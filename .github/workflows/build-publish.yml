@@ -5,6 +5,7 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
 env:
   REGISTRY: ghcr.io
@@ -51,4 +52,5 @@ jobs:
         run: ./mvnw -Pnative -B spring-boot:build-image
 
       - name: Push Docker image
+        if: github.event_name == 'workflow_dispatch'
         run: docker push ${{ env.IMAGE_NAME }}:${{ steps.version.outputs.version }}
