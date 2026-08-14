@@ -1,0 +1,26 @@
+src/main/java/org/sanmibuh/cqrs/domain/Command.java
+  h_97a91c9e567f87 1-4
+src/main/java/org/sanmibuh/cqrs/domain/CommandBus.java
+  h_97a91c9e567f87 1-6
+src/main/java/org/sanmibuh/cqrs/domain/CommandHandler.java
+  h_97a91c9e567f87 1-6
+src/main/java/org/sanmibuh/cqrs/domain/HandlerNotFoundException.java
+  h_97a91c9e567f87 1-14
+src/main/java/org/sanmibuh/cqrs/domain/Query.java
+  h_97a91c9e567f87 1-5
+src/main/java/org/sanmibuh/cqrs/domain/QueryBus.java
+  h_97a91c9e567f87 1-6
+src/main/java/org/sanmibuh/cqrs/domain/QueryHandler.java
+  h_97a91c9e567f87 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "cf28e90ff4642c1a25779668c87eaa493d54f979",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
