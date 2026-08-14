@@ -1,0 +1,52 @@
+.gitignore
+  h_97a91c9e567f87 10
+.mvn/wrapper/MavenWrapperDownloader.java
+  h_97a91c9e567f87 23-29,31-35,37-40,42-46,48-51,53-77,79-96,98-116
+README.md
+  h_97a91c9e567f87 2
+pom.xml
+  h_97a91c9e567f87 2-3,5,7-12,14-18,20-23,25-33,35-54,56-68,70-85,87-89
+src/main/java/org/sanmibuh/tedee/automation/TedeeAutomationApplication.java
+  h_97a91c9e567f87 11-13
+src/main/java/org/sanmibuh/tedee/automation/configuration/GlobalExceptionHandler.java
+  h_97a91c9e567f87 3,15-16
+src/main/java/org/sanmibuh/tedee/automation/lock/application/SyncLockStateUseCase.java
+  h_97a91c9e567f87 15-16,18-21,23-27
+src/main/java/org/sanmibuh/tedee/automation/lock/domain/Lock.java
+  h_97a91c9e567f87 8-10,12-16,18-20,22-24,26-28,30-32
+src/main/java/org/sanmibuh/tedee/automation/lock/domain/LockId.java
+  h_97a91c9e567f87 10
+src/main/java/org/sanmibuh/tedee/automation/lock/domain/LockRepository.java
+  h_97a91c9e567f87 10,12
+src/main/java/org/sanmibuh/tedee/automation/lock/domain/LockState.java
+  h_97a91c9e567f87 7
+src/main/java/org/sanmibuh/tedee/automation/lock/domain/TedeeApiPort.java
+  h_97a91c9e567f87 8,10,12
+src/main/java/org/sanmibuh/tedee/automation/lock/infrastructure/InMemoryLockRepository.java
+  h_97a91c9e567f87 13-14,19,21-24,26-29
+src/main/java/org/sanmibuh/tedee/automation/lock/infrastructure/LockSyncScheduler.java
+  h_97a91c9e567f87 15,17-18,20-22,24-29
+src/main/java/org/sanmibuh/tedee/automation/lock/infrastructure/LockWebhookController.java
+  h_97a91c9e567f87 5-8,17,19-21,23-26
+src/main/java/org/sanmibuh/tedee/automation/lock/infrastructure/TedeeApiAdapter.java
+  h_97a91c9e567f87 16,18-20,22-26,28-31,33-36
+src/main/java/org/sanmibuh/tedee/automation/notification/application/SendNotificationUseCase.java
+  h_97a91c9e567f87 12,14-16,18-20
+src/main/java/org/sanmibuh/tedee/automation/notification/domain/NotificationPort.java
+  h_97a91c9e567f87 8
+src/main/java/org/sanmibuh/tedee/automation/notification/infrastructure/TelegramNotificationAdapter.java
+  h_97a91c9e567f87 4,15-37
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  h_97a91c9e567f87 12-35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "03abea59c30ecd2b65370666b66aa44056bfc523",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
