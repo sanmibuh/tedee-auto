@@ -1,0 +1,14 @@
+src/main/java/org/sanmibuh/ddd/exception/DomainException.java
+  h_97a91c9e567f87 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "dc745c43eddff67a0d9d952addab25e030d55fa2",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
