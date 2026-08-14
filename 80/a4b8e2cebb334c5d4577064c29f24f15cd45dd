@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/automation/configuration/GlobalExceptionHandler.java
+  h_97a91c9e567f87 8,11,13-19
+src/test/java/org/sanmibuh/tedee/automation/configuration/GlobalExceptionHandlerTest.java
+  h_97a91c9e567f87 1-54
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "80a4b8e2cebb334c5d4577064c29f24f15cd45dd",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
