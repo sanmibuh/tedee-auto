@@ -1,0 +1,16 @@
+src/test/java/org/sanmibuh/tedee/automation/configuration/GlobalExceptionHandlerTest.java
+  h_97a91c9e567f87 11
+src/main/java/org/sanmibuh/ddd/domain/DomainException.java
+  h_97a91c9e567f87 1,7-8,10-12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "6de49a73a7a00d19b124a92c7cd58e578c449c96",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
