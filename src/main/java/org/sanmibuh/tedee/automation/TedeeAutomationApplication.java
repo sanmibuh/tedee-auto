@@ -8,7 +8,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 @EnableScheduling
 public class TedeeAutomationApplication {
 
-	static void main(String[] args) {
-		SpringApplication.run(TedeeAutomationApplication.class, args);
-	}
+  static void main(String[] args) {
+    SpringApplication.run(TedeeAutomationApplication.class, args);
+  }
 }
