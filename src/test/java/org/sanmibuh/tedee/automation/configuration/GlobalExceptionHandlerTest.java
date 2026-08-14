@@ -8,7 +8,7 @@ import java.io.Serial;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.sanmibuh.ddd.exception.DomainException;
+import org.sanmibuh.ddd.domain.DomainException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
