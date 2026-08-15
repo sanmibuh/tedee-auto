@@ -103,7 +103,7 @@ jobs:
           cp pitest-history-output.bin "$TMPDIR/pitest-history.bin"
 
           if git ls-remote --exit-code origin coverage-data > /dev/null 2>&1; then
-            git worktree add "$TMPDIR/data-branch" origin/coverage-data
+            git worktree add -b coverage-data "$TMPDIR/data-branch" origin/coverage-data
           else
             git worktree add --orphan -b coverage-data "$TMPDIR/data-branch"
           fi
@@ -115,4 +115,4 @@ jobs:
           cd "$TMPDIR/data-branch"
           git add coverage.json pitest.json pitest-history.bin
           git commit -m "coverage: ${{ github.sha }}"
-          git push origin coverage-data
+          git push origin HEAD:coverage-data
