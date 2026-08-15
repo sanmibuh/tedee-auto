@@ -6,12 +6,11 @@ on:
     types: [opened, synchronize, reopened, ready_for_review]
 
 jobs:
-  build-and-test:
+  lint:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false
     permissions:
       contents: read
-      pull-requests: write
 
     steps:
       - name: Checkout code
@@ -32,64 +31,53 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
-      - name: Fetch baseline from coverage-data branch
-        id: baseline
-        run: |
-          git fetch origin coverage-data 2>/dev/null || true
+      - name: Check formatting (Spotless)
+        run: ./mvnw spotless:check -B
 
-          fetch_json_metric() {
-            local file=$1 key=$2
-            git show origin/coverage-data:"$file" 2>/dev/null \
-              | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('$key', -1))" 2>/dev/null \
-              || echo "-1"
-          }
+  test:
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    permissions:
+      contents: read
+    outputs:
+      tests: ${{ steps.results.outputs.tests }}
+      passed: ${{ steps.results.outputs.passed }}
+      failures: ${{ steps.results.outputs.failures }}
+      errors: ${{ steps.results.outputs.errors }}
+      skipped: ${{ steps.results.outputs.skipped }}
+      status: ${{ steps.results.outputs.status }}
+      instruction: ${{ steps.results.outputs.instruction }}
+      branch: ${{ steps.results.outputs.branch }}
+      line: ${{ steps.results.outputs.line }}
+      method: ${{ steps.results.outputs.method }}
+      class: ${{ steps.results.outputs.class }}
 
-          echo "instruction=$(fetch_json_metric coverage.json instruction)" >> "$GITHUB_OUTPUT"
-          echo "branch=$(fetch_json_metric coverage.json branch)"           >> "$GITHUB_OUTPUT"
-          echo "line=$(fetch_json_metric coverage.json line)"               >> "$GITHUB_OUTPUT"
-          echo "method=$(fetch_json_metric coverage.json method)"           >> "$GITHUB_OUTPUT"
-          echo "class=$(fetch_json_metric coverage.json class)"             >> "$GITHUB_OUTPUT"
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
 
-          echo "pit_killed=$(fetch_json_metric pitest.json killed)"         >> "$GITHUB_OUTPUT"
-          echo "pit_total=$(fetch_json_metric pitest.json total)"           >> "$GITHUB_OUTPUT"
-          echo "pit_score=$(fetch_json_metric pitest.json score)"           >> "$GITHUB_OUTPUT"
+      - name: Set up GraalVM (Java 25)
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
-          # Restore pitest history file for incremental analysis
-          git show origin/coverage-data:pitest-history.bin > pitest-history-input.bin 2>/dev/null || true
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
 
       - name: Build and test
         run: |
           set -o pipefail
-          ./mvnw verify -B 2>&1 | tee build.log
+          ./mvnw verify -B -Dspotless.skip=true 2>&1 | tee build.log
 
-      - name: Run mutation tests (incremental)
-        id: pitest
-        if: success()
-        run: |
-          ./mvnw pitest:mutationCoverage -B \
-            -Dpitest.historyInputFile=pitest-history-input.bin \
-            -Dpitest.historyOutputFile=pitest-history-output.bin \
-            2>&1 | tee pitest.log
-
-          MUTATIONS_XML="target/pit-reports/mutations.xml"
-          if [ -f "$MUTATIONS_XML" ]; then
-            TOTAL=$(grep -c '<mutation ' "$MUTATIONS_XML") || TOTAL=0
-            KILLED=$(grep -oP 'status="\K[^"]+' "$MUTATIONS_XML" | grep -c "^KILLED$") || KILLED=0
-            if [ "$TOTAL" -gt 0 ]; then
-              SCORE=$((KILLED * 100 / TOTAL))
-            else
-              SCORE=-1
-            fi
-          else
-            TOTAL=0; KILLED=0; SCORE=-1
-          fi
-
-          echo "total=$TOTAL"   >> "$GITHUB_OUTPUT"
-          echo "killed=$KILLED" >> "$GITHUB_OUTPUT"
-          echo "score=$SCORE"   >> "$GITHUB_OUTPUT"
-
-      - name: Parse JaCoCo coverage
-        id: coverage
+      - name: Parse test results and JaCoCo coverage
+        id: results
         if: always()
         run: |
           TESTS=$(grep -oP 'Tests run: \K[0-9]+' build.log | awk '{s+=$1} END {print s+0}')
@@ -133,24 +121,119 @@ jobs:
             echo "class=-1"       >> "$GITHUB_OUTPUT"
           fi
 
+  pitest:
+    runs-on: ubuntu-latest
+    needs: test
+    permissions:
+      contents: read
+    outputs:
+      killed: ${{ steps.results.outputs.killed }}
+      total: ${{ steps.results.outputs.total }}
+      score: ${{ steps.results.outputs.score }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up GraalVM (Java 25)
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Restore PITest history
+        run: |
+          git fetch origin coverage-data 2>/dev/null || true
+          git show origin/coverage-data:pitest-history.bin > pitest-history-input.bin 2>/dev/null || true
+
+      - name: Run mutation tests (incremental)
+        run: |
+          set -o pipefail
+          ./mvnw pitest:mutationCoverage -B \
+            -Dspotless.skip=true \
+            -Dpitest.historyInputFile=pitest-history-input.bin \
+            -Dpitest.historyOutputFile=pitest-history-output.bin \
+            2>&1 | tee pitest.log
+
+      - name: Parse PITest results
+        id: results
+        if: always()
+        run: |
+          MUTATIONS_XML="target/pit-reports/mutations.xml"
+          if [ -f "$MUTATIONS_XML" ]; then
+            TOTAL=$(grep -c '<mutation ' "$MUTATIONS_XML") || TOTAL=0
+            KILLED=$(grep -oP 'status="\K[^"]+' "$MUTATIONS_XML" | grep -c "^KILLED$") || KILLED=0
+            if [ "$TOTAL" -gt 0 ]; then
+              SCORE=$((KILLED * 100 / TOTAL))
+            else
+              SCORE=-1
+            fi
+          else
+            TOTAL=0; KILLED=0; SCORE=-1
+          fi
+          echo "total=$TOTAL"   >> "$GITHUB_OUTPUT"
+          echo "killed=$KILLED" >> "$GITHUB_OUTPUT"
+          echo "score=$SCORE"   >> "$GITHUB_OUTPUT"
+
+  report:
+    runs-on: ubuntu-latest
+    needs: [test, pitest]
+    if: always() && github.event.pull_request.draft == false
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Fetch baseline metrics
+        id: baseline
+        run: |
+          git fetch origin coverage-data 2>/dev/null || true
+
+          fetch_json_metric() {
+            local file=$1 key=$2
+            git show origin/coverage-data:"$file" 2>/dev/null \
+              | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('$key', -1))" 2>/dev/null \
+              || echo "-1"
+          }
+
+          echo "instruction=$(fetch_json_metric coverage.json instruction)" >> "$GITHUB_OUTPUT"
+          echo "branch=$(fetch_json_metric coverage.json branch)"           >> "$GITHUB_OUTPUT"
+          echo "line=$(fetch_json_metric coverage.json line)"               >> "$GITHUB_OUTPUT"
+          echo "method=$(fetch_json_metric coverage.json method)"           >> "$GITHUB_OUTPUT"
+          echo "class=$(fetch_json_metric coverage.json class)"             >> "$GITHUB_OUTPUT"
+          echo "pit_killed=$(fetch_json_metric pitest.json killed)"         >> "$GITHUB_OUTPUT"
+          echo "pit_total=$(fetch_json_metric pitest.json total)"           >> "$GITHUB_OUTPUT"
+          echo "pit_score=$(fetch_json_metric pitest.json score)"           >> "$GITHUB_OUTPUT"
+
       - name: Comment PR with report
         uses: actions/github-script@v7
-        if: always()
         with:
           script: |
-            const status   = '${{ steps.coverage.outputs.status }}';
-            const tests    = '${{ steps.coverage.outputs.tests }}';
-            const passed   = '${{ steps.coverage.outputs.passed }}';
-            const failures = '${{ steps.coverage.outputs.failures }}';
-            const errors   = '${{ steps.coverage.outputs.errors }}';
-            const skipped  = '${{ steps.coverage.outputs.skipped }}';
+            const status   = '${{ needs.test.outputs.status }}';
+            const tests    = '${{ needs.test.outputs.tests }}';
+            const passed   = '${{ needs.test.outputs.passed }}';
+            const failures = '${{ needs.test.outputs.failures }}';
+            const errors   = '${{ needs.test.outputs.errors }}';
+            const skipped  = '${{ needs.test.outputs.skipped }}';
 
             const cur = {
-              instruction: parseInt('${{ steps.coverage.outputs.instruction }}'),
-              branch:      parseInt('${{ steps.coverage.outputs.branch }}'),
-              line:        parseInt('${{ steps.coverage.outputs.line }}'),
-              method:      parseInt('${{ steps.coverage.outputs.method }}'),
-              class:       parseInt('${{ steps.coverage.outputs.class }}'),
+              instruction: parseInt('${{ needs.test.outputs.instruction }}'),
+              branch:      parseInt('${{ needs.test.outputs.branch }}'),
+              line:        parseInt('${{ needs.test.outputs.line }}'),
+              method:      parseInt('${{ needs.test.outputs.method }}'),
+              class:       parseInt('${{ needs.test.outputs.class }}'),
             };
             const base = {
               instruction: parseInt('${{ steps.baseline.outputs.instruction }}'),
@@ -160,8 +243,16 @@ jobs:
               class:       parseInt('${{ steps.baseline.outputs.class }}'),
             };
 
-            const pitCur  = { killed: parseInt('${{ steps.pitest.outputs.killed }}'),  total: parseInt('${{ steps.pitest.outputs.total }}'),  score: parseInt('${{ steps.pitest.outputs.score }}') };
-            const pitBase = { killed: parseInt('${{ steps.baseline.outputs.pit_killed }}'), total: parseInt('${{ steps.baseline.outputs.pit_total }}'), score: parseInt('${{ steps.baseline.outputs.pit_score }}') };
+            const pitCur  = {
+              killed: parseInt('${{ needs.pitest.outputs.killed }}'),
+              total:  parseInt('${{ needs.pitest.outputs.total }}'),
+              score:  parseInt('${{ needs.pitest.outputs.score }}'),
+            };
+            const pitBase = {
+              killed: parseInt('${{ steps.baseline.outputs.pit_killed }}'),
+              total:  parseInt('${{ steps.baseline.outputs.pit_total }}'),
+              score:  parseInt('${{ steps.baseline.outputs.pit_score }}'),
+            };
 
             const fmt = (v) => v < 0 ? 'N/A' : `${v}%`;
             const diff = (cur, base) => {
@@ -173,7 +264,8 @@ jobs:
               return `0% ➡️`;
             };
 
-            const pitSection = pitCur.score >= 0
+            const pitJobResult = '${{ needs.pitest.result }}';
+            const pitSection = pitJobResult === 'success' && pitCur.score >= 0
               ? [
                   '',
                   '### Mutation Testing (PITest) vs `main`',
@@ -183,7 +275,7 @@ jobs:
                   `| Score          | ${fmt(pitBase.score)}                    | ${fmt(pitCur.score)}                    | ${diff(pitCur.score, pitBase.score)} |`,
                   `| Killed/Total   | ${pitBase.killed < 0 ? 'N/A' : pitBase.killed + '/' + pitBase.total} | ${pitCur.killed}/${pitCur.total} | |`,
                 ]
-              : ['', '> ⚠️ Mutation testing did not run (tests may have failed)'];
+              : ['', '> ⚠️ Mutation testing did not run or failed'];
 
             const icon  = status === 'passed' ? '✅' : '❌';
             const title = status === 'passed' ? `${icon} All tests passed` : `${icon} Tests failed`;
