@@ -1,0 +1,149 @@
+name: PR Check
+
+on:
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up GraalVM (Java 25)
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Build and test
+        run: ./mvnw verify -B 2>&1 | tee build.log
+
+      - name: Parse test and coverage results
+        id: results
+        if: always()
+        run: |
+          TESTS=$(grep -oP 'Tests run: \K[0-9]+' build.log | awk '{s+=$1} END {print s+0}')
+          FAILURES=$(grep -oP 'Failures: \K[0-9]+' build.log | awk '{s+=$1} END {print s+0}')
+          ERRORS=$(grep -oP 'Errors: \K[0-9]+' build.log | awk '{s+=$1} END {print s+0}')
+          SKIPPED=$(grep -oP 'Skipped: \K[0-9]+' build.log | awk '{s+=$1} END {print s+0}')
+          PASSED=$((TESTS - FAILURES - ERRORS - SKIPPED))
+
+          echo "tests=$TESTS"     >> "$GITHUB_OUTPUT"
+          echo "failures=$FAILURES" >> "$GITHUB_OUTPUT"
+          echo "errors=$ERRORS"   >> "$GITHUB_OUTPUT"
+          echo "skipped=$SKIPPED" >> "$GITHUB_OUTPUT"
+          echo "passed=$PASSED"   >> "$GITHUB_OUTPUT"
+
+          if [ "$FAILURES" -gt 0 ] || [ "$ERRORS" -gt 0 ]; then
+            echo "status=failed" >> "$GITHUB_OUTPUT"
+          else
+            echo "status=passed" >> "$GITHUB_OUTPUT"
+          fi
+
+          JACOCO_XML="target/site/jacoco/jacoco.xml"
+          if [ -f "$JACOCO_XML" ]; then
+            extract() {
+              local type=$1
+              local missed covered
+              missed=$(grep -oP "type=\"${type}\" missed=\"\K[0-9]+" "$JACOCO_XML" | awk '{s+=$1} END {print s+0}')
+              covered=$(grep -oP "type=\"${type}\" missed=\"[0-9]+\" covered=\"\K[0-9]+" "$JACOCO_XML" | awk '{s+=$1} END {print s+0}')
+              local total=$((missed + covered))
+              if [ "$total" -eq 0 ]; then echo "N/A"; else echo "$((covered * 100 / total))%"; fi
+            }
+            echo "cov_instruction=$(extract INSTRUCTION)" >> "$GITHUB_OUTPUT"
+            echo "cov_branch=$(extract BRANCH)"           >> "$GITHUB_OUTPUT"
+            echo "cov_line=$(extract LINE)"               >> "$GITHUB_OUTPUT"
+            echo "cov_method=$(extract METHOD)"           >> "$GITHUB_OUTPUT"
+            echo "cov_class=$(extract CLASS)"             >> "$GITHUB_OUTPUT"
+          else
+            echo "cov_instruction=N/A" >> "$GITHUB_OUTPUT"
+            echo "cov_branch=N/A"      >> "$GITHUB_OUTPUT"
+            echo "cov_line=N/A"        >> "$GITHUB_OUTPUT"
+            echo "cov_method=N/A"      >> "$GITHUB_OUTPUT"
+            echo "cov_class=N/A"       >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Comment PR with report
+        uses: actions/github-script@v7
+        if: always()
+        with:
+          script: |
+            const status   = '${{ steps.results.outputs.status }}';
+            const tests    = '${{ steps.results.outputs.tests }}';
+            const passed   = '${{ steps.results.outputs.passed }}';
+            const failures = '${{ steps.results.outputs.failures }}';
+            const errors   = '${{ steps.results.outputs.errors }}';
+            const skipped  = '${{ steps.results.outputs.skipped }}';
+
+            const covInstruction = '${{ steps.results.outputs.cov_instruction }}';
+            const covBranch      = '${{ steps.results.outputs.cov_branch }}';
+            const covLine        = '${{ steps.results.outputs.cov_line }}';
+            const covMethod      = '${{ steps.results.outputs.cov_method }}';
+            const covClass       = '${{ steps.results.outputs.cov_class }}';
+
+            const icon = status === 'passed' ? '✅' : '❌';
+            const title = status === 'passed' ? `${icon} All tests passed` : `${icon} Tests failed`;
+
+            const body = [
+              `## ${title}`,
+              '',
+              '### Tests',
+              '',
+              '| Result | Count |',
+              '|--------|------:|',
+              `| ✅ Passed   | ${passed}    |`,
+              `| ❌ Failed   | ${failures}  |`,
+              `| 💥 Errors   | ${errors}    |`,
+              `| ⏭️ Skipped  | ${skipped}   |`,
+              `| **Total**   | **${tests}** |`,
+              '',
+              '### Coverage (JaCoCo)',
+              '',
+              '| Metric      | Coverage |',
+              '|-------------|:--------:|',
+              `| Instructions | ${covInstruction} |`,
+              `| Branches     | ${covBranch}      |`,
+              `| Lines        | ${covLine}        |`,
+              `| Methods      | ${covMethod}      |`,
+              `| Classes      | ${covClass}       |`,
+            ].join('\n');
+
+            const { data: comments } = await github.rest.issues.listComments({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+            });
+
+            const existing = comments.find(c =>
+              c.user.login === 'github-actions[bot]' && c.body.startsWith('## ')
+            );
+
+            if (existing) {
+              await github.rest.issues.deleteComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                comment_id: existing.id,
+              });
+            }
+
+            await github.rest.issues.createComment({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              issue_number: context.issue.number,
+              body,
+            });
