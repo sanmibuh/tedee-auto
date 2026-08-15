@@ -135,6 +135,14 @@ jobs:
             echo "class=-1"       >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Upload JaCoCo report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: jacoco-report
+          path: target/site/jacoco/jacoco.xml
+          if-no-files-found: ignore
+
   pitest:
     runs-on: ubuntu-latest
     needs: test
@@ -209,6 +217,47 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Download JaCoCo report
+        uses: actions/download-artifact@v4
+        with:
+          name: jacoco-report
+        continue-on-error: true
+
+      - name: Parse per-class coverage
+        run: |
+          python3 << 'PYEOF'
+          import xml.etree.ElementTree as ET, os
+
+          if not os.path.exists('jacoco.xml'):
+            with open('class_details.md', 'w') as f:
+              f.write('_No JaCoCo report available._')
+          else:
+            tree = ET.parse('jacoco.xml')
+            classes = []
+            for cls in tree.getroot().iter('class'):
+              simple_name = cls.get('name', '').split('/')[-1]
+              for counter in cls.findall('counter'):
+                if counter.get('type') == 'LINE':
+                  missed  = int(counter.get('missed', 0))
+                  covered = int(counter.get('covered', 0))
+                  total   = missed + covered
+                  if total > 0 and missed > 0:
+                    classes.append((simple_name, covered * 100 // total, covered, total))
+
+            classes.sort(key=lambda x: x[1])
+
+            if not classes:
+              output = '_All classes reach 100% line coverage._'
+            else:
+              rows = ['| Class | Line Coverage |', '|-------|:-------------:|']
+              for name, pct, cov, tot in classes:
+                rows.append(f'| `{name}` | {pct}% ({cov}/{tot}) |')
+              output = '\n'.join(rows)
+
+            with open('class_details.md', 'w') as f:
+              f.write(output)
+          PYEOF
+
       - name: Fetch baseline metrics
         id: baseline
         run: |
@@ -234,6 +283,7 @@ jobs:
         uses: actions/github-script@v7
         with:
           script: |
+            const fs = require('fs');
             const status   = '${{ needs.test.outputs.status }}';
             const tests    = '${{ needs.test.outputs.tests }}';
             const passed   = '${{ needs.test.outputs.passed }}';
@@ -277,6 +327,10 @@ jobs:
               return `0% ➡️`;
             };
 
+            const classDetails = fs.existsSync('class_details.md')
+              ? fs.readFileSync('class_details.md', 'utf8')
+              : '_No data available._';
+
             const pitJobResult = '${{ needs.pitest.result }}';
             const pitSection = pitJobResult === 'success' && pitCur.score >= 0
               ? [
@@ -318,6 +372,13 @@ jobs:
               `| Lines        | ${fmt(base.line)}        | ${fmt(cur.line)}        | ${diff(cur.line, base.line)}               |`,
               `| Methods      | ${fmt(base.method)}      | ${fmt(cur.method)}      | ${diff(cur.method, base.method)}           |`,
               `| Classes      | ${fmt(base.class)}       | ${fmt(cur.class)}       | ${diff(cur.class, base.class)}             |`,
+              '',
+              '<details>',
+              '<summary>Classes below 100% line coverage</summary>',
+              '',
+              classDetails,
+              '',
+              '</details>',
               ...pitSection,
             ].join('\n');
 
