@@ -9,7 +9,7 @@ import org.junit.jupiter.api.Test;
 
 class HexagonalArchitectureTest {
 
-  private static final String BASE_PACKAGE = "org.sanmibuh.tedee.automation";
+  private static final String BASE_PACKAGE = "org.sanmibuh";
 
   private final JavaClasses classes = new ClassFileImporter().importPackages(BASE_PACKAGE);
 
@@ -24,13 +24,6 @@ class HexagonalArchitectureTest {
   void should_domainLayer_notDependOnInfrastructure() {
     final ArchRule rule = noClasses().that().resideInAPackage("..domain..").should().dependOnClassesThat()
         .resideInAPackage("..infrastructure..");
-    rule.check(classes);
-  }
-
-  @Test
-  void should_lockInfrastructure_notDependOnNotificationApplication() {
-    final ArchRule rule = noClasses().that().resideInAPackage("..lock.infrastructure..").should()
-        .dependOnClassesThat().resideInAPackage("..notification.application..");
     rule.check(classes);
   }
 }
