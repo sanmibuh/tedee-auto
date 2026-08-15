@@ -452,12 +452,14 @@ jobs:
               if (tot > 0) return `${pct}% (${cov}/${tot})`;
               return `${pct}%`;
             };
+            const mathColor = (color, content) =>
+              '$' + '{\\color{' + color + '}{' + content + '}}' + '$';
             const diff = (c, b) => {
               if (c < 0 || b < 0) return '';
               const d = c - b;
-              if (d > 0) return `**+${d}%** ⬆️`;
-              if (d < 0) return `**${d}%** ⬇️`;
-              return '➡️';
+              if (d > 0) return mathColor('green', '\\uparrow +' + d + '\\%');
+              if (d < 0) return mathColor('red',   '\\downarrow ' + d + '\\%');
+              return mathColor('royalblue', '=');
             };
 
             // Semaphore: coverage thresholds 90/70, mutation 80/60
@@ -497,19 +499,19 @@ jobs:
               `> **${failures} failure(s) and ${errors} error(s)** — check the [Actions log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.`,
             ] : [];
 
-            // Metrics table
+            // Metrics table — columns: semaphore | Metric | PR | main | Diff
             const pitRow = pitAvailable
-              ? `| ${semPit(pitCur.score)} | Mutation Score | ${fmt(pitBase.score, pitBase.killed, pitBase.total)} | ${fmt(pitCur.score, pitCur.killed, pitCur.total)} | ${diff(pitCur.score, pitBase.score)} | ${pitCur.killed}/${pitCur.total} |`
-              : `| ⚪ | Mutation Score | — | — | ⚠️ did not run | — |`;
+              ? `| ${semPit(pitCur.score)} | Mutation Score | ${fmt(pitCur.score, pitCur.killed, pitCur.total)} | ${fmt(pitBase.score, pitBase.killed, pitBase.total)} | ${diff(pitCur.score, pitBase.score)} |`
+              : `| ⚪ | Mutation Score | — | — | ⚠️ did not run |`;
 
             const metricsTable = [
-              '| | Metric | `main` | PR | Diff | Detail |',
-              '|:---:|---|:---:|:---:|:---:|---|',
-              `| ${semCov(cur.instruction)} | Instructions | ${fmt(base.instruction, base.instruction_covered, base.instruction_total)} | ${fmt(cur.instruction, cur.instruction_covered, cur.instruction_total)} | ${diff(cur.instruction, base.instruction)} | ${cur.instruction_covered}/${cur.instruction_total} |`,
-              `| ${semCov(cur.branch)}      | Branches     | ${fmt(base.branch, base.branch_covered, base.branch_total)}           | ${fmt(cur.branch, cur.branch_covered, cur.branch_total)}           | ${diff(cur.branch, base.branch)}           | ${cur.branch_covered}/${cur.branch_total} |`,
-              `| ${semCov(cur.line)}        | Lines        | ${fmt(base.line, base.line_covered, base.line_total)}               | ${fmt(cur.line, cur.line_covered, cur.line_total)}                 | ${diff(cur.line, base.line)}               | ${cur.line_covered}/${cur.line_total} |`,
-              `| ${semCov(cur.method)}      | Methods      | ${fmt(base.method, base.method_covered, base.method_total)}         | ${fmt(cur.method, cur.method_covered, cur.method_total)}           | ${diff(cur.method, base.method)}           | ${cur.method_covered}/${cur.method_total} |`,
-              `| ${semCov(cur.class)}       | Classes      | ${fmt(base.class, base.class_covered, base.class_total)}           | ${fmt(cur.class, cur.class_covered, cur.class_total)}             | ${diff(cur.class, base.class)}             | ${cur.class_covered}/${cur.class_total} |`,
+              '| | Metric | PR | `main` | Diff |',
+              '|:---:|---|:---:|:---:|:---:|',
+              `| ${semCov(cur.instruction)} | Instructions | ${fmt(cur.instruction, cur.instruction_covered, cur.instruction_total)} | ${fmt(base.instruction, base.instruction_covered, base.instruction_total)} | ${diff(cur.instruction, base.instruction)} |`,
+              `| ${semCov(cur.branch)}      | Branches     | ${fmt(cur.branch, cur.branch_covered, cur.branch_total)}           | ${fmt(base.branch, base.branch_covered, base.branch_total)}           | ${diff(cur.branch, base.branch)} |`,
+              `| ${semCov(cur.line)}        | Lines        | ${fmt(cur.line, cur.line_covered, cur.line_total)}                 | ${fmt(base.line, base.line_covered, base.line_total)}               | ${diff(cur.line, base.line)} |`,
+              `| ${semCov(cur.method)}      | Methods      | ${fmt(cur.method, cur.method_covered, cur.method_total)}           | ${fmt(base.method, base.method_covered, base.method_total)}         | ${diff(cur.method, base.method)} |`,
+              `| ${semCov(cur.class)}       | Classes      | ${fmt(cur.class, cur.class_covered, cur.class_total)}             | ${fmt(base.class, base.class_covered, base.class_total)}           | ${diff(cur.class, base.class)} |`,
               pitRow,
             ];
 
