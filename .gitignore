@@ -8,3 +8,4 @@ target/
 .settings/
 *.class
 .tool-versions
+/pitest-history-output.bin
