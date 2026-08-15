@@ -1,0 +1,151 @@
+name: Nightly AI Review
+
+on:
+  schedule:
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  ai-review:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      issues: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build code snapshot
+        run: |
+          {
+            for guide in AGENTS.md ARCHITECTURE.md; do
+              if [ -f "$guide" ]; then
+                echo "=== FILE: $guide ==="
+                cat "$guide"
+                echo ""
+              fi
+            done
+            echo "=== PROJECT STRUCTURE ==="
+            find src -name "*.java" | sort
+            echo ""
+            find src -name "*.java" | sort | while read -r f; do
+              echo "=== FILE: $f ==="
+              cat "$f"
+              echo ""
+            done
+          } > code_snapshot.txt
+
+      - name: Run Gemini review
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+        run: |
+          python3 << 'PYEOF'
+          import os, json, urllib.request, urllib.error, sys
+
+          with open("code_snapshot.txt") as f:
+            code = f.read()
+
+          prompt = f"""You are a senior software engineer performing a nightly automated code review.
+The project guidelines and quality standards are defined in AGENTS.md (included below).
+The architecture is described in ARCHITECTURE.md (included below).
+Use both as the reference for this review — do not apply standards from outside these documents.
+
+Review the codebase and produce a structured markdown report covering:
+
+## 1. Clean Code & Best Practices
+Evaluate against the standards in AGENTS.md: naming, dead code, DRY, method size, magic values.
+
+## 2. Test Quality (TDD)
+Evaluate against the TDD standards in AGENTS.md: behavior testing, naming convention, BDDAssertions usage, soft assertions, missing cases.
+
+## 3. SOLID & Architecture
+Evaluate against the architectural rules in AGENTS.md and ARCHITECTURE.md: layer dependencies, domain isolation, SOLID violations.
+
+## 4. Documentation
+Is ARCHITECTURE.md accurate and up to date with the actual code? Are there comments that restate the code rather than explaining non-obvious decisions?
+
+## 5. Improvement Suggestions
+Specific, actionable suggestions with code examples where useful.
+Label each: 🔴 High / 🟡 Medium / 🟢 Low priority.
+
+Be specific: reference actual class names and method names.
+If an area is compliant, say so briefly. Do not invent problems.
+
+CODEBASE AND GUIDELINES:
+{code}
+"""
+
+          payload = {{
+            "contents": [{{"parts": [{{"text": prompt}}]}}],
+            "generationConfig": {{"temperature": 0.2, "maxOutputTokens": 8192}}
+          }}
+
+          req = urllib.request.Request(
+            f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key={{os.environ['GEMINI_API_KEY']}}",
+            data=json.dumps(payload).encode(),
+            headers={{"Content-Type": "application/json"}},
+            method="POST"
+          )
+          try:
+            with urllib.request.urlopen(req) as resp:
+              data = json.loads(resp.read())
+          except urllib.error.HTTPError as e:
+            print(f"Gemini API error: {{e.code}} {{e.read().decode()}}", file=sys.stderr)
+            sys.exit(1)
+
+          review = data["candidates"][0]["content"]["parts"][0]["text"]
+          with open("review.md", "w") as f:
+            f.write(review)
+          PYEOF
+
+      - name: Create GitHub issue
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const fs = require('fs');
+            const review = fs.readFileSync('review.md', 'utf8');
+            const date = new Date().toISOString().split('T')[0];
+
+            const label = 'ai-review';
+
+            // Ensure label exists
+            try {
+              await github.rest.issues.getLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: label
+              });
+            } catch {
+              await github.rest.issues.createLabel({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                name: label,
+                color: '8B5CF6',
+                description: 'Automated AI code review'
+              });
+            }
+
+            // Close previous open ai-review issues
+            const { data: open } = await github.rest.issues.listForRepo({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              labels: label,
+              state: 'open'
+            });
+            for (const issue of open) {
+              await github.rest.issues.update({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                state: 'closed'
+              });
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title: `AI Code Review — ${date}`,
+              body: `> Generated by Gemini 2.5 Flash on ${new Date().toUTCString()}\n\n${review}`,
+              labels: [label]
+            });
