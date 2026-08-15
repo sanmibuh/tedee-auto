@@ -1,0 +1,19 @@
+AGENTS.md
+  h_97a91c9e567f87 1-50
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  h_97a91c9e567f87 12-35
+  h_97a91c9e567f87 3-4
+ARCHITECTURE.md
+  h_97a91c9e567f87 1-56
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "8af6531930aac096ea09c5723137c02b8b9715af",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
