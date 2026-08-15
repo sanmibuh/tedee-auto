@@ -161,18 +161,6 @@
             <groupId>org.graalvm.buildtools</groupId>
             <artifactId>native-maven-plugin</artifactId>
           </plugin>
-          <plugin>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-maven-plugin</artifactId>
-            <configuration>
-              <image>
-                <name>ghcr.io/sanmibuh/tedee-auto/${project.artifactId}:${project.version}</name>
-                <env>
-                  <BP_NATIVE_IMAGE>true</BP_NATIVE_IMAGE>
-                </env>
-              </image>
-            </configuration>
-          </plugin>
         </plugins>
       </build>
     </profile>

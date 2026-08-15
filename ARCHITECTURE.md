@@ -51,6 +51,12 @@ Domain rule violations extend `DomainException` and are mapped globally to HTTP 
 ## Build & run
 
 ```bash
+# Run tests
 ./mvnw verify
-./mvnw -Pnative spring-boot:build-image
+
+# Build native binary (inside Docker — used by CI)
+docker build -t tedee-automation .
+
+# Build native binary locally (requires GraalVM 25)
+./mvnw -Pnative native:compile
 ```
