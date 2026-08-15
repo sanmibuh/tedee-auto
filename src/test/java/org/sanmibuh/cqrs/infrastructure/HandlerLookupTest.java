@@ -22,6 +22,21 @@ class HandlerLookupTest {
   static class RawStubHandler implements StubHandler {
   }
 
+  static class AnotherConcreteStubHandler implements StubHandler<StubMessage> {
+  }
+
+  @Test
+  void should_throwIllegalArgumentException_whenDuplicateHandlersForSameMessageType() {
+    final var handler1 = new ConcreteStubHandler();
+    final var handler2 = new AnotherConcreteStubHandler();
+
+    final var thrown = thenThrownBy(() -> new HandlerLookup<>(List.of(handler1, handler2), StubHandler.class));
+
+    thrown
+      .isInstanceOf(IllegalArgumentException.class)
+      .hasMessageContaining(StubMessage.class.getName());
+  }
+
   @Test
   void should_findHandler_byMessageType() {
     final var handler = new ConcreteStubHandler();

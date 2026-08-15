@@ -186,7 +186,10 @@ jobs:
             const icon  = status === 'passed' ? '✅' : '❌';
             const title = status === 'passed' ? `${icon} All tests passed` : `${icon} Tests failed`;
 
+            const MARKER = '<!-- tedee-auto-ci-report -->';
+
             const body = [
+              MARKER,
               `## ${title}`,
               '',
               '### Tests',
@@ -218,7 +221,7 @@ jobs:
             });
 
             const existing = comments.find(c =>
-              c.user.login === 'github-actions[bot]' && c.body.startsWith('## ')
+              c.user.login === 'github-actions[bot]' && c.body.includes(MARKER)
             );
 
             if (existing) {

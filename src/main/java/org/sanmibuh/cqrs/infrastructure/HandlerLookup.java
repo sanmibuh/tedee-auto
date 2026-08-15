@@ -13,7 +13,14 @@ class HandlerLookup<H> {
 
   HandlerLookup(final List<H> handlers, final Class<?> handlerInterface) {
     index = handlers.stream()
-      .collect(Collectors.toMap(h -> resolveMessageType(h.getClass(), handlerInterface), Function.identity()));
+      .collect(
+        Collectors.toMap(
+          h -> resolveMessageType(h.getClass(), handlerInterface),
+          Function.identity(),
+          (a, b) -> {
+            throw new IllegalArgumentException(
+              "Duplicate handlers for message type: " + resolveMessageType(a.getClass(), handlerInterface).getName());
+          }));
   }
 
   @SuppressWarnings("unchecked")

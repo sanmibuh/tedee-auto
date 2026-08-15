@@ -13,6 +13,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import lombok.SneakyThrows;
 
 class GlobalExceptionHandlerTest {
 
@@ -27,7 +28,8 @@ class GlobalExceptionHandlerTest {
   }
 
   @Test
-  void should_return400_withDetail_whenDomainExceptionIsThrown() throws Exception {
+  @SneakyThrows
+  void should_return400_withDetail_whenDomainExceptionIsThrown() {
     mockMvc.perform(get("/test/domain-exception"))
       .andExpect(status().isBadRequest())
       .andExpect(jsonPath("$.detail").value("domain rule violated"));
