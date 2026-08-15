@@ -38,7 +38,10 @@ jobs:
         run: ./mvnw verify -B
 
       - name: Run mutation tests (incremental)
-        run: ./mvnw pitest:mutationCoverage -B
+        run: |
+          ./mvnw pitest:mutationCoverage -B \
+            -Dpitest.historyInputFile=pitest-history-input.bin \
+            -Dpitest.historyOutputFile=pitest-history-output.bin
 
       - name: Extract metrics
         id: metrics

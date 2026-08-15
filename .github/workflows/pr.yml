@@ -64,7 +64,10 @@ jobs:
         id: pitest
         if: success()
         run: |
-          ./mvnw pitest:mutationCoverage -B 2>&1 | tee pitest.log
+          ./mvnw pitest:mutationCoverage -B \
+            -Dpitest.historyInputFile=pitest-history-input.bin \
+            -Dpitest.historyOutputFile=pitest-history-output.bin \
+            2>&1 | tee pitest.log
 
           MUTATIONS_XML="target/pit-reports/mutations.xml"
           if [ -f "$MUTATIONS_XML" ]; then

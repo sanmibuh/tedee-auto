@@ -117,8 +117,8 @@
             <param>org.sanmibuh.*</param>
           </targetTests>
           <timestampedReports>false</timestampedReports>
-          <historyInputFile>${project.basedir}/pitest-history-input.bin</historyInputFile>
-          <historyOutputFile>${project.basedir}/pitest-history-output.bin</historyOutputFile>
+          <historyInputFile>${project.basedir}/.pit/history-input.bin</historyInputFile>
+          <historyOutputFile>${project.basedir}/.pit/history-output.bin</historyOutputFile>
           <outputFormats>
             <outputFormat>XML</outputFormat>
             <outputFormat>HTML</outputFormat>
