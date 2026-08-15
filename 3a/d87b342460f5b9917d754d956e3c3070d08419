@@ -1,0 +1,20 @@
+.github/workflows/publish.yml
+  h_97a91c9e567f87 70-71,73-82
+ARCHITECTURE.md
+  h_97a91c9e567f87 54,56-61
+Dockerfile
+  h_97a91c9e567f87 1-20
+Makefile
+  h_97a91c9e567f87 1,9,22-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "3ad87b342460f5b9917d754d956e3c3070d08419",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
