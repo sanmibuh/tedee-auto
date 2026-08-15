@@ -1,0 +1,16 @@
+pom.xml
+  h_97a91c9e567f87 22
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  h_97a91c9e567f87 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "3d4a7b60528c96ba3bc23b073df6db286009b764",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
