@@ -2,6 +2,7 @@ package org.sanmibuh.cqrs.infrastructure;
 
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
 import org.springframework.core.GenericTypeResolver;
@@ -12,9 +13,7 @@ class HandlerLookup<H> {
 
   HandlerLookup(final List<H> handlers, final Class<?> handlerInterface) {
     index = handlers.stream()
-        .collect(Collectors.toMap(
-            h -> resolveMessageType(h.getClass(), handlerInterface),
-            h -> h));
+      .collect(Collectors.toMap(h -> resolveMessageType(h.getClass(), handlerInterface), Function.identity()));
   }
 
   @SuppressWarnings("unchecked")

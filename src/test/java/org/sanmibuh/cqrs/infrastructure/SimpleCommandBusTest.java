@@ -23,7 +23,7 @@ class SimpleCommandBusTest {
       handled = true;
     }
   }
-  
+
   @Test
   void should_dispatchCommand_toRegisteredHandler() {
     final var handler = new StubCommandHandler();
@@ -39,7 +39,7 @@ class SimpleCommandBusTest {
     final var bus = new SimpleCommandBus(List.of());
 
     thenThrownBy(() -> bus.dispatch(new StubCommand()))
-        .isInstanceOf(HandlerNotFoundException.class)
-        .hasMessageContaining(StubCommand.class.getName());
+      .isInstanceOf(HandlerNotFoundException.class)
+      .hasMessageContaining(StubCommand.class.getName());
   }
 }

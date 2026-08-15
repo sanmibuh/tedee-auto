@@ -7,14 +7,19 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 
 @AutoConfiguration
-@ComponentScan(basePackageClasses = CQRSAutoConfiguration.class)
 @ComponentScan(
-    basePackages = "org.sanmibuh",
-    useDefaultFilters = false,
-    includeFilters = {
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = CommandHandler.class),
-        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE, classes = QueryHandler.class)
-    })
+  basePackageClasses = CQRSAutoConfiguration.class)
+@ComponentScan(
+  basePackages = "org.sanmibuh",
+  useDefaultFilters = false,
+  includeFilters = {
+    @ComponentScan.Filter(
+      type = FilterType.ASSIGNABLE_TYPE,
+      classes = CommandHandler.class),
+    @ComponentScan.Filter(
+      type = FilterType.ASSIGNABLE_TYPE,
+      classes = QueryHandler.class)
+  })
 
 public class CQRSAutoConfiguration {
 }

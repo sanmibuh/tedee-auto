@@ -21,7 +21,7 @@ class SimpleQueryBusTest {
       return "result";
     }
   }
-  
+
   @Test
   void should_dispatchQuery_toRegisteredHandler_andReturnResult() {
     final var bus = new SimpleQueryBus(List.of(new StubQueryHandler()));
@@ -36,7 +36,7 @@ class SimpleQueryBusTest {
     final var bus = new SimpleQueryBus(List.of());
 
     thenThrownBy(() -> bus.dispatch(new StubQuery()))
-        .isInstanceOf(HandlerNotFoundException.class)
-        .hasMessageContaining(StubQuery.class.getName());
+      .isInstanceOf(HandlerNotFoundException.class)
+      .hasMessageContaining(StubQuery.class.getName());
   }
 }

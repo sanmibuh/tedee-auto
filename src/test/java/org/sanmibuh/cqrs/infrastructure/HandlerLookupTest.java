@@ -37,8 +37,8 @@ class HandlerLookupTest {
     final var lookup = new HandlerLookup<>(List.of(), StubHandler.class);
 
     thenThrownBy(() -> lookup.find(StubMessage.class))
-        .isInstanceOf(HandlerNotFoundException.class)
-        .hasMessageContaining(StubMessage.class.getName());
+      .isInstanceOf(HandlerNotFoundException.class)
+      .hasMessageContaining(StubMessage.class.getName());
   }
 
   @Test
@@ -46,7 +46,7 @@ class HandlerLookupTest {
     final var rawHandler = new RawStubHandler();
 
     thenThrownBy(() -> new HandlerLookup<>(List.of(rawHandler), StubHandler.class))
-        .isInstanceOf(IllegalArgumentException.class)
-        .hasMessageContaining(RawStubHandler.class.getName());
+      .isInstanceOf(IllegalArgumentException.class)
+      .hasMessageContaining(RawStubHandler.class.getName());
   }
 }

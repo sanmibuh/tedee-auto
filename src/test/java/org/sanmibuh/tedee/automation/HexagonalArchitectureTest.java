@@ -2,10 +2,10 @@ package org.sanmibuh.tedee.automation;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
+import org.junit.jupiter.api.Test;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.lang.ArchRule;
-import org.junit.jupiter.api.Test;
 
 class HexagonalArchitectureTest {
 
@@ -15,15 +15,19 @@ class HexagonalArchitectureTest {
 
   @Test
   void should_domainLayer_notDependOnSpring() {
-    final ArchRule rule = noClasses().that().resideInAPackage("..domain..").should().dependOnClassesThat()
-        .resideInAPackage("org.springframework..");
+    final ArchRule rule = noClasses()
+      .that().resideInAPackage("..domain..")
+      .should().dependOnClassesThat()
+      .resideInAPackage("org.springframework..");
     rule.check(classes);
   }
 
   @Test
   void should_domainLayer_notDependOnInfrastructure() {
-    final ArchRule rule = noClasses().that().resideInAPackage("..domain..").should().dependOnClassesThat()
-        .resideInAPackage("..infrastructure..");
+    final ArchRule rule = noClasses()
+      .that().resideInAPackage("..domain..")
+      .should().dependOnClassesThat()
+      .resideInAPackage("..infrastructure..");
     rule.check(classes);
   }
 }

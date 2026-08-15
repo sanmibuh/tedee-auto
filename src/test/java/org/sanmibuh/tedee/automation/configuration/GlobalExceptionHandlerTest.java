@@ -20,17 +20,17 @@ class GlobalExceptionHandlerTest {
 
   @BeforeEach
   void setUp() {
-    this.mockMvc = MockMvcBuilders
-        .standaloneSetup(new StubController())
-        .setControllerAdvice(new GlobalExceptionHandler()).build();
+    mockMvc = MockMvcBuilders
+      .standaloneSetup(new StubController())
+      .setControllerAdvice(new GlobalExceptionHandler())
+      .build();
   }
 
   @Test
   void should_return400_withDetail_whenDomainExceptionIsThrown() throws Exception {
-    this.mockMvc
-        .perform(get("/test/domain-exception"))
-        .andExpect(status().isBadRequest())
-        .andExpect(jsonPath("$.detail").value("domain rule violated"));
+    mockMvc.perform(get("/test/domain-exception"))
+      .andExpect(status().isBadRequest())
+      .andExpect(jsonPath("$.detail").value("domain rule violated"));
   }
 
   @RestController
