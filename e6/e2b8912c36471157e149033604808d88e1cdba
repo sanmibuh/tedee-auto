@@ -1,0 +1,14 @@
+.github/workflows/nightly.yml
+  h_97a91c9e567f87 20,46-54,69-83,88-115,123-127,152-162,176-177,182,184-187,189-202,205-208,211-213,215
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "e6e2b8912c36471157e149033604808d88e1cdba",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
