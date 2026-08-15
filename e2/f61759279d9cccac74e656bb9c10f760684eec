@@ -1,0 +1,24 @@
+.github/workflows/main.yml
+  h_97a91c9e567f87 41-44
+.github/workflows/pr.yml
+  h_97a91c9e567f87 67-70
+.gitignore
+  h_97a91c9e567f87 11
+Makefile
+  h_97a91c9e567f87 1-20
+lombok.config
+  h_97a91c9e567f87 1-8
+pom.xml
+  h_97a91c9e567f87 120-121
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "e2f61759279d9cccac74e656bb9c10f760684eec",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
