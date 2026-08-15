@@ -175,7 +175,7 @@ jobs:
           MUTATIONS_XML="target/pit-reports/mutations.xml"
           if [ -f "$MUTATIONS_XML" ]; then
             TOTAL=$(grep -c '<mutation ' "$MUTATIONS_XML") || TOTAL=0
-            KILLED=$(grep -oP 'status="\K[^"]+' "$MUTATIONS_XML" | grep -c "^KILLED$") || KILLED=0
+            KILLED=$(grep -oP "status='\K[^']+" "$MUTATIONS_XML" | grep -c "^KILLED$") || KILLED=0
             if [ "$TOTAL" -gt 0 ]; then
               SCORE=$((KILLED * 100 / TOTAL))
             else
