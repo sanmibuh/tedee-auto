@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfiguration.java
+  h_97a91c9e567f87 1-20
+src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+  h_97a91c9e567f87 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "4d8161cf91b28a2403f57cadb6c6eb3b78ff95e0",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
