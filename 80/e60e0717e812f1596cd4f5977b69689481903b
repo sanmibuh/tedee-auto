@@ -1,0 +1,14 @@
+.github/workflows/main.yml
+  h_97a91c9e567f87 72
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "80e60e0717e812f1596cd4f5977b69689481903b",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
