@@ -17,6 +17,7 @@ jobs:
       issues: write
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
       - name: Checkout code
@@ -42,6 +43,15 @@ jobs:
             done
           } > code_snapshot.txt
 
+      - name: Fetch open AI review issues
+        run: |
+          gh api \
+            "repos/${{ github.repository }}/issues?labels=ai-review&state=open&per_page=100" \
+            --jq '[.[] | select(.pull_request == null) | {number: .number, title: .title, body: .body}]' \
+            > open_issues.json
+          echo "Open ai-review issues:"
+          cat open_issues.json
+
       - name: Run Gemini review
         if: env.GEMINI_API_KEY != ''
         run: |
@@ -56,31 +66,53 @@ jobs:
           with open("code_snapshot.txt") as f:
             code = f.read()
 
+          with open("open_issues.json") as f:
+            open_issues = json.load(f)
+
+          if open_issues:
+            open_issues_text = "\n".join(
+              f"- #{i['number']}: {i['title']}\n  {(i['body'] or '')[:300]}"
+              for i in open_issues
+            )
+            open_issues_section = f"""
+ALREADY REPORTED (open issues — do NOT create findings for these):
+{open_issues_text}
+"""
+          else:
+            open_issues_section = ""
+
           prompt = f"""You are a senior software engineer performing a nightly automated code review.
 The project guidelines and quality standards are defined in AGENTS.md (included below).
 The architecture is described in ARCHITECTURE.md (included below).
 Use both as the reference for this review — do not apply standards from outside these documents.
+{open_issues_section}
+Analyze the codebase and identify concrete, actionable findings across these areas:
+- Clean Code & Best Practices (naming, dead code, DRY, method size, magic values)
+- Test Quality / TDD (behavior testing, naming convention, BDDAssertions, missing cases)
+- SOLID & Architecture (layer dependencies, domain isolation, SOLID violations)
+- Documentation (ARCHITECTURE.md accuracy, comments that restate code)
 
-Review the codebase and produce a structured markdown report covering:
+Rules:
+- Each finding must be specific: reference actual class names and method names.
+- Do NOT report findings already listed in "ALREADY REPORTED" above.
+- Do NOT invent problems. If the code is clean in an area, skip it.
+- Return ONLY a JSON array. No explanation outside the JSON.
 
-## 1. Clean Code & Best Practices
-Evaluate against the standards in AGENTS.md: naming, dead code, DRY, method size, magic values.
+Each finding must have:
+- "title": short descriptive title (max 80 chars), prefixed with the area: [Clean Code], [TDD], [SOLID], or [Docs]
+- "priority": "high", "medium", or "low"
+- "body": full markdown description with the problem, why it matters, and a concrete suggestion (with code example if useful)
 
-## 2. Test Quality (TDD)
-Evaluate against the TDD standards in AGENTS.md: behavior testing, naming convention, BDDAssertions usage, soft assertions, missing cases.
+Example format:
+[
+  {{
+    "title": "[TDD] Missing edge case in HandlerLookupTest for duplicate handler registration",
+    "priority": "medium",
+    "body": "## Problem\\n...\\n## Suggestion\\n..."
+  }}
+]
 
-## 3. SOLID & Architecture
-Evaluate against the architectural rules in AGENTS.md and ARCHITECTURE.md: layer dependencies, domain isolation, SOLID violations.
-
-## 4. Documentation
-Is ARCHITECTURE.md accurate and up to date with the actual code? Are there comments that restate the code rather than explaining non-obvious decisions?
-
-## 5. Improvement Suggestions
-Specific, actionable suggestions with code examples where useful.
-Label each: 🔴 High / 🟡 Medium / 🟢 Low priority.
-
-Be specific: reference actual class names and method names.
-If an area is compliant, say so briefly. Do not invent problems.
+If there are no new findings, return an empty array: []
 
 CODEBASE AND GUIDELINES:
 {code}
@@ -88,7 +120,11 @@ CODEBASE AND GUIDELINES:
 
           payload = {
             "contents": [{"parts": [{"text": prompt}]}],
-            "generationConfig": {"temperature": 0.2, "maxOutputTokens": 8192}
+            "generationConfig": {
+              "temperature": 0.2,
+              "maxOutputTokens": 8192,
+              "responseMimeType": "application/json"
+            }
           }
 
           req = urllib.request.Request(
@@ -113,14 +149,21 @@ CODEBASE AND GUIDELINES:
             print(f"Gemini returned no content (model={model}). finishReason: {finish}", file=sys.stderr)
             sys.exit(1)
 
-          review = candidates[0]["content"]["parts"][0]["text"]
-          with open("review.md", "w") as f:
-            f.write(f"> Model: {model}\n\n" + review)
+          raw = candidates[0]["content"]["parts"][0]["text"]
+          try:
+            findings = json.loads(raw)
+          except json.JSONDecodeError as e:
+            print(f"Failed to parse Gemini response as JSON: {e}\nRaw: {raw[:500]}", file=sys.stderr)
+            sys.exit(1)
+
+          with open("findings.json", "w") as f:
+            json.dump({"model": model, "findings": findings}, f)
+
+          print(f"Found {len(findings)} new finding(s) with {model}")
           PYEOF
 
             EXIT=$?
             if [ $EXIT -eq 0 ]; then
-              echo "Review generated with $MODEL"
               break
             elif [ $EXIT -eq 2 ]; then
               echo "Quota exceeded for $MODEL, trying next..."
@@ -130,56 +173,44 @@ CODEBASE AND GUIDELINES:
             fi
           done
 
-      - name: Create GitHub issue
-        if: env.GEMINI_API_KEY != '' && hashFiles('review.md') != ''
+      - name: Create issues for new findings
+        if: env.GEMINI_API_KEY != '' && hashFiles('findings.json') != ''
         uses: actions/github-script@v7
         with:
           script: |
             const fs = require('fs');
-            const review = fs.readFileSync('review.md', 'utf8');
-            const date = new Date().toISOString().split('T')[0];
+            const { model, findings } = JSON.parse(fs.readFileSync('findings.json', 'utf8'));
+
+            if (findings.length === 0) {
+              console.log('No new findings — nothing to create.');
+              return;
+            }
 
             const label = 'ai-review';
+            const modelLabel = `model: ${model}`;
+            const priorityLabel = { high: '🔴', medium: '🟡', low: '🟢' };
 
-            // Ensure label exists
-            try {
-              await github.rest.issues.getLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                name: label
-              });
-            } catch {
-              await github.rest.issues.createLabel({
-                owner: context.repo.owner,
-                repo: context.repo.repo,
-                name: label,
-                color: '8B5CF6',
-                description: 'Automated AI code review'
-              });
+            // Ensure labels exist
+            for (const [name, color, description] of [
+              [label,      '8B5CF6', 'Automated AI code review'],
+              [modelLabel, '0EA5E9', `Review generated by ${model}`],
+            ]) {
+              try {
+                await github.rest.issues.getLabel({ owner: context.repo.owner, repo: context.repo.repo, name });
+              } catch {
+                await github.rest.issues.createLabel({ owner: context.repo.owner, repo: context.repo.repo, name, color, description });
+              }
             }
 
-            // Close previous open ai-review issues created by this bot (skip PRs)
-            const { data: open } = await github.rest.issues.listForRepo({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              labels: label,
-              state: 'open'
-            });
-            for (const issue of open) {
-              if (issue.pull_request) continue;
-              if (issue.user.login !== 'github-actions[bot]') continue;
-              await github.rest.issues.update({
+            for (const finding of findings) {
+              const priority = priorityLabel[finding.priority] ?? '🟢';
+              const footer = `\n\n---\n> ${priority} ${finding.priority} priority · Model: ${model} · ${new Date().toUTCString()}`;
+              await github.rest.issues.create({
                 owner: context.repo.owner,
                 repo: context.repo.repo,
-                issue_number: issue.number,
-                state: 'closed'
+                title: finding.title,
+                body: finding.body + footer,
+                labels: [label, modelLabel]
               });
+              console.log(`Created issue: ${finding.title}`);
             }
-
-            await github.rest.issues.create({
-              owner: context.repo.owner,
-              repo: context.repo.repo,
-              title: `AI Code Review — ${date}`,
-              body: `> Generated by Gemini 2.5 Flash on ${new Date().toUTCString()}\n\n${review}`,
-              labels: [label]
-            });
