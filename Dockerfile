@@ -17,4 +17,6 @@ FROM gcr.io/distroless/base-debian12:nonroot
 
 COPY --from=builder /app/target/tedee-automation /tedee-automation
 
+USER nonroot
+
 ENTRYPOINT ["/tedee-automation"]
