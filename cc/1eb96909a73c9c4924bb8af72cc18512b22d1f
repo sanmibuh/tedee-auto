@@ -1,0 +1,16 @@
+.github/workflows/codeql.yml
+  h_97a91c9e567f87 1-44
+.github/workflows/dependency-submission.yml
+  h_97a91c9e567f87 1-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "cc1eb96909a73c9c4924bb8af72cc18512b22d1f",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
