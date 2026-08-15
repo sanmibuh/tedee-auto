@@ -22,6 +22,10 @@ Never write implementation code without a corresponding test.
 
 Use `BDDAssertions` from AssertJ in all tests (`then`, `thenThrownBy`). Never use `assertThat` or `assertThatThrownBy`.
 
+When a test has more than one assertion, use `BDDSoftAssertions` via `@ExtendWith(SoftAssertionsExtension.class)` and `@InjectSoftAssertions`, replacing `then(...)` with `softly.then(...)`.
+
+When a test method would declare checked exceptions, annotate it with Lombok's `@SneakyThrows` instead of adding `throws` to the signature.
+
 Test method names use snake_case with camelCase segments: `should_doSomething_whenCondition`.
 
 Do not write comments that restate what the code already says. Only comment when explaining a non-obvious decision or constraint that cannot be expressed in the code itself.
