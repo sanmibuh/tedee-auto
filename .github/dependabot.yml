@@ -6,8 +6,8 @@ updates:
       interval: "weekly"
     open-pull-requests-limit: 10
     ignore:
-      # GraalVM and Java version are managed manually
-      - dependency-name: "org.graalvm.*"
+      # GraalVM Native Maven Plugin is managed manually alongside the GraalVM toolchain
+      - dependency-name: "org.graalvm.buildtools:native-maven-plugin"
         update-types: ["version-update:semver-major", "version-update:semver-minor", "version-update:semver-patch"]
     groups:
       spring-boot:
