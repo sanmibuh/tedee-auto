@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/cqrs/infrastructure/HandlerLookupTest.java
+  s_284fe5ba13b5fb::t_891a18a605cee6 15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "17df20708164cd6716da9d9c741724ec9850a19a",
+  "prompts": {},
+  "sessions": {
+    "s_284fe5ba13b5fb": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fff5c7abbffe5IRTrUU4oupRW2",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
