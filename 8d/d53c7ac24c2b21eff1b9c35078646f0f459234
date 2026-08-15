@@ -1,0 +1,14 @@
+README.md
+  h_97a91c9e567f87 3-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "8dd53c7ac24c2b21eff1b9c35078646f0f459234",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
