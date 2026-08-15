@@ -1,0 +1,16 @@
+.github/workflows/main.yml
+  h_97a91c9e567f87 48,54-56,59-65,69-83
+.github/workflows/pr.yml
+  h_97a91c9e567f87 117-119,123-126,128-132,134-138,141-148,219-226,245-258,294-370,383-390,406-407,409-410,412-413,415-416,418-419,423-424,426-427,429-430,432-433,435-436,450-454,471-478,502,508-512,516-538,549,556-557
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "64c77133f61f7b1f67a868a556ea6a4a553498a0",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
