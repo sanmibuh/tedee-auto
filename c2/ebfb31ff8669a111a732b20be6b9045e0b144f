@@ -1,0 +1,15 @@
+.github/workflows/codeql.yml
+  h_97a91c9e567f87 8,32-33,36,58-61,63,65
+  h_97a91c9e567f87 41-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "c2ebfb31ff8669a111a732b20be6b9045e0b144f",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
