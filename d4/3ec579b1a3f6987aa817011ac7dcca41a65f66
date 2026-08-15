@@ -1,0 +1,29 @@
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfiguration.java
+  h_97a91c9e567f87 11-22
+src/main/java/org/sanmibuh/cqrs/infrastructure/HandlerLookup.java
+  h_97a91c9e567f87 16
+  h_97a91c9e567f87 5
+config/eclipse-google-style.xml
+  s_284fe5ba13b5fb::t_961c3920074293 1-338
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "d43ec579b1a3f6987aa817011ac7dcca41a65f66",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_284fe5ba13b5fb": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fff5c7abbffe5IRTrUU4oupRW2",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
