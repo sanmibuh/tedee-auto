@@ -167,15 +167,14 @@ jobs:
       - name: Restore PITest history
         run: |
           git fetch origin coverage-data 2>/dev/null || true
-          git show origin/coverage-data:pitest-history.bin > pitest-history-input.bin 2>/dev/null || true
+          mkdir -p .pit
+          git show origin/coverage-data:pitest-history.bin > .pit/history-input.bin 2>/dev/null || true
 
       - name: Run mutation tests (incremental)
         run: |
           set -o pipefail
           ./mvnw test-compile pitest:mutationCoverage -B \
             -Dspotless.skip=true \
-            -Dpitest.historyInputFile=pitest-history-input.bin \
-            -Dpitest.historyOutputFile=pitest-history-output.bin \
             2>&1 | tee pitest.log
 
       - name: Parse PITest results

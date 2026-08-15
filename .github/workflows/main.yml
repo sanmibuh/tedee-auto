@@ -32,16 +32,14 @@ jobs:
       - name: Restore pitest history for incremental analysis
         run: |
           git fetch origin coverage-data 2>/dev/null || true
-          git show origin/coverage-data:pitest-history.bin > pitest-history-input.bin 2>/dev/null || true
+          mkdir -p .pit
+          git show origin/coverage-data:pitest-history.bin > .pit/history-input.bin 2>/dev/null || true
 
       - name: Build and test
         run: ./mvnw verify -B
 
       - name: Run mutation tests (incremental)
-        run: |
-          ./mvnw pitest:mutationCoverage -B \
-            -Dpitest.historyInputFile=pitest-history-input.bin \
-            -Dpitest.historyOutputFile=pitest-history-output.bin
+        run: ./mvnw pitest:mutationCoverage -B
 
       - name: Extract metrics
         id: metrics
@@ -110,7 +108,7 @@ jobs:
 
           cp "$GITHUB_WORKSPACE/coverage.json" .
           cp "$GITHUB_WORKSPACE/pitest.json" .
-          cp "$GITHUB_WORKSPACE/pitest-history-output.bin" pitest-history.bin 2>/dev/null || touch pitest-history.bin
+          cp "$GITHUB_WORKSPACE/.pit/history-output.bin" pitest-history.bin 2>/dev/null || touch pitest-history.bin
 
           git add coverage.json pitest.json pitest-history.bin
           git commit -m "coverage: ${{ github.sha }}"
