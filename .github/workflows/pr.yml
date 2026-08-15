@@ -285,11 +285,11 @@ jobs:
           script: |
             const fs = require('fs');
             const status   = '${{ needs.test.outputs.status }}';
-            const tests    = '${{ needs.test.outputs.tests }}';
-            const passed   = '${{ needs.test.outputs.passed }}';
-            const failures = '${{ needs.test.outputs.failures }}';
-            const errors   = '${{ needs.test.outputs.errors }}';
-            const skipped  = '${{ needs.test.outputs.skipped }}';
+            const tests    = parseInt('${{ needs.test.outputs.tests }}');
+            const passed   = parseInt('${{ needs.test.outputs.passed }}');
+            const failures = parseInt('${{ needs.test.outputs.failures }}');
+            const errors   = parseInt('${{ needs.test.outputs.errors }}');
+            const skipped  = parseInt('${{ needs.test.outputs.skipped }}');
 
             const cur = {
               instruction: parseInt('${{ needs.test.outputs.instruction }}'),
@@ -317,69 +317,89 @@ jobs:
               score:  parseInt('${{ steps.baseline.outputs.pit_score }}'),
             };
 
-            const fmt = (v) => v < 0 ? 'N/A' : `${v}%`;
-            const diff = (cur, base) => {
-              if (cur < 0) return '';
-              if (base < 0) return '_(no baseline)_';
-              const d = cur - base;
-              if (d > 0) return `+${d}% ⬆️`;
-              if (d < 0) return `${d}% ⬇️`;
-              return `0% ➡️`;
+            const fmt  = (v) => v < 0 ? 'N/A' : `${v}%`;
+            const diff = (c, b) => {
+              if (c < 0 || b < 0) return '';
+              const d = c - b;
+              if (d > 0) return `**+${d}%** ⬆️`;
+              if (d < 0) return `**${d}%** ⬇️`;
+              return '➡️';
             };
+
+            // Semaphore: coverage thresholds 90/70, mutation 80/60
+            const semCov = (v) => v < 0 ? '⚪' : v >= 90 ? '🟢' : v >= 70 ? '🟡' : '🔴';
+            const semPit = (v) => v < 0 ? '⚪' : v >= 80 ? '🟢' : v >= 60 ? '🟡' : '🔴';
 
             const classDetails = fs.existsSync('class_details.md')
               ? fs.readFileSync('class_details.md', 'utf8')
               : '_No data available._';
 
             const pitJobResult = '${{ needs.pitest.result }}';
-            const pitSection = pitJobResult === 'success' && pitCur.score >= 0
-              ? [
-                  '',
-                  '### Mutation Testing (PITest) vs `main`',
-                  '',
-                  '| Metric         | Main                                     | PR                                      | Diff                               |',
-                  '|----------------|:----------------------------------------:|:---------------------------------------:|:----------------------------------:|',
-                  `| Score          | ${fmt(pitBase.score)}                    | ${fmt(pitCur.score)}                    | ${diff(pitCur.score, pitBase.score)} |`,
-                  `| Killed/Total   | ${pitBase.killed < 0 ? 'N/A' : pitBase.killed + '/' + pitBase.total} | ${pitCur.killed}/${pitCur.total} | |`,
-                ]
-              : ['', '> ⚠️ Mutation testing did not run or failed'];
+            const pitAvailable = pitJobResult === 'success' && pitCur.score >= 0;
 
-            const icon  = status === 'passed' ? '✅' : '❌';
-            const title = status === 'passed' ? `${icon} All tests passed` : `${icon} Tests failed`;
+            // One-line summary
+            const testSummary  = status === 'passed'
+              ? `${passed} passed`
+              : `${failures} failed, ${errors} errors`;
+            const covSummary   = cur.line >= 0 ? `lines ${cur.line}%` : '';
+            const pitSummary   = pitAvailable ? `mutations ${pitCur.score}%` : '';
+            const summaryParts = [testSummary, covSummary, pitSummary].filter(Boolean);
+
+            const headerIcon = status === 'passed' ? '✅' : '❌';
+            const headerText = status === 'passed' ? 'All tests passed' : 'Tests failed';
+
+            // Failures block (shown prominently only when there are failures)
+            const failureSection = (failures > 0 || errors > 0) ? [
+              '',
+              '> [!CAUTION]',
+              `> **${failures} failure(s) and ${errors} error(s)** — check the [Actions log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.`,
+            ] : [];
+
+            // Metrics table
+            const pitRow = pitAvailable
+              ? `| ${semPit(pitCur.score)} | Mutation Score | ${fmt(pitBase.score)} | ${fmt(pitCur.score)} | ${diff(pitCur.score, pitBase.score)} | ${pitCur.killed}/${pitCur.total} |`
+              : `| ⚪ | Mutation Score | — | — | ⚠️ did not run | — |`;
+
+            const metricsTable = [
+              '| | Metric | `main` | PR | Diff | Detail |',
+              '|:---:|---|:---:|:---:|:---:|---|',
+              `| ${semCov(cur.instruction)} | Instructions | ${fmt(base.instruction)} | ${fmt(cur.instruction)} | ${diff(cur.instruction, base.instruction)} | |`,
+              `| ${semCov(cur.branch)}      | Branches     | ${fmt(base.branch)}      | ${fmt(cur.branch)}      | ${diff(cur.branch, base.branch)}           | |`,
+              `| ${semCov(cur.line)}        | Lines        | ${fmt(base.line)}        | ${fmt(cur.line)}        | ${diff(cur.line, base.line)}               | |`,
+              `| ${semCov(cur.method)}      | Methods      | ${fmt(base.method)}      | ${fmt(cur.method)}      | ${diff(cur.method, base.method)}           | |`,
+              `| ${semCov(cur.class)}       | Classes      | ${fmt(base.class)}       | ${fmt(cur.class)}       | ${diff(cur.class, base.class)}             | |`,
+              pitRow,
+            ];
 
             const MARKER = '<!-- tedee-auto-ci-report -->';
 
             const body = [
               MARKER,
-              `## ${title}`,
+              `## ${headerIcon} ${headerText}`,
+              `> ${summaryParts.join(' · ')}`,
+              ...failureSection,
               '',
-              '### Tests',
-              '',
-              '| Result      | Count        |',
-              '|-------------|-------------:|',
-              `| ✅ Passed   | ${passed}    |`,
-              `| ❌ Failed   | ${failures}  |`,
-              `| 💥 Errors   | ${errors}    |`,
-              `| ⏭️ Skipped  | ${skipped}   |`,
-              `| **Total**   | **${tests}** |`,
-              '',
-              '### Coverage (JaCoCo) vs `main`',
-              '',
-              '| Metric       | Main                     | PR                      | Diff                          |',
-              '|--------------|:------------------------:|:-----------------------:|:-----------------------------:|',
-              `| Instructions | ${fmt(base.instruction)} | ${fmt(cur.instruction)} | ${diff(cur.instruction, base.instruction)} |`,
-              `| Branches     | ${fmt(base.branch)}      | ${fmt(cur.branch)}      | ${diff(cur.branch, base.branch)}           |`,
-              `| Lines        | ${fmt(base.line)}        | ${fmt(cur.line)}        | ${diff(cur.line, base.line)}               |`,
-              `| Methods      | ${fmt(base.method)}      | ${fmt(cur.method)}      | ${diff(cur.method, base.method)}           |`,
-              `| Classes      | ${fmt(base.class)}       | ${fmt(cur.class)}       | ${diff(cur.class, base.class)}             |`,
+              ...metricsTable,
               '',
               '<details>',
-              '<summary>Classes below 100% line coverage</summary>',
+              `<summary>🧪 Tests — ${passed}/${tests} passed</summary>`,
+              '',
+              '| Result | Count |',
+              '|--------|------:|',
+              `| ✅ Passed  | ${passed}   |`,
+              `| ❌ Failed  | ${failures} |`,
+              `| 💥 Errors  | ${errors}   |`,
+              `| ⏭️ Skipped | ${skipped}  |`,
+              `| **Total**  | **${tests}** |`,
+              '',
+              '</details>',
+              '',
+              '<details>',
+              '<summary>📉 Classes below 100% line coverage</summary>',
               '',
               classDetails,
               '',
               '</details>',
-              ...pitSection,
             ].join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
