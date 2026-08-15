@@ -162,7 +162,7 @@ jobs:
       - name: Run mutation tests (incremental)
         run: |
           set -o pipefail
-          ./mvnw pitest:mutationCoverage -B \
+          ./mvnw test-compile pitest:mutationCoverage -B \
             -Dspotless.skip=true \
             -Dpitest.historyInputFile=pitest-history-input.bin \
             -Dpitest.historyOutputFile=pitest-history-output.bin \
