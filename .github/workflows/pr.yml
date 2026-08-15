@@ -30,6 +30,24 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Fetch main coverage baseline
+        id: baseline
+        run: |
+          fetch_metric() {
+            local key=$1
+            local val
+            val=$(git show origin/coverage-data:coverage.json 2>/dev/null | python3 -c "import sys,json; d=json.load(sys.stdin); print(d.get('$key', -1))" 2>/dev/null || echo "-1")
+            echo "$val"
+          }
+
+          git fetch origin coverage-data 2>/dev/null || true
+
+          echo "instruction=$(fetch_metric instruction)" >> "$GITHUB_OUTPUT"
+          echo "branch=$(fetch_metric branch)"           >> "$GITHUB_OUTPUT"
+          echo "line=$(fetch_metric line)"               >> "$GITHUB_OUTPUT"
+          echo "method=$(fetch_metric method)"           >> "$GITHUB_OUTPUT"
+          echo "class=$(fetch_metric class)"             >> "$GITHUB_OUTPUT"
+
       - name: Build and test
         run: ./mvnw verify -B 2>&1 | tee build.log
 
@@ -43,11 +61,11 @@ jobs:
           SKIPPED=$(grep -oP 'Skipped: \K[0-9]+' build.log | awk '{s+=$1} END {print s+0}')
           PASSED=$((TESTS - FAILURES - ERRORS - SKIPPED))
 
-          echo "tests=$TESTS"     >> "$GITHUB_OUTPUT"
+          echo "tests=$TESTS"       >> "$GITHUB_OUTPUT"
           echo "failures=$FAILURES" >> "$GITHUB_OUTPUT"
-          echo "errors=$ERRORS"   >> "$GITHUB_OUTPUT"
-          echo "skipped=$SKIPPED" >> "$GITHUB_OUTPUT"
-          echo "passed=$PASSED"   >> "$GITHUB_OUTPUT"
+          echo "errors=$ERRORS"     >> "$GITHUB_OUTPUT"
+          echo "skipped=$SKIPPED"   >> "$GITHUB_OUTPUT"
+          echo "passed=$PASSED"     >> "$GITHUB_OUTPUT"
 
           if [ "$FAILURES" -gt 0 ] || [ "$ERRORS" -gt 0 ]; then
             echo "status=failed" >> "$GITHUB_OUTPUT"
@@ -57,25 +75,25 @@ jobs:
 
           JACOCO_XML="target/site/jacoco/jacoco.xml"
           if [ -f "$JACOCO_XML" ]; then
-            extract() {
+            extract_pct() {
               local type=$1
-              local missed covered
+              local missed covered total
               missed=$(grep -oP "type=\"${type}\" missed=\"\K[0-9]+" "$JACOCO_XML" | awk '{s+=$1} END {print s+0}')
               covered=$(grep -oP "type=\"${type}\" missed=\"[0-9]+\" covered=\"\K[0-9]+" "$JACOCO_XML" | awk '{s+=$1} END {print s+0}')
-              local total=$((missed + covered))
-              if [ "$total" -eq 0 ]; then echo "N/A"; else echo "$((covered * 100 / total))%"; fi
+              total=$((missed + covered))
+              if [ "$total" -eq 0 ]; then echo "-1"; else echo "$((covered * 100 / total))"; fi
             }
-            echo "cov_instruction=$(extract INSTRUCTION)" >> "$GITHUB_OUTPUT"
-            echo "cov_branch=$(extract BRANCH)"           >> "$GITHUB_OUTPUT"
-            echo "cov_line=$(extract LINE)"               >> "$GITHUB_OUTPUT"
-            echo "cov_method=$(extract METHOD)"           >> "$GITHUB_OUTPUT"
-            echo "cov_class=$(extract CLASS)"             >> "$GITHUB_OUTPUT"
+            echo "instruction=$(extract_pct INSTRUCTION)" >> "$GITHUB_OUTPUT"
+            echo "branch=$(extract_pct BRANCH)"           >> "$GITHUB_OUTPUT"
+            echo "line=$(extract_pct LINE)"               >> "$GITHUB_OUTPUT"
+            echo "method=$(extract_pct METHOD)"           >> "$GITHUB_OUTPUT"
+            echo "class=$(extract_pct CLASS)"             >> "$GITHUB_OUTPUT"
           else
-            echo "cov_instruction=N/A" >> "$GITHUB_OUTPUT"
-            echo "cov_branch=N/A"      >> "$GITHUB_OUTPUT"
-            echo "cov_line=N/A"        >> "$GITHUB_OUTPUT"
-            echo "cov_method=N/A"      >> "$GITHUB_OUTPUT"
-            echo "cov_class=N/A"       >> "$GITHUB_OUTPUT"
+            echo "instruction=-1" >> "$GITHUB_OUTPUT"
+            echo "branch=-1"      >> "$GITHUB_OUTPUT"
+            echo "line=-1"        >> "$GITHUB_OUTPUT"
+            echo "method=-1"      >> "$GITHUB_OUTPUT"
+            echo "class=-1"       >> "$GITHUB_OUTPUT"
           fi
 
       - name: Comment PR with report
@@ -90,11 +108,30 @@ jobs:
             const errors   = '${{ steps.results.outputs.errors }}';
             const skipped  = '${{ steps.results.outputs.skipped }}';
 
-            const covInstruction = '${{ steps.results.outputs.cov_instruction }}';
-            const covBranch      = '${{ steps.results.outputs.cov_branch }}';
-            const covLine        = '${{ steps.results.outputs.cov_line }}';
-            const covMethod      = '${{ steps.results.outputs.cov_method }}';
-            const covClass       = '${{ steps.results.outputs.cov_class }}';
+            const cur = {
+              instruction: parseInt('${{ steps.results.outputs.instruction }}'),
+              branch:      parseInt('${{ steps.results.outputs.branch }}'),
+              line:        parseInt('${{ steps.results.outputs.line }}'),
+              method:      parseInt('${{ steps.results.outputs.method }}'),
+              class:       parseInt('${{ steps.results.outputs.class }}'),
+            };
+            const base = {
+              instruction: parseInt('${{ steps.baseline.outputs.instruction }}'),
+              branch:      parseInt('${{ steps.baseline.outputs.branch }}'),
+              line:        parseInt('${{ steps.baseline.outputs.line }}'),
+              method:      parseInt('${{ steps.baseline.outputs.method }}'),
+              class:       parseInt('${{ steps.baseline.outputs.class }}'),
+            };
+
+            const fmt = (v) => v < 0 ? 'N/A' : `${v}%`;
+            const diff = (key) => {
+              if (cur[key] < 0) return '';
+              if (base[key] < 0) return '_(no baseline)_';
+              const d = cur[key] - base[key];
+              if (d > 0) return `+${d}% ⬆️`;
+              if (d < 0) return `${d}% ⬇️`;
+              return `0% ➡️`;
+            };
 
             const icon = status === 'passed' ? '✅' : '❌';
             const title = status === 'passed' ? `${icon} All tests passed` : `${icon} Tests failed`;
@@ -104,23 +141,23 @@ jobs:
               '',
               '### Tests',
               '',
-              '| Result | Count |',
-              '|--------|------:|',
-              `| ✅ Passed   | ${passed}    |`,
-              `| ❌ Failed   | ${failures}  |`,
-              `| 💥 Errors   | ${errors}    |`,
-              `| ⏭️ Skipped  | ${skipped}   |`,
-              `| **Total**   | **${tests}** |`,
+              '| Result      | Count        |',
+              '|-------------|-------------:|',
+              `| ✅ Passed   | ${passed}     |`,
+              `| ❌ Failed   | ${failures}   |`,
+              `| 💥 Errors   | ${errors}     |`,
+              `| ⏭️ Skipped  | ${skipped}    |`,
+              `| **Total**   | **${tests}**  |`,
               '',
-              '### Coverage (JaCoCo)',
+              '### Coverage (JaCoCo) vs `main`',
               '',
-              '| Metric      | Coverage |',
-              '|-------------|:--------:|',
-              `| Instructions | ${covInstruction} |`,
-              `| Branches     | ${covBranch}      |`,
-              `| Lines        | ${covLine}        |`,
-              `| Methods      | ${covMethod}      |`,
-              `| Classes      | ${covClass}       |`,
+              '| Metric       | Main                          | PR                           | Diff         |',
+              '|--------------|:-----------------------------:|:----------------------------:|:------------:|',
+              `| Instructions | ${fmt(base.instruction)}      | ${fmt(cur.instruction)}      | ${diff('instruction')} |`,
+              `| Branches     | ${fmt(base.branch)}           | ${fmt(cur.branch)}           | ${diff('branch')}      |`,
+              `| Lines        | ${fmt(base.line)}             | ${fmt(cur.line)}             | ${diff('line')}        |`,
+              `| Methods      | ${fmt(base.method)}           | ${fmt(cur.method)}           | ${diff('method')}      |`,
+              `| Classes      | ${fmt(base.class)}            | ${fmt(cur.class)}            | ${diff('class')}       |`,
             ].join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
