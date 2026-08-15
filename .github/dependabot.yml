@@ -5,6 +5,7 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    rebase-strategy: auto
     ignore:
       # GraalVM Native Maven Plugin is managed manually alongside the GraalVM toolchain
       - dependency-name: "org.graalvm.buildtools:native-maven-plugin"
@@ -20,3 +21,4 @@ updates:
     schedule:
       interval: "weekly"
     open-pull-requests-limit: 10
+    rebase-strategy: auto
