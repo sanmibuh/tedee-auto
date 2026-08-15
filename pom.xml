@@ -19,7 +19,7 @@
 
   <properties>
     <archunit.version>1.4.1</archunit.version>
-    <jacoco.version>0.8.13</jacoco.version>
+    <jacoco.version>0.8.15</jacoco.version>
     <java.version>25</java.version>
     <pitest.version>1.25.9</pitest.version>
     <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
