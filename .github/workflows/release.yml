@@ -1,0 +1,167 @@
+name: Release — Create Release PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      bump:
+        description: 'Version bump type'
+        required: true
+        type: choice
+        options: [patch, minor, major]
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up GraalVM (Java 25)
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Compute release version
+        id: version
+        run: |
+          SNAPSHOT=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          BASE="${SNAPSHOT%-SNAPSHOT}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE"
+
+          case "${{ inputs.bump }}" in
+            major) MAJOR=$((MAJOR + 1)); MINOR=0; PATCH=0 ;;
+            minor) MINOR=$((MINOR + 1)); PATCH=0 ;;
+            patch) ;;
+          esac
+
+          RELEASE="${MAJOR}.${MINOR}.${PATCH}"
+
+          echo "release=${RELEASE}"           >> "$GITHUB_OUTPUT"
+          echo "branch=release/v${RELEASE}"   >> "$GITHUB_OUTPUT"
+
+      - name: Create release branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git checkout -b "${{ steps.version.outputs.branch }}"
+
+      - name: Set release version in pom.xml
+        run: |
+          ./mvnw versions:set \
+            -DnewVersion="${{ steps.version.outputs.release }}" \
+            -DgenerateBackupPoms=false \
+            -B
+
+      - name: Generate CHANGELOG.md
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          VERSION="${{ steps.version.outputs.release }}"
+          TODAY=$(date +%Y-%m-%d)
+
+          PREV_TAG=$(git tag --sort=-version:refname | head -1)
+          if [ -n "$PREV_TAG" ]; then
+            SINCE=$(git log -1 --format=%aI "$PREV_TAG")
+          else
+            SINCE="1970-01-01T00:00:00Z"
+          fi
+
+          PRS=$(gh api \
+            "repos/${{ github.repository }}/pulls?state=closed&base=main&per_page=100&sort=updated&direction=desc" \
+            --jq "[.[] | select(.merged_at != null and .merged_at > \"${SINCE}\") | {title: .title, number: .number, url: .html_url}]")
+
+          python3 << PYEOF
+          import json, os, sys
+
+          version = "${VERSION}"
+          today   = "${TODAY}"
+          prs     = json.loads("""${PRS}""")
+
+          lines = [f"## [{version}] - {today}"]
+          if prs:
+              for pr in prs:
+                  lines.append(f"- {pr['title']} ([#{pr['number']}]({pr['url']}))")
+          else:
+              lines.append("_No changes._")
+          entry = "\n".join(lines)
+
+          if os.path.exists("CHANGELOG.md"):
+              with open("CHANGELOG.md") as f:
+                  existing = f.read()
+              # Insert after the first line (# Changelog header) if present
+              if existing.startswith("# Changelog"):
+                  header, _, rest = existing.partition("\n")
+                  content = f"{header}\n\n{entry}\n\n{rest.lstrip()}"
+              else:
+                  content = f"{entry}\n\n{existing}"
+          else:
+              content = f"# Changelog\n\n{entry}\n"
+
+          with open("CHANGELOG.md", "w") as f:
+              f.write(content)
+          PYEOF
+
+      - name: Commit and push release branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add pom.xml CHANGELOG.md
+          git commit -m "chore: release v${{ steps.version.outputs.release }}"
+          git push origin "${{ steps.version.outputs.branch }}"
+
+      - name: Ensure release label exists
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh label create release \
+            --color "0075ca" \
+            --description "Release PR" \
+            2>/dev/null || true
+
+      - name: Extract changelog section for PR body
+        id: notes
+        run: |
+          VERSION="${{ steps.version.outputs.release }}"
+          python3 << 'PYEOF'
+          import re, os
+
+          version = os.environ.get("VERSION", "")
+          with open("CHANGELOG.md") as f:
+              content = f.read()
+
+          pattern = rf"(## \[{re.escape(version)}\].*?)(?=\n## \[|\Z)"
+          match = re.search(pattern, content, re.DOTALL)
+          section = match.group(1).strip() if match else ""
+
+          with open("pr_body.md", "w") as f:
+              f.write(section)
+          PYEOF
+        env:
+          VERSION: ${{ steps.version.outputs.release }}
+
+      - name: Open release PR
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh pr create \
+            --base main \
+            --head "${{ steps.version.outputs.branch }}" \
+            --title "chore: release v${{ steps.version.outputs.release }}" \
+            --body-file pr_body.md \
+            --label release
