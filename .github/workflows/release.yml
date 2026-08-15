@@ -41,6 +41,10 @@ jobs:
         id: version
         run: |
           SNAPSHOT=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
+          if [[ "$SNAPSHOT" != *-SNAPSHOT ]]; then
+            echo "ERROR: project.version is '${SNAPSHOT}' — expected a -SNAPSHOT version. Aborting."
+            exit 1
+          fi
           BASE="${SNAPSHOT%-SNAPSHOT}"
           IFS='.' read -r MAJOR MINOR PATCH <<< "$BASE"
 
@@ -86,12 +90,16 @@ jobs:
             "repos/${{ github.repository }}/pulls?state=closed&base=main&per_page=100&sort=updated&direction=desc" \
             --jq "[.[] | select(.merged_at != null and .merged_at > \"${SINCE}\") | {title: .title, number: .number, url: .html_url}]")
 
-          python3 << PYEOF
-          import json, os, sys
+          echo "$PRS" > /tmp/prs.json
 
-          version = "${VERSION}"
-          today   = "${TODAY}"
-          prs     = json.loads("""${PRS}""")
+          python3 << 'PYEOF'
+          import json, os
+
+          version = os.environ["VERSION"]
+          today   = os.environ["TODAY"]
+
+          with open("/tmp/prs.json") as f:
+              prs = json.load(f)
 
           lines = [f"## [{version}] - {today}"]
           if prs:
