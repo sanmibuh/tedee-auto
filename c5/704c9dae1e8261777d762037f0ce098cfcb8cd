@@ -1,0 +1,14 @@
+.github/workflows/pr.yml
+  h_97a91c9e567f87 138-145,220-260,286,330-333,375-381
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "c5704c9dae1e8261777d762037f0ce098cfcb8cd",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
