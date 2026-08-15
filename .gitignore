@@ -1,11 +1,22 @@
+# Build output
 target/
+
+# Local tool config
+.tool-versions
+
+# PITest incremental analysis
+.pit/
+
+# IntelliJ IDEA
 .idea/
 *.iml
 *.iws
 *.ipr
+
+# Eclipse
 .classpath
 .project
 .settings/
+
+# Compiled classes
 *.class
-.tool-versions
-.pit/
