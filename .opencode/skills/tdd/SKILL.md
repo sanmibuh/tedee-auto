@@ -1,7 +1,7 @@
 ---
 name: tdd
 description: Guide the developer through strict TDD mini-steps (Red → Green → Refactor), pausing after each step for developer review and commit before continuing.
-license: MIT
+license: GPL-3.0
 compatibility: opencode
 ---
 
