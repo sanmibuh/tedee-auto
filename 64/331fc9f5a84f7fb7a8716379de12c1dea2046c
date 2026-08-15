@@ -1,0 +1,18 @@
+AGENTS.md
+  h_97a91c9e567f87 25-28
+pom.xml
+  h_97a91c9e567f87 58-69
+src/test/java/org/sanmibuh/tedee/automation/TedeeAutomationApplicationTest.java
+  h_97a91c9e567f87 1-43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "64331fc9f5a84f7fb7a8716379de12c1dea2046c",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
