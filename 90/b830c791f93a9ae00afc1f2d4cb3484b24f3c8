@@ -1,0 +1,16 @@
+.github/dependabot.yml
+  h_97a91c9e567f87 9-10
+.github/workflows/dependabot-automerge.yml
+  h_97a91c9e567f87 3-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "90b830c791f93a9ae00afc1f2d4cb3484b24f3c8",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
