@@ -54,9 +54,12 @@ These standards apply to all code in this project and are the basis for any code
 - Prepare each improvement as a clean, self-contained change ready to commit, then stop and wait.
 
 ### TDD process
-1. Write the test and watch it fail before writing any implementation.
-2. Implement the minimum code to make it pass.
-3. Refactor with the tests as the safety net.
+
+Use the `tdd` skill for any implementation task: load it with the `skill` tool at the start of each coding session.
+
+Apply TDD for all implementation work: domain logic, use cases, services, and infrastructure adapters.
+
+Skip TDD for pure configuration that contains no logic: Spring `@Configuration` classes, `application.yml`, GraalVM hints, Dockerfile, and build descriptors.
 
 ### Before finishing
 - Run `./mvnw spotless:apply` to auto-format all code.
