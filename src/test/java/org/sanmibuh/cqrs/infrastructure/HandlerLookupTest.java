@@ -18,6 +18,10 @@ class HandlerLookupTest {
   static class ConcreteStubHandler implements StubHandler<StubMessage> {
   }
 
+  @SuppressWarnings("rawtypes")
+  static class RawStubHandler implements StubHandler {
+  }
+
   @Test
   void should_findHandler_byMessageType() {
     final var handler = new ConcreteStubHandler();
@@ -35,5 +39,14 @@ class HandlerLookupTest {
     thenThrownBy(() -> lookup.find(StubMessage.class))
         .isInstanceOf(HandlerNotFoundException.class)
         .hasMessageContaining(StubMessage.class.getName());
+  }
+
+  @Test
+  void should_throwIllegalArgumentException_whenHandlerHasNoGenericType() {
+    final var rawHandler = new RawStubHandler();
+
+    thenThrownBy(() -> new HandlerLookup<>(List.of(rawHandler), StubHandler.class))
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining(RawStubHandler.class.getName());
   }
 }
