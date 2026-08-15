@@ -1,0 +1,14 @@
+.github/dependabot.yml
+  h_97a91c9e567f87 8,24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "3ca0975577cccf172d29ea34f536d6255e1a1c19",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
