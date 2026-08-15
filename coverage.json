@@ -1,9 +1,19 @@
 {
-  "sha": "12730a82ac62eb5ea6caa1905236d1c10cbd4cdb",
-  "timestamp": "2026-08-15T19:53:46Z",
+  "sha": "01ab288742fbe45e7714e297c7c5be7ef4965c5b",
+  "timestamp": "2026-08-15T22:06:13Z",
   "instruction": 96,
+  "instruction_covered": 670,
+  "instruction_total": 695,
   "branch": 83,
+  "branch_covered": 25,
+  "branch_total": 30,
   "line": 95,
+  "line_covered": 190,
+  "line_total": 200,
   "method": 93,
-  "class": 100
+  "method_covered": 75,
+  "method_total": 80,
+  "class": 100,
+  "class_covered": 32,
+  "class_total": 32
 }
