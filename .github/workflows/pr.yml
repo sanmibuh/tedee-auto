@@ -114,26 +114,37 @@ jobs:
 
           JACOCO_XML="target/site/jacoco/jacoco.xml"
           if [ -f "$JACOCO_XML" ]; then
-            extract_pct() {
-              local type=$1
-              local missed covered total
+            extract_metric() {
+              local type=$1 varname=$2
+              local missed covered total pct
               missed=$(grep -oP "type=\"${type}\" missed=\"\K[0-9]+" "$JACOCO_XML" | awk '{s+=$1} END {print s+0}')
               covered=$(grep -oP "type=\"${type}\" missed=\"[0-9]+\" covered=\"\K[0-9]+" "$JACOCO_XML" | awk '{s+=$1} END {print s+0}')
               total=$((missed + covered))
-              if [ "$total" -eq 0 ]; then echo "-1"; else echo "$((covered * 100 / total))"; fi
+              if [ "$total" -eq 0 ]; then pct=-1; else pct=$((covered * 100 / total)); fi
+              echo "${varname}=${pct}"           >> "$GITHUB_OUTPUT"
+              echo "${varname}_covered=${covered}" >> "$GITHUB_OUTPUT"
+              echo "${varname}_total=${total}"     >> "$GITHUB_OUTPUT"
             }
-            echo "instruction=$(extract_pct INSTRUCTION)" >> "$GITHUB_OUTPUT"
-            echo "branch=$(extract_pct BRANCH)"           >> "$GITHUB_OUTPUT"
-            echo "line=$(extract_pct LINE)"               >> "$GITHUB_OUTPUT"
-            echo "method=$(extract_pct METHOD)"           >> "$GITHUB_OUTPUT"
-            echo "class=$(extract_pct CLASS)"             >> "$GITHUB_OUTPUT"
+            extract_metric INSTRUCTION instruction
+            extract_metric BRANCH       branch
+            extract_metric LINE         line
+            extract_metric METHOD       method
+            extract_metric CLASS        class
           else
-            echo "instruction=-1" >> "$GITHUB_OUTPUT"
-            echo "branch=-1"      >> "$GITHUB_OUTPUT"
-            echo "line=-1"        >> "$GITHUB_OUTPUT"
-            echo "method=-1"      >> "$GITHUB_OUTPUT"
-            echo "class=-1"       >> "$GITHUB_OUTPUT"
+            for m in instruction branch line method class; do
+              echo "${m}=-1"        >> "$GITHUB_OUTPUT"
+              echo "${m}_covered=0" >> "$GITHUB_OUTPUT"
+              echo "${m}_total=0"   >> "$GITHUB_OUTPUT"
+            done
           fi
+
+      - name: Upload surefire reports
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: surefire-reports
+          path: target/surefire-reports/TEST-*.xml
+          if-no-files-found: ignore
 
       - name: Upload JaCoCo report
         if: always()
@@ -205,6 +216,14 @@ jobs:
           echo "killed=$KILLED" >> "$GITHUB_OUTPUT"
           echo "score=$SCORE"   >> "$GITHUB_OUTPUT"
 
+      - name: Upload PITest mutations report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: pitest-mutations
+          path: target/pit-reports/mutations.xml
+          if-no-files-found: ignore
+
   report:
     runs-on: ubuntu-latest
     needs: [test, pitest]
@@ -221,6 +240,20 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: jacoco-report
+        continue-on-error: true
+
+      - name: Download surefire reports
+        uses: actions/download-artifact@v4
+        with:
+          name: surefire-reports
+          path: surefire-reports
+        continue-on-error: true
+
+      - name: Download PITest mutations
+        uses: actions/download-artifact@v4
+        with:
+          name: pitest-mutations
+          path: pitest-mutations
         continue-on-error: true
 
       - name: Parse per-class coverage
@@ -258,6 +291,83 @@ jobs:
               f.write(output)
           PYEOF
 
+      - name: Parse surefire reports for failing tests
+        run: |
+          python3 << 'PYEOF'
+          import xml.etree.ElementTree as ET, os, glob
+
+          reports = glob.glob('surefire-reports/TEST-*.xml')
+          failures, errors, skipped = [], [], []
+
+          for path in sorted(reports):
+            try:
+              root = ET.parse(path).getroot()
+            except ET.ParseError:
+              continue
+            for tc in root.findall('testcase'):
+              classname = tc.get('classname', '')
+              name = tc.get('name', '')
+              label = f'{classname}.{name}' if classname else name
+              if tc.find('failure') is not None:
+                failures.append(label)
+              elif tc.find('error') is not None:
+                errors.append(label)
+              elif tc.find('skipped') is not None:
+                skipped.append(label)
+
+          lines = []
+          if failures:
+            lines.append('**❌ Failed:**')
+            lines.extend(f'- `{t}`' for t in failures)
+          if errors:
+            if lines: lines.append('')
+            lines.append('**💥 Errors:**')
+            lines.extend(f'- `{t}`' for t in errors)
+          if skipped:
+            if lines: lines.append('')
+            lines.append('**⏭️ Skipped:**')
+            lines.extend(f'- `{t}`' for t in skipped)
+
+          with open('test_details.md', 'w') as f:
+            f.write('\n'.join(lines))
+          PYEOF
+
+      - name: Parse PITest mutations for surviving mutants
+        run: |
+          python3 << 'PYEOF'
+          import xml.etree.ElementTree as ET, os
+
+          mutations_xml = 'pitest-mutations/mutations.xml'
+          if not os.path.exists(mutations_xml):
+            with open('pitest_details.md', 'w') as f:
+              f.write('_No PITest report available._')
+          else:
+            root = ET.parse(mutations_xml).getroot()
+            surviving = []
+            for m in root.findall('mutation'):
+              status = m.get('status', '')
+              if status in ('SURVIVED', 'NO_COVERAGE'):
+                fqcn = m.findtext('mutatedClass', '')
+                simple_cls = fqcn.split('.')[-1] if fqcn else '?'
+                line = m.findtext('lineNumber', '?')
+                desc = m.findtext('description', '')
+                surviving.append((simple_cls, line, desc, status))
+
+            if not surviving:
+              output = '_All mutants killed. 🎉_'
+            else:
+              surviving.sort(key=lambda x: (x[0], int(x[1]) if x[1].isdigit() else 0))
+              rows = ['| Class | Line | Mutant | Status |',
+                      '|-------|-----:|-------|--------|']
+              for cls, line, desc, status in surviving:
+                emoji = '🧟' if status == 'SURVIVED' else '🕳️'
+                rows.append(f'| `{cls}` | {line} | {desc} | {emoji} {status} |')
+              output = '\n'.join(rows)
+
+            with open('pitest_details.md', 'w') as f:
+              f.write(output)
+          PYEOF
+
       - name: Fetch baseline metrics
         id: baseline
         run: |
@@ -270,14 +380,14 @@ jobs:
               || echo "-1"
           }
 
-          echo "instruction=$(fetch_json_metric coverage.json instruction)" >> "$GITHUB_OUTPUT"
-          echo "branch=$(fetch_json_metric coverage.json branch)"           >> "$GITHUB_OUTPUT"
-          echo "line=$(fetch_json_metric coverage.json line)"               >> "$GITHUB_OUTPUT"
-          echo "method=$(fetch_json_metric coverage.json method)"           >> "$GITHUB_OUTPUT"
-          echo "class=$(fetch_json_metric coverage.json class)"             >> "$GITHUB_OUTPUT"
-          echo "pit_killed=$(fetch_json_metric pitest.json killed)"         >> "$GITHUB_OUTPUT"
-          echo "pit_total=$(fetch_json_metric pitest.json total)"           >> "$GITHUB_OUTPUT"
-          echo "pit_score=$(fetch_json_metric pitest.json score)"           >> "$GITHUB_OUTPUT"
+          for m in instruction branch line method class; do
+            echo "${m}=$(fetch_json_metric coverage.json $m)"                     >> "$GITHUB_OUTPUT"
+            echo "${m}_covered=$(fetch_json_metric coverage.json ${m}_covered)"   >> "$GITHUB_OUTPUT"
+            echo "${m}_total=$(fetch_json_metric coverage.json ${m}_total)"       >> "$GITHUB_OUTPUT"
+          done
+          echo "pit_killed=$(fetch_json_metric pitest.json killed)" >> "$GITHUB_OUTPUT"
+          echo "pit_total=$(fetch_json_metric pitest.json total)"   >> "$GITHUB_OUTPUT"
+          echo "pit_score=$(fetch_json_metric pitest.json score)"   >> "$GITHUB_OUTPUT"
 
       - name: Comment PR with report
         uses: actions/github-script@v7
@@ -293,17 +403,37 @@ jobs:
 
             const cur = {
               instruction: parseInt('${{ needs.test.outputs.instruction }}'),
+              instruction_covered: parseInt('${{ needs.test.outputs.instruction_covered }}'),
+              instruction_total:   parseInt('${{ needs.test.outputs.instruction_total }}'),
               branch:      parseInt('${{ needs.test.outputs.branch }}'),
+              branch_covered:      parseInt('${{ needs.test.outputs.branch_covered }}'),
+              branch_total:        parseInt('${{ needs.test.outputs.branch_total }}'),
               line:        parseInt('${{ needs.test.outputs.line }}'),
+              line_covered:        parseInt('${{ needs.test.outputs.line_covered }}'),
+              line_total:          parseInt('${{ needs.test.outputs.line_total }}'),
               method:      parseInt('${{ needs.test.outputs.method }}'),
+              method_covered:      parseInt('${{ needs.test.outputs.method_covered }}'),
+              method_total:        parseInt('${{ needs.test.outputs.method_total }}'),
               class:       parseInt('${{ needs.test.outputs.class }}'),
+              class_covered:       parseInt('${{ needs.test.outputs.class_covered }}'),
+              class_total:         parseInt('${{ needs.test.outputs.class_total }}'),
             };
             const base = {
               instruction: parseInt('${{ steps.baseline.outputs.instruction }}'),
+              instruction_covered: parseInt('${{ steps.baseline.outputs.instruction_covered }}'),
+              instruction_total:   parseInt('${{ steps.baseline.outputs.instruction_total }}'),
               branch:      parseInt('${{ steps.baseline.outputs.branch }}'),
+              branch_covered:      parseInt('${{ steps.baseline.outputs.branch_covered }}'),
+              branch_total:        parseInt('${{ steps.baseline.outputs.branch_total }}'),
               line:        parseInt('${{ steps.baseline.outputs.line }}'),
+              line_covered:        parseInt('${{ steps.baseline.outputs.line_covered }}'),
+              line_total:          parseInt('${{ steps.baseline.outputs.line_total }}'),
               method:      parseInt('${{ steps.baseline.outputs.method }}'),
+              method_covered:      parseInt('${{ steps.baseline.outputs.method_covered }}'),
+              method_total:        parseInt('${{ steps.baseline.outputs.method_total }}'),
               class:       parseInt('${{ steps.baseline.outputs.class }}'),
+              class_covered:       parseInt('${{ steps.baseline.outputs.class_covered }}'),
+              class_total:         parseInt('${{ steps.baseline.outputs.class_total }}'),
             };
 
             const pitCur  = {
@@ -317,13 +447,19 @@ jobs:
               score:  parseInt('${{ steps.baseline.outputs.pit_score }}'),
             };
 
-            const fmt  = (v) => v < 0 ? 'N/A' : `${v}%`;
+            const fmt = (pct, cov, tot) => {
+              if (pct < 0) return 'N/A';
+              if (tot > 0) return `${pct}% (${cov}/${tot})`;
+              return `${pct}%`;
+            };
+            const mathColor = (color, content) =>
+              '$' + '{\\color{' + color + '}{' + content + '}}' + '$';
             const diff = (c, b) => {
               if (c < 0 || b < 0) return '';
               const d = c - b;
-              if (d > 0) return `**+${d}%** ⬆️`;
-              if (d < 0) return `**${d}%** ⬇️`;
-              return '➡️';
+              if (d > 0) return mathColor('green', '\\uparrow +' + d + '\\%');
+              if (d < 0) return mathColor('red',   '\\downarrow ' + d + '\\%');
+              return mathColor('royalblue', '=');
             };
 
             // Semaphore: coverage thresholds 90/70, mutation 80/60
@@ -332,6 +468,14 @@ jobs:
 
             const classDetails = fs.existsSync('class_details.md')
               ? fs.readFileSync('class_details.md', 'utf8')
+              : '_No data available._';
+
+            const testDetails = fs.existsSync('test_details.md')
+              ? fs.readFileSync('test_details.md', 'utf8').trim()
+              : '';
+
+            const pitDetails = fs.existsSync('pitest_details.md')
+              ? fs.readFileSync('pitest_details.md', 'utf8')
               : '_No data available._';
 
             const pitJobResult = '${{ needs.pitest.result }}';
@@ -355,21 +499,44 @@ jobs:
               `> **${failures} failure(s) and ${errors} error(s)** — check the [Actions log](${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}) for details.`,
             ] : [];
 
-            // Metrics table
+            // Metrics table — columns: semaphore | Metric | PR | main | Diff
             const pitRow = pitAvailable
-              ? `| ${semPit(pitCur.score)} | Mutation Score | ${fmt(pitBase.score)} | ${fmt(pitCur.score)} | ${diff(pitCur.score, pitBase.score)} | ${pitCur.killed}/${pitCur.total} |`
-              : `| ⚪ | Mutation Score | — | — | ⚠️ did not run | — |`;
+              ? `| ${semPit(pitCur.score)} | Mutation Score | ${fmt(pitCur.score, pitCur.killed, pitCur.total)} | ${fmt(pitBase.score, pitBase.killed, pitBase.total)} | ${diff(pitCur.score, pitBase.score)} |`
+              : `| ⚪ | Mutation Score | — | — | ⚠️ did not run |`;
 
             const metricsTable = [
-              '| | Metric | `main` | PR | Diff | Detail |',
-              '|:---:|---|:---:|:---:|:---:|---|',
-              `| ${semCov(cur.instruction)} | Instructions | ${fmt(base.instruction)} | ${fmt(cur.instruction)} | ${diff(cur.instruction, base.instruction)} | |`,
-              `| ${semCov(cur.branch)}      | Branches     | ${fmt(base.branch)}      | ${fmt(cur.branch)}      | ${diff(cur.branch, base.branch)}           | |`,
-              `| ${semCov(cur.line)}        | Lines        | ${fmt(base.line)}        | ${fmt(cur.line)}        | ${diff(cur.line, base.line)}               | |`,
-              `| ${semCov(cur.method)}      | Methods      | ${fmt(base.method)}      | ${fmt(cur.method)}      | ${diff(cur.method, base.method)}           | |`,
-              `| ${semCov(cur.class)}       | Classes      | ${fmt(base.class)}       | ${fmt(cur.class)}       | ${diff(cur.class, base.class)}             | |`,
+              '| | Metric | PR | `main` | Diff |',
+              '|:---:|---|:---:|:---:|:---:|',
+              `| ${semCov(cur.instruction)} | Instructions | ${fmt(cur.instruction, cur.instruction_covered, cur.instruction_total)} | ${fmt(base.instruction, base.instruction_covered, base.instruction_total)} | ${diff(cur.instruction, base.instruction)} |`,
+              `| ${semCov(cur.branch)}      | Branches     | ${fmt(cur.branch, cur.branch_covered, cur.branch_total)}           | ${fmt(base.branch, base.branch_covered, base.branch_total)}           | ${diff(cur.branch, base.branch)} |`,
+              `| ${semCov(cur.line)}        | Lines        | ${fmt(cur.line, cur.line_covered, cur.line_total)}                 | ${fmt(base.line, base.line_covered, base.line_total)}               | ${diff(cur.line, base.line)} |`,
+              `| ${semCov(cur.method)}      | Methods      | ${fmt(cur.method, cur.method_covered, cur.method_total)}           | ${fmt(base.method, base.method_covered, base.method_total)}         | ${diff(cur.method, base.method)} |`,
+              `| ${semCov(cur.class)}       | Classes      | ${fmt(cur.class, cur.class_covered, cur.class_total)}             | ${fmt(base.class, base.class_covered, base.class_total)}           | ${diff(cur.class, base.class)} |`,
               pitRow,
             ];
+
+            // Tests detail — only shown when there are non-passing tests
+            const hasNonPassing = failures > 0 || errors > 0 || skipped > 0;
+            const testsSection = hasNonPassing ? [
+              '<details>',
+              `<summary>🧪 Tests — ${passed}/${tests} passed</summary>`,
+              '',
+              testDetails || '_No test detail available._',
+              '',
+              '</details>',
+              '',
+            ] : [];
+
+            // PITest detail — only shown when pitest ran
+            const pitestSection = pitAvailable ? [
+              '<details>',
+              `<summary>🧬 PITest mutations — ${pitCur.killed}/${pitCur.total} killed</summary>`,
+              '',
+              pitDetails,
+              '',
+              '</details>',
+              '',
+            ] : [];
 
             const MARKER = '<!-- tedee-auto-ci-report -->';
 
@@ -381,25 +548,15 @@ jobs:
               '',
               ...metricsTable,
               '',
-              '<details>',
-              `<summary>🧪 Tests — ${passed}/${tests} passed</summary>`,
-              '',
-              '| Result | Count |',
-              '|--------|------:|',
-              `| ✅ Passed  | ${passed}   |`,
-              `| ❌ Failed  | ${failures} |`,
-              `| 💥 Errors  | ${errors}   |`,
-              `| ⏭️ Skipped | ${skipped}  |`,
-              `| **Total**  | **${tests}** |`,
-              '',
-              '</details>',
-              '',
+              ...testsSection,
               '<details>',
               '<summary>📉 Classes below 100% line coverage</summary>',
               '',
               classDetails,
               '',
               '</details>',
+              '',
+              ...pitestSection,
             ].join('\n');
 
             const { data: comments } = await github.rest.issues.listComments({
