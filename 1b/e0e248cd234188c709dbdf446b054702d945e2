@@ -1,0 +1,44 @@
+src/test/java/org/sanmibuh/cqrs/infrastructure/SimpleQueryBusTest.java
+  h_97a91c9e567f87 24,39-40
+pom.xml
+  38460208e3e714f7 4
+  h_97a91c9e567f87 3,11,103
+  h_97a91c9e567f87 22-23,27,63-83
+src/test/java/org/sanmibuh/tedee/automation/configuration/GlobalExceptionHandlerTest.java
+  h_97a91c9e567f87 23-26,31-33
+config/eclipse-google-style.xml
+  s_284fe5ba13b5fb::t_961c3920074293 1-338
+src/test/java/org/sanmibuh/cqrs/infrastructure/HandlerLookupTest.java
+  h_97a91c9e567f87 40-41,49-50
+src/test/java/org/sanmibuh/tedee/automation/TedeeAutomationApplicationTest.java
+  h_97a91c9e567f87 9,17,19-20
+src/main/java/org/sanmibuh/cqrs/infrastructure/HandlerLookup.java
+  h_97a91c9e567f87 5,16
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfiguration.java
+  h_97a91c9e567f87 11-22
+src/test/java/org/sanmibuh/cqrs/infrastructure/SimpleCommandBusTest.java
+  h_97a91c9e567f87 26,42-43
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  h_97a91c9e567f87 5,18-21,27-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "1be0e248cd234188c709dbdf446b054702d945e2",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_284fe5ba13b5fb": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fff5c7abbffe5IRTrUU4oupRW2",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
