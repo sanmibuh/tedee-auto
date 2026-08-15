@@ -1,0 +1,118 @@
+name: Main — Save Coverage
+
+on:
+  push:
+    branches: [ "main" ]
+
+jobs:
+  save-coverage:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up GraalVM (Java 25)
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Cache Maven packages
+        uses: actions/cache@v4
+        with:
+          path: ~/.m2/repository
+          key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
+          restore-keys: |
+            ${{ runner.os }}-maven-
+
+      - name: Restore pitest history for incremental analysis
+        run: |
+          git fetch origin coverage-data 2>/dev/null || true
+          git show origin/coverage-data:pitest-history.bin > pitest-history-input.bin 2>/dev/null || true
+
+      - name: Build and test
+        run: ./mvnw verify -B
+
+      - name: Run mutation tests (incremental)
+        run: |
+          ./mvnw pitest:mutationCoverage -B \
+            -Dpitest.historyInputFile=pitest-history-input.bin \
+            -Dpitest.historyOutputFile=pitest-history-output.bin
+
+      - name: Extract metrics
+        id: metrics
+        run: |
+          JACOCO_XML="target/site/jacoco/jacoco.xml"
+          extract_pct() {
+            local type=$1
+            local missed covered total
+            missed=$(grep -oP "type=\"${type}\" missed=\"\K[0-9]+" "$JACOCO_XML" | awk '{s+=$1} END {print s+0}')
+            covered=$(grep -oP "type=\"${type}\" missed=\"[0-9]+\" covered=\"\K[0-9]+" "$JACOCO_XML" | awk '{s+=$1} END {print s+0}')
+            total=$((missed + covered))
+            if [ "$total" -eq 0 ]; then echo "-1"; else echo "$((covered * 100 / total))"; fi
+          }
+
+          cat > coverage.json <<EOF
+          {
+            "sha": "${{ github.sha }}",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "instruction": $(extract_pct INSTRUCTION),
+            "branch": $(extract_pct BRANCH),
+            "line": $(extract_pct LINE),
+            "method": $(extract_pct METHOD),
+            "class": $(extract_pct CLASS)
+          }
+          EOF
+
+          MUTATIONS_XML="target/pit-reports/mutations.xml"
+          if [ -f "$MUTATIONS_XML" ]; then
+            TOTAL=$(grep -c '<mutation ' "$MUTATIONS_XML") || TOTAL=0
+            KILLED=$(grep -oP 'status="\K[^"]+' "$MUTATIONS_XML" | grep -c "^KILLED$") || KILLED=0
+            SCORE=$([ "$TOTAL" -gt 0 ] && echo "$((KILLED * 100 / TOTAL))" || echo "-1")
+          else
+            TOTAL=0; KILLED=0; SCORE=-1
+          fi
+
+          cat > pitest.json <<EOF
+          {
+            "sha": "${{ github.sha }}",
+            "timestamp": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+            "total": ${TOTAL},
+            "killed": ${KILLED},
+            "score": ${SCORE}
+          }
+          EOF
+
+          cat coverage.json
+          cat pitest.json
+
+      - name: Push metrics and pitest history to coverage-data branch
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          git fetch origin coverage-data 2>/dev/null || true
+
+          TMPDIR=$(mktemp -d)
+          cp coverage.json "$TMPDIR/coverage.json"
+          cp pitest.json "$TMPDIR/pitest.json"
+          cp pitest-history-output.bin "$TMPDIR/pitest-history.bin"
+
+          if git ls-remote --exit-code origin coverage-data > /dev/null 2>&1; then
+            git worktree add "$TMPDIR/data-branch" origin/coverage-data
+          else
+            git worktree add --orphan -b coverage-data "$TMPDIR/data-branch"
+          fi
+
+          cp "$TMPDIR/coverage.json"      "$TMPDIR/data-branch/coverage.json"
+          cp "$TMPDIR/pitest.json"        "$TMPDIR/data-branch/pitest.json"
+          cp "$TMPDIR/pitest-history.bin" "$TMPDIR/data-branch/pitest-history.bin"
+
+          cd "$TMPDIR/data-branch"
+          git add coverage.json pitest.json pitest-history.bin
+          git commit -m "coverage: ${{ github.sha }}"
+          git push origin coverage-data
