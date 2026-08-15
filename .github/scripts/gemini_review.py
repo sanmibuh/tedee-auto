@@ -4,7 +4,16 @@ import urllib.request
 import urllib.error
 import sys
 
+if len(sys.argv) < 2:
+  print("Usage: gemini_review.py <model>", file=sys.stderr)
+  sys.exit(1)
+
 model = sys.argv[1]
+
+api_key = os.getenv("GEMINI_API_KEY")
+if not api_key:
+  print("Error: GEMINI_API_KEY environment variable is not set.", file=sys.stderr)
+  sys.exit(1)
 
 with open("code_snapshot.txt") as f:
   code = f.read()
@@ -72,19 +81,22 @@ payload = {
 }
 
 req = urllib.request.Request(
-  f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={os.environ['GEMINI_API_KEY']}",
+  f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}",
   data=json.dumps(payload).encode(),
   headers={"Content-Type": "application/json"},
   method="POST"
 )
 try:
-  with urllib.request.urlopen(req) as resp:
+  with urllib.request.urlopen(req, timeout=120) as resp:
     data = json.loads(resp.read())
 except urllib.error.HTTPError as e:
   if e.code == 429:
     print(f"Quota exceeded for {model}, will try next model", file=sys.stderr)
     sys.exit(2)
   print(f"Gemini API error: {e.code} {e.read().decode()}", file=sys.stderr)
+  sys.exit(1)
+except urllib.error.URLError as e:
+  print(f"Network error calling Gemini API: {e.reason}", file=sys.stderr)
   sys.exit(1)
 
 candidates = data.get("candidates", [])
@@ -98,6 +110,10 @@ try:
   findings = json.loads(raw)
 except json.JSONDecodeError as e:
   print(f"Failed to parse Gemini response as JSON: {e}\nRaw: {raw[:500]}", file=sys.stderr)
+  sys.exit(1)
+
+if not isinstance(findings, list):
+  print(f"Gemini response is not a JSON array. Got: {type(findings).__name__}", file=sys.stderr)
   sys.exit(1)
 
 with open("findings.json", "w") as f:
