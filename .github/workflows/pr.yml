@@ -58,7 +58,9 @@ jobs:
           git show origin/coverage-data:pitest-history.bin > pitest-history-input.bin 2>/dev/null || true
 
       - name: Build and test
-        run: ./mvnw verify -B 2>&1 | tee build.log
+        run: |
+          set -o pipefail
+          ./mvnw verify -B 2>&1 | tee build.log
 
       - name: Run mutation tests (incremental)
         id: pitest

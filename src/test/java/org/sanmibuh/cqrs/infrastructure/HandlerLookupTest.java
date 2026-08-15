@@ -12,8 +12,7 @@ class HandlerLookupTest {
   interface StubHandler<T> {
   }
 
-  record StubMessage() {
-  }
+  record StubMessage() {}
 
   static class ConcreteStubHandler implements StubHandler<StubMessage> {
   }
