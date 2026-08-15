@@ -67,14 +67,12 @@ jobs:
 
           git fetch origin coverage-data 2>/dev/null || true
 
-          # Work in a temp dir to avoid conflicts with the current checkout
           TMPDIR=$(mktemp -d)
           cp coverage.json "$TMPDIR/coverage.json"
 
           if git ls-remote --exit-code origin coverage-data > /dev/null 2>&1; then
             git worktree add "$TMPDIR/coverage-branch" origin/coverage-data
           else
-            # Branch does not exist yet — create it as orphan inside a worktree
             git worktree add --orphan -b coverage-data "$TMPDIR/coverage-branch"
           fi
 
