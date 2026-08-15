@@ -51,10 +51,20 @@ jobs:
       skipped: ${{ steps.results.outputs.skipped }}
       status: ${{ steps.results.outputs.status }}
       instruction: ${{ steps.results.outputs.instruction }}
+      instruction_covered: ${{ steps.results.outputs.instruction_covered }}
+      instruction_total: ${{ steps.results.outputs.instruction_total }}
       branch: ${{ steps.results.outputs.branch }}
+      branch_covered: ${{ steps.results.outputs.branch_covered }}
+      branch_total: ${{ steps.results.outputs.branch_total }}
       line: ${{ steps.results.outputs.line }}
+      line_covered: ${{ steps.results.outputs.line_covered }}
+      line_total: ${{ steps.results.outputs.line_total }}
       method: ${{ steps.results.outputs.method }}
+      method_covered: ${{ steps.results.outputs.method_covered }}
+      method_total: ${{ steps.results.outputs.method_total }}
       class: ${{ steps.results.outputs.class }}
+      class_covered: ${{ steps.results.outputs.class_covered }}
+      class_total: ${{ steps.results.outputs.class_total }}
 
     steps:
       - name: Checkout code

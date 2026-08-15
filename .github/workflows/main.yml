@@ -105,7 +105,11 @@ jobs:
           if git ls-remote --exit-code origin coverage-data > /dev/null 2>&1; then
             git worktree add -b coverage-data "$TMPDIR/data-branch" origin/coverage-data
           else
-            git worktree add --orphan -b coverage-data "$TMPDIR/data-branch"
+            git worktree add --detach "$TMPDIR/data-branch"
+            cd "$TMPDIR/data-branch"
+            git checkout --orphan coverage-data
+            git rm -rf . 2>/dev/null || true
+            cd -
           fi
 
           cp "$TMPDIR/coverage.json"      "$TMPDIR/data-branch/coverage.json"
