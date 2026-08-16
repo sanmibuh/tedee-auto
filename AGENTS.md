@@ -40,6 +40,7 @@ These standards apply to all code in this project and are the basis for any code
 - `domain` layer must not depend on Spring or `infrastructure` — enforced at build time by ArchUnit.
 - Domain rule violations must extend `DomainException`.
 - Cross-aggregate coupling at infrastructure level is forbidden.
+- Commands and queries use only primitive or standard Java types (`String`, `UUID`, etc.). They must not reference domain value objects or aggregates. The handler is responsible for constructing domain objects from those primitives.
 
 ### Documentation
 - `ARCHITECTURE.md` must always reflect the current state of the project.
