@@ -72,7 +72,7 @@ jobs:
 
       - name: Create issues for new findings
         if: env.GEMINI_API_KEY != '' && hashFiles('findings.json') != ''
-        uses: actions/github-script@v7
+        uses: actions/github-script@v9
         with:
           script: |
             const fs = require('fs');
