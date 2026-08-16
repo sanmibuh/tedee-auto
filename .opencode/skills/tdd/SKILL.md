@@ -21,7 +21,8 @@ Work in the **smallest possible steps**. Each mini-step must be **independently 
 2. Write **only** the test. No implementation yet.
 3. Run the test suite and confirm the new test **fails** (and only that test).
 4. Show the failure output to the developer.
-5. **STOP.** Suggest a commit message and wait:
+5. Run `make format` to auto-format the code.
+6. **STOP.** Suggest a commit message and wait:
 
    > **Suggested commit:** `test: <describe the behavior being tested>`
    >
@@ -35,7 +36,8 @@ Work in the **smallest possible steps**. Each mini-step must be **independently 
    - No extra logic, no anticipating future cases.
    - Hardcoding is acceptable if it makes the test green.
 2. Run the full test suite and confirm **all tests pass**.
-3. **STOP.** Suggest a commit message and wait:
+3. Run `make format` to auto-format the code.
+4. **STOP.** Suggest a commit message and wait:
 
    > **Suggested commit:** `feat: <describe the behavior implemented>`
    >
@@ -56,7 +58,8 @@ Steps:
 2. Propose the refactor and explain why.
 3. Apply the refactor. **All tests must stay green.**
 4. Run the full test suite and confirm nothing broke.
-5. **STOP.** Suggest a commit message and wait:
+5. Run `make format` to auto-format the code.
+6. **STOP.** Suggest a commit message and wait:
 
    > **Suggested commit:** `refactor: <describe what was cleaned up>`
    >
@@ -77,7 +80,7 @@ After each GREEN step, scan for repeated structural patterns (e.g., same boilerp
 - Test naming: `should_doSomething_whenCondition`.
 - Use `@SneakyThrows` instead of `throws` on test methods.
 - `domain` layer must have zero Spring or infrastructure imports.
-- Run `./mvnw spotless:apply` before any GREEN commit to auto-format.
+- Run `make format` before every commit (RED, GREEN, and REFACTOR) to auto-format.
 - Run `./mvnw verify` to confirm all checks pass.
 
 ---

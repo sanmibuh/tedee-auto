@@ -62,5 +62,5 @@ Apply TDD for all implementation work: domain logic, use cases, services, and in
 Skip TDD for pure configuration that contains no logic: Spring `@Configuration` classes, `application.yml`, GraalVM hints, Dockerfile, and build descriptors.
 
 ### Before finishing
-- Run `./mvnw spotless:apply` to auto-format all code.
+- Run `make format` to auto-format all code. This is mandatory for both AI-generated and human-authored changes.
 - Run `./mvnw verify` — all checks must pass.
