@@ -37,7 +37,7 @@ class HandlerLookupTest {
   }
 
   @Test
-  void should_findHandler_byMessageType() {
+  void should_returnHandler_whenMessageTypeIsRegistered() {
     final var handler = new ConcreteStubHandler();
     final var lookup = new HandlerLookup<>(List.of(handler), StubHandler.class);
 
