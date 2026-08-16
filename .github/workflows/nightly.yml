@@ -107,8 +107,12 @@ jobs:
             });
             for (const l of existingLabels) {
               if (l.name.startsWith('model: ') && l.name !== modelLabel) {
-                await github.rest.issues.deleteLabel({ owner: context.repo.owner, repo: context.repo.repo, name: l.name });
-                console.log(`Deleted stale label: ${l.name}`);
+                try {
+                  await github.rest.issues.deleteLabel({ owner: context.repo.owner, repo: context.repo.repo, name: l.name });
+                  console.log(`Deleted stale label: ${l.name}`);
+                } catch (e) {
+                  if (e.status !== 404) throw e;
+                }
               }
             }
             try {
