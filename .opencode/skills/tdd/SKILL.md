@@ -18,15 +18,18 @@ Work in the **smallest possible steps**. Each mini-step must be **independently 
 ### 🔴 RED — Write a failing test
 
 1. Identify the **single next behavior** to implement (one assertion, one case).
-2. Write **only** the test. No implementation yet.
-3. Run the test suite and confirm the new test **fails** (and only that test).
+2. Write the test **and the minimal compilation stubs** needed for it to compile:
+   - Empty classes, interfaces, or records with the right name and package.
+   - Method signatures that return `null` / `0` / `false` or throw `UnsupportedOperationException` — no real logic.
+   - The goal is: **the test compiles and fails at runtime**, not at compile time.
+3. Run the test suite and confirm the new test **fails at runtime** (and only that test).
 4. Show the failure output to the developer.
 5. Run `make format` to auto-format the code.
 6. **STOP.** Suggest a commit message and wait:
 
    > **Suggested commit:** `test: <describe the behavior being tested>`
    >
-   > Please review the test, commit it, and tell me to continue.
+   > Please review the test and stubs, commit them, and tell me to continue.
 
 ---
 
@@ -82,6 +85,8 @@ After each GREEN step, scan for repeated structural patterns (e.g., same boilerp
 - `domain` layer must have zero Spring or infrastructure imports.
 - Run `make format` before every commit (RED, GREEN, and REFACTOR) to auto-format.
 - Run `./mvnw verify` to confirm all checks pass.
+- **Value object tests are unit tests.** Do not test that a valid instance is created successfully — that will be covered indirectly when the value object is used. Only test guard clauses (invalid input).
+- **Use `@ParameterizedTest` with `@ValueSource` (or `@MethodSource`) when multiple invalid inputs trigger the same exception.** Avoid duplicating test methods for equivalent cases.
 
 ---
 
