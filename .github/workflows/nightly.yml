@@ -140,7 +140,7 @@ jobs:
       - name: Persist model stats
         if: env.GEMINI_API_KEY != '' && hashFiles('run-results.json') != ''
         run: |
-          cp run-results.json /tmp/run-results.json
+          RUN_RESULTS="$GITHUB_WORKSPACE/run-results.json"
 
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -154,7 +154,7 @@ jobs:
             git rm -rf . --quiet || true
           fi
 
-          python3 .github/scripts/persist_model_stats.py
+          python3 "$GITHUB_WORKSPACE/.github/scripts/persist_model_stats.py" "$RUN_RESULTS"
 
           git add model-stats.json model-summary.json
           git diff --cached --quiet || git commit -m "chore(stats): nightly model usage $(date -u +%Y-%m-%d)"

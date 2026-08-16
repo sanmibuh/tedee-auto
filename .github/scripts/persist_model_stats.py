@@ -1,6 +1,11 @@
 import json
+import sys
 
-with open("/tmp/run-results.json") as f:
+if len(sys.argv) < 2:
+  print("Usage: persist_model_stats.py <run-results.json>", file=sys.stderr)
+  sys.exit(1)
+
+with open(sys.argv[1]) as f:
   new_records = json.load(f)
 
 try:
