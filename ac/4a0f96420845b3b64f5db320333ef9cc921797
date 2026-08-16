@@ -1,0 +1,16 @@
+.github/scripts/persist_model_stats.py
+  h_97a91c9e567f87 2,4-8
+.github/workflows/nightly.yml
+  h_97a91c9e567f87 143,157
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "ac4a0f96420845b3b64f5db320333ef9cc921797",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
