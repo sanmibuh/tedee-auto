@@ -54,6 +54,12 @@ These standards apply to all code in this project and are the basis for any code
 
 ## For interactive agents making code changes
 
+### Session continuity
+- If a `WIP.md` file exists at the project root, read it at the start of the session, continue from where it left off, and delete it when the work described in it is complete.
+- When asked to implement an issue, create `WIP.md` at the project root with the planned steps before writing any code.
+- As work progresses, keep `WIP.md` up to date: strike through completed steps (~~done~~), update the next step, and note any open decisions.
+- When the issue is fully implemented and all checks pass, delete `WIP.md`.
+
 ### Commits
 - **Never create git commits.** The user reviews changes and commits manually.
 - Prepare each improvement as a clean, self-contained change ready to commit, then stop and wait.
