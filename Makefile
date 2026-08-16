@@ -1,15 +1,19 @@
-.PHONY: help build test pitest image
+.PHONY: help build format test pitest image
 
 help:
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "  build   Compile source code"
+	@echo "  format  Apply Spotless code formatter"
 	@echo "  test    Run tests and generate JaCoCo coverage report"
 	@echo "  pitest  Run incremental mutation testing"
 	@echo "  image   Build GraalVM native Docker image"
 
 build:
 	./mvnw compile -B
+
+format:
+	./mvnw spotless:apply -B
 
 test:
 	./mvnw verify -B
