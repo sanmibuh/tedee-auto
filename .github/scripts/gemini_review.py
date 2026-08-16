@@ -1,7 +1,7 @@
 import json
 import os
 import sys
-import urllib.error
+import urllib.request
 from datetime import datetime, timezone
 
 if len(sys.argv) < 2:
@@ -135,8 +135,8 @@ raw = candidates[0]["content"]["parts"][0]["text"]
 
 if finish_reason == "MAX_TOKENS":
   print(
-    f"Model {model} hit the token limit (MAX_TOKENS) — response truncated, trying next model",
-    file=sys.stderr)
+      f"Model {model} hit the token limit (MAX_TOKENS) — response truncated, trying next model",
+      file=sys.stderr)
   write_attempt("nok", reason="max_tokens")
   sys.exit(2)
 
