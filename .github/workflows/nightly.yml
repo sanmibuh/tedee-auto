@@ -13,7 +13,7 @@ jobs:
   ai-review:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: write
       issues: write
     env:
       GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
@@ -55,6 +55,7 @@ jobs:
       - name: Run Gemini review
         if: env.GEMINI_API_KEY != ''
         run: |
+          echo "[]" > run-results.json
           mapfile -t MODELS < <(grep -v '^#' .github/gemini-models.txt | grep -v '^[[:space:]]*$')
           if [ ${#MODELS[@]} -eq 0 ]; then
             echo "Error: .github/gemini-models.txt is empty or missing." >&2
@@ -63,9 +64,11 @@ jobs:
           for MODEL in "${MODELS[@]}"; do
             echo "Trying model: $MODEL"
             if python3 .github/scripts/gemini_review.py "$MODEL"; then
+              python3 .github/scripts/accumulate_attempt.py
               break
             else
               EXIT=$?
+              python3 .github/scripts/accumulate_attempt.py
               if [ $EXIT -eq 2 ]; then
                 echo "Model $MODEL not available or quota exceeded, trying next..."
                 continue
@@ -133,3 +136,26 @@ jobs:
               });
               console.log(`Created issue: ${finding.title}`);
             }
+
+      - name: Persist model stats
+        if: env.GEMINI_API_KEY != '' && hashFiles('run-results.json') != ''
+        run: |
+          cp run-results.json /tmp/run-results.json
+
+          git config user.name  "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+
+          # Checkout or create the orphan branch
+          if git ls-remote --exit-code --heads origin nightly-stats; then
+            git fetch origin nightly-stats
+            git checkout nightly-stats
+          else
+            git checkout --orphan nightly-stats
+            git rm -rf . --quiet || true
+          fi
+
+          python3 .github/scripts/persist_model_stats.py
+
+          git add model-stats.json model-summary.json
+          git diff --cached --quiet || git commit -m "chore(stats): nightly model usage $(date -u +%Y-%m-%d)"
+          git push origin nightly-stats
