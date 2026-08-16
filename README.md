@@ -4,9 +4,24 @@ Backend service that automates a [Tedee](https://tedee.com) smart lock — built
 
 ## Requirements
 
-- Java 25 (GraalVM recommended)
+- Java 25 (`openjdk-25.0.3+tzdata2026b`) — managed via [jenv](https://www.jenv.be), version pinned in `.java-version`
 - Maven wrapper included (`./mvnw`)
 - Docker (for native image build)
+
+## Development setup
+
+Install the required JDK, register it with jenv, and rehash:
+
+```bash
+jenv add <path-to-jdk>   # register openjdk-25.0.3+tzdata2026b
+jenv rehash              # .java-version drives version selection automatically
+```
+
+If using [OpenCode](https://opencode.ai) as AI assistant, install the Java LSP for real-time diagnostics:
+
+```bash
+brew install jdtls
+```
 
 ## Quick start
 
