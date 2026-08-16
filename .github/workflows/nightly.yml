@@ -55,18 +55,23 @@ jobs:
       - name: Run Gemini review
         if: env.GEMINI_API_KEY != ''
         run: |
-          MODELS=("gemini-2.5-flash" "gemini-2.0-flash")
+          mapfile -t MODELS < <(grep -v '^#' .github/gemini-models.txt | grep -v '^[[:space:]]*$')
+          if [ ${#MODELS[@]} -eq 0 ]; then
+            echo "Error: .github/gemini-models.txt is empty or missing." >&2
+            exit 1
+          fi
           for MODEL in "${MODELS[@]}"; do
             echo "Trying model: $MODEL"
-            python3 .github/scripts/gemini_review.py "$MODEL"
-            EXIT=$?
-            if [ $EXIT -eq 0 ]; then
+            if python3 .github/scripts/gemini_review.py "$MODEL"; then
               break
-            elif [ $EXIT -eq 2 ]; then
-              echo "Quota exceeded for $MODEL, trying next..."
-              continue
             else
-              exit $EXIT
+              EXIT=$?
+              if [ $EXIT -eq 2 ]; then
+                echo "Model $MODEL not available or quota exceeded, trying next..."
+                continue
+              else
+                exit $EXIT
+              fi
             fi
           done
 

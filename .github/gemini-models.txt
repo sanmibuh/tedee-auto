@@ -1,0 +1,16 @@
+# Gemini model fallback chain for the nightly AI review.
+# Models are tried in order — first success wins.
+# On 404 (model unavailable) or 429 (quota exceeded) the next model is tried.
+# Update this list when models are deprecated or better ones become available.
+
+# Primary: deep architectural reasoning, 1M token context
+gemini-3.1-pro-preview
+
+# Fallback 1: optimised for software engineering tasks
+gemini-3.7-flash
+
+# Fallback 2: cost/quota reduction
+gemini-3.5-flash
+
+# Fallback 3: minimal token consumption
+gemini-3.5-flash-lite
