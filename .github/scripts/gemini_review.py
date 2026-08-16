@@ -93,6 +93,9 @@ except urllib.error.HTTPError as e:
   if e.code == 429:
     print(f"Quota exceeded for {model}, will try next model", file=sys.stderr)
     sys.exit(2)
+  if e.code == 404:
+    print(f"Model {model} not available (404), will try next model", file=sys.stderr)
+    sys.exit(2)
   print(f"Gemini API error: {e.code} {e.read().decode()}", file=sys.stderr)
   sys.exit(1)
 except urllib.error.URLError as e:
