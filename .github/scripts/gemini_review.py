@@ -75,7 +75,7 @@ payload = {
   "contents": [{"parts": [{"text": prompt}]}],
   "generationConfig": {
     "temperature": 0.2,
-    "maxOutputTokens": 8192,
+    "maxOutputTokens": 65536,
     "responseMimeType": "application/json"
   }
 }
@@ -110,12 +110,18 @@ if not candidates or not candidates[0].get("content", {}).get("parts"):
   print(f"Gemini returned no content (model={model}). finishReason: {finish}", file=sys.stderr)
   sys.exit(1)
 
+finish_reason = candidates[0].get("finishReason", "")
 raw = candidates[0]["content"]["parts"][0]["text"]
+
+if finish_reason == "MAX_TOKENS":
+  print(f"Model {model} hit the token limit (MAX_TOKENS) — response truncated, trying next model", file=sys.stderr)
+  sys.exit(2)
+
 try:
   findings = json.loads(raw)
 except json.JSONDecodeError as e:
   print(f"Failed to parse Gemini response as JSON: {e}\nRaw: {raw[:500]}", file=sys.stderr)
-  sys.exit(1)
+  sys.exit(2)
 
 if not isinstance(findings, list):
   print(f"Gemini response is not a JSON array. Got: {type(findings).__name__}", file=sys.stderr)
