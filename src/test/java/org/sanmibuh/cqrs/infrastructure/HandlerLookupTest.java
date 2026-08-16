@@ -41,7 +41,7 @@ class HandlerLookupTest {
     final var handler = new ConcreteStubHandler();
     final var lookup = new HandlerLookup<>(List.of(handler), StubHandler.class);
 
-    final StubHandler<StubMessage> found = lookup.find(StubMessage.class);
+    final var found = lookup.find(StubMessage.class);
 
     then(found).isSameAs(handler);
   }
