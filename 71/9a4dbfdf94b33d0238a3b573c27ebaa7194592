@@ -1,0 +1,20 @@
+.github/scripts/accumulate_attempt.py
+  h_97a91c9e567f87 1-8
+.github/scripts/gemini_review.py
+  h_97a91c9e567f87 6,13-23,107-109,111-113,116,120,127,135,142,147,153
+.github/scripts/persist_model_stats.py
+  h_97a91c9e567f87 1-30
+.github/workflows/nightly.yml
+  h_97a91c9e567f87 16,58,67,71,139-161
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "719a4dbfdf94b33d0238a3b573c27ebaa7194592",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
