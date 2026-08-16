@@ -1,9 +1,10 @@
-.PHONY: help build format test pitest image
+.PHONY: help build clean format test pitest image
 
 help:
 	@echo "Usage: make <target>"
 	@echo ""
 	@echo "  build   Compile source code"
+	@echo "  clean   Remove build artifacts"
 	@echo "  format  Apply Spotless code formatter"
 	@echo "  test    Run tests and generate JaCoCo coverage report"
 	@echo "  pitest  Run incremental mutation testing"
@@ -11,6 +12,9 @@ help:
 
 build:
 	./mvnw compile -B
+
+clean:
+	./mvnw clean -B
 
 format:
 	./mvnw spotless:apply -B
