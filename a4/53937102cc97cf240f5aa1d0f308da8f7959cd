@@ -1,0 +1,18 @@
+AGENTS.md
+  h_97a91c9e567f87 35
+src/main/java/org/sanmibuh/tedee/automation/TedeeAutomationApplication.java
+  h_97a91c9e567f87 11
+src/test/java/org/sanmibuh/cqrs/infrastructure/HandlerLookupTest.java
+  h_97a91c9e567f87 44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "a453937102cc97cf240f5aa1d0f308da8f7959cd",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
