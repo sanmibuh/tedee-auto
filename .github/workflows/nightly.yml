@@ -55,7 +55,7 @@ jobs:
       - name: Run Gemini review
         if: env.GEMINI_API_KEY != ''
         run: |
-          MODELS=("gemini-2.5-pro" "gemini-2.5-flash")
+          MODELS=("gemini-2.5-flash" "gemini-2.0-flash")
           for MODEL in "${MODELS[@]}"; do
             echo "Trying model: $MODEL"
             python3 .github/scripts/gemini_review.py "$MODEL"
