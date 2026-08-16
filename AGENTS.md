@@ -21,7 +21,7 @@ These standards apply to all code in this project and are the basis for any code
 ### TDD
 - Every piece of implementation code must have a corresponding test.
 - Tests must test behavior, not implementation details.
-- Test method names: `should_doSomething_whenCondition` (snake_case with camelCase segments).
+- Test method names: `should_doSomething_whenCondition` (snake_case with camelCase segments). `doSomething` is a verb + object describing observable behavior (e.g., `returnHandler`, `throwException`). `whenCondition` is the relevant precondition or context (e.g., `whenHandlerIsRegistered`). Never use `_to...`, `_by...`, or `_and...` as a third segment.
 - Use `BDDAssertions` from AssertJ: `then(...)` and `thenThrownBy(...)`. Never `assertThat` or `assertThatThrownBy`.
 - When a test has more than one assertion, use `BDDSoftAssertions` via `@ExtendWith(SoftAssertionsExtension.class)` and `@InjectSoftAssertions`, replacing `then(...)` with `softly.then(...)`.
 - When a test method would declare checked exceptions, use Lombok's `@SneakyThrows` instead of adding `throws` to the signature.

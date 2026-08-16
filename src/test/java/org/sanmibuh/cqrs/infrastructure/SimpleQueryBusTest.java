@@ -23,7 +23,7 @@ class SimpleQueryBusTest {
   }
 
   @Test
-  void should_dispatchQuery_toRegisteredHandler_andReturnResult() {
+  void should_returnQueryResult_whenHandlerIsRegistered() {
     final var bus = new SimpleQueryBus(List.of(new StubQueryHandler()));
 
     final var result = bus.dispatch(new StubQuery());

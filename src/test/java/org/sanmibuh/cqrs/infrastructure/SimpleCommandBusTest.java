@@ -25,7 +25,7 @@ class SimpleCommandBusTest {
   }
 
   @Test
-  void should_dispatchCommand_toRegisteredHandler() {
+  void should_dispatchCommand_whenHandlerIsRegistered() {
     final var handler = new StubCommandHandler();
     final var bus = new SimpleCommandBus(List.of(handler));
 

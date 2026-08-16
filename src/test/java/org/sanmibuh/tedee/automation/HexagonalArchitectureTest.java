@@ -14,7 +14,7 @@ class HexagonalArchitectureTest {
   private final JavaClasses classes = new ClassFileImporter().importPackages(BASE_PACKAGE);
 
   @Test
-  void should_domainLayer_notDependOnSpring() {
+  void should_forbidSpringDependencies_whenInDomainLayer() {
     final ArchRule rule = noClasses()
       .that().resideInAPackage("..domain..")
       .should().dependOnClassesThat()
@@ -23,7 +23,7 @@ class HexagonalArchitectureTest {
   }
 
   @Test
-  void should_domainLayer_notDependOnInfrastructure() {
+  void should_forbidInfrastructureDependencies_whenInDomainLayer() {
     final ArchRule rule = noClasses()
       .that().resideInAPackage("..domain..")
       .should().dependOnClassesThat()
