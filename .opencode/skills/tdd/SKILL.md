@@ -86,8 +86,6 @@ After each GREEN step, scan for repeated structural patterns (e.g., same boilerp
 - `domain` layer must have zero Spring or infrastructure imports.
 - Run `make format` before every commit (RED, GREEN, and REFACTOR) to auto-format.
 - Run `./mvnw verify` to confirm all checks pass.
-- **Value object tests are unit tests.** Do not test that a valid instance is created successfully — that will be covered indirectly when the value object is used. Only test guard clauses (invalid input).
-- **Use `@ParameterizedTest` with `@ValueSource` (or `@MethodSource`) when multiple invalid inputs trigger the same exception.** Avoid duplicating test methods for equivalent cases.
 
 ---
 
