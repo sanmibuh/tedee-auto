@@ -1,0 +1,16 @@
+.github/gemini-models.txt
+  h_97a91c9e567f87 1-16
+.github/workflows/nightly.yml
+  h_97a91c9e567f87 58
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "e42c6ce00165ef16c42855fb6a65f6977b390e8a",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
