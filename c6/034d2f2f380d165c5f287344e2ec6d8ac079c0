@@ -1,0 +1,20 @@
+README.md
+  h_97a91c9e567f87 7,11-25
+.java-version
+  h_97a91c9e567f87 1
+AGENTS.md
+  h_97a91c9e567f87 64-67
+opencode.json
+  h_97a91c9e567f87 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "c6034d2f2f380d165c5f287344e2ec6d8ac079c0",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
