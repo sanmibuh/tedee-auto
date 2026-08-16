@@ -86,6 +86,7 @@ After each GREEN step, scan for repeated structural patterns (e.g., same boilerp
 - `domain` layer must have zero Spring or infrastructure imports.
 - Run `make format` before every commit (RED, GREEN, and REFACTOR) to auto-format.
 - Run `./mvnw verify` to confirm all checks pass.
+- When moving files, always use `git mv` to preserve git history. Never delete and recreate.
 
 ---
 

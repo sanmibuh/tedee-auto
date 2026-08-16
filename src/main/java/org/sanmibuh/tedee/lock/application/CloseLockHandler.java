@@ -2,6 +2,7 @@ package org.sanmibuh.tedee.lock.application;
 
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.cqrs.domain.CommandHandler;
+import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockPort;
 
 @RequiredArgsConstructor
@@ -11,6 +12,6 @@ public class CloseLockHandler implements CommandHandler<CloseLockCommand> {
 
   @Override
   public void handle(final CloseLockCommand command) {
-    throw new UnsupportedOperationException("not implemented");
+    lockPort.lock(new LockId(command.deviceId()));
   }
 }
