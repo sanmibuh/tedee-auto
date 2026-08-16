@@ -1,16 +1,15 @@
-import os
 import json
-import urllib.request
-import urllib.error
+import os
 import sys
-from datetime import date
+import urllib.error
+from datetime import datetime, timezone
 
 if len(sys.argv) < 2:
   print("Usage: gemini_review.py <model>", file=sys.stderr)
   sys.exit(1)
 
 model = sys.argv[1]
-today = date.today().isoformat()
+today = datetime.now(timezone.utc).date().isoformat()
 
 
 def write_attempt(outcome, *, reason=None, findings=None):
@@ -22,9 +21,11 @@ def write_attempt(outcome, *, reason=None, findings=None):
   with open("attempt-result.json", "w") as _f:
     json.dump(record, _f)
 
+
 api_key = os.getenv("GEMINI_API_KEY")
 if not api_key:
-  print("Error: GEMINI_API_KEY environment variable is not set.", file=sys.stderr)
+  print("Error: GEMINI_API_KEY environment variable is not set.",
+        file=sys.stderr)
   sys.exit(1)
 
 with open("code_snapshot.txt") as f:
@@ -35,13 +36,13 @@ with open("open_issues.json") as f:
 
 if open_issues:
   open_issues_text = "\n".join(
-    f"- #{i['number']}: {i['title']}\n  {(i['body'] or '')[:300]}"
-    for i in open_issues
+      f"- #{i['number']}: {i['title']}\n  {(i['body'] or '')[:300]}"
+      for i in open_issues
   )
   open_issues_section = (
-    "\nALREADY REPORTED (open issues — do NOT create findings for these):\n"
-    + open_issues_text
-    + "\n"
+      "\nALREADY REPORTED (open issues — do NOT create findings for these):\n"
+      + open_issues_text
+      + "\n"
   )
 else:
   open_issues_section = ""
@@ -93,10 +94,10 @@ payload = {
 }
 
 req = urllib.request.Request(
-  f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}",
-  data=json.dumps(payload).encode(),
-  headers={"Content-Type": "application/json"},
-  method="POST"
+    f"https://generativelanguage.googleapis.com/v1beta/models/{model}:generateContent?key={api_key}",
+    data=json.dumps(payload).encode(),
+    headers={"Content-Type": "application/json"},
+    method="POST"
 )
 try:
   with urllib.request.urlopen(req, timeout=120) as resp:
@@ -122,8 +123,10 @@ except urllib.error.URLError as e:
 
 candidates = data.get("candidates", [])
 if not candidates or not candidates[0].get("content", {}).get("parts"):
-  finish = candidates[0].get("finishReason", "UNKNOWN") if candidates else "NO_CANDIDATES"
-  print(f"Gemini returned no content (model={model}). finishReason: {finish}", file=sys.stderr)
+  finish = candidates[0].get("finishReason",
+                             "UNKNOWN") if candidates else "NO_CANDIDATES"
+  print(f"Gemini returned no content (model={model}). finishReason: {finish}",
+        file=sys.stderr)
   write_attempt("nok", reason="no_content")
   sys.exit(1)
 
@@ -131,19 +134,23 @@ finish_reason = candidates[0].get("finishReason", "")
 raw = candidates[0]["content"]["parts"][0]["text"]
 
 if finish_reason == "MAX_TOKENS":
-  print(f"Model {model} hit the token limit (MAX_TOKENS) — response truncated, trying next model", file=sys.stderr)
+  print(
+    f"Model {model} hit the token limit (MAX_TOKENS) — response truncated, trying next model",
+    file=sys.stderr)
   write_attempt("nok", reason="max_tokens")
   sys.exit(2)
 
 try:
   findings = json.loads(raw)
 except json.JSONDecodeError as e:
-  print(f"Failed to parse Gemini response as JSON: {e}\nRaw: {raw[:500]}", file=sys.stderr)
+  print(f"Failed to parse Gemini response as JSON: {e}\nRaw: {raw[:500]}",
+        file=sys.stderr)
   write_attempt("nok", reason="invalid_json")
   sys.exit(2)
 
 if not isinstance(findings, list):
-  print(f"Gemini response is not a JSON array. Got: {type(findings).__name__}", file=sys.stderr)
+  print(f"Gemini response is not a JSON array. Got: {type(findings).__name__}",
+        file=sys.stderr)
   write_attempt("nok", reason="unexpected_format")
   sys.exit(1)
 

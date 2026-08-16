@@ -70,7 +70,7 @@ jobs:
               EXIT=$?
               python3 .github/scripts/accumulate_attempt.py
               if [ $EXIT -eq 2 ]; then
-                echo "Model $MODEL not available or quota exceeded, trying next..."
+                echo "Model $MODEL skipped (not available, quota exceeded, or response issue), trying next..."
                 continue
               else
                 exit $EXIT
@@ -140,7 +140,9 @@ jobs:
       - name: Persist model stats
         if: env.GEMINI_API_KEY != '' && hashFiles('run-results.json') != ''
         run: |
-          RUN_RESULTS="$GITHUB_WORKSPACE/run-results.json"
+          WORK_DIR="$(mktemp -d)"
+          cp run-results.json "$WORK_DIR/run-results.json"
+          cp .github/scripts/persist_model_stats.py "$WORK_DIR/persist_model_stats.py"
 
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -154,7 +156,7 @@ jobs:
             git rm -rf . --quiet || true
           fi
 
-          python3 "$GITHUB_WORKSPACE/.github/scripts/persist_model_stats.py" "$RUN_RESULTS"
+          python3 "$WORK_DIR/persist_model_stats.py" "$WORK_DIR/run-results.json"
 
           git add model-stats.json model-summary.json
           git diff --cached --quiet || git commit -m "chore(stats): nightly model usage $(date -u +%Y-%m-%d)"
