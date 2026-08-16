@@ -1,0 +1,14 @@
+Makefile
+  h_97a91c9e567f87 1,7,16-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "5674a7dd48e8cc1a1866d401840e86e7de2b6bee",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
