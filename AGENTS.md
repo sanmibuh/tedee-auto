@@ -61,6 +61,10 @@ Apply TDD for all implementation work: domain logic, use cases, services, and in
 
 Skip TDD for pure configuration that contains no logic: Spring `@Configuration` classes, `application.yml`, GraalVM hints, Dockerfile, and build descriptors.
 
+### LSP
+
+Java LSP (`jdtls`) is enabled via `opencode.json`. OpenCode will automatically start it when editing `.java` files and use its diagnostics as feedback. No additional configuration is needed.
+
 ### Before finishing
 - Run `make format` to auto-format all code. This is mandatory for both AI-generated and human-authored changes.
 - Run `./mvnw verify` — all checks must pass.
