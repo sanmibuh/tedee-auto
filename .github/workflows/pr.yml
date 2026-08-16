@@ -140,7 +140,7 @@ jobs:
 
       - name: Upload surefire reports
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: surefire-reports
           path: target/surefire-reports/TEST-*.xml
@@ -148,7 +148,7 @@ jobs:
 
       - name: Upload JaCoCo report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: jacoco-report
           path: target/site/jacoco/jacoco.xml
@@ -218,7 +218,7 @@ jobs:
 
       - name: Upload PITest mutations report
         if: always()
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: pitest-mutations
           path: target/pit-reports/mutations.xml
