@@ -1,0 +1,22 @@
+AGENTS.md
+  h_97a91c9e567f87 28-30,41
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockCommand.java
+  h_97a91c9e567f87 1-5
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockHandler.java
+  h_97a91c9e567f87 1-16
+src/main/java/org/sanmibuh/tedee/lock/domain/LockPort.java
+  h_97a91c9e567f87 1-6
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  h_97a91c9e567f87 1-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "20a0ef5f6cdcc6b723dd3b809e813784c3a49407",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
