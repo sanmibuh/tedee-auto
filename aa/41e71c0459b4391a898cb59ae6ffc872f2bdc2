@@ -1,0 +1,16 @@
+.github/scripts/gemini_review.py
+  h_97a91c9e567f87 2,4-5,12,24,27-28,39-40,43-45,97-100,126-129,137-139,146-147,152-153
+.github/workflows/nightly.yml
+  h_97a91c9e567f87 73,143-145,159
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "aa41e71c0459b4391a898cb59ae6ffc872f2bdc2",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
