@@ -32,7 +32,7 @@ These standards apply to all code in this project and are the basis for any code
 - **OOP**: encapsulate state, prefer instance methods over static utilities when state is involved.
 - Small methods, descriptive names, no magic numbers or strings.
 - No dead code.
-- Use `final` on all fields and parameters where the value is not reassigned. Use `var` for local variables.
+- Use `final` on all fields and parameters where the value is not reassigned. Use `var` for local variables, unless doing so would require an explicit unchecked cast — in that case, declare the explicit type instead.
 - Use 2-space indentation.
 - Do not write comments that restate what the code already says. Only comment to explain a non-obvious decision or constraint that cannot be expressed in the code itself.
 
