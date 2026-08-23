@@ -8,6 +8,7 @@ import java.io.Serial;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -35,12 +36,24 @@ class GlobalExceptionHandlerTest {
       .andExpect(jsonPath("$.detail").value("domain rule violated"));
   }
 
+  @Test
+  @SneakyThrows
+  void should_return500_whenHandlerNotFoundExceptionIsThrown() {
+    mockMvc.perform(get("/test/handler-not-found"))
+      .andExpect(status().isInternalServerError());
+  }
+
   @RestController
   static class StubController {
 
     @GetMapping("/test/domain-exception")
     void throwDomainException() {
       throw new StubDomainException();
+    }
+
+    @GetMapping("/test/handler-not-found")
+    void throwHandlerNotFoundException() {
+      throw new HandlerNotFoundException(String.class);
     }
 
     static class StubDomainException extends DomainException {
