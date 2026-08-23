@@ -31,6 +31,9 @@ class HexagonalArchitectureTest {
     rule.check(classes);
   }
 
+  // allowEmptyShould: currently only one aggregate exists (tedee.automation), so no
+  // cross-aggregate violations are possible yet. The rule will start enforcing automatically
+  // once a second aggregate with an infrastructure sub-package is introduced.
   @Test
   void should_forbidCrossAggregateCoupling_whenInInfrastructureLayer() {
     slices()

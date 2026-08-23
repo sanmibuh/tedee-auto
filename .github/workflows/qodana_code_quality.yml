@@ -31,15 +31,12 @@ jobs:
 
       - name: Qodana Scan
         uses: JetBrains/qodana-action@v2026.1
-        env:
-          QODANA_TOKEN: ${{ secrets.QODANA_TOKEN_1100031870 }}
-          QODANA_ENDPOINT: 'https://qodana.cloud'
         with:
           pr-mode: false
           use-caches: true
-          post-pr-comment: true
+          post-pr-comment: false
           use-annotations: true
-          upload-result: true
+          upload-result: false
           push-fixes: 'none'
 
       - name: Upload SARIF to GitHub Security tab

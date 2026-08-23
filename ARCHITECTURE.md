@@ -42,7 +42,7 @@ infrastructure/  — Spring beans: controllers, adapters, schedulers
 
 Rules enforced at build time by ArchUnit:
 - `domain` must not depend on Spring or `infrastructure`
-- Cross-aggregate coupling at infrastructure level is forbidden
+- Cross-aggregate coupling at infrastructure level is forbidden (rule is in place; activates automatically once a second aggregate with an `infrastructure` sub-package is introduced)
 
 Domain rule violations extend `DomainException` and are mapped globally to HTTP 400 by `GlobalExceptionHandler` (extends `ResponseEntityExceptionHandler`).
 
