@@ -1,0 +1,14 @@
+qodana.yaml
+  h_97a91c9e567f87 7-11,14,16-27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "f4a53adb74342d16ad41b2dd6f3047cf347e690e",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
