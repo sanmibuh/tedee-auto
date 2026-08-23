@@ -4,7 +4,24 @@
 
 version: "1.0"
 linter: qodana-jvm-community
+projectJDK: "25"
+withinDocker: false
+
+bootstrap: ./mvnw compile -q
+
 profile:
   name: qodana.recommended
+
 include:
   - name: CheckDependencyLicenses
+  - name: IncorrectFormatting
+
+exclude:
+  - name: All
+    paths:
+      - target
+
+failureConditions:
+  severityThresholds:
+    critical: 1
+    high: 5
