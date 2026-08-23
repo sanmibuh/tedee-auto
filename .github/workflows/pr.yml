@@ -452,14 +452,12 @@ jobs:
               if (tot > 0) return `${pct}% (${cov}/${tot})`;
               return `${pct}%`;
             };
-            const mathColor = (color, content) =>
-              '$' + '{\\color{' + color + '}{' + content + '}}' + '$';
             const diff = (c, b) => {
               if (c < 0 || b < 0) return '';
               const d = c - b;
-              if (d > 0) return mathColor('green', '\\uparrow +' + d + '\\%');
-              if (d < 0) return mathColor('red',   '\\downarrow ' + d + '\\%');
-              return mathColor('royalblue', '=');
+              if (d > 0) return `⬆ +${d}%`;
+              if (d < 0) return `⬇ ${d}%`;
+              return '=';
             };
 
             // Semaphore: coverage thresholds 90/70, mutation 80/60
