@@ -8,22 +8,14 @@ import org.sanmibuh.cqrs.domain.QueryHandler;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.annotation.FilterType;
 
 @AutoConfiguration
-@ComponentScan(
-  basePackages = "org.sanmibuh",
-  useDefaultFilters = false,
-  includeFilters = {
-    @ComponentScan.Filter(
-      type = FilterType.ASSIGNABLE_TYPE,
-      classes = CommandHandler.class),
-    @ComponentScan.Filter(
-      type = FilterType.ASSIGNABLE_TYPE,
-      classes = QueryHandler.class)
-  })
 public class CQRSAutoConfiguration {
+
+  @Bean
+  static CQRSHandlerRegistrar cqrsHandlerRegistrar() {
+    return new CQRSHandlerRegistrar();
+  }
 
   @Bean
   @ConditionalOnMissingBean(CommandBus.class)
