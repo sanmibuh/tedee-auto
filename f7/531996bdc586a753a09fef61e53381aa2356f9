@@ -1,0 +1,19 @@
+.github/workflows/qodana_code_quality.yml
+  s_ab18baae50eb77::t_8b2714cb9ef003 37,39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "f7531996bdc586a753a09fef61e53381aa2356f9",
+  "prompts": {},
+  "sessions": {
+    "s_ab18baae50eb77": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "3f6e6139-5058-4d53-b9e6-80c8e49b7636",
+        "model": "unknown"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
