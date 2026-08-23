@@ -1,0 +1,14 @@
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  h_97a91c9e567f87 17,26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "638c2f5401e7526a1aaa1fa54b86cc568cc6f6e9",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
