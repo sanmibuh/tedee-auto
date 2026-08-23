@@ -13,6 +13,17 @@ import com.example.StubComponentCommandHandler;
 class CQRSHandlerRegistrarTest {
 
   @Test
+  void should_notRegisterAnyBean_whenAutoConfigurationPackagesNotPresent() {
+    final var beanFactory = new DefaultListableBeanFactory();
+    final var registrar = new CQRSHandlerRegistrar();
+    registrar.setBeanFactory(beanFactory);
+
+    registrar.postProcessBeanDefinitionRegistry(beanFactory);
+
+    then(beanFactory.getBeanDefinitionCount()).isZero();
+  }
+
+  @Test
   void should_registerCommandHandlerBean_whenFoundInAutoConfigurationPackage() {
     final var beanFactory = registrarAppliedTo("com.example");
 

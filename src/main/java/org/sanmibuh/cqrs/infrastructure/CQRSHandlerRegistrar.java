@@ -30,6 +30,9 @@ class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor, BeanF
 
   @Override
   public void postProcessBeanDefinitionRegistry(final BeanDefinitionRegistry registry) throws BeansException {
+    if (!AutoConfigurationPackages.has(beanFactory)) {
+      return;
+    }
     final var packages = AutoConfigurationPackages.get(beanFactory);
     registerHandlers(registry, packages, CommandHandler.class);
     registerHandlers(registry, packages, QueryHandler.class);
