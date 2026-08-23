@@ -10,6 +10,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 
 import com.example.StubCommandHandler;
 import com.example.StubCommandHandler.StubCommand;
+import com.example.StubComponentCommandHandler;
+import com.example.StubComponentCommandHandler.StubComponentCommand;
 import com.example.StubQueryHandler.StubQuery;
 import com.example.TestApplication;
 
@@ -38,5 +40,15 @@ class CQRSAutoConfigurationTest {
     final var result = queryBus.dispatch(new StubQuery());
 
     then(result).isEqualTo("stub-result");
+  }
+
+  @Autowired
+  private StubComponentCommandHandler componentCommandHandler;
+
+  @Test
+  void should_dispatchCommand_whenHandlerIsAnnotatedWithComponent() {
+    commandBus.dispatch(new StubComponentCommand());
+
+    then(componentCommandHandler.handled).isTrue();
   }
 }
