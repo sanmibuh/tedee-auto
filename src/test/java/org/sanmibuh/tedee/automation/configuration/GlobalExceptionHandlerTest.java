@@ -42,7 +42,7 @@ class GlobalExceptionHandlerTest {
 
   @Test
   @SneakyThrows
-  void should_return400_withDetail_whenDomainExceptionIsThrown() {
+  void should_returnBadRequestWithDetail_whenDomainExceptionIsThrown() {
     final var response = get("/test/domain-exception");
 
     softly.then(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
