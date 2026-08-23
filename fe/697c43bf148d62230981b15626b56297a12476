@@ -1,0 +1,19 @@
+src/test/java/com/example/TestApplication.java
+  s_bc47b3573181c7::t_0f8e930b468296 1-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "fe697c43bf148d62230981b15626b56297a12476",
+  "prompts": {},
+  "sessions": {
+    "s_bc47b3573181c7": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fcf787c67ffe5N6uYSit55HRr0",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
