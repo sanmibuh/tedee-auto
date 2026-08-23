@@ -9,7 +9,11 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 
+import org.assertj.core.api.BDDSoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.tedee.automation.TedeeAutomationApplication;
@@ -27,17 +31,22 @@ import lombok.SneakyThrows;
     TedeeAutomationApplication.class,
     GlobalExceptionHandlerTest.StubController.class
   })
+@ExtendWith(SoftAssertionsExtension.class)
 class GlobalExceptionHandlerTest {
 
   @LocalServerPort
   private int port;
+
+  @InjectSoftAssertions
+  private BDDSoftAssertions softly;
 
   @Test
   @SneakyThrows
   void should_return400_withDetail_whenDomainExceptionIsThrown() {
     final var response = get("/test/domain-exception");
 
-    then(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    softly.then(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
+    softly.then(response.body()).contains("domain rule violated");
   }
 
   @Test
