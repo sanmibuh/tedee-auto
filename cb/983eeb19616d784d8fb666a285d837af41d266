@@ -1,0 +1,16 @@
+src/test/java/com/example/StubComponentCommandHandler.java
+  h_97a91c9e567f87 1-20
+src/test/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfigurationTest.java
+  h_97a91c9e567f87 13-14,44-53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "cb983eeb19616d784d8fb666a285d837af41d266",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
