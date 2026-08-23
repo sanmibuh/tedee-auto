@@ -1,0 +1,17 @@
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfiguration.java
+  h_97a91c9e567f87 15-19
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSHandlerRegistrar.java
+  h_97a91c9e567f87 1-2,4-47
+  h_97a91c9e567f87 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "fc941c272c14932f842ce4cbd77b58e5b2c442ec",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
