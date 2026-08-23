@@ -1,7 +1,6 @@
 package org.sanmibuh.tedee.automation;
 
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
-import static com.tngtech.archunit.library.dependencies.SlicesRuleDefinition.slices;
 
 import org.junit.jupiter.api.Test;
 import com.tngtech.archunit.core.domain.JavaClasses;
@@ -29,17 +28,5 @@ class HexagonalArchitectureTest {
       .should().dependOnClassesThat()
       .resideInAPackage("..infrastructure..");
     rule.check(classes);
-  }
-
-  // allowEmptyShould: currently only one aggregate exists (tedee.automation), so no
-  // cross-aggregate violations are possible yet. The rule will start enforcing automatically
-  // once a second aggregate with an infrastructure sub-package is introduced.
-  @Test
-  void should_forbidCrossAggregateCoupling_whenInInfrastructureLayer() {
-    slices()
-      .matching("org.sanmibuh.tedee.(*).infrastructure..")
-      .should().notDependOnEachOther()
-      .allowEmptyShould(true)
-      .check(classes);
   }
 }
