@@ -1,22 +1,23 @@
 package org.sanmibuh.cqrs.infrastructure;
 
 import java.util.List;
-import java.util.Objects;
 
 import org.sanmibuh.cqrs.domain.CommandHandler;
 import org.sanmibuh.cqrs.domain.QueryHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryAware;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
+import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 
 class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor, BeanFactoryAware {
+
+  private static final AnnotationBeanNameGenerator NAME_GENERATOR = new AnnotationBeanNameGenerator();
 
   private BeanFactory beanFactory;
 
@@ -40,8 +41,12 @@ class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor, BeanF
     scanner.addIncludeFilter(new AssignableTypeFilter(handlerType));
     packages.stream()
       .flatMap(basePackage -> scanner.findCandidateComponents(basePackage).stream())
-      .map(BeanDefinition::getBeanClassName)
-      .filter(Objects::nonNull)
-      .forEach(beanClassName -> registry.registerBeanDefinition(beanClassName, new RootBeanDefinition(beanClassName)));
+      .filter(candidate -> candidate.getBeanClassName() != null)
+      .forEach(candidate -> {
+        final var beanName = NAME_GENERATOR.generateBeanName(candidate, registry);
+        if (!registry.containsBeanDefinition(beanName)) {
+          registry.registerBeanDefinition(beanName, new RootBeanDefinition(candidate.getBeanClassName()));
+        }
+      });
   }
 }
