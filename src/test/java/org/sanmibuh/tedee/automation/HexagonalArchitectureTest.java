@@ -5,7 +5,6 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 import org.junit.jupiter.api.Test;
 import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
-import com.tngtech.archunit.lang.ArchRule;
 
 class HexagonalArchitectureTest {
 
@@ -15,7 +14,7 @@ class HexagonalArchitectureTest {
 
   @Test
   void should_forbidSpringDependencies_whenInDomainLayer() {
-    final ArchRule rule = noClasses()
+    final var rule = noClasses()
       .that().resideInAPackage("..domain..")
       .should().dependOnClassesThat()
       .resideInAPackage("org.springframework..");
@@ -24,7 +23,7 @@ class HexagonalArchitectureTest {
 
   @Test
   void should_forbidInfrastructureDependencies_whenInDomainLayer() {
-    final ArchRule rule = noClasses()
+    final var rule = noClasses()
       .that().resideInAPackage("..domain..")
       .should().dependOnClassesThat()
       .resideInAPackage("..infrastructure..");
