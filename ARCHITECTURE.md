@@ -26,7 +26,7 @@ CQRS building blocks.
 **`infrastructure`** — Spring-backed implementations:
 - `SimpleCommandBus` / `SimpleQueryBus` — resolve handlers at startup via `HandlerLookup` (O(1) dispatch)
 - `HandlerLookup` — builds a `Map<messageType, handler>` on construction using `GenericTypeResolver`
-- `CQRSAutoConfiguration` — `@AutoConfiguration` that scans `cqrs.infrastructure` for buses and `org.sanmibuh` for all `CommandHandler` / `QueryHandler` implementations. Registered in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`.
+- `CQRSAutoConfiguration` — `@AutoConfiguration` that registers `SimpleCommandBus` and `SimpleQueryBus` as `@ConditionalOnMissingBean` beans (allowing applications to override either with a custom implementation), and scans `org.sanmibuh` for all `CommandHandler` / `QueryHandler` implementations. Registered in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`.
 
 ---
 
