@@ -1,0 +1,18 @@
+config/checkstyle-suppressions.xml
+  h_97a91c9e567f87 1-19
+src/main/java/org/sanmibuh/cqrs/domain/HandlerNotFoundException.java
+  h_97a91c9e567f87 5
+src/test/java/org/sanmibuh/tedee/automation/configuration/GlobalExceptionHandlerTest.java
+  h_97a91c9e567f87 3-4,7-10,15-18,21,24-29,32-33,38-40,46-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "6f7d1dd112529a90484c60ea1c0b5ca38e41cd8a",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
