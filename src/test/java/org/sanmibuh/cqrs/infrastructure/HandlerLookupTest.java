@@ -65,19 +65,14 @@ class HandlerLookupTest {
   }
 
   @SuppressWarnings("unused")
-  interface StubHandler<T> {
-  }
+  interface StubHandler<T> {}
 
-  record StubMessage() {
-  }
+  record StubMessage() {}
 
-  static class ConcreteStubHandler implements StubHandler<StubMessage> {
-  }
+  static class ConcreteStubHandler implements StubHandler<StubMessage> {}
 
   @SuppressWarnings("rawtypes")
-  static class RawStubHandler implements StubHandler {
-  }
+  static class RawStubHandler implements StubHandler {}
 
-  static class AnotherConcreteStubHandler implements StubHandler<StubMessage> {
-  }
+  static class AnotherConcreteStubHandler implements StubHandler<StubMessage> {}
 }

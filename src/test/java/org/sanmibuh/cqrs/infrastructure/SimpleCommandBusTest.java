@@ -11,19 +11,6 @@ import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
 
 class SimpleCommandBusTest {
 
-  record StubCommand() implements Command {
-  }
-
-  static class StubCommandHandler implements CommandHandler<StubCommand> {
-
-    boolean handled;
-
-    @Override
-    public void handle(final StubCommand command) {
-      handled = true;
-    }
-  }
-
   @Test
   void should_dispatchCommand_whenHandlerIsRegistered() {
     final var handler = new StubCommandHandler();
@@ -41,5 +28,18 @@ class SimpleCommandBusTest {
     thenThrownBy(() -> bus.dispatch(new StubCommand()))
       .isInstanceOf(HandlerNotFoundException.class)
       .hasMessageContaining(StubCommand.class.getName());
+  }
+
+  record StubCommand() implements Command {
+  }
+
+  static class StubCommandHandler implements CommandHandler<StubCommand> {
+
+    boolean handled;
+
+    @Override
+    public void handle(final StubCommand command) {
+      handled = true;
+    }
   }
 }
