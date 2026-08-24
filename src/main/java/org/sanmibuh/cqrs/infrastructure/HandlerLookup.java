@@ -5,8 +5,8 @@ import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.core.GenericTypeResolver;
-import org.springframework.util.ClassUtils;
 
 class HandlerLookup<H> {
 
@@ -16,12 +16,12 @@ class HandlerLookup<H> {
     index = handlers.stream()
       .collect(
         Collectors.toMap(
-          h -> resolveMessageType(ClassUtils.getUserClass(h), handlerInterface),
+          h -> resolveMessageType(AopUtils.getTargetClass(h), handlerInterface),
           Function.identity(),
           (a, b) -> {
             throw new IllegalArgumentException(
               "Duplicate handlers for message type: "
-                + resolveMessageType(ClassUtils.getUserClass(a), handlerInterface).getName());
+                + resolveMessageType(AopUtils.getTargetClass(a), handlerInterface).getName());
           }));
   }
 
