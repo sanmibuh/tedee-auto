@@ -1,0 +1,21 @@
+src/main/java/org/sanmibuh/cqrs/domain/Query.java
+  s_93562ab5e314d3::t_cc25765a0c1ff0 4
+src/test/java/com/example/TestApplication.java
+  s_93562ab5e314d3::t_bf02ad161ef783 6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "034eeb53951d0123823a25c89aa7c4d9906699cf",
+  "prompts": {},
+  "sessions": {
+    "s_93562ab5e314d3": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fca3e5160ffeL0o4xvxfFL7xKV",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
