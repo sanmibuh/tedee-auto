@@ -6,23 +6,9 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
+import org.springframework.aop.framework.ProxyFactory;
 
 class HandlerLookupTest {
-
-  interface StubHandler<T> {
-  }
-
-  record StubMessage() {}
-
-  static class ConcreteStubHandler implements StubHandler<StubMessage> {
-  }
-
-  @SuppressWarnings("rawtypes")
-  static class RawStubHandler implements StubHandler {
-  }
-
-  static class AnotherConcreteStubHandler implements StubHandler<StubMessage> {
-  }
 
   @Test
   void should_throwIllegalArgumentException_whenDuplicateHandlersForSameMessageType() {
@@ -62,5 +48,36 @@ class HandlerLookupTest {
     thenThrownBy(() -> new HandlerLookup<>(List.of(rawHandler), StubHandler.class))
       .isInstanceOf(IllegalArgumentException.class)
       .hasMessageContaining(RawStubHandler.class.getName());
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  void should_returnHandler_whenHandlerIsWrappedInCglibProxy() {
+    final var handler = new ConcreteStubHandler();
+    final var proxyFactory = new ProxyFactory(handler);
+    proxyFactory.setProxyTargetClass(true);
+    final var proxy = (StubHandler<StubMessage>) proxyFactory.getProxy();
+    final var lookup = new HandlerLookup<>(List.of(proxy), StubHandler.class);
+
+    final var found = lookup.find(StubMessage.class);
+
+    then(found).isSameAs(proxy);
+  }
+
+  @SuppressWarnings("unused")
+  interface StubHandler<T> {
+  }
+
+  record StubMessage() {
+  }
+
+  static class ConcreteStubHandler implements StubHandler<StubMessage> {
+  }
+
+  @SuppressWarnings("rawtypes")
+  static class RawStubHandler implements StubHandler {
+  }
+
+  static class AnotherConcreteStubHandler implements StubHandler<StubMessage> {
   }
 }
