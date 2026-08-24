@@ -1,0 +1,19 @@
+config/eclipse-google-style.xml
+  s_eec760d78fa7b6::t_3d4b12b16e2806 89
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "65424b7655d5bfd70e6a28c5466f1e68fd615aa1",
+  "prompts": {},
+  "sessions": {
+    "s_eec760d78fa7b6": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "1c467e22-17e3-4978-ba46-b790a31b4274",
+        "model": "unknown"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
