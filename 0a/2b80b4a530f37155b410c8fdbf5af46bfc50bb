@@ -1,0 +1,35 @@
+src/test/java/org/sanmibuh/cqrs/infrastructure/SimpleCommandBusTest.java
+  9e024904a9b2b65e 34,40-44
+  9e024904a9b2b65e 32-33
+  9e024904a9b2b65e 35-39
+config/eclipse-google-style.xml
+  s_eec760d78fa7b6::t_3d4b12b16e2806 89
+src/test/java/org/sanmibuh/cqrs/infrastructure/HandlerLookupTest.java
+  h_97a91c9e567f87 70
+  h_97a91c9e567f87 68,72,75,77
+src/test/java/com/example/StubCommandHandler.java
+  h_97a91c9e567f87 14-16
+src/test/java/com/example/StubComponentCommandHandler.java
+  h_97a91c9e567f87 17-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "0a2b80b4a530f37155b410c8fdbf5af46bfc50bb",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_eec760d78fa7b6": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "1c467e22-17e3-4978-ba46-b790a31b4274",
+        "model": "unknown"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
