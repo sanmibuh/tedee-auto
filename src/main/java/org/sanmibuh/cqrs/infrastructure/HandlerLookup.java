@@ -6,6 +6,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.util.ClassUtils;
 
 class HandlerLookup<H> {
 
@@ -15,12 +16,21 @@ class HandlerLookup<H> {
     index = handlers.stream()
       .collect(
         Collectors.toMap(
-          h -> resolveMessageType(h.getClass(), handlerInterface),
+          h -> resolveMessageType(ClassUtils.getUserClass(h), handlerInterface),
           Function.identity(),
           (a, b) -> {
             throw new IllegalArgumentException(
-              "Duplicate handlers for message type: " + resolveMessageType(a.getClass(), handlerInterface).getName());
+              "Duplicate handlers for message type: "
+                + resolveMessageType(ClassUtils.getUserClass(a), handlerInterface).getName());
           }));
+  }
+
+  private static Class<?> resolveMessageType(final Class<?> handlerClass, final Class<?> handlerInterface) {
+    final var typeArgs = GenericTypeResolver.resolveTypeArguments(handlerClass, handlerInterface);
+    if (typeArgs == null || typeArgs.length == 0) {
+      throw new IllegalArgumentException("Cannot resolve message type for: " + handlerClass.getName());
+    }
+    return typeArgs[0];
   }
 
   @SuppressWarnings("unchecked")
@@ -30,13 +40,5 @@ class HandlerLookup<H> {
       throw new HandlerNotFoundException(messageType);
     }
     return (T) handler;
-  }
-
-  private static Class<?> resolveMessageType(final Class<?> handlerClass, final Class<?> handlerInterface) {
-    final var typeArgs = GenericTypeResolver.resolveTypeArguments(handlerClass, handlerInterface);
-    if (typeArgs == null || typeArgs.length == 0) {
-      throw new IllegalArgumentException("Cannot resolve message type for: " + handlerClass.getName());
-    }
-    return typeArgs[0];
   }
 }
