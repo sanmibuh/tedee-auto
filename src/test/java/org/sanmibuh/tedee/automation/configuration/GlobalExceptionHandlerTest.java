@@ -62,8 +62,8 @@ class GlobalExceptionHandlerTest {
   void should_returnProblemDetailWithoutInternalDetails_whenUnhandledExceptionIsThrown() {
     final var response = get("/test/unexpected-exception");
 
-    softly.then(response.headers().firstValue("Content-Type").orElse(""))
-      .contains("application/problem+json");
+    softly.then(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    softly.then(response.headers().firstValue("Content-Type").orElse("")).contains("application/problem+json");
     softly.then(response.body()).doesNotContain("StubUnexpectedException");
     softly.then(response.body()).doesNotContain("something went wrong internally");
   }
