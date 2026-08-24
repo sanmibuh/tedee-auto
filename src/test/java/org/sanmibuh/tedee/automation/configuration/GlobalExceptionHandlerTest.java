@@ -57,6 +57,17 @@ class GlobalExceptionHandlerTest {
     then(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 
+  @Test
+  @SneakyThrows
+  void should_returnProblemDetailWithoutInternalDetails_whenUnhandledExceptionIsThrown() {
+    final var response = get("/test/unexpected-exception");
+
+    softly.then(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
+    softly.then(response.headers().firstValue("Content-Type").orElse("")).contains("application/problem+json");
+    softly.then(response.body()).doesNotContain("StubUnexpectedException");
+    softly.then(response.body()).doesNotContain("something went wrong internally");
+  }
+
   @SneakyThrows
   private HttpResponse<String> get(final String path) {
     final var request = HttpRequest.newBuilder()
@@ -81,6 +92,11 @@ class GlobalExceptionHandlerTest {
       throw new HandlerNotFoundException(String.class);
     }
 
+    @GetMapping("/test/unexpected-exception")
+    void throwUnexpectedException() {
+      throw new StubUnexpectedException();
+    }
+
     static class StubDomainException extends DomainException {
 
       @Serial
@@ -88,6 +104,16 @@ class GlobalExceptionHandlerTest {
 
       StubDomainException() {
         super("domain rule violated");
+      }
+    }
+
+    static class StubUnexpectedException extends RuntimeException {
+
+      @Serial
+      private static final long serialVersionUID = 1L;
+
+      StubUnexpectedException() {
+        super("something went wrong internally");
       }
     }
   }

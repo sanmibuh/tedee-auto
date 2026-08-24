@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @RestControllerAdvice
 public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
 
@@ -16,5 +19,11 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
     detail.setDetail(ex.getMessage());
 
     return detail;
+  }
+
+  @ExceptionHandler(Exception.class)
+  public ProblemDetail handleUnexpectedException(final Exception ex) {
+    log.error("Unexpected error", ex);
+    return ProblemDetail.forStatus(HttpStatus.INTERNAL_SERVER_ERROR);
   }
 }
