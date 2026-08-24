@@ -1,0 +1,15 @@
+src/test/java/org/sanmibuh/cqrs/infrastructure/HandlerLookupTest.java
+  h_97a91c9e567f87 9,52-66,68-82
+  h_97a91c9e567f87 67
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "75117cbf605d7240cf47d059d06386f280fb2fde",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
