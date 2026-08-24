@@ -1,0 +1,26 @@
+.mvn/jvm.config
+  h_97a91c9e567f87 1-10
+ARCHITECTURE.md
+  h_97a91c9e567f87 51-61
+pom.xml
+  h_97a91c9e567f87 28-29,95-104,106-110
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfiguration.java
+  h_97a91c9e567f87 8,17-18
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSHandlerRegistrar.java
+  h_97a91c9e567f87 20,22-24,26,28
+src/test/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfigurationTest.java
+  h_97a91c9e567f87 7,15-16
+src/test/java/org/sanmibuh/cqrs/infrastructure/CQRSHandlerRegistrarTest.java
+  h_97a91c9e567f87 26,55,73,84
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "01c76dce3a87cadb6c6e2e74fcff11ee58861409",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
