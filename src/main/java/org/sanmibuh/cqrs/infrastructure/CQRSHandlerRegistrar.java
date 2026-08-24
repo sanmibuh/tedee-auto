@@ -1,8 +1,9 @@
 package org.sanmibuh.cqrs.infrastructure;
 
+import java.util.Arrays;
 import java.util.List;
-
 import java.util.Optional;
+
 import org.sanmibuh.cqrs.domain.CommandHandler;
 import org.sanmibuh.cqrs.domain.QueryHandler;
 import org.springframework.beans.BeansException;
@@ -46,16 +47,22 @@ class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor, BeanF
     scanner.addIncludeFilter(new AssignableTypeFilter(handlerType));
     packages.stream()
       .flatMap(basePackage -> scanner.findCandidateComponents(basePackage).stream())
-      .forEach(candidate -> registerBeanDefinition(registry, candidate));
+      .forEach(candidate -> registerIfAbsent(registry, candidate));
   }
 
-  private void registerBeanDefinition(final BeanDefinitionRegistry registry, final BeanDefinition candidate) {
+  private void registerIfAbsent(final BeanDefinitionRegistry registry, final BeanDefinition candidate) {
     findBeanClassNamePITEquivalent(candidate).ifPresent(beanClassName -> {
-      final var beanName = NAME_GENERATOR.generateBeanName(candidate, registry);
-      if (!registry.containsBeanDefinition(beanName)) {
+      if (!isClassRegistered(registry, beanClassName)) {
+        final var beanName = NAME_GENERATOR.generateBeanName(candidate, registry);
         registry.registerBeanDefinition(beanName, new RootBeanDefinition(beanClassName));
       }
     });
+  }
+
+  private boolean isClassRegistered(final BeanDefinitionRegistry registry, final String beanClassName) {
+    return Arrays.stream(registry.getBeanDefinitionNames())
+      .map(name -> registry.getBeanDefinition(name).getBeanClassName())
+      .anyMatch(beanClassName::equals);
   }
 
   private Optional<String> findBeanClassNamePITEquivalent(final BeanDefinition candidate) {
