@@ -4,6 +4,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 class CQRSAutoConfigurationTest {
 
@@ -11,7 +12,8 @@ class CQRSAutoConfigurationTest {
 
   @Test
   void should_returnRegistrar_whenCqrsHandlerRegistrarCalled() {
-    then(CQRSAutoConfiguration.cqrsHandlerRegistrar()).isInstanceOf(CQRSHandlerRegistrar.class);
+    then(CQRSAutoConfiguration.cqrsHandlerRegistrar(new DefaultListableBeanFactory()))
+      .isInstanceOf(CQRSHandlerRegistrar.class);
   }
 
   @Test

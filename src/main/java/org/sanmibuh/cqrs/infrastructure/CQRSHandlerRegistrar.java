@@ -8,7 +8,6 @@ import org.sanmibuh.cqrs.domain.CommandHandler;
 import org.sanmibuh.cqrs.domain.QueryHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.BeanFactoryAware;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
@@ -18,16 +17,15 @@ import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 
-class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor, BeanFactoryAware {
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor(
+  access = lombok.AccessLevel.PACKAGE)
+class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor {
 
   private static final AnnotationBeanNameGenerator NAME_GENERATOR = new AnnotationBeanNameGenerator();
 
-  private BeanFactory beanFactory;
-
-  @Override
-  public void setBeanFactory(final BeanFactory beanFactory) throws BeansException {
-    this.beanFactory = beanFactory;
-  }
+  private final BeanFactory beanFactory;
 
   @Override
   public void postProcessBeanDefinitionRegistry(final BeanDefinitionRegistry registry) throws BeansException {

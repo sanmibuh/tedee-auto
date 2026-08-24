@@ -23,8 +23,7 @@ class CQRSHandlerRegistrarTest {
   @Test
   void should_notRegisterAnyBean_whenAutoConfigurationPackagesNotPresent() {
     final var beanFactory = new DefaultListableBeanFactory();
-    final var registrar = new CQRSHandlerRegistrar();
-    registrar.setBeanFactory(beanFactory);
+    final var registrar = new CQRSHandlerRegistrar(beanFactory);
 
     registrar.postProcessBeanDefinitionRegistry(beanFactory);
 
@@ -53,8 +52,7 @@ class CQRSHandlerRegistrarTest {
       "stubComponentCommandHandler",
       new RootBeanDefinition(StubComponentCommandHandler.class));
 
-    final var registrar = new CQRSHandlerRegistrar();
-    registrar.setBeanFactory(beanFactory);
+    final var registrar = new CQRSHandlerRegistrar(beanFactory);
     registrar.postProcessBeanDefinitionRegistry(beanFactory);
 
     softly
@@ -72,8 +70,7 @@ class CQRSHandlerRegistrarTest {
       "myCustomHandlerName",
       new RootBeanDefinition(StubComponentCommandHandler.class));
 
-    final var registrar = new CQRSHandlerRegistrar();
-    registrar.setBeanFactory(beanFactory);
+    final var registrar = new CQRSHandlerRegistrar(beanFactory);
     registrar.postProcessBeanDefinitionRegistry(beanFactory);
 
     softly.then(beanFactory.getBeansOfType(StubComponentCommandHandler.class)).hasSize(1);
@@ -84,8 +81,7 @@ class CQRSHandlerRegistrarTest {
   private DefaultListableBeanFactory registrarAppliedTo(final String basePackage) {
     final var beanFactory = new DefaultListableBeanFactory();
     AutoConfigurationPackages.register(beanFactory, basePackage);
-    final var registrar = new CQRSHandlerRegistrar();
-    registrar.setBeanFactory(beanFactory);
+    final var registrar = new CQRSHandlerRegistrar(beanFactory);
     registrar.postProcessBeanDefinitionRegistry(beanFactory);
     return beanFactory;
   }
