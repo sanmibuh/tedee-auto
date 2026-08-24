@@ -52,6 +52,20 @@ class HandlerLookupTest {
 
   @Test
   @SuppressWarnings("unchecked")
+  void should_returnHandler_whenHandlerIsWrappedInJdkProxy() {
+    final var handler = new ConcreteStubHandler();
+    final var proxyFactory = new ProxyFactory(handler);
+    proxyFactory.setProxyTargetClass(false);
+    final var proxy = (StubHandler<StubMessage>) proxyFactory.getProxy();
+    final var lookup = new HandlerLookup<>(List.of(proxy), StubHandler.class);
+
+    final var found = lookup.find(StubMessage.class);
+
+    then(found).isSameAs(proxy);
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
   void should_returnHandler_whenHandlerIsWrappedInCglibProxy() {
     final var handler = new ConcreteStubHandler();
     final var proxyFactory = new ProxyFactory(handler);
