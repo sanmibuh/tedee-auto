@@ -8,7 +8,7 @@
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
     <version>4.1.0</version>
-    <relativePath />
+    <relativePath/>
   </parent>
 
   <groupId>org.sanmibuh.tedee</groupId>
@@ -69,8 +69,8 @@
             <eclipse>
               <file>config/eclipse-google-style.xml</file>
             </eclipse>
-            <trimTrailingWhitespace />
-            <endWithNewline />
+            <trimTrailingWhitespace/>
+            <endWithNewline/>
           </java>
         </configuration>
         <executions>
@@ -140,6 +140,9 @@
           <targetTests>
             <param>org.sanmibuh.*</param>
           </targetTests>
+          <excludedMethods>
+            <excludedMethod>*PITEquivalent</excludedMethod>
+          </excludedMethods>
           <timestampedReports>false</timestampedReports>
           <historyInputFile>${project.basedir}/.pit/history-input.bin</historyInputFile>
           <historyOutputFile>${project.basedir}/.pit/history-output.bin</historyOutputFile>
