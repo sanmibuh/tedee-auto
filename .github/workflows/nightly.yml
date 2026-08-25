@@ -43,7 +43,7 @@ jobs:
             done
           } > code_snapshot.txt
 
-      - name: Fetch open AI review issues
+      - name: Fetch AI review issues
         run: |
           gh api \
             "repos/${{ github.repository }}/issues?labels=ai-review&state=open&per_page=100" \
@@ -51,6 +51,13 @@ jobs:
             > open_issues.json
           echo "Open ai-review issues:"
           cat open_issues.json
+          gh api \
+            "repos/${{ github.repository }}/issues?labels=ai-review&state=closed&per_page=100" \
+            --jq '[.[] | select(.pull_request == null) | {number: .number, title: .title}]' \
+            > closed_issues.json \
+            || echo "[]" > closed_issues.json
+          echo "Closed ai-review issues:"
+          cat closed_issues.json
 
       - name: Run Gemini review
         if: env.GEMINI_API_KEY != ''
