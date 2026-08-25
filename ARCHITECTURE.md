@@ -48,6 +48,17 @@ Domain rule violations extend `DomainException` and are mapped globally to HTTP 
 
 ---
 
+## Static analysis
+
+The build runs **Error Prone** (via the `javac` plugin) and **NullAway** on every compilation:
+
+- **Error Prone** (`com.google.errorprone:error_prone_core`) — catches common Java bugs at compile time.
+- **NullAway** (`com.uber.nullaway:nullaway`) — enforces non-null contracts across all packages under `org.sanmibuh`. Any `@NonNull` field that is not initialized in the constructor (e.g., Spring lifecycle fields) must be annotated with `@SuppressWarnings("NullAway.Init")`.
+
+The required JVM flags for these tools (`--add-exports`/`--add-opens` on `jdk.compiler`) are declared in `.mvn/jvm.config` and apply automatically to all Maven goals.
+
+---
+
 ## Build & run
 
 ```bash

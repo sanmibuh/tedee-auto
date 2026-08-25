@@ -5,6 +5,7 @@ import org.sanmibuh.cqrs.domain.CommandBus;
 import org.sanmibuh.cqrs.domain.CommandHandler;
 import org.sanmibuh.cqrs.domain.QueryBus;
 import org.sanmibuh.cqrs.domain.QueryHandler;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -13,8 +14,8 @@ import org.springframework.context.annotation.Bean;
 public class CQRSAutoConfiguration {
 
   @Bean
-  static CQRSHandlerRegistrar cqrsHandlerRegistrar() {
-    return new CQRSHandlerRegistrar();
+  static CQRSHandlerRegistrar cqrsHandlerRegistrar(final BeanFactory beanFactory) {
+    return new CQRSHandlerRegistrar(beanFactory);
   }
 
   @Bean
