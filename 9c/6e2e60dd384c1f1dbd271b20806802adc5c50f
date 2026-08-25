@@ -1,0 +1,21 @@
+.github/scripts/gemini_review.py
+  s_ca8e4a6feefbcc::t_c7a52987c123dc 37-42,56-68,73
+.github/workflows/nightly.yml
+  s_ca8e4a6feefbcc::t_d740cc3b64f87d 54-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "9c6e2e60dd384c1f1dbd271b20806802adc5c50f",
+  "prompts": {},
+  "sessions": {
+    "s_ca8e4a6feefbcc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fc85dacacffesa2KpMLME20b6g",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
