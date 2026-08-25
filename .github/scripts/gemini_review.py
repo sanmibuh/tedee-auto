@@ -34,6 +34,12 @@ with open("code_snapshot.txt") as f:
 with open("open_issues.json") as f:
   open_issues = json.load(f)
 
+try:
+  with open("closed_issues.json") as f:
+    closed_issues = json.load(f)
+except FileNotFoundError:
+  closed_issues = []
+
 if open_issues:
   open_issues_text = "\n".join(
       f"- #{i['number']}: {i['title']}\n  {(i['body'] or '')[:300]}"
@@ -47,11 +53,24 @@ if open_issues:
 else:
   open_issues_section = ""
 
+if closed_issues:
+  closed_issues_text = "\n".join(
+      f"- #{i['number']}: {i['title']}"
+      for i in closed_issues
+  )
+  closed_issues_section = (
+      "\nALREADY REVIEWED AND DISMISSED (closed issues — these were intentional or not applicable, do NOT re-report them):\n"
+      + closed_issues_text
+      + "\n"
+  )
+else:
+  closed_issues_section = ""
+
 prompt = f"""You are a senior software engineer performing a nightly automated code review.
 The project guidelines and quality standards are defined in AGENTS.md (included below).
 The architecture is described in ARCHITECTURE.md (included below).
 Use both as the reference for this review — do not apply standards from outside these documents.
-{open_issues_section}
+{open_issues_section}{closed_issues_section}
 Analyze the codebase and identify concrete, actionable findings across these areas:
 - Clean Code & Best Practices (naming, dead code, DRY, method size, magic values)
 - Test Quality / TDD (behavior testing, naming convention, BDDAssertions, missing cases)

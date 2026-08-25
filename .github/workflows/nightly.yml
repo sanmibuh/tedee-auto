@@ -51,6 +51,12 @@ jobs:
             > open_issues.json
           echo "Open ai-review issues:"
           cat open_issues.json
+          gh api \
+            "repos/${{ github.repository }}/issues?labels=ai-review&state=closed&per_page=100" \
+            --jq '[.[] | select(.pull_request == null) | {number: .number, title: .title, body: .body}]' \
+            > closed_issues.json
+          echo "Closed ai-review issues:"
+          cat closed_issues.json
 
       - name: Run Gemini review
         if: env.GEMINI_API_KEY != ''
