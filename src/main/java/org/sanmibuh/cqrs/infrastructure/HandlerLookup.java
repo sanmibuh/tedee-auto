@@ -1,9 +1,8 @@
 package org.sanmibuh.cqrs.infrastructure;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.core.GenericTypeResolver;
@@ -13,16 +12,15 @@ class HandlerLookup<H> {
   private final Map<Class<?>, H> index;
 
   HandlerLookup(final List<H> handlers, final Class<?> handlerInterface) {
-    index = handlers.stream()
-      .collect(
-        Collectors.toMap(
-          h -> resolveMessageType(AopUtils.getTargetClass(h), handlerInterface),
-          Function.identity(),
-          (a, b) -> {
-            throw new IllegalArgumentException(
-              "Duplicate handlers for message type: "
-                + resolveMessageType(AopUtils.getTargetClass(a), handlerInterface).getName());
-          }));
+    final Map<Class<?>, H> map = new HashMap<>();
+    for (final var handler : handlers) {
+      final var messageType = resolveMessageType(AopUtils.getTargetClass(handler), handlerInterface);
+      final var existing = map.put(messageType, handler);
+      if (existing != null) {
+        throw new IllegalArgumentException("Duplicate handlers for message type: " + messageType.getName());
+      }
+    }
+    this.index = Map.copyOf(map);
   }
 
   private static Class<?> resolveMessageType(final Class<?> handlerClass, final Class<?> handlerInterface) {

@@ -33,6 +33,7 @@ jobs:
         with:
           distribution: temurin
           java-version: 25
+          cache: maven
 
       - name: Qodana Scan
         uses: JetBrains/qodana-action@v2026.1
