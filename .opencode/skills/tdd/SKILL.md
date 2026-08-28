@@ -41,7 +41,7 @@ Work in the **smallest possible steps**. Each mini-step must be **independently 
 2. **Always run `./mvnw spotless:apply` before running the tests.** Never try to apply formatting rules manually from the XML config — the linter is the source of truth.
 3. Run the full test suite and confirm **all tests pass**.
 4. Run `make format` to auto-format the code.
-4. **STOP.** Suggest a commit message and wait:
+5. **STOP.** Suggest a commit message and wait:
 
    > **Suggested commit:** `feat: <describe the behavior implemented>`
    >

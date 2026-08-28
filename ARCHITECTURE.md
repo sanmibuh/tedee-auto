@@ -4,8 +4,7 @@
 
 `tedee-automation` is a Spring Boot backend that automates a Tedee smart lock.
 
-Built as a **GraalVM Native Image**, shipped as a Docker container via GitHub Container Registry
-(`ghcr.io/sanmibuh/tedee-auto/tedee-automation`).
+Built as a **GraalVM Native Image**, shipped as a Docker container via GitHub Container Registry (`ghcr.io/sanmibuh/tedee-auto/tedee-automation`).
 
 ---
 

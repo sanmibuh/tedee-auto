@@ -51,6 +51,7 @@ These standards apply to all code in this project and are the basis for any code
 ### Documentation
 - `ARCHITECTURE.md` must always reflect the current state of the project.
 - Update it when a module or package is added, renamed, or removed, when a key design decision changes, or when a new workflow or release mechanism is introduced.
+- Do not hard-wrap Markdown prose. Write one paragraph per line and let editors and renderers soft-wrap it; this keeps diffs and `git blame` clean. The 120-char limit applies to code, not to `.md` text.
 
 ---
 
