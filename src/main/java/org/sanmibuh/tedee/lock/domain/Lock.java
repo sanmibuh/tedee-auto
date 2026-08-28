@@ -24,6 +24,9 @@ public class Lock extends AggregateRoot {
     if (status == LockStatus.LOCKED) {
       return;
     }
+    if (status != LockStatus.UNLOCKED) {
+      throw new LockNotOperableException(id, status);
+    }
     status = LockStatus.LOCKED;
     recordEvent(new LockLocked(id));
   }
