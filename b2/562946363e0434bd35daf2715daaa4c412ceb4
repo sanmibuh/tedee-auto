@@ -1,0 +1,18 @@
+src/main/java/org/sanmibuh/ddd/domain/AggregateRoot.java
+  h_97a91c9e567f87 1-18
+src/main/java/org/sanmibuh/ddd/domain/DomainEvent.java
+  h_97a91c9e567f87 1-3
+src/test/java/org/sanmibuh/ddd/domain/AggregateRootTest.java
+  h_97a91c9e567f87 1-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "b2562946363e0434bd35daf2715daaa4c412ceb4",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
