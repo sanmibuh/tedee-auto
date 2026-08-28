@@ -12,8 +12,10 @@ Built as a **GraalVM Native Image**, shipped as a Docker container via GitHub Co
 ## Shared libraries
 
 ### `org.sanmibuh.ddd`
-Base abstractions for DDD:
-- `DomainException` — base `RuntimeException` for all domain rule violations. Subclasses are mapped automatically to HTTP 400 by `GlobalExceptionHandler`.
+Base abstractions for DDD. Three exception categories model the possible outcomes of a failed operation, and `GlobalExceptionHandler` maps each to an HTTP status:
+- `DomainException` — a business rule was violated (the request is invalid). Mapped to HTTP 400.
+- `IntegrationException` — an external dependency failed in a way that is not the caller's fault. Mapped to HTTP 500.
+- `TransientIntegrationException` (extends `IntegrationException`) — an external dependency is temporarily unavailable and the operation may succeed if retried. Mapped to HTTP 503.
 
 ### `org.sanmibuh.cqrs`
 CQRS building blocks.
@@ -44,7 +46,7 @@ Rules enforced at build time by ArchUnit:
 - `domain` must not depend on Spring or `infrastructure`
 - Cross-aggregate coupling at infrastructure level is forbidden (not yet enforced by ArchUnit — rule will be added once multiple aggregates with `infrastructure` sub-packages exist)
 
-Domain rule violations extend `DomainException` and are mapped globally to HTTP 400 by `GlobalExceptionHandler` (extends `ResponseEntityExceptionHandler`).
+Failures are modelled with the three `ddd` exception categories (`DomainException` → 400, `IntegrationException` → 500, `TransientIntegrationException` → 503) and mapped globally by `GlobalExceptionHandler` (extends `ResponseEntityExceptionHandler`). Spring resolves the most-specific `@ExceptionHandler`, so a transient failure yields 503 rather than 500.
 
 ---
 
@@ -55,20 +57,18 @@ Automates operations against a physical Tedee lock exposed through a **Tedee Bri
 **`domain`** — pure business logic:
 - `LockId` — value object wrapping the device id, with a guard clause (`deviceId > 0`).
 - `LockPort` — secondary (output) port the domain depends on; decoupled from any HTTP or generated-client type.
-- Domain exceptions (all extend `DomainException`, mapped to HTTP 400):
-  - `InvalidLockIdException` — invalid `LockId` construction.
-  - `InvalidApiTokenException` — bridge rejected the API token (HTTP 401).
-  - `LockNotFoundException` — device unknown to the bridge (HTTP 404).
-  - `LockDisconnectedException` — device disconnected (HTTP 405).
-  - `LockBleErrorException` — Bluetooth error reaching the device (HTTP 406).
-  - `UnexpectedBridgeErrorException` — any other bridge error; wraps the original cause so no infrastructure exception ever leaks into the domain.
+- Exceptions, each modelling an outcome rather than a specific bridge cause. All bridge-translated exceptions wrap the original `HttpClientErrorException` as their cause, so no infrastructure exception ever leaks into the domain:
+  - `InvalidLockIdException` (extends `DomainException`, → 400) — invalid `LockId` construction.
+  - `InvalidLockRequestException` (extends `DomainException`, → 400) — the bridge rejected the request as invalid (bridge HTTP 404, device unknown).
+  - `LockOperationFailedException` (extends `IntegrationException`, → 500) — the bridge failed to perform the operation for a non-recoverable reason (bridge HTTP 401 and any other unmapped error).
+  - `LockTemporarilyUnavailableException` (extends `TransientIntegrationException`, → 503) — the lock is momentarily unreachable and the operation may succeed if retried (bridge HTTP 405 disconnected, 406 Bluetooth error).
 
 **`application`** — commands and handlers:
 - `CloseLockCommand` — carries the primitive `int deviceId`.
 - `CloseLockHandler` — builds the `LockId` and delegates to `LockPort`.
 
 **`infrastructure`** — Tedee Bridge secondary adapter:
-- `TedeeApiAdapter` — implements `LockPort`. Delegates to the generated `LockApi` (`POST /v1.0/lock/{deviceId}/lock`, expects `204`) and translates HTTP error statuses into domain exceptions via `toDomainException(...)`.
+- `TedeeApiAdapter` — implements `LockPort`. Delegates to the generated `LockApi` (`POST /v1.0/lock/{deviceId}/lock`, expects `204`) and translates HTTP error statuses into the `ddd` exception categories via `toDomainException(...)`.
 - `TedeeClientConfiguration` — wires the generated `ApiClient`/`LockApi` from an injected `RestClient.Builder`, setting the base URL and the `api_token` API key.
 - `TedeeProperties` — `@ConfigurationProperties(prefix = "sanmibuh.rest.tedee")` holding `baseUrl` and `apiKey`.
 
