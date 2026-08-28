@@ -1,0 +1,18 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/LockPort.java
+  h_97a91c9e567f87 5-8
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/TedeeApiAdapter.java
+  h_97a91c9e567f87 6,22-31
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  h_97a91c9e567f87 3-4,12,15,25-28,30,32-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "8a845ad26dbaf9210b54add9f00eee885f885757",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
