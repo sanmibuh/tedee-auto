@@ -1,0 +1,16 @@
+WIP.md
+  h_97a91c9e567f87 15-21,24-27,43-46,52-54,57-58
+pom.xml
+  h_97a91c9e567f87 30,50-60,129-159
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "18ed0abd37c38f6503b3372fb7a2818cfce462fa",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
