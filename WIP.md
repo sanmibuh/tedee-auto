@@ -1,20 +1,20 @@
 # WIP — Issue #42 / PR #98 review comment #5 (Lock aggregate)
 
 Resolving PR #98 review comment #5: introduce a real `Lock` aggregate so the
-domain drives the action (find → close → save), instead of the handler calling
+domain drives the action (find → lock → save), instead of the handler calling
 an RPC-style port. Repository-style port chosen (`findById` + `save`).
 
 ## Design (approved)
 
 - **Domain**
   - `LockStatus` enum (domain vocabulary): `LOCKED`, `UNLOCKED`, `TRANSITIONING`, `UNKNOWN`.
-  - `Lock` aggregate root: `LockId id`, `LockStatus status`, behavior `close()`:
+  - `Lock` aggregate root: `LockId id`, `LockStatus status`, behavior `lock()`:
     - already `LOCKED` → idempotent (no command).
     - `TRANSITIONING` / `UNKNOWN` → `LockNotOperableException` (DomainException).
     - `UNLOCKED` → command transition to `LOCKED`.
   - `LockPort`: `Lock findById(LockId)` + `void save(Lock)`.
 - **Application**
-  - `CloseLockHandler`: `var lock = lockPort.findById(id); lock.close(); lockPort.save(lock);`
+  - `CloseLockHandler`: `var lock = lockPort.findById(id); lock.lock(); lockPort.save(lock);`
 - **Infra (`TedeeApiAdapter`)**
   - `findById` → `getLockById` → map device `state` code → `LockStatus` → build `Lock`.
   - `save` → if the lock has a commanded transition to `LOCKED`, call `postLock`; else no-op.
@@ -23,9 +23,9 @@ an RPC-style port. Repository-style port chosen (`findById` + `save`).
 ## Plan (TDD mini-steps)
 
 1. ~~Align issue #42 naming (comment #4)~~ **done**.
-2. `LockStatus` enum + `Lock.close()` UNLOCKED→LOCKED (RED/GREEN).
-3. `Lock.close()` idempotent when already LOCKED.
-4. `Lock.close()` rejects TRANSITIONING / UNKNOWN → `LockNotOperableException`.
+2. `LockStatus` enum + `Lock.lock()` UNLOCKED→LOCKED (RED/GREEN).
+3. `Lock.lock()` idempotent when already LOCKED.
+4. `Lock.lock()` rejects TRANSITIONING / UNKNOWN → `LockNotOperableException`.
 5. `Lock` exposes commanded-lock intent for the adapter.
 6. `LockPort` → `findById` + `save`; update `CloseLockHandler` (find→close→save).
 7. `TedeeApiAdapter.findById` mapping (getLockById → Lock).

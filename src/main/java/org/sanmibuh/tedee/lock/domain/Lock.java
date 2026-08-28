@@ -18,7 +18,7 @@ public class Lock {
     return status;
   }
 
-  public void close() {
-    throw new UnsupportedOperationException();
+  public void lock() {
+    status = LockStatus.LOCKED;
   }
 }
