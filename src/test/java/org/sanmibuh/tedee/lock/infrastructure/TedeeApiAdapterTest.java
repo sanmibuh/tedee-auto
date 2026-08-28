@@ -10,6 +10,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.tedee.lock.domain.InvalidApiTokenException;
 import org.sanmibuh.tedee.lock.domain.LockId;
+import org.sanmibuh.tedee.lock.domain.LockNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.context.annotation.Import;
@@ -63,5 +64,15 @@ class TedeeApiAdapterTest {
         .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
 
     thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(InvalidApiTokenException.class);
+  }
+
+  @Test
+  void should_throwLockNotFound_whenBridgeRespondsNotFound() {
+    server
+        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+    thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(LockNotFoundException.class);
   }
 }
