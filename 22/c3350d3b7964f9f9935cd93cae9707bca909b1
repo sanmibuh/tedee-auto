@@ -1,0 +1,16 @@
+src/test/java/org/sanmibuh/tedee/automation/configuration/GlobalExceptionHandlerTest.java
+  h_97a91c9e567f87 24,26,80-81
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/TedeeApiAdapterTest.java
+  h_97a91c9e567f87 33-34,38-42,61,65,73-74,77,87,91,97,101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "22c3350d3b7964f9f9935cd93cae9707bca909b1",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
