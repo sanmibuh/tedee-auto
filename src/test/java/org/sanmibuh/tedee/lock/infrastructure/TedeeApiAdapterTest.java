@@ -15,8 +15,10 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.sanmibuh.tedee.lock.domain.InvalidLockRequestException;
+import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockOperationFailedException;
+import org.sanmibuh.tedee.lock.domain.LockStatus;
 import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
@@ -56,25 +58,25 @@ class TedeeApiAdapterTest {
   }
 
   @Test
-  void should_postToLockEndpoint_whenLockingDevice() {
+  void should_postToLockEndpoint_whenSavingLockedLock() {
     server
         .expect(requestTo(LOCK_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withNoContent());
 
-    sut.lock(new LockId(DEVICE_ID));
+    sut.save(lockedLock());
 
     server.verify();
   }
 
   @Test
-  void should_sendApiToken_whenLockingDevice() {
+  void should_sendApiToken_whenSavingLockedLock() {
     server
         .expect(requestTo(LOCK_URL))
         .andExpect(header("api_token", API_KEY))
         .andRespond(withNoContent());
 
-    sut.lock(new LockId(DEVICE_ID));
+    sut.save(lockedLock());
 
     server.verify();
   }
@@ -88,7 +90,7 @@ class TedeeApiAdapterTest {
         .andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(status));
 
-    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID))).isInstanceOf(expectedException);
+    thenThrownBy(() -> sut.save(lockedLock())).isInstanceOf(expectedException);
   }
 
   @Test
@@ -98,7 +100,13 @@ class TedeeApiAdapterTest {
         .andExpect(method(HttpMethod.POST))
         .andRespond(withException(new IOException("bridge unreachable")));
 
-    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
+    thenThrownBy(() -> sut.save(lockedLock()))
         .isInstanceOf(LockTemporarilyUnavailableException.class);
+  }
+
+  private static Lock lockedLock() {
+    final var lock = new Lock(new LockId(DEVICE_ID), LockStatus.UNLOCKED);
+    lock.lock();
+    return lock;
   }
 }

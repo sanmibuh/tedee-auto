@@ -3,9 +3,11 @@ package org.sanmibuh.tedee.lock.infrastructure;
 import com.tedee.bridge.client.api.LockApi;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.sanmibuh.ddd.domain.DomainEvent;
 import org.sanmibuh.tedee.lock.domain.InvalidLockRequestException;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
+import org.sanmibuh.tedee.lock.domain.LockLocked;
 import org.sanmibuh.tedee.lock.domain.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.LockPort;
 import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
@@ -27,11 +29,16 @@ public class TedeeApiAdapter implements LockPort {
 
   @Override
   public void save(final Lock lock) {
-    throw new UnsupportedOperationException();
+    lock.domainEvents().forEach(event -> apply(event, lock.id()));
   }
 
-  @Override
-  public void lock(final LockId lockId) {
+  private void apply(final DomainEvent event, final LockId lockId) {
+    if (event instanceof LockLocked) {
+      lock(lockId);
+    }
+  }
+
+  private void lock(final LockId lockId) {
     try {
       lockApi.postLock(lockId.deviceId());
     } catch (final RestClientResponseException exception) {
