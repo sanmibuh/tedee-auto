@@ -21,6 +21,9 @@ public class Lock extends AggregateRoot {
   }
 
   public void lock() {
+    if (status == LockStatus.LOCKED) {
+      return;
+    }
     status = LockStatus.LOCKED;
     recordEvent(new LockLocked(id));
   }
