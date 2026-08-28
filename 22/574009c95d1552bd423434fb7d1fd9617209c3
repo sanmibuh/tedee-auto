@@ -1,0 +1,18 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/TedeeProperties.java
+  h_97a91c9e567f87 6
+src/main/resources/application.yml
+  h_97a91c9e567f87 8-9
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/TedeeApiAdapterTest.java
+  h_97a91c9e567f87 3,19-23,41-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "22574009c95d1552bd423434fb7d1fd9617209c3",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
