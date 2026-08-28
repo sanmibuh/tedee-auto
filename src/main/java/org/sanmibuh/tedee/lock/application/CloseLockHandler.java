@@ -12,6 +12,8 @@ public class CloseLockHandler implements CommandHandler<CloseLockCommand> {
 
   @Override
   public void handle(final CloseLockCommand command) {
-    lockPort.lock(new LockId(command.deviceId()));
+    final var lock = lockPort.findById(new LockId(command.deviceId()));
+    lock.lock();
+    lockPort.save(lock);
   }
 }
