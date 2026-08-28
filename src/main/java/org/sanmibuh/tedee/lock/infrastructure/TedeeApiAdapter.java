@@ -21,13 +21,16 @@ public class TedeeApiAdapter implements LockPort {
     try {
       lockApi.postLock(lockId.deviceId());
     } catch (final HttpClientErrorException exception) {
-      if (exception.getStatusCode() == HttpStatus.UNAUTHORIZED) {
-        throw new InvalidApiTokenException();
-      }
-      if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
-        throw new LockNotFoundException(lockId.deviceId());
-      }
-      throw exception;
+      throw toDomainException(exception, lockId);
     }
+  }
+
+  private RuntimeException toDomainException(
+      final HttpClientErrorException exception, final LockId lockId) {
+    return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
+      case UNAUTHORIZED -> new InvalidApiTokenException();
+      case NOT_FOUND -> new LockNotFoundException(lockId.deviceId());
+      case null, default -> exception;
+    };
   }
 }
