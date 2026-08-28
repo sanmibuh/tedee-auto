@@ -16,6 +16,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
 import org.sanmibuh.ddd.domain.DomainException;
+import org.sanmibuh.ddd.domain.IntegrationException;
+import org.sanmibuh.ddd.domain.TransientIntegrationException;
 import org.sanmibuh.tedee.TedeeAutomationApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -40,6 +42,22 @@ class GlobalExceptionHandlerTest {
 
     softly.then(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     softly.then(response.body()).contains("domain rule violated");
+  }
+
+  @Test
+  @SneakyThrows
+  void should_returnServiceUnavailable_whenTransientIntegrationExceptionIsThrown() {
+    final var response = get("/test/transient-integration-exception");
+
+    then(response.statusCode()).isEqualTo(HttpStatus.SERVICE_UNAVAILABLE.value());
+  }
+
+  @Test
+  @SneakyThrows
+  void should_returnInternalServerError_whenIntegrationExceptionIsThrown() {
+    final var response = get("/test/integration-exception");
+
+    then(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
   }
 
   @Test
@@ -80,6 +98,16 @@ class GlobalExceptionHandlerTest {
       throw new StubDomainException();
     }
 
+    @GetMapping("/test/transient-integration-exception")
+    void throwTransientIntegrationException() {
+      throw new StubTransientIntegrationException();
+    }
+
+    @GetMapping("/test/integration-exception")
+    void throwIntegrationException() {
+      throw new StubIntegrationException();
+    }
+
     @GetMapping("/test/handler-not-found")
     void throwHandlerNotFoundException() {
       throw new HandlerNotFoundException(String.class);
@@ -96,6 +124,24 @@ class GlobalExceptionHandlerTest {
 
       StubDomainException() {
         super("domain rule violated");
+      }
+    }
+
+    static class StubIntegrationException extends IntegrationException {
+
+      @Serial private static final long serialVersionUID = 1L;
+
+      StubIntegrationException() {
+        super("integration failed");
+      }
+    }
+
+    static class StubTransientIntegrationException extends TransientIntegrationException {
+
+      @Serial private static final long serialVersionUID = 1L;
+
+      StubTransientIntegrationException() {
+        super("integration temporarily unavailable");
       }
     }
 
