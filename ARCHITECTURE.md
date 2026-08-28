@@ -12,8 +12,15 @@ Built as a **GraalVM Native Image**, shipped as a Docker container via GitHub Co
 ## Shared libraries
 
 ### `org.sanmibuh.ddd`
-Base abstractions for DDD. Three exception categories model the possible outcomes of a failed operation, and `GlobalExceptionHandler` maps each to an HTTP status:
+Base abstractions for DDD.
+
+**Aggregate modelling:**
+- `AggregateRoot` — base class for aggregate roots. Records domain events via the protected `recordEvent(DomainEvent)` and exposes them through the read-only `domainEvents()` (an unmodifiable list). Secondary adapters read these events to decide what to persist.
+- `DomainEvent` — marker interface for domain events (business facts recorded by an aggregate, e.g. `LockLocked`).
+
+**Exceptions** — categories model the possible outcomes of a failed operation, and `GlobalExceptionHandler` maps each to an HTTP status:
 - `DomainException` — a business rule was violated (the request is invalid). Mapped to HTTP 400.
+- `AggregateNotFoundException` (extends `DomainException`) — a requested aggregate does not exist. Mapped to HTTP 404 (a more-specific handler than the generic `DomainException` → 400).
 - `IntegrationException` — an external dependency failed in a way that is not the caller's fault. Mapped to HTTP 500.
 - `TransientIntegrationException` (extends `IntegrationException`) — an external dependency is temporarily unavailable and the operation may succeed if retried. Mapped to HTTP 503.
 
@@ -46,7 +53,7 @@ Rules enforced at build time by ArchUnit:
 - `domain` must not depend on Spring or `infrastructure`
 - Cross-aggregate coupling at infrastructure level is forbidden (not yet enforced by ArchUnit — rule will be added once multiple aggregates with `infrastructure` sub-packages exist)
 
-Failures are modelled with the three `ddd` exception categories (`DomainException` → 400, `IntegrationException` → 500, `TransientIntegrationException` → 503) and mapped globally by `GlobalExceptionHandler` (extends `ResponseEntityExceptionHandler`). Spring resolves the most-specific `@ExceptionHandler`, so a transient failure yields 503 rather than 500.
+Failures are modelled with the `ddd` exception categories (`DomainException` → 400, `AggregateNotFoundException` → 404, `IntegrationException` → 500, `TransientIntegrationException` → 503) and mapped globally by `GlobalExceptionHandler` (extends `ResponseEntityExceptionHandler`). Spring resolves the most-specific `@ExceptionHandler`, so a transient failure yields 503 rather than 500, and a missing aggregate yields 404 rather than 400.
 
 ---
 
@@ -55,8 +62,11 @@ Failures are modelled with the three `ddd` exception categories (`DomainExceptio
 Automates operations against a physical Tedee lock exposed through a **Tedee Bridge** on the local network.
 
 **`domain`** — pure business logic:
+- `Lock` — aggregate root (`extends AggregateRoot`) holding a `LockId` and a mutable `LockStatus`. `lock()` is idempotent: when the lock is not already `LOCKED` it transitions to `LOCKED` and records a `LockLocked` domain event; when already `LOCKED` it does nothing. The lock is treated as authoritative — the aggregate never rejects the operation on a safety invariant; a bridge that refuses surfaces as an infrastructure exception.
+- `LockStatus` — enum (`LOCKED`, `UNLOCKED`). `UNLOCKED` means "not confirmed locked"; the mapping from the bridge's richer device `state` is the adapter's responsibility.
+- `LockLocked` — domain event (`record LockLocked(LockId lockId)`) recorded when a lock transitions to `LOCKED`.
 - `LockId` — value object wrapping the device id, with a guard clause (`deviceId > 0`).
-- `LockPort` — secondary (output) port the domain depends on; decoupled from any HTTP or generated-client type.
+- `LockPort` — secondary (output) port, repository-style: `Optional<Lock> findById(LockId)` and `save(Lock)`. Decoupled from any HTTP or generated-client type. Absence is reported as an empty `Optional` (infrastructure never decides the not-found policy).
 - Exceptions, each modelling an outcome rather than a specific bridge cause. Every bridge-translated exception wraps the original `RestClientException` as its cause, so no infrastructure exception ever leaks into the domain:
   - `InvalidLockIdException` (extends `DomainException`, → 400) — invalid `LockId` construction.
   - `InvalidLockRequestException` (extends `DomainException`, → 400) — the bridge rejected the request as invalid (bridge HTTP 404, device unknown).
@@ -65,10 +75,10 @@ Automates operations against a physical Tedee lock exposed through a **Tedee Bri
 
 **`application`** — commands and handlers:
 - `CloseLockCommand` — carries the primitive `int deviceId`.
-- `CloseLockHandler` — builds the `LockId` and delegates to `LockPort`.
+- `CloseLockHandler` — `find → mutate → save`: loads the `Lock` via `LockPort.findById`, throwing `AggregateNotFoundException` (→ 404) when absent, calls `lock()` on the aggregate, and persists it via `LockPort.save`. The not-found policy lives in the application layer, not in the adapter.
 
 **`infrastructure`** — Tedee Bridge secondary adapter:
-- `TedeeApiAdapter` — implements `LockPort`. Delegates to the generated `LockApi` (`POST /v1.0/lock/{deviceId}/lock`, expects `204`) and translates every `RestClientException` (HTTP error responses via status, and connectivity failures) into the `ddd` exception categories, so no `RestClient` exception escapes the port. Unexpected non-`RestClientException` errors are left to propagate to the global handler as `500`.
+- `TedeeApiAdapter` — implements `LockPort`. `save(Lock)` reacts to the aggregate's recorded domain events: it iterates `domainEvents()` and translates each `LockLocked` into a `POST /v1.0/lock/{deviceId}/lock` (expects `204`) on the generated `LockApi`, translating every `RestClientException` (HTTP error responses via status, and connectivity failures) into the `ddd` exception categories, so no `RestClient` exception escapes the port. Unexpected non-`RestClientException` errors are left to propagate to the global handler as `500`. `findById` is currently a **placeholder** returning an `UNLOCKED` `Lock`; its real implementation (reading `GET /lock/{deviceId}` and mapping the device `state` to `LockStatus`, with bridge 404 → empty `Optional`) is deferred.
 - `TedeeClientConfiguration` — wires the generated `ApiClient`/`LockApi` from an injected `RestClient.Builder`, setting the base URL and the `api_token` API key.
 - `TedeeProperties` — `@ConfigurationProperties(prefix = "sanmibuh.rest.tedee")` holding `baseUrl` and `apiKey`. Both are sourced from the mandatory `TEDEE_HOST` and `TEDEE_API_KEY` environment variables (`base-url: http://${TEDEE_HOST}/v1.0`, `api-key: ${TEDEE_API_KEY}`); neither has a default, so the application **fails fast at startup** if either is unset rather than issuing requests against an invalid URL or without credentials.
 

@@ -52,7 +52,8 @@ class GlobalExceptionHandlerTest {
   void should_returnNotFound_whenAggregateNotFoundExceptionIsThrown() {
     final var response = get("/test/aggregate-not-found");
 
-    then(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    softly.then(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
+    softly.then(response.body()).contains("Object not found: 1");
   }
 
   @Test
