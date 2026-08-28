@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
 import org.sanmibuh.ddd.domain.DomainException;
-import org.sanmibuh.tedee.automation.TedeeAutomationApplication;
+import org.sanmibuh.tedee.TedeeAutomationApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpStatus;
