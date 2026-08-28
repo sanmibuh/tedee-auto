@@ -9,7 +9,8 @@ import org.sanmibuh.tedee.lock.domain.LockPort;
 import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.HttpClientErrorException;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 
 @Component
 @RequiredArgsConstructor
@@ -21,13 +22,15 @@ public class TedeeApiAdapter implements LockPort {
   public void lock(final LockId lockId) {
     try {
       lockApi.postLock(lockId.deviceId());
-    } catch (final HttpClientErrorException exception) {
+    } catch (final RestClientResponseException exception) {
       throw toDomainException(exception, lockId);
+    } catch (final RestClientException exception) {
+      throw new LockTemporarilyUnavailableException(lockId.deviceId(), exception);
     }
   }
 
   private RuntimeException toDomainException(
-      final HttpClientErrorException exception, final LockId lockId) {
+      final RestClientResponseException exception, final LockId lockId) {
     return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
       case NOT_FOUND -> new InvalidLockRequestException(lockId.deviceId(), exception);
       case METHOD_NOT_ALLOWED, NOT_ACCEPTABLE ->

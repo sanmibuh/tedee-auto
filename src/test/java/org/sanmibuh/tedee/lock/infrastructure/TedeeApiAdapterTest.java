@@ -4,9 +4,11 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withException;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
+import java.io.IOException;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -43,7 +45,9 @@ class TedeeApiAdapterTest {
         Arguments.of(HttpStatus.UNAUTHORIZED, LockOperationFailedException.class),
         Arguments.of(HttpStatus.BAD_REQUEST, LockOperationFailedException.class),
         Arguments.of(HttpStatus.METHOD_NOT_ALLOWED, LockTemporarilyUnavailableException.class),
-        Arguments.of(HttpStatus.NOT_ACCEPTABLE, LockTemporarilyUnavailableException.class));
+        Arguments.of(HttpStatus.NOT_ACCEPTABLE, LockTemporarilyUnavailableException.class),
+        Arguments.of(HttpStatus.INTERNAL_SERVER_ERROR, LockOperationFailedException.class),
+        Arguments.of(HttpStatus.SERVICE_UNAVAILABLE, LockOperationFailedException.class));
   }
 
   @Test
@@ -80,5 +84,16 @@ class TedeeApiAdapterTest {
         .andRespond(withStatus(status));
 
     thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(expectedException);
+  }
+
+  @Test
+  void should_throwLockTemporarilyUnavailable_whenBridgeIsUnreachable() {
+    server
+        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withException(new IOException("bridge unreachable")));
+
+    thenThrownBy(() -> sut.lock(new LockId(42)))
+        .isInstanceOf(LockTemporarilyUnavailableException.class);
   }
 }

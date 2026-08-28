@@ -57,18 +57,18 @@ Automates operations against a physical Tedee lock exposed through a **Tedee Bri
 **`domain`** — pure business logic:
 - `LockId` — value object wrapping the device id, with a guard clause (`deviceId > 0`).
 - `LockPort` — secondary (output) port the domain depends on; decoupled from any HTTP or generated-client type.
-- Exceptions, each modelling an outcome rather than a specific bridge cause. All bridge-translated exceptions wrap the original `HttpClientErrorException` as their cause, so no infrastructure exception ever leaks into the domain:
+- Exceptions, each modelling an outcome rather than a specific bridge cause. Every bridge-translated exception wraps the original `RestClientException` as its cause, so no infrastructure exception ever leaks into the domain:
   - `InvalidLockIdException` (extends `DomainException`, → 400) — invalid `LockId` construction.
   - `InvalidLockRequestException` (extends `DomainException`, → 400) — the bridge rejected the request as invalid (bridge HTTP 404, device unknown).
-  - `LockOperationFailedException` (extends `IntegrationException`, → 500) — the bridge failed to perform the operation for a non-recoverable reason (bridge HTTP 401 and any other unmapped error).
-  - `LockTemporarilyUnavailableException` (extends `TransientIntegrationException`, → 503) — the lock is momentarily unreachable and the operation may succeed if retried (bridge HTTP 405 disconnected, 406 Bluetooth error).
+  - `LockOperationFailedException` (extends `IntegrationException`, → 500) — the bridge failed to perform the operation for a non-recoverable reason (bridge HTTP 401, any 5xx, and any other unmapped status).
+  - `LockTemporarilyUnavailableException` (extends `TransientIntegrationException`, → 503) — the lock is momentarily unreachable and the operation may succeed if retried (bridge HTTP 405 disconnected, 406 Bluetooth error, or a connectivity failure such as connection refused / timeout).
 
 **`application`** — commands and handlers:
 - `CloseLockCommand` — carries the primitive `int deviceId`.
 - `CloseLockHandler` — builds the `LockId` and delegates to `LockPort`.
 
 **`infrastructure`** — Tedee Bridge secondary adapter:
-- `TedeeApiAdapter` — implements `LockPort`. Delegates to the generated `LockApi` (`POST /v1.0/lock/{deviceId}/lock`, expects `204`) and translates HTTP error statuses into the `ddd` exception categories via `toDomainException(...)`.
+- `TedeeApiAdapter` — implements `LockPort`. Delegates to the generated `LockApi` (`POST /v1.0/lock/{deviceId}/lock`, expects `204`) and translates every `RestClientException` (HTTP error responses via status, and connectivity failures) into the `ddd` exception categories, so no `RestClient` exception escapes the port. Unexpected non-`RestClientException` errors are left to propagate to the global handler as `500`.
 - `TedeeClientConfiguration` — wires the generated `ApiClient`/`LockApi` from an injected `RestClient.Builder`, setting the base URL and the `api_token` API key.
 - `TedeeProperties` — `@ConfigurationProperties(prefix = "sanmibuh.rest.tedee")` holding `baseUrl` and `apiKey`. Both are sourced from the mandatory `TEDEE_HOST` and `TEDEE_API_KEY` environment variables (`base-url: http://${TEDEE_HOST}/v1.0`, `api-key: ${TEDEE_API_KEY}`); neither has a default, so the application **fails fast at startup** if either is unset rather than issuing requests against an invalid URL or without credentials.
 
