@@ -1,6 +1,7 @@
 package org.sanmibuh.tedee.lock.infrastructure;
 
 import com.tedee.bridge.client.api.LockApi;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.tedee.lock.domain.InvalidLockRequestException;
 import org.sanmibuh.tedee.lock.domain.Lock;
@@ -20,7 +21,7 @@ public class TedeeApiAdapter implements LockPort {
   private final LockApi lockApi;
 
   @Override
-  public Lock findById(final LockId lockId) {
+  public Optional<Lock> findById(final LockId lockId) {
     throw new UnsupportedOperationException();
   }
 

@@ -1,8 +1,10 @@
 package org.sanmibuh.tedee.lock.domain;
 
+import java.util.Optional;
+
 public interface LockPort {
 
-  Lock findById(LockId lockId);
+  Optional<Lock> findById(LockId lockId);
 
   void save(Lock lock);
 
