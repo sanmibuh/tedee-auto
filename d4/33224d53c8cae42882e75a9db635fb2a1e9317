@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/LockBleErrorException.java
+  h_97a91c9e567f87 1-13
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/TedeeApiAdapterTest.java
+  h_97a91c9e567f87 12,92-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "d433224d53c8cae42882e75a9db635fb2a1e9317",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
