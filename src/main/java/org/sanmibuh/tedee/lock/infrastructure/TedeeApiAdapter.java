@@ -14,6 +14,6 @@ public class TedeeApiAdapter implements LockPort {
 
   @Override
   public void lock(final LockId lockId) {
-    throw new UnsupportedOperationException("not implemented");
+    lockApi.postLock(lockId.deviceId());
   }
 }
