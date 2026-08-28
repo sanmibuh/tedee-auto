@@ -15,6 +15,7 @@ public class TedeeClientConfiguration {
   ApiClient tedeeApiClient(final RestClient.Builder builder, final TedeeProperties properties) {
     final var apiClient = new ApiClient(builder.build());
     apiClient.setBasePath(properties.baseUrl());
+    apiClient.setApiKey(properties.apiKey());
     return apiClient;
   }
 
