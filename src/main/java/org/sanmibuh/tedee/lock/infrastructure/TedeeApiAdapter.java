@@ -3,6 +3,7 @@ package org.sanmibuh.tedee.lock.infrastructure;
 import com.tedee.bridge.client.api.LockApi;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.tedee.lock.domain.InvalidApiTokenException;
+import org.sanmibuh.tedee.lock.domain.LockBleErrorException;
 import org.sanmibuh.tedee.lock.domain.LockDisconnectedException;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockNotFoundException;
@@ -33,6 +34,7 @@ public class TedeeApiAdapter implements LockPort {
       case UNAUTHORIZED -> new InvalidApiTokenException();
       case NOT_FOUND -> new LockNotFoundException(lockId.deviceId());
       case METHOD_NOT_ALLOWED -> new LockDisconnectedException(lockId.deviceId());
+      case NOT_ACCEPTABLE -> new LockBleErrorException(lockId.deviceId());
       case null, default -> new UnexpectedBridgeErrorException(lockId.deviceId(), exception);
     };
   }
