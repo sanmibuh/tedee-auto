@@ -1,0 +1,19 @@
+openapi/tedee-bridge-api.json
+  s_f3990d0dfc1e73::t_2d37a7acf45cd2 1-1178
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "17cbe02f5465dbf0411009294b5d14394c703de0",
+  "prompts": {},
+  "sessions": {
+    "s_f3990d0dfc1e73": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb7a8e245ffewgrvdg6NPu1OyQ",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
