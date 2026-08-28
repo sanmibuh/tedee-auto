@@ -1,0 +1,18 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 60,63-64,71
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/TedeeApiAdapter.java
+  h_97a91c9e567f87 12-13,25,27-28,33
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/TedeeApiAdapterTest.java
+  h_97a91c9e567f87 7,11,48-50,88-98
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "36fb3bad77f8ac29a3908cd9563af0a99234c1f4",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
