@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/LockStatus.java
+  h_97a91c9e567f87 5
+src/test/java/org/sanmibuh/tedee/lock/domain/LockTest.java
+  h_97a91c9e567f87 16-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "6cf69ddb092b3a80bcbeb494dd372a98463a36b0",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
