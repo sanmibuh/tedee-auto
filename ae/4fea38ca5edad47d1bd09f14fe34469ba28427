@@ -1,0 +1,22 @@
+src/main/java/org/sanmibuh/ddd/domain/AggregateNotFoundException.java
+  h_97a91c9e567f87 1-8
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockHandler.java
+  h_97a91c9e567f87 15
+src/main/java/org/sanmibuh/tedee/lock/domain/LockPort.java
+  h_97a91c9e567f87 3-4,7
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/TedeeApiAdapter.java
+  h_97a91c9e567f87 4,24
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  h_97a91c9e567f87 4,8,14,31,38-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "ae4fea38ca5edad47d1bd09f14fe34469ba28427",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
