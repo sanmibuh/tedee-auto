@@ -7,13 +7,15 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
+import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
-import org.sanmibuh.tedee.lock.domain.InvalidApiTokenException;
-import org.sanmibuh.tedee.lock.domain.LockBleErrorException;
-import org.sanmibuh.tedee.lock.domain.LockDisconnectedException;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.sanmibuh.tedee.lock.domain.InvalidLockRequestException;
 import org.sanmibuh.tedee.lock.domain.LockId;
-import org.sanmibuh.tedee.lock.domain.LockNotFoundException;
-import org.sanmibuh.tedee.lock.domain.UnexpectedBridgeErrorException;
+import org.sanmibuh.tedee.lock.domain.LockOperationFailedException;
+import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.context.annotation.Import;
@@ -34,6 +36,15 @@ class TedeeApiAdapterTest {
   @Autowired private TedeeApiAdapter sut;
 
   @Autowired private MockRestServiceServer server;
+
+  static Stream<Arguments> bridgeErrorsToDomainExceptions() {
+    return Stream.of(
+        Arguments.of(HttpStatus.NOT_FOUND, InvalidLockRequestException.class),
+        Arguments.of(HttpStatus.UNAUTHORIZED, LockOperationFailedException.class),
+        Arguments.of(HttpStatus.BAD_REQUEST, LockOperationFailedException.class),
+        Arguments.of(HttpStatus.METHOD_NOT_ALLOWED, LockTemporarilyUnavailableException.class),
+        Arguments.of(HttpStatus.NOT_ACCEPTABLE, LockTemporarilyUnavailableException.class));
+  }
 
   @Test
   void should_postToLockEndpoint_whenLockingDevice() {
@@ -59,53 +70,15 @@ class TedeeApiAdapterTest {
     server.verify();
   }
 
-  @Test
-  void should_throwInvalidApiToken_whenBridgeRespondsUnauthorized() {
+  @ParameterizedTest
+  @MethodSource("bridgeErrorsToDomainExceptions")
+  void should_translateBridgeError_whenBridgeRespondsWithError(
+      final HttpStatus status, final Class<? extends Throwable> expectedException) {
     server
         .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
         .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(HttpStatus.UNAUTHORIZED));
+        .andRespond(withStatus(status));
 
-    thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(InvalidApiTokenException.class);
-  }
-
-  @Test
-  void should_throwLockNotFound_whenBridgeRespondsNotFound() {
-    server
-        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(HttpStatus.NOT_FOUND));
-
-    thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(LockNotFoundException.class);
-  }
-
-  @Test
-  void should_throwLockDisconnected_whenBridgeRespondsMethodNotAllowed() {
-    server
-        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(HttpStatus.METHOD_NOT_ALLOWED));
-
-    thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(LockDisconnectedException.class);
-  }
-
-  @Test
-  void should_throwLockBleError_whenBridgeRespondsNotAcceptable() {
-    server
-        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(HttpStatus.NOT_ACCEPTABLE));
-
-    thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(LockBleErrorException.class);
-  }
-
-  @Test
-  void should_throwUnexpectedBridgeError_whenBridgeRespondsUnhandledError() {
-    server
-        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(HttpStatus.BAD_REQUEST));
-
-    thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(UnexpectedBridgeErrorException.class);
+    thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(expectedException);
   }
 }
