@@ -15,6 +15,7 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
+import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.domain.IntegrationException;
 import org.sanmibuh.ddd.domain.TransientIntegrationException;
@@ -44,6 +45,14 @@ class GlobalExceptionHandlerTest {
 
     softly.then(response.statusCode()).isEqualTo(HttpStatus.BAD_REQUEST.value());
     softly.then(response.body()).contains("domain rule violated");
+  }
+
+  @Test
+  @SneakyThrows
+  void should_returnNotFound_whenAggregateNotFoundExceptionIsThrown() {
+    final var response = get("/test/aggregate-not-found");
+
+    then(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
   }
 
   @Test
@@ -98,6 +107,11 @@ class GlobalExceptionHandlerTest {
     @GetMapping("/test/domain-exception")
     void throwDomainException() {
       throw new StubDomainException();
+    }
+
+    @GetMapping("/test/aggregate-not-found")
+    void throwAggregateNotFoundException() {
+      throw new AggregateNotFoundException(Object.class, 1);
     }
 
     @GetMapping("/test/transient-integration-exception")

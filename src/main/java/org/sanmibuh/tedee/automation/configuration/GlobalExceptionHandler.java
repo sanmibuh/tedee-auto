@@ -1,6 +1,7 @@
 package org.sanmibuh.tedee.automation.configuration;
 
 import lombok.extern.slf4j.Slf4j;
+import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.domain.IntegrationException;
 import org.sanmibuh.ddd.domain.TransientIntegrationException;
@@ -17,6 +18,14 @@ public class GlobalExceptionHandler extends ResponseEntityExceptionHandler {
   @ExceptionHandler(DomainException.class)
   public ProblemDetail handleDomainException(final DomainException ex) {
     final var detail = ProblemDetail.forStatus(HttpStatus.BAD_REQUEST);
+    detail.setDetail(ex.getMessage());
+
+    return detail;
+  }
+
+  @ExceptionHandler(AggregateNotFoundException.class)
+  public ProblemDetail handleAggregateNotFoundException(final AggregateNotFoundException ex) {
+    final var detail = ProblemDetail.forStatus(HttpStatus.NOT_FOUND);
     detail.setDetail(ex.getMessage());
 
     return detail;
