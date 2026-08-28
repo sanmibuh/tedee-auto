@@ -3,6 +3,7 @@ package org.sanmibuh.tedee.lock.infrastructure;
 import com.tedee.bridge.client.api.LockApi;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.tedee.lock.domain.InvalidLockRequestException;
+import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.LockPort;
@@ -17,6 +18,16 @@ import org.springframework.web.client.RestClientResponseException;
 public class TedeeApiAdapter implements LockPort {
 
   private final LockApi lockApi;
+
+  @Override
+  public Lock findById(final LockId lockId) {
+    throw new UnsupportedOperationException();
+  }
+
+  @Override
+  public void save(final Lock lock) {
+    throw new UnsupportedOperationException();
+  }
 
   @Override
   public void lock(final LockId lockId) {
