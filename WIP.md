@@ -12,10 +12,19 @@ Spec downloaded to `openapi/tedee-bridge-api.json` (Tedee Bridge API 1.2), fetch
 - Error responses: 401 InvalidToken, 404 DeviceNotFound, 405 DeviceDisconnected, 406 DeviceBleError
 
 ## Design decision — generated client as adapter collaborator
-- The Tedee API client is **generated with openapi-generator** from the local spec (offline, no network needed to build).
+- The Tedee API client is **generated with openapi-generator** (`7.14.0`) from the local spec (offline, no network needed to build).
+- Generator flavor: `java` + **`library=native`** (JDK `java.net.http.HttpClient`).
+  - `restclient`/`resttemplate`/`webclient` libraries are INCOMPATIBLE with Spring Framework 7 / Boot 4:
+    Spring 7 `HttpHeaders` no longer implements `Map`, so the generated `ApiClient` (`headers.entrySet()`/`containsKey()`) fails to compile.
+  - `native` avoids Spring HTTP types entirely → compiles cleanly.
+- Extra deps required by the generated client: `jackson-datatype-jsr310`, `org.openapitools:jackson-databind-nullable`.
+- Generated code lives in package `com.tedee.bridge.client.*` (outside `org.sanmibuh`) so NullAway/ErrorProne treat it as unannotated third-party code. Output: `target/generated-sources/openapi` (not under `src/`, so Spotless ignores it).
 - The generated client is a **collaborator of the secondary adapter** (`TedeeApiAdapter`), NOT the port itself.
 - The domain secondary port (`LockPort`) stays decoupled from the generated model; the adapter maps between domain and generated client.
-- Generated sources must be excluded from Spotless, NullAway and ErrorProne, and covered by GraalVM native reflection hints.
+- Auth: the `native` client does NOT auto-apply the `api_token` security header; it exposes a request interceptor
+  (`Consumer<HttpRequest.Builder>`). The adapter sets it to add header `api_token: <apiKey>`.
+- `LockApi.postLock(Integer deviceId)` → `POST {baseUri}/lock/{deviceId}/lock`; default baseUri `.../v1.0`.
+- Still TODO: GraalVM native reflection hints for the generated Jackson models.
 
 ## Testing strategy
 - Use case (domain): unit test port-to-port — DONE (`CloseLockHandlerTest` mocks `LockPort`).
@@ -31,19 +40,19 @@ Spec downloaded to `openapi/tedee-bridge-api.json` (Tedee Bridge API 1.2), fetch
 - ~~`TedeeApiAdapter` stub registered as `@Component`~~
 - ~~`TedeeAutomationApplication` moved to root package `org.sanmibuh.tedee`~~
 - ~~Download OpenAPI spec into repo (`openapi/tedee-bridge-api.json`)~~
-- Add `openapi-generator-maven-plugin` to generate the Tedee client (offline, from local spec)
-- Exclude generated sources from Spotless / NullAway / ErrorProne
-- `TedeeApiAdapter` — delegate to generated client: `POST /v1.0/lock/{deviceId}/lock` with header `api_token`
-- `TedeeProperties` — `@ConfigurationProperties(prefix = "tedee")` with `apiKey` (+ base URL)
+- ~~Add `openapi-generator-maven-plugin` (java/native) generating the Tedee client; compiles cleanly~~
+- `TedeeApiAdapter` — delegate to generated `LockApi`: `POST /v1.0/lock/{deviceId}/lock` with header `api_token`, expects 204
+- `TedeeProperties` — `@ConfigurationProperties(prefix = "tedee")` with `apiKey` + base URL
+- Spring `@Configuration` wiring the `ApiClient`/`LockApi` bean with base URL + `api_token` interceptor
 - Configure `application.properties` with `tedee.api-key` and base URL
 - GraalVM native reflection hints for generated client
 - Update `ARCHITECTURE.md`
 
 ## Next step
-Add `openapi-generator-maven-plugin` and generate the client from `openapi/tedee-bridge-api.json`,
-then wire it as a collaborator of `TedeeApiAdapter`. After the client exists, do 🔴 RED for the
-adapter integration test asserting the correct REST request (`api_token` header, `/v1.0/lock/{id}/lock`, expects 204).
+🔴 RED — integration test for `TedeeApiAdapter`: given a `LockId`, calling `lock(...)` performs
+`POST /v1.0/lock/{deviceId}/lock` with header `api_token: <apiKey>`. Use **WireMock** as the local
+HTTP server (JDK HttpClient → `MockRestServiceServer` is NOT applicable).
 
 ## Open decisions
-- openapi-generator generator flavor: `java` with `library=restclient` (Spring Boot 4 idiomatic, aligns with hand-usage of `RestClient`) vs `spring` (`resttemplate`/`webclient`). Prefer `restclient`.
-- HTTP mock in the adapter test: `MockRestServiceServer` bound to the `RestClient.Builder` used by the generated client (no extra deps).
+- WireMock dependency to add: `org.wiremock:wiremock-standalone` (test scope). Confirm coordinates/version.
+- GraalVM hints: `@RegisterReflectionForBinding` for generated models vs `reflect-config.json`.
