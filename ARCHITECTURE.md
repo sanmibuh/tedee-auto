@@ -90,6 +90,20 @@ The Bridge client is generated offline by `openapi-generator-maven-plugin` (`7.2
 ---
 
 
+## Testing strategy
+
+Domain and application logic is verified with **collaborative (sociable) unit tests** written at the use-case boundary — the command/query handler:
+
+- The **handler is the subject under test** (`sut`), exercised with a **real aggregate**. Business logic (aggregate state transitions, event recording, idempotency) is never mocked; it is asserted *through* the use case. `CloseLockHandlerTest` is the reference example.
+- Only the **port** (the I/O boundary, e.g. `LockPort`) is mocked, since it represents an actuator/side effect. The handler's output is asserted on what it hands to `save(...)` — an `ArgumentCaptor<Lock>` inspecting the aggregate's immutable `domainEvents()` rather than mutable getters (the aggregate exposes no state getters).
+- **Aggregate invariants get their own direct tests only when they grow complex.** Simple behaviour stays expressed as use-case scenarios; there is no separate `LockTest` while `lock()` is a trivial idempotent transition.
+- **Value-object guard clauses** are covered by focused micro-tests (e.g. `LockIdTest`), asserting only invalid input — successful construction is covered indirectly when the value object is used.
+- **Secondary adapters** are tested against the real collaborator boundary (`TedeeApiAdapterTest` uses `@RestClientTest` + `MockRestServiceServer` to assert HTTP interactions and exception translation).
+
+Mutation testing (**PITest**, `targetClasses = org.sanmibuh.*`) guards the strength of these tests and is expected to stay at 100%. It is not bound to `verify`; run it explicitly with `./mvnw test-compile org.pitest:pitest-maven:mutationCoverage`.
+
+---
+
 ## Static analysis
 
 The build runs **Error Prone** (via the `javac` plugin) and **NullAway** on every compilation:

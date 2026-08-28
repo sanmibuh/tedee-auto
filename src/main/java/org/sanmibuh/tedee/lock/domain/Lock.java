@@ -12,14 +12,6 @@ public class Lock extends AggregateRoot {
     this.status = status;
   }
 
-  public LockId id() {
-    return id;
-  }
-
-  public LockStatus status() {
-    return status;
-  }
-
   public void lock() {
     if (status == LockStatus.LOCKED) {
       return;

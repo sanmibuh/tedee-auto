@@ -30,11 +30,11 @@ public class TedeeApiAdapter implements LockPort {
 
   @Override
   public void save(final Lock lock) {
-    lock.domainEvents().forEach(event -> apply(event, lock.id()));
+    lock.domainEvents().forEach(this::apply);
   }
 
-  private void apply(final DomainEvent event, final LockId lockId) {
-    if (event instanceof LockLocked) {
+  private void apply(final DomainEvent event) {
+    if (event instanceof LockLocked(LockId lockId)) {
       lock(lockId);
     }
   }
