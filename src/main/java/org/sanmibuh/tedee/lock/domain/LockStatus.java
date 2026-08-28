@@ -2,7 +2,5 @@ package org.sanmibuh.tedee.lock.domain;
 
 public enum LockStatus {
   LOCKED,
-  UNLOCKED,
-  TRANSITIONING,
-  UNKNOWN
+  UNLOCKED
 }

@@ -7,22 +7,15 @@ import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.EnumSource.Mode;
 
 @ExtendWith(SoftAssertionsExtension.class)
 class LockTest {
 
   @InjectSoftAssertions BDDSoftAssertions softly;
 
-  @ParameterizedTest
-  @EnumSource(
-      value = LockStatus.class,
-      mode = Mode.EXCLUDE,
-      names = {"LOCKED"})
-  void should_lockAndRecordEvent_whenLockingNonLockedLock(final LockStatus status) {
-    final var sut = new Lock(new LockId(1), status);
+  @Test
+  void should_lockAndRecordEvent_whenLockingUnlockedLock() {
+    final var sut = new Lock(new LockId(1), LockStatus.UNLOCKED);
 
     sut.lock();
 
