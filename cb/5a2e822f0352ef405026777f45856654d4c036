@@ -1,0 +1,21 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/LockNotOperableException.java
+  s_7a9f158e7d159c::t_1cb21e1065b0da 1-10
+src/test/java/org/sanmibuh/tedee/lock/domain/LockTest.java
+  s_7a9f158e7d159c::t_8fd5c4635aa867 4,7-8,38-47
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "cb5a2e822f0352ef405026777f45856654d4c036",
+  "prompts": {},
+  "sessions": {
+    "s_7a9f158e7d159c": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "ee8ba26f-e5ac-4203-8ddf-d446de53cdee",
+        "model": "unknown"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
