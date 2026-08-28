@@ -1,0 +1,43 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/InvalidLockIdException.java
+  s_f3990d0dfc1e73::t_f421fb83af48a1 4,8
+src/test/java/com/example/StubCommandHandler.java
+  s_f3990d0dfc1e73::t_bcfe30b6f9775d 15
+src/test/java/com/example/StubComponentCommandHandler.java
+  s_f3990d0dfc1e73::t_398f7add497b24 9,18
+src/test/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfigurationTest.java
+  s_f3990d0dfc1e73::t_498ff485381844 16
+src/test/java/org/sanmibuh/cqrs/infrastructure/CQRSHandlerRegistrarTest.java
+  s_f3990d0dfc1e73::t_1df14f551996d2 5-6,19,50,56-57,67
+src/test/java/org/sanmibuh/cqrs/infrastructure/HandlerLookupTest.java
+  s_f3990d0dfc1e73::t_741888a30b6a31 18-19,22-23,41-42,50-51
+src/test/java/org/sanmibuh/cqrs/infrastructure/SimpleCommandBusTest.java
+  s_f3990d0dfc1e73::t_6e68b100c2b1bd 29-30,33
+src/test/java/org/sanmibuh/cqrs/infrastructure/SimpleQueryBusTest.java
+  s_f3990d0dfc1e73::t_045bf705e6380f 14,38-39
+src/test/java/org/sanmibuh/tedee/TedeeAutomationApplicationTest.java
+  s_f3990d0dfc1e73::t_b359fbb2bef0eb 9,18,22,24,29-33
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  s_f3990d0dfc1e73::t_d7ae637bea5807 9,13-19,22-28
+src/test/java/org/sanmibuh/tedee/automation/configuration/GlobalExceptionHandlerTest.java
+  s_f3990d0dfc1e73::t_5539abe2620697 11,19,27-28,32,34,59-61,68-69,95,104
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  s_f3990d0dfc1e73::t_20b0995372bf7c 16,18
+src/test/java/org/sanmibuh/tedee/lock/domain/LockIdTest.java
+  s_f3990d0dfc1e73::t_4504380374f4af 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "1544384ab9ff3574141612c3c4f85d0af0faebe5",
+  "prompts": {},
+  "sessions": {
+    "s_f3990d0dfc1e73": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb7a8e245ffewgrvdg6NPu1OyQ",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
