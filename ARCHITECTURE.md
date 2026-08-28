@@ -70,7 +70,7 @@ Automates operations against a physical Tedee lock exposed through a **Tedee Bri
 **`infrastructure`** — Tedee Bridge secondary adapter:
 - `TedeeApiAdapter` — implements `LockPort`. Delegates to the generated `LockApi` (`POST /v1.0/lock/{deviceId}/lock`, expects `204`) and translates HTTP error statuses into the `ddd` exception categories via `toDomainException(...)`.
 - `TedeeClientConfiguration` — wires the generated `ApiClient`/`LockApi` from an injected `RestClient.Builder`, setting the base URL and the `api_token` API key.
-- `TedeeProperties` — `@ConfigurationProperties(prefix = "sanmibuh.rest.tedee")` holding `baseUrl` and `apiKey`.
+- `TedeeProperties` — `@ConfigurationProperties(prefix = "sanmibuh.rest.tedee")` holding `baseUrl` and `apiKey`. Both are sourced from the mandatory `TEDEE_HOST` and `TEDEE_API_KEY` environment variables (`base-url: http://${TEDEE_HOST}/v1.0`, `api-key: ${TEDEE_API_KEY}`); neither has a default, so the application **fails fast at startup** if either is unset rather than issuing requests against an invalid URL or without credentials.
 
 ### Generated Tedee client
 The Bridge client is generated offline by `openapi-generator-maven-plugin` (`7.25.0`, flavour `java` + `library=restclient`) from the vendored spec `openapi/tedee-bridge-api.json`. Generated code lives in package `com.tedee.bridge.client.*` (outside `org.sanmibuh`, so NullAway/Error Prone treat it as third-party) and is emitted to `target/generated-sources/openapi` (not under `src/`, so Spotless ignores it). The generated client is a **collaborator** of `TedeeApiAdapter`, never the port itself.
