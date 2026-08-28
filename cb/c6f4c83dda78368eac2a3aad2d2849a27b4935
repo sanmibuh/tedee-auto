@@ -1,0 +1,24 @@
+src/main/java/org/sanmibuh/ddd/domain/IntegrationException.java
+  h_97a91c9e567f87 1-6
+src/main/java/org/sanmibuh/ddd/domain/TransientIntegrationException.java
+  h_97a91c9e567f87 1-6
+src/main/java/org/sanmibuh/tedee/lock/domain/InvalidLockRequestException.java
+  h_97a91c9e567f87 1-10
+src/main/java/org/sanmibuh/tedee/lock/domain/LockOperationFailedException.java
+  h_97a91c9e567f87 1-10
+src/main/java/org/sanmibuh/tedee/lock/domain/LockTemporarilyUnavailableException.java
+  h_97a91c9e567f87 1-10
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/TedeeApiAdapterTest.java
+  h_97a91c9e567f87 10,12-15,17-18,40-48,73-76,80,82
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "cbc6f4c83dda78368eac2a3aad2d2849a27b4935",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
