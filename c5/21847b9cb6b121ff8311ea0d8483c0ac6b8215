@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/lock/domain/LockTest.java
+  s_f3990d0dfc1e73::t_1cda447c9c2eb8 5-7,9,12,14,17,19-25,29-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "c521847b9cb6b121ff8311ea0d8483c0ac6b8215",
+  "prompts": {},
+  "sessions": {
+    "s_f3990d0dfc1e73": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb7a8e245ffewgrvdg6NPu1OyQ",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
