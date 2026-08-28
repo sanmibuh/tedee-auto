@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 @RestClientTest(TedeeApiAdapter.class)
 @Import(TedeeClientConfiguration.class)
+@TestPropertySource(properties = "sanmibuh.rest.tedee.base-url=http://localhost/v1.0")
 class TedeeApiAdapterTest {
 
   @Autowired private TedeeApiAdapter sut;

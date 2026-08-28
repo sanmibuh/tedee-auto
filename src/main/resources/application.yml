@@ -1,0 +1,8 @@
+spring:
+  application:
+    name: tedee-automation
+
+sanmibuh:
+  rest:
+    tedee:
+      base-url: http://localhost/v1.0
