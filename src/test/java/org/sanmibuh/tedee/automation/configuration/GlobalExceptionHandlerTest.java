@@ -8,7 +8,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
-
+import lombok.SneakyThrows;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -23,22 +23,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.SneakyThrows;
-
 @SpringBootTest(
-  webEnvironment = RANDOM_PORT,
-  classes = {
-    TedeeAutomationApplication.class,
-    GlobalExceptionHandlerTest.StubController.class
-  })
+    webEnvironment = RANDOM_PORT,
+    classes = {TedeeAutomationApplication.class, GlobalExceptionHandlerTest.StubController.class})
 @ExtendWith(SoftAssertionsExtension.class)
 class GlobalExceptionHandlerTest {
 
-  @LocalServerPort
-  private int port;
+  @LocalServerPort private int port;
 
-  @InjectSoftAssertions
-  private BDDSoftAssertions softly;
+  @InjectSoftAssertions private BDDSoftAssertions softly;
 
   @Test
   @SneakyThrows
@@ -63,17 +56,17 @@ class GlobalExceptionHandlerTest {
     final var response = get("/test/unexpected-exception");
 
     softly.then(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
-    softly.then(response.headers().firstValue("Content-Type").orElse("")).contains("application/problem+json");
+    softly
+        .then(response.headers().firstValue("Content-Type").orElse(""))
+        .contains("application/problem+json");
     softly.then(response.body()).doesNotContain("StubUnexpectedException");
     softly.then(response.body()).doesNotContain("something went wrong internally");
   }
 
   @SneakyThrows
   private HttpResponse<String> get(final String path) {
-    final var request = HttpRequest.newBuilder()
-      .uri(URI.create("http://localhost:" + port + path))
-      .GET()
-      .build();
+    final var request =
+        HttpRequest.newBuilder().uri(URI.create("http://localhost:" + port + path)).GET().build();
     try (final var client = HttpClient.newHttpClient()) {
       return client.send(request, HttpResponse.BodyHandlers.ofString());
     }
@@ -99,8 +92,7 @@ class GlobalExceptionHandlerTest {
 
     static class StubDomainException extends DomainException {
 
-      @Serial
-      private static final long serialVersionUID = -1440054683212399969L;
+      @Serial private static final long serialVersionUID = -1440054683212399969L;
 
       StubDomainException() {
         super("domain rule violated");
@@ -109,8 +101,7 @@ class GlobalExceptionHandlerTest {
 
     static class StubUnexpectedException extends RuntimeException {
 
-      @Serial
-      private static final long serialVersionUID = 1L;
+      @Serial private static final long serialVersionUID = 1L;
 
       StubUnexpectedException() {
         super("something went wrong internally");

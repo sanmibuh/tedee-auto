@@ -13,11 +13,9 @@ import org.sanmibuh.tedee.lock.domain.LockPort;
 @ExtendWith(MockitoExtension.class)
 class CloseLockHandlerTest {
 
-  @Mock
-  LockPort lockPort;
+  @Mock LockPort lockPort;
 
-  @InjectMocks
-  CloseLockHandler sut;
+  @InjectMocks CloseLockHandler sut;
 
   @Test
   void should_delegateToLockPort_whenHandlingCloseLockCommand() {

@@ -2,6 +2,8 @@ package org.sanmibuh.cqrs.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+import com.example.StubCommandHandler;
+import com.example.StubComponentCommandHandler;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -11,14 +13,10 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.beans.factory.support.RootBeanDefinition;
 import org.springframework.boot.autoconfigure.AutoConfigurationPackages;
 
-import com.example.StubCommandHandler;
-import com.example.StubComponentCommandHandler;
-
 @ExtendWith(SoftAssertionsExtension.class)
 class CQRSHandlerRegistrarTest {
 
-  @InjectSoftAssertions
-  private BDDSoftAssertions softly;
+  @InjectSoftAssertions private BDDSoftAssertions softly;
 
   @Test
   void should_notRegisterAnyBean_whenAutoConfigurationPackagesNotPresent() {
@@ -49,15 +47,14 @@ class CQRSHandlerRegistrarTest {
     final var beanFactory = new DefaultListableBeanFactory();
     AutoConfigurationPackages.register(beanFactory, "com.example");
     beanFactory.registerBeanDefinition(
-      "stubComponentCommandHandler",
-      new RootBeanDefinition(StubComponentCommandHandler.class));
+        "stubComponentCommandHandler", new RootBeanDefinition(StubComponentCommandHandler.class));
 
     final var registrar = new CQRSHandlerRegistrar(beanFactory);
     registrar.postProcessBeanDefinitionRegistry(beanFactory);
 
     softly
-      .then(beanFactory.getBeanDefinition("stubComponentCommandHandler").getBeanClassName())
-      .isEqualTo(StubComponentCommandHandler.class.getName());
+        .then(beanFactory.getBeanDefinition("stubComponentCommandHandler").getBeanClassName())
+        .isEqualTo(StubComponentCommandHandler.class.getName());
     softly.then(beanFactory.getBeansOfType(StubCommandHandler.class)).hasSize(1);
     softly.then(beanFactory.getBeansOfType(StubComponentCommandHandler.class)).hasSize(1);
   }
@@ -67,8 +64,7 @@ class CQRSHandlerRegistrarTest {
     final var beanFactory = new DefaultListableBeanFactory();
     AutoConfigurationPackages.register(beanFactory, "com.example");
     beanFactory.registerBeanDefinition(
-      "myCustomHandlerName",
-      new RootBeanDefinition(StubComponentCommandHandler.class));
+        "myCustomHandlerName", new RootBeanDefinition(StubComponentCommandHandler.class));
 
     final var registrar = new CQRSHandlerRegistrar(beanFactory);
     registrar.postProcessBeanDefinitionRegistry(beanFactory);

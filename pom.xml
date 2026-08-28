@@ -20,6 +20,7 @@
   <properties>
     <archunit.version>1.5.0</archunit.version>
     <error-prone.version>2.50.0</error-prone.version>
+    <google-java-format.version>1.36.1</google-java-format.version>
     <jacoco.version>0.8.15</jacoco.version>
     <java.version>25</java.version>
     <nullaway.version>0.13.7</nullaway.version>
@@ -81,9 +82,9 @@
         <version>${spotless.version}</version>
         <configuration>
           <java>
-            <eclipse>
-              <file>config/eclipse-google-style.xml</file>
-            </eclipse>
+            <googleJavaFormat>
+              <version>${google-java-format.version}</version>
+            </googleJavaFormat>
             <trimTrailingWhitespace/>
             <endWithNewline/>
           </java>

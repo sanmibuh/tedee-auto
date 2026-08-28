@@ -11,8 +11,7 @@ import org.sanmibuh.cqrs.domain.QueryHandler;
 
 class SimpleQueryBusTest {
 
-  record StubQuery() implements Query<String> {
-  }
+  record StubQuery() implements Query<String> {}
 
   static class StubQueryHandler implements QueryHandler<StubQuery, String> {
 
@@ -36,7 +35,7 @@ class SimpleQueryBusTest {
     final var bus = new SimpleQueryBus(List.of());
 
     thenThrownBy(() -> bus.dispatch(new StubQuery()))
-      .isInstanceOf(HandlerNotFoundException.class)
-      .hasMessageContaining(StubQuery.class.getName());
+        .isInstanceOf(HandlerNotFoundException.class)
+        .hasMessageContaining(StubQuery.class.getName());
   }
 }

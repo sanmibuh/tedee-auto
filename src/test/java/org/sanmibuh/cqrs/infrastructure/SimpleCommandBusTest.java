@@ -26,12 +26,11 @@ class SimpleCommandBusTest {
     final var bus = new SimpleCommandBus(List.of());
 
     thenThrownBy(() -> bus.dispatch(new StubCommand()))
-      .isInstanceOf(HandlerNotFoundException.class)
-      .hasMessageContaining(StubCommand.class.getName());
+        .isInstanceOf(HandlerNotFoundException.class)
+        .hasMessageContaining(StubCommand.class.getName());
   }
 
-  record StubCommand() implements Command {
-  }
+  record StubCommand() implements Command {}
 
   static class StubCommandHandler implements CommandHandler<StubCommand> {
 
