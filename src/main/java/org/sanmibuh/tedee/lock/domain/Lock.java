@@ -1,6 +1,8 @@
 package org.sanmibuh.tedee.lock.domain;
 
-public class Lock {
+import org.sanmibuh.ddd.domain.AggregateRoot;
+
+public class Lock extends AggregateRoot {
 
   private final LockId id;
   private LockStatus status;
@@ -20,5 +22,6 @@ public class Lock {
 
   public void lock() {
     status = LockStatus.LOCKED;
+    recordEvent(new LockLocked(id));
   }
 }
