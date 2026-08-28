@@ -19,15 +19,16 @@
 
   <properties>
     <archunit.version>1.5.0</archunit.version>
+    <error-prone.version>2.50.0</error-prone.version>
     <jacoco.version>0.8.15</jacoco.version>
     <java.version>25</java.version>
-    <pitest.version>1.25.9</pitest.version>
-    <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
-    <pitest-history-plugin.version>0.0.1</pitest-history-plugin.version>
-    <spotless.version>3.10.0</spotless.version>
-    <error-prone.version>2.50.0</error-prone.version>
     <nullaway.version>0.13.7</nullaway.version>
-    <openapi-generator.version>7.14.0</openapi-generator.version>
+    <openapi-generator.version>7.25.0</openapi-generator.version>
+    <pitest-history-plugin.version>0.0.1</pitest-history-plugin.version>
+    <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
+    <pitest.version>1.25.9</pitest.version>
+    <spotless.version>3.10.0</spotless.version>
+    <tedee.client.package>com.tedee.bridge.client</tedee.client.package>
   </properties>
 
   <dependencies>
@@ -139,10 +140,10 @@
             <configuration>
               <inputSpec>${project.basedir}/openapi/tedee-bridge-api.json</inputSpec>
               <generatorName>java</generatorName>
-              <library>native</library>
-              <apiPackage>com.tedee.bridge.client.api</apiPackage>
-              <modelPackage>com.tedee.bridge.client.model</modelPackage>
-              <invokerPackage>com.tedee.bridge.client</invokerPackage>
+              <library>restclient</library>
+              <apiPackage>${tedee.client.package}.api</apiPackage>
+              <modelPackage>${tedee.client.package}.model</modelPackage>
+              <invokerPackage>${tedee.client.package}</invokerPackage>
               <generateApiTests>false</generateApiTests>
               <generateModelTests>false</generateModelTests>
               <generateApiDocumentation>false</generateApiDocumentation>
