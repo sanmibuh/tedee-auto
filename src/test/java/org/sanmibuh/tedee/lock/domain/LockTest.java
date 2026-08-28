@@ -1,30 +1,33 @@
 package org.sanmibuh.tedee.lock.domain;
 
 import static org.assertj.core.api.BDDAssertions.then;
-import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
+import org.assertj.core.api.BDDSoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.EnumSource;
+import org.junit.jupiter.params.provider.EnumSource.Mode;
 
+@ExtendWith(SoftAssertionsExtension.class)
 class LockTest {
 
-  @Test
-  void should_haveLockedStatus_whenLockingUnlockedLock() {
-    final var sut = new Lock(new LockId(1), LockStatus.UNLOCKED);
+  @InjectSoftAssertions BDDSoftAssertions softly;
+
+  @ParameterizedTest
+  @EnumSource(
+      value = LockStatus.class,
+      mode = Mode.EXCLUDE,
+      names = {"LOCKED"})
+  void should_lockAndRecordEvent_whenLockingNonLockedLock(final LockStatus status) {
+    final var sut = new Lock(new LockId(1), status);
 
     sut.lock();
 
-    then(sut.status()).isEqualTo(LockStatus.LOCKED);
-  }
-
-  @Test
-  void should_recordLockLockedEvent_whenLockingUnlockedLock() {
-    final var sut = new Lock(new LockId(1), LockStatus.UNLOCKED);
-
-    sut.lock();
-
-    then(sut.domainEvents()).containsExactly(new LockLocked(new LockId(1)));
+    softly.then(sut.status()).isEqualTo(LockStatus.LOCKED);
+    softly.then(sut.domainEvents()).containsExactly(new LockLocked(new LockId(1)));
   }
 
   @Test
@@ -34,15 +37,5 @@ class LockTest {
     sut.lock();
 
     then(sut.domainEvents()).isEmpty();
-  }
-
-  @ParameterizedTest
-  @EnumSource(
-      value = LockStatus.class,
-      names = {"TRANSITIONING", "UNKNOWN"})
-  void should_throwLockNotOperableException_whenLockingNonOperableLock(final LockStatus status) {
-    final var sut = new Lock(new LockId(1), status);
-
-    thenThrownBy(sut::lock).isInstanceOf(LockNotOperableException.class);
   }
 }
