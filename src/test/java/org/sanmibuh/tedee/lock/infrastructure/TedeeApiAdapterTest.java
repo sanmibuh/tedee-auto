@@ -9,6 +9,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.tedee.lock.domain.InvalidApiTokenException;
+import org.sanmibuh.tedee.lock.domain.LockDisconnectedException;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockNotFoundException;
 import org.sanmibuh.tedee.lock.domain.UnexpectedBridgeErrorException;
@@ -75,6 +76,16 @@ class TedeeApiAdapterTest {
         .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
     thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(LockNotFoundException.class);
+  }
+
+  @Test
+  void should_throwLockDisconnected_whenBridgeRespondsMethodNotAllowed() {
+    server
+        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.METHOD_NOT_ALLOWED));
+
+    thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(LockDisconnectedException.class);
   }
 
   @Test
