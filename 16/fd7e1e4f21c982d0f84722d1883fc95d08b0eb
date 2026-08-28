@@ -1,0 +1,19 @@
+WIP.md
+  s_f3990d0dfc1e73::t_6d9b4d5defe1f8 4,11,17,26-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "16fd7e1e4f21c982d0f84722d1883fc95d08b0eb",
+  "prompts": {},
+  "sessions": {
+    "s_f3990d0dfc1e73": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb7a8e245ffewgrvdg6NPu1OyQ",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
