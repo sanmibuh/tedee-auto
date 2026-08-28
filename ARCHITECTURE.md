@@ -75,7 +75,7 @@ Automates operations against a physical Tedee lock exposed through a **Tedee Bri
 ### Generated Tedee client
 The Bridge client is generated offline by `openapi-generator-maven-plugin` (`7.25.0`, flavour `java` + `library=restclient`) from the vendored spec `openapi/tedee-bridge-api.json`. Generated code lives in package `com.tedee.bridge.client.*` (outside `org.sanmibuh`, so NullAway/Error Prone treat it as third-party) and is emitted to `target/generated-sources/openapi` (not under `src/`, so Spotless ignores it). The generated client is a **collaborator** of `TedeeApiAdapter`, never the port itself.
 
-> **GraalVM note:** the current `lock` flow never (de)serializes the generated Jackson models — success is `204` with no body and errors are handled by status code only. Reflection hints for `com.tedee.bridge.client.model.*` are therefore **deferred** and must be added (via a `RuntimeHintsRegistrar` or `reflect-config.json`) as soon as response bodies start being parsed.
+> **GraalVM note:** the current `lock` flow never (de)serializes the generated Jackson models — success is `204` with no body and errors are handled by status code only. Reflection hints for `com.tedee.bridge.client.model.*` are therefore **deferred** (tracked in #96) and must be added (via a `RuntimeHintsRegistrar` or `reflect-config.json`) as soon as response bodies start being parsed.
 
 ---
 
