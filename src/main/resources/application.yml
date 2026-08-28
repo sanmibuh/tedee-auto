@@ -5,4 +5,5 @@ spring:
 sanmibuh:
   rest:
     tedee:
-      base-url: http://localhost/v1.0
+      base-url: http://${TEDEE_HOST:}/v1.0
+      api-key: ${TEDEE_API_KEY:}

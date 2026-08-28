@@ -1,5 +1,6 @@
 package org.sanmibuh.tedee.lock.infrastructure;
 
+import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
@@ -15,7 +16,11 @@ import org.springframework.test.web.client.MockRestServiceServer;
 
 @RestClientTest(TedeeApiAdapter.class)
 @Import(TedeeClientConfiguration.class)
-@TestPropertySource(properties = "sanmibuh.rest.tedee.base-url=http://localhost/v1.0")
+@TestPropertySource(
+    properties = {
+      "sanmibuh.rest.tedee.base-url=http://localhost/v1.0",
+      "sanmibuh.rest.tedee.api-key=test-api-key"
+    })
 class TedeeApiAdapterTest {
 
   @Autowired private TedeeApiAdapter sut;
@@ -27,6 +32,18 @@ class TedeeApiAdapterTest {
     server
         .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
         .andExpect(method(HttpMethod.POST))
+        .andRespond(withNoContent());
+
+    sut.lock(new LockId(42));
+
+    server.verify();
+  }
+
+  @Test
+  void should_sendApiToken_whenLockingDevice() {
+    server
+        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
+        .andExpect(header("api_token", "test-api-key"))
         .andRespond(withNoContent());
 
     sut.lock(new LockId(42));
