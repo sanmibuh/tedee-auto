@@ -48,6 +48,38 @@ Domain rule violations extend `DomainException` and are mapped globally to HTTP 
 
 ---
 
+## Bounded context: `tedee.lock`
+
+Automates operations against a physical Tedee lock exposed through a **Tedee Bridge** on the local network.
+
+**`domain`** — pure business logic:
+- `LockId` — value object wrapping the device id, with a guard clause (`deviceId > 0`).
+- `LockPort` — secondary (output) port the domain depends on; decoupled from any HTTP or generated-client type.
+- Domain exceptions (all extend `DomainException`, mapped to HTTP 400):
+  - `InvalidLockIdException` — invalid `LockId` construction.
+  - `InvalidApiTokenException` — bridge rejected the API token (HTTP 401).
+  - `LockNotFoundException` — device unknown to the bridge (HTTP 404).
+  - `LockDisconnectedException` — device disconnected (HTTP 405).
+  - `LockBleErrorException` — Bluetooth error reaching the device (HTTP 406).
+  - `UnexpectedBridgeErrorException` — any other bridge error; wraps the original cause so no infrastructure exception ever leaks into the domain.
+
+**`application`** — commands and handlers:
+- `CloseLockCommand` — carries the primitive `int deviceId`.
+- `CloseLockHandler` — builds the `LockId` and delegates to `LockPort`.
+
+**`infrastructure`** — Tedee Bridge secondary adapter:
+- `TedeeApiAdapter` — implements `LockPort`. Delegates to the generated `LockApi` (`POST /v1.0/lock/{deviceId}/lock`, expects `204`) and translates HTTP error statuses into domain exceptions via `toDomainException(...)`.
+- `TedeeClientConfiguration` — wires the generated `ApiClient`/`LockApi` from an injected `RestClient.Builder`, setting the base URL and the `api_token` API key.
+- `TedeeProperties` — `@ConfigurationProperties(prefix = "sanmibuh.rest.tedee")` holding `baseUrl` and `apiKey`.
+
+### Generated Tedee client
+The Bridge client is generated offline by `openapi-generator-maven-plugin` (`7.25.0`, flavour `java` + `library=restclient`) from the vendored spec `openapi/tedee-bridge-api.json`. Generated code lives in package `com.tedee.bridge.client.*` (outside `org.sanmibuh`, so NullAway/Error Prone treat it as third-party) and is emitted to `target/generated-sources/openapi` (not under `src/`, so Spotless ignores it). The generated client is a **collaborator** of `TedeeApiAdapter`, never the port itself.
+
+> **GraalVM note:** the current `lock` flow never (de)serializes the generated Jackson models — success is `204` with no body and errors are handled by status code only. Reflection hints for `com.tedee.bridge.client.model.*` are therefore **deferred** and must be added (via a `RuntimeHintsRegistrar` or `reflect-config.json`) as soon as response bodies start being parsed.
+
+---
+
+
 ## Static analysis
 
 The build runs **Error Prone** (via the `javac` plugin) and **NullAway** on every compilation:

@@ -46,19 +46,29 @@ Spec downloaded to `openapi/tedee-bridge-api.json` (Tedee Bridge API 1.2), fetch
 - ~~`TedeeAutomationApplication` moved to root package `org.sanmibuh.tedee`~~
 - ~~Download OpenAPI spec into repo (`openapi/tedee-bridge-api.json`)~~
 - ~~Add `openapi-generator-maven-plugin` (java/restclient, 7.25.0) generating the Tedee client; compiles cleanly~~
-- `TedeeApiAdapter` — delegate to generated `LockApi`: `POST /v1.0/lock/{deviceId}/lock` with header `api_token`, expects 204
-- `TedeeProperties` — `@ConfigurationProperties(prefix = "tedee")` with `apiKey` + base URL
-- Spring `@Configuration` wiring the `ApiClient`/`LockApi` bean with base URL + `api_token` api key
-- Configure `application.properties` with `tedee.api-key` and base URL
-- Fix Spotless/records blocker so `./mvnw verify` passes
-- GraalVM native reflection hints for generated client
-- Update `ARCHITECTURE.md`
+- ~~`TedeeApiAdapter` — delegate to generated `LockApi`: `POST /v1.0/lock/{deviceId}/lock` with header `api_token`, expects 204~~
+- ~~`TedeeProperties` — `@ConfigurationProperties(prefix = "sanmibuh.rest.tedee")` with `apiKey` + base URL~~
+- ~~Spring `@Configuration` wiring the `ApiClient`/`LockApi` bean with base URL + `api_token` api key~~
+- ~~Configure `application.yml` with `sanmibuh.rest.tedee.api-key` and base URL~~
+- ~~Fix Spotless/records blocker so `./mvnw verify` passes (migrated to `googleJavaFormat`)~~
+- ~~Map bridge error statuses to domain exceptions (401/404/405/406 + generic fallback), via `toDomainException`~~
+- ~~Update `ARCHITECTURE.md` (tedee.lock bounded context + adapter + domain exceptions)~~
+- GraalVM native reflection hints for generated client — **DEFERRED** (see note below)
+
+## GraalVM hints — deferred (decision)
+The `lock` flow never (de)serializes the generated Jackson models: success is `204` (no body) and
+errors are handled by status code only. Registering reflection hints now would be dead config (YAGNI).
+Add a `RuntimeHintsRegistrar` (or `reflect-config.json`) for `com.tedee.bridge.client.model.*` as soon as
+response bodies start being parsed. Documented in `ARCHITECTURE.md` ("GraalVM note").
+
+## Remaining for #42
+- Primary adapter (channel/controller → bus): integration test asserting the correct `CloseLockCommand`
+  is published to the bus. NOT STARTED (no controller/channel yet).
 
 ## Next step
-🔴 RED — integration test for `TedeeApiAdapter`: given a `LockId`, calling `lock(...)` performs
-`POST /v1.0/lock/{deviceId}/lock` with header `api_token: <apiKey>`. Since the generated client uses
-Spring `RestClient`, mock with **`MockRestServiceServer`** bound to the injected `RestClient.Builder`
-(no WireMock needed).
+🔴 RED — primary adapter: incoming request/channel publishes a `CloseLockCommand(deviceId)` to the
+`CommandBus`. Integration test verifying the published command.
+
 
 ## Open decisions
 - Spotless/records blocker fix: `googleJavaFormat()` vs bump Eclipse formatter (see "Known blocker").
