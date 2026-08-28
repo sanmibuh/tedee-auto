@@ -1,0 +1,14 @@
+src/main/resources/application.yml
+  h_97a91c9e567f87 8-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "ac51a25bfe12c2899a70c1038b2ae87571ff62d9",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
