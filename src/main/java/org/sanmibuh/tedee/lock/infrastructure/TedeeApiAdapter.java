@@ -6,6 +6,7 @@ import org.sanmibuh.tedee.lock.domain.InvalidApiTokenException;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockNotFoundException;
 import org.sanmibuh.tedee.lock.domain.LockPort;
+import org.sanmibuh.tedee.lock.domain.UnexpectedBridgeErrorException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.HttpClientErrorException;
@@ -30,7 +31,7 @@ public class TedeeApiAdapter implements LockPort {
     return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
       case UNAUTHORIZED -> new InvalidApiTokenException();
       case NOT_FOUND -> new LockNotFoundException(lockId.deviceId());
-      case null, default -> exception;
+      case null, default -> new UnexpectedBridgeErrorException(lockId.deviceId(), exception);
     };
   }
 }
