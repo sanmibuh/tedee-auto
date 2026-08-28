@@ -30,10 +30,15 @@ import org.springframework.test.web.client.MockRestServiceServer;
 @Import(TedeeClientConfiguration.class)
 @TestPropertySource(
     properties = {
-      "sanmibuh.rest.tedee.base-url=http://localhost/v1.0",
-      "sanmibuh.rest.tedee.api-key=test-api-key"
+      "sanmibuh.rest.tedee.base-url=" + TedeeApiAdapterTest.BASE_URL,
+      "sanmibuh.rest.tedee.api-key=" + TedeeApiAdapterTest.API_KEY
     })
 class TedeeApiAdapterTest {
+
+  static final String BASE_URL = "http://localhost/v1.0";
+  static final String API_KEY = "test-api-key";
+  private static final int DEVICE_ID = 42;
+  private static final String LOCK_URL = BASE_URL + "/lock/" + DEVICE_ID + "/lock";
 
   @Autowired private TedeeApiAdapter sut;
 
@@ -53,11 +58,11 @@ class TedeeApiAdapterTest {
   @Test
   void should_postToLockEndpoint_whenLockingDevice() {
     server
-        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
+        .expect(requestTo(LOCK_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withNoContent());
 
-    sut.lock(new LockId(42));
+    sut.lock(new LockId(DEVICE_ID));
 
     server.verify();
   }
@@ -65,11 +70,11 @@ class TedeeApiAdapterTest {
   @Test
   void should_sendApiToken_whenLockingDevice() {
     server
-        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
-        .andExpect(header("api_token", "test-api-key"))
+        .expect(requestTo(LOCK_URL))
+        .andExpect(header("api_token", API_KEY))
         .andRespond(withNoContent());
 
-    sut.lock(new LockId(42));
+    sut.lock(new LockId(DEVICE_ID));
 
     server.verify();
   }
@@ -79,21 +84,21 @@ class TedeeApiAdapterTest {
   void should_translateBridgeError_whenBridgeRespondsWithError(
       final HttpStatus status, final Class<? extends Throwable> expectedException) {
     server
-        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
+        .expect(requestTo(LOCK_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(status));
 
-    thenThrownBy(() -> sut.lock(new LockId(42))).isInstanceOf(expectedException);
+    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID))).isInstanceOf(expectedException);
   }
 
   @Test
   void should_throwLockTemporarilyUnavailable_whenBridgeIsUnreachable() {
     server
-        .expect(requestTo("http://localhost/v1.0/lock/42/lock"))
+        .expect(requestTo(LOCK_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withException(new IOException("bridge unreachable")));
 
-    thenThrownBy(() -> sut.lock(new LockId(42)))
+    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
         .isInstanceOf(LockTemporarilyUnavailableException.class);
   }
 }

@@ -21,7 +21,9 @@ import org.sanmibuh.ddd.domain.TransientIntegrationException;
 import org.sanmibuh.tedee.TedeeAutomationApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -75,8 +77,8 @@ class GlobalExceptionHandlerTest {
 
     softly.then(response.statusCode()).isEqualTo(HttpStatus.INTERNAL_SERVER_ERROR.value());
     softly
-        .then(response.headers().firstValue("Content-Type").orElse(""))
-        .contains("application/problem+json");
+        .then(response.headers().firstValue(HttpHeaders.CONTENT_TYPE).orElse(""))
+        .contains(MediaType.APPLICATION_PROBLEM_JSON_VALUE);
     softly.then(response.body()).doesNotContain("StubUnexpectedException");
     softly.then(response.body()).doesNotContain("something went wrong internally");
   }
