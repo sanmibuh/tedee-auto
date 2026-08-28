@@ -23,4 +23,13 @@ class LockTest {
 
     then(sut.domainEvents()).containsExactly(new LockLocked(new LockId(1)));
   }
+
+  @Test
+  void should_notRecordEvent_whenLockingAlreadyLockedLock() {
+    final var sut = new Lock(new LockId(1), LockStatus.LOCKED);
+
+    sut.lock();
+
+    then(sut.domainEvents()).isEmpty();
+  }
 }
