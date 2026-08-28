@@ -10,6 +10,7 @@ import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockLocked;
 import org.sanmibuh.tedee.lock.domain.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.LockPort;
+import org.sanmibuh.tedee.lock.domain.LockStatus;
 import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
@@ -24,7 +25,7 @@ public class TedeeApiAdapter implements LockPort {
 
   @Override
   public Optional<Lock> findById(final LockId lockId) {
-    throw new UnsupportedOperationException();
+    return Optional.of(new Lock(lockId, LockStatus.UNLOCKED));
   }
 
   @Override

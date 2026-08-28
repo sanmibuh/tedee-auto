@@ -10,7 +10,11 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import java.io.IOException;
 import java.util.stream.Stream;
+import org.assertj.core.api.BDDSoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
@@ -35,6 +39,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
       "sanmibuh.rest.tedee.base-url=" + TedeeApiAdapterTest.BASE_URL,
       "sanmibuh.rest.tedee.api-key=" + TedeeApiAdapterTest.API_KEY
     })
+@ExtendWith(SoftAssertionsExtension.class)
 class TedeeApiAdapterTest {
 
   static final String BASE_URL = "http://localhost/v1.0";
@@ -43,6 +48,8 @@ class TedeeApiAdapterTest {
   private static final String LOCK_URL = BASE_URL + "/lock/" + DEVICE_ID + "/lock";
 
   @Autowired private TedeeApiAdapter sut;
+
+  @InjectSoftAssertions private BDDSoftAssertions softly;
 
   @Autowired private MockRestServiceServer server;
 
@@ -102,6 +109,16 @@ class TedeeApiAdapterTest {
 
     thenThrownBy(() -> sut.save(lockedLock()))
         .isInstanceOf(LockTemporarilyUnavailableException.class);
+  }
+
+  @Test
+  void should_returnUnlockedLock_whenFindingById() {
+    final var lockId = new LockId(DEVICE_ID);
+
+    final var lock = sut.findById(lockId).orElseThrow();
+
+    softly.then(lock.id()).isEqualTo(lockId);
+    softly.then(lock.status()).isEqualTo(LockStatus.UNLOCKED);
   }
 
   private static Lock lockedLock() {
