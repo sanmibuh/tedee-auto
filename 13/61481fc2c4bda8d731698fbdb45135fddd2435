@@ -1,0 +1,22 @@
+WIP.md
+  h_97a91c9e567f87 15-18,20,23-24,27-33,48,51,53,59-61,64
+pom.xml
+  h_97a91c9e567f87 69-73
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/TedeeApiAdapter.java
+  h_97a91c9e567f87 3-4,10,13-14
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/TedeeClientConfiguration.java
+  h_97a91c9e567f87 1-23
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/TedeeApiAdapterTest.java
+  h_97a91c9e567f87 1-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "1361481fc2c4bda8d731698fbdb45135fddd2435",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
