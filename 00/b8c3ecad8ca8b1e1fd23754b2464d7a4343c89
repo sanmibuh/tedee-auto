@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  s_ec15229c4ddc75::t_1822f512f1f528 45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "00b8c3ecad8ca8b1e1fd23754b2464d7a4343c89",
+  "prompts": {},
+  "sessions": {
+    "s_ec15229c4ddc75": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb38b8e48ffeRN17zYM5DQvBLx",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
