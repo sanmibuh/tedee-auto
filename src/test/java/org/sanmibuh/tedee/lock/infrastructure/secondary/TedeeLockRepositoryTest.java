@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure;
+package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;

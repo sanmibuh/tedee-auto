@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure;
+package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
