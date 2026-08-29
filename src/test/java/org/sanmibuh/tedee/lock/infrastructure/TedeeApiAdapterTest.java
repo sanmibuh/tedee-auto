@@ -55,7 +55,9 @@ class TedeeApiAdapterTest {
         Arguments.of(HttpStatus.METHOD_NOT_ALLOWED, LockTemporarilyUnavailableException.class),
         Arguments.of(HttpStatus.NOT_ACCEPTABLE, LockTemporarilyUnavailableException.class),
         Arguments.of(HttpStatus.INTERNAL_SERVER_ERROR, LockOperationFailedException.class),
-        Arguments.of(HttpStatus.SERVICE_UNAVAILABLE, LockOperationFailedException.class));
+        Arguments.of(HttpStatus.BAD_GATEWAY, LockTemporarilyUnavailableException.class),
+        Arguments.of(HttpStatus.SERVICE_UNAVAILABLE, LockTemporarilyUnavailableException.class),
+        Arguments.of(HttpStatus.GATEWAY_TIMEOUT, LockTemporarilyUnavailableException.class));
   }
 
   @Test

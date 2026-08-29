@@ -53,7 +53,7 @@ public class TedeeApiAdapter implements LockPort {
       final RestClientResponseException exception, final LockId lockId) {
     return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
       case NOT_FOUND -> new InvalidLockRequestException(lockId.deviceId(), exception);
-      case METHOD_NOT_ALLOWED, NOT_ACCEPTABLE ->
+      case METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT ->
           new LockTemporarilyUnavailableException(lockId.deviceId(), exception);
       case null, default -> new LockOperationFailedException(lockId.deviceId(), exception);
     };

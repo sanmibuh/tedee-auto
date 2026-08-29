@@ -69,8 +69,8 @@ Automates operations against a physical Tedee lock exposed through a **Tedee Bri
 - Exceptions, each modelling an outcome rather than a specific bridge cause. Every bridge-translated exception wraps the original `RestClientException` as its cause, so no infrastructure exception ever leaks into the domain:
   - `InvalidLockIdException` (extends `DomainException`, → 400) — invalid `LockId` construction.
   - `InvalidLockRequestException` (extends `DomainException`, → 400) — the bridge rejected the request as invalid (bridge HTTP 404, device unknown).
-  - `LockOperationFailedException` (extends `IntegrationException`, → 500) — the bridge failed to perform the operation for a non-recoverable reason (bridge HTTP 401, any 5xx, and any other unmapped status).
-  - `LockTemporarilyUnavailableException` (extends `TransientIntegrationException`, → 503) — the lock is momentarily unreachable and the operation may succeed if retried (bridge HTTP 405 disconnected, 406 Bluetooth error, or a connectivity failure such as connection refused / timeout).
+  - `LockOperationFailedException` (extends `IntegrationException`, → 500) — the bridge failed to perform the operation for a non-recoverable reason (bridge HTTP 401, HTTP 500, and any other unmapped status).
+  - `LockTemporarilyUnavailableException` (extends `TransientIntegrationException`, → 503) — the lock is momentarily unreachable and the operation may succeed if retried (bridge HTTP 405 disconnected, 406 Bluetooth error, the transient gateway statuses 502/503/504, or a connectivity failure such as connection refused / timeout).
 
 **`application`** — commands and handlers:
 - `CloseLockCommand` — carries the primitive `int deviceId`.
