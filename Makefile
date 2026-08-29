@@ -24,9 +24,16 @@ test:
 
 pitest:
 	@mkdir -p .pit
-	@git fetch origin coverage-data 2>/dev/null || true
-	@git show origin/coverage-data:pitest-history.bin > .pit/history-input.bin 2>/dev/null || true
-	./mvnw pitest:mutationCoverage -B
+	@if git fetch origin coverage-data 2>/dev/null \
+	   && git show origin/coverage-data:pitest-history.bin > .pit/history-input.bin 2>/dev/null \
+	   && [ -s .pit/history-input.bin ]; then \
+	  echo ">> PITest: incremental run using history from origin/coverage-data"; \
+	else \
+	  rm -f .pit/history-input.bin; \
+	  echo ">> PITest: no usable history in origin/coverage-data — running full baseline"; \
+	fi
+	./mvnw test-compile pitest:mutationCoverage -B
+	@echo ">> PITest: updated history written to .pit/history-output.bin"
 
 image:
 	docker build -t tedee-automation .

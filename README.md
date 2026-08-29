@@ -61,6 +61,19 @@ Results are posted as a comment on the PR. Baseline metrics are stored in the or
 
 On merge to `main`, the updated metrics and PITest history are saved back to `coverage-data`.
 
+## Incremental mutation testing
+
+`make pitest` is the canonical local command for mutation testing and mirrors the CI incremental strategy. It:
+
+1. fetches the orphan `coverage-data` branch,
+2. restores its `pitest-history.bin` into `.pit/history-input.bin`,
+3. runs `./mvnw test-compile pitest:mutationCoverage -B`, reusing that history so PITest only re-evaluates changed code,
+4. leaves the fresh history in `.pit/history-output.bin` for inspection.
+
+The history contract is identical between local and CI: the file is stored as `pitest-history.bin` on `coverage-data`, consumed as `.pit/history-input.bin` and produced as `.pit/history-output.bin`. On merge to `main`, CI copies the new `.pit/history-output.bin` back to `coverage-data:pitest-history.bin`, which becomes the baseline for the next local or CI run.
+
+On the first run — or whenever `coverage-data` is missing, cannot be fetched, or does not yet contain a usable `pitest-history.bin` — `make pitest` prints that it is running a full baseline and evaluates every mutant. This is the deliberate, documented fallback; it is never silent.
+
 ## Architecture
 
 See [ARCHITECTURE.md](ARCHITECTURE.md) for module design, data flow and key decisions.
