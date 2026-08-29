@@ -15,6 +15,8 @@ public class LockSchedulingConfigurer implements SchedulingConfigurer {
   public void configureTasks(final ScheduledTaskRegistrar registrar) {
     properties
         .schedules()
-        .forEach((deviceId, cron) -> registrar.addCronTask(new CronTask(() -> {}, cron)));
+        .forEach(
+            (deviceId, cron) ->
+                registrar.addCronTask(new CronTask(() -> scheduler.closeLock(deviceId), cron)));
   }
 }
