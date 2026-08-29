@@ -16,6 +16,6 @@ public class Lock extends AggregateRoot<LockId> {
       return;
     }
     status = LockStatus.LOCKED;
-    recordEvent(new LockLocked(id()));
+    recordEvent(new LockLocked(id().value()));
   }
 }

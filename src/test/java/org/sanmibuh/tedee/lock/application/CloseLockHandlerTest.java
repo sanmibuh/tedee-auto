@@ -37,7 +37,7 @@ class CloseLockHandlerTest {
     sut.handle(new CloseLockCommand(1));
 
     verify(lockPort).save(savedLock.capture());
-    then(savedLock.getValue().domainEvents()).containsExactly(new LockLocked(new LockId(1)));
+    then(savedLock.getValue().domainEvents()).containsExactly(new LockLocked(1));
   }
 
   @Test
