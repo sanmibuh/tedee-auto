@@ -4,6 +4,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.Mockito.verify;
 
 import java.util.Map;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
@@ -19,14 +20,16 @@ class LockSchedulingConfigurerTest {
 
   @Mock LockScheduler scheduler;
 
+  private final ScheduledTaskRegistrar registrar = new ScheduledTaskRegistrar();
+
+  @BeforeEach
+  void configureTasks() {
+    final var properties = new LockSchedulerProperties(Map.of(DEVICE_ID, CRON));
+    new LockSchedulingConfigurer(properties, scheduler).configureTasks(registrar);
+  }
+
   @Test
   void should_registerCronTaskWithConfiguredExpression_whenConfiguringTasks() {
-    final var properties = new LockSchedulerProperties(Map.of(DEVICE_ID, CRON));
-    final var sut = new LockSchedulingConfigurer(properties, scheduler);
-    final var registrar = new ScheduledTaskRegistrar();
-
-    sut.configureTasks(registrar);
-
     then(registrar.getCronTaskList())
         .singleElement()
         .extracting(CronTask::getExpression)
@@ -35,11 +38,6 @@ class LockSchedulingConfigurerTest {
 
   @Test
   void should_closeConfiguredLock_whenCronTaskRuns() {
-    final var properties = new LockSchedulerProperties(Map.of(DEVICE_ID, CRON));
-    final var sut = new LockSchedulingConfigurer(properties, scheduler);
-    final var registrar = new ScheduledTaskRegistrar();
-    sut.configureTasks(registrar);
-
     registrar.getCronTaskList().getFirst().getRunnable().run();
 
     verify(scheduler).closeLock(DEVICE_ID);
