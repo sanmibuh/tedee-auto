@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure;
+package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import com.tedee.bridge.client.ApiClient;
 import com.tedee.bridge.client.api.LockApi;

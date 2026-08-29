@@ -7,3 +7,7 @@ sanmibuh:
     tedee:
       base-url: http://${TEDEE_HOST}/v1.0
       api-key: ${TEDEE_API_KEY}
+  scheduler:
+    lock:
+      # Map of deviceId -> cron expression. Configure per environment, e.g.:
+      #   SANMIBUH_SCHEDULER_LOCK_SCHEDULES_12345="0 0 0,22 * * *"  # 00:00 and 22:00 every day
