@@ -1,10 +1,12 @@
 package org.sanmibuh.tedee.lock.domain;
 
-public record LockId(int deviceId) {
+import org.sanmibuh.ddd.domain.AggregateRootId;
+
+public record LockId(Integer value) implements AggregateRootId<Integer> {
 
   public LockId {
-    if (deviceId <= 0) {
-      throw new InvalidLockIdException(deviceId);
+    if (value <= 0) {
+      throw new InvalidLockIdException(value);
     }
   }
 }

@@ -7,7 +7,12 @@ import org.junit.jupiter.api.Test;
 
 class AggregateRootTest {
 
-  private final TestAggregate sut = new TestAggregate();
+  private final TestAggregate sut = new TestAggregate(new TestId(42));
+
+  @Test
+  void should_exposeItsId_whenConstructedWithAnId() {
+    then(sut.id()).isEqualTo(new TestId(42));
+  }
 
   @Test
   void should_exposeRecordedEvents_whenEventsAreRecordedInOrder() {
@@ -26,11 +31,17 @@ class AggregateRootTest {
         .isInstanceOf(UnsupportedOperationException.class);
   }
 
-  private static final class TestAggregate extends AggregateRoot {
+  private static final class TestAggregate extends AggregateRoot<TestId> {
+    TestAggregate(final TestId id) {
+      super(id);
+    }
+
     void emit(final DomainEvent event) {
       recordEvent(event);
     }
   }
+
+  private record TestId(Integer value) implements AggregateRootId<Integer> {}
 
   private record TestEvent() implements DomainEvent {}
 }

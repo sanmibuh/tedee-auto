@@ -41,21 +41,21 @@ public class TedeeApiAdapter implements LockPort {
 
   private void lock(final LockId lockId) {
     try {
-      lockApi.postLock(lockId.deviceId());
+      lockApi.postLock(lockId.value());
     } catch (final RestClientResponseException exception) {
       throw toDomainException(exception, lockId);
     } catch (final RestClientException exception) {
-      throw new LockTemporarilyUnavailableException(lockId.deviceId(), exception);
+      throw new LockTemporarilyUnavailableException(lockId.value(), exception);
     }
   }
 
   private RuntimeException toDomainException(
       final RestClientResponseException exception, final LockId lockId) {
     return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
-      case NOT_FOUND -> new InvalidLockRequestException(lockId.deviceId(), exception);
+      case NOT_FOUND -> new InvalidLockRequestException(lockId.value(), exception);
       case METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT ->
-          new LockTemporarilyUnavailableException(lockId.deviceId(), exception);
-      case null, default -> new LockOperationFailedException(lockId.deviceId(), exception);
+          new LockTemporarilyUnavailableException(lockId.value(), exception);
+      case null, default -> new LockOperationFailedException(lockId.value(), exception);
     };
   }
 }
