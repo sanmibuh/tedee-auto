@@ -6,7 +6,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StubComponentCommandHandler
-  implements CommandHandler<StubComponentCommandHandler.StubComponentCommand> {
+    implements CommandHandler<StubComponentCommandHandler.StubComponentCommand> {
 
   public boolean handled;
 
@@ -15,6 +15,5 @@ public class StubComponentCommandHandler
     handled = true;
   }
 
-  public record StubComponentCommand() implements Command {
-  }
+  public record StubComponentCommand() implements Command {}
 }

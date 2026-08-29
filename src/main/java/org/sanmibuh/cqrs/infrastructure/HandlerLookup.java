@@ -14,19 +14,23 @@ class HandlerLookup<H> {
   HandlerLookup(final List<H> handlers, final Class<?> handlerInterface) {
     final Map<Class<?>, H> map = new HashMap<>();
     for (final var handler : handlers) {
-      final var messageType = resolveMessageType(AopUtils.getTargetClass(handler), handlerInterface);
+      final var messageType =
+          resolveMessageType(AopUtils.getTargetClass(handler), handlerInterface);
       final var existing = map.put(messageType, handler);
       if (existing != null) {
-        throw new IllegalArgumentException("Duplicate handlers for message type: " + messageType.getName());
+        throw new IllegalArgumentException(
+            "Duplicate handlers for message type: " + messageType.getName());
       }
     }
-    this.index = Map.copyOf(map);
+    index = Map.copyOf(map);
   }
 
-  private static Class<?> resolveMessageType(final Class<?> handlerClass, final Class<?> handlerInterface) {
+  private static Class<?> resolveMessageType(
+      final Class<?> handlerClass, final Class<?> handlerInterface) {
     final var typeArgs = GenericTypeResolver.resolveTypeArguments(handlerClass, handlerInterface);
     if (typeArgs == null || typeArgs.length == 0) {
-      throw new IllegalArgumentException("Cannot resolve message type for: " + handlerClass.getName());
+      throw new IllegalArgumentException(
+          "Cannot resolve message type for: " + handlerClass.getName());
     }
     return typeArgs[0];
   }

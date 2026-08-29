@@ -13,7 +13,7 @@ class CQRSAutoConfigurationTest {
   @Test
   void should_returnRegistrar_whenCqrsHandlerRegistrarCalled() {
     then(CQRSAutoConfiguration.cqrsHandlerRegistrar(new DefaultListableBeanFactory()))
-      .isInstanceOf(CQRSHandlerRegistrar.class);
+        .isInstanceOf(CQRSHandlerRegistrar.class);
   }
 
   @Test

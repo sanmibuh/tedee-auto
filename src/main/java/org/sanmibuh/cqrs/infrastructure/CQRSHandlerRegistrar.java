@@ -3,7 +3,7 @@ package org.sanmibuh.cqrs.infrastructure;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
-
+import lombok.RequiredArgsConstructor;
 import org.sanmibuh.cqrs.domain.CommandHandler;
 import org.sanmibuh.cqrs.domain.QueryHandler;
 import org.springframework.beans.BeansException;
@@ -17,50 +17,54 @@ import org.springframework.context.annotation.AnnotationBeanNameGenerator;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 
-import lombok.RequiredArgsConstructor;
-
-@RequiredArgsConstructor(
-  access = lombok.AccessLevel.PACKAGE)
+@RequiredArgsConstructor(access = lombok.AccessLevel.PACKAGE)
 class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor {
 
-  private static final AnnotationBeanNameGenerator NAME_GENERATOR = new AnnotationBeanNameGenerator();
+  private static final AnnotationBeanNameGenerator NAME_GENERATOR =
+      new AnnotationBeanNameGenerator();
 
   private final BeanFactory beanFactory;
 
   @Override
-  public void postProcessBeanDefinitionRegistry(final BeanDefinitionRegistry registry) throws BeansException {
+  public void postProcessBeanDefinitionRegistry(final BeanDefinitionRegistry registry)
+      throws BeansException {
     if (!AutoConfigurationPackages.has(beanFactory)) {
       return;
     }
+
     final var packages = AutoConfigurationPackages.get(beanFactory);
     registerHandlers(registry, packages, CommandHandler.class);
     registerHandlers(registry, packages, QueryHandler.class);
   }
 
   private void registerHandlers(
-    final BeanDefinitionRegistry registry,
-    final List<String> packages,
-    final Class<?> handlerType) {
+      final BeanDefinitionRegistry registry,
+      final List<String> packages,
+      final Class<?> handlerType) {
     final var scanner = new ClassPathScanningCandidateComponentProvider(false);
     scanner.addIncludeFilter(new AssignableTypeFilter(handlerType));
     packages.stream()
-      .flatMap(basePackage -> scanner.findCandidateComponents(basePackage).stream())
-      .forEach(candidate -> registerIfAbsent(registry, candidate));
+        .flatMap(basePackage -> scanner.findCandidateComponents(basePackage).stream())
+        .forEach(candidate -> registerIfAbsent(registry, candidate));
   }
 
-  private void registerIfAbsent(final BeanDefinitionRegistry registry, final BeanDefinition candidate) {
-    findBeanClassNamePITEquivalent(candidate).ifPresent(beanClassName -> {
-      if (!isClassRegistered(registry, beanClassName)) {
-        final var beanName = NAME_GENERATOR.generateBeanName(candidate, registry);
-        registry.registerBeanDefinition(beanName, new RootBeanDefinition(beanClassName));
-      }
-    });
+  private void registerIfAbsent(
+      final BeanDefinitionRegistry registry, final BeanDefinition candidate) {
+    findBeanClassNamePITEquivalent(candidate)
+        .ifPresent(
+            beanClassName -> {
+              if (!isClassRegistered(registry, beanClassName)) {
+                final var beanName = NAME_GENERATOR.generateBeanName(candidate, registry);
+                registry.registerBeanDefinition(beanName, new RootBeanDefinition(beanClassName));
+              }
+            });
   }
 
-  private boolean isClassRegistered(final BeanDefinitionRegistry registry, final String beanClassName) {
+  private boolean isClassRegistered(
+      final BeanDefinitionRegistry registry, final String beanClassName) {
     return Arrays.stream(registry.getBeanDefinitionNames())
-      .map(name -> registry.getBeanDefinition(name).getBeanClassName())
-      .anyMatch(beanClassName::equals);
+        .map(name -> registry.getBeanDefinition(name).getBeanClassName())
+        .anyMatch(beanClassName::equals);
   }
 
   private Optional<String> findBeanClassNamePITEquivalent(final BeanDefinition candidate) {

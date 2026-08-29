@@ -12,6 +12,5 @@ public class StubCommandHandler implements CommandHandler<StubCommandHandler.Stu
     handled = true;
   }
 
-  public record StubCommand() implements Command {
-  }
+  public record StubCommand() implements Command {}
 }

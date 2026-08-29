@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.automation;
+package org.sanmibuh.tedee;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

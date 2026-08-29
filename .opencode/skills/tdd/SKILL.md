@@ -18,15 +18,18 @@ Work in the **smallest possible steps**. Each mini-step must be **independently 
 ### 🔴 RED — Write a failing test
 
 1. Identify the **single next behavior** to implement (one assertion, one case).
-2. Write **only** the test. No implementation yet.
-3. Run the test suite and confirm the new test **fails** (and only that test).
+2. Write the test **and the minimal compilation stubs** needed for it to compile:
+   - Empty classes, interfaces, or records with the right name and package.
+   - Method signatures that return `null` / `0` / `false` or throw `UnsupportedOperationException` — no real logic.
+   - The goal is: **the test compiles and fails at runtime**, not at compile time.
+3. Run the test suite and confirm the new test **fails at runtime** (and only that test).
 4. Show the failure output to the developer.
 5. Run `make format` to auto-format the code.
 6. **STOP.** Suggest a commit message and wait:
 
    > **Suggested commit:** `test: <describe the behavior being tested>`
    >
-   > Please review the test, commit it, and tell me to continue.
+   > Please review the test and stubs, commit them, and tell me to continue.
 
 ---
 
@@ -35,9 +38,10 @@ Work in the **smallest possible steps**. Each mini-step must be **independently 
 1. Write the **minimum code** to make the failing test pass.
    - No extra logic, no anticipating future cases.
    - Hardcoding is acceptable if it makes the test green.
-2. Run the full test suite and confirm **all tests pass**.
-3. Run `make format` to auto-format the code.
-4. **STOP.** Suggest a commit message and wait:
+2. **Always run `./mvnw spotless:apply` before running the tests.** Never try to apply formatting rules manually from the XML config — the linter is the source of truth.
+3. Run the full test suite and confirm **all tests pass**.
+4. Run `make format` to auto-format the code.
+5. **STOP.** Suggest a commit message and wait:
 
    > **Suggested commit:** `feat: <describe the behavior implemented>`
    >
@@ -82,6 +86,7 @@ After each GREEN step, scan for repeated structural patterns (e.g., same boilerp
 - `domain` layer must have zero Spring or infrastructure imports.
 - Run `make format` before every commit (RED, GREEN, and REFACTOR) to auto-format.
 - Run `./mvnw verify` to confirm all checks pass.
+- When moving files, always use `git mv` to preserve git history. Never delete and recreate.
 
 ---
 

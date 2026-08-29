@@ -15,11 +15,12 @@ class HandlerLookupTest {
     final var handler1 = new ConcreteStubHandler();
     final var handler2 = new AnotherConcreteStubHandler();
 
-    final var thrown = thenThrownBy(() -> new HandlerLookup<>(List.of(handler1, handler2), StubHandler.class));
+    final var thrown =
+        thenThrownBy(() -> new HandlerLookup<>(List.of(handler1, handler2), StubHandler.class));
 
     thrown
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessageContaining(StubMessage.class.getName());
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining(StubMessage.class.getName());
   }
 
   @Test
@@ -37,8 +38,8 @@ class HandlerLookupTest {
     final var lookup = new HandlerLookup<>(List.of(), StubHandler.class);
 
     thenThrownBy(() -> lookup.find(StubMessage.class))
-      .isInstanceOf(HandlerNotFoundException.class)
-      .hasMessageContaining(StubMessage.class.getName());
+        .isInstanceOf(HandlerNotFoundException.class)
+        .hasMessageContaining(StubMessage.class.getName());
   }
 
   @Test
@@ -46,8 +47,8 @@ class HandlerLookupTest {
     final var rawHandler = new RawStubHandler();
 
     thenThrownBy(() -> new HandlerLookup<>(List.of(rawHandler), StubHandler.class))
-      .isInstanceOf(IllegalArgumentException.class)
-      .hasMessageContaining(RawStubHandler.class.getName());
+        .isInstanceOf(IllegalArgumentException.class)
+        .hasMessageContaining(RawStubHandler.class.getName());
   }
 
   @Test

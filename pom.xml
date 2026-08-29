@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xmlns="http://maven.apache.org/POM/4.0.0"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+         xmlns="http://maven.apache.org/POM/4.0.0"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -19,14 +19,17 @@
 
   <properties>
     <archunit.version>1.5.0</archunit.version>
+    <error-prone.version>2.50.0</error-prone.version>
+    <google-java-format.version>1.36.1</google-java-format.version>
     <jacoco.version>0.8.15</jacoco.version>
     <java.version>25</java.version>
-    <pitest.version>1.25.9</pitest.version>
-    <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
-    <pitest-history-plugin.version>0.0.1</pitest-history-plugin.version>
-    <spotless.version>3.10.0</spotless.version>
-    <error-prone.version>2.50.0</error-prone.version>
     <nullaway.version>0.13.7</nullaway.version>
+    <openapi-generator.version>7.25.0</openapi-generator.version>
+    <pitest-history-plugin.version>0.0.1</pitest-history-plugin.version>
+    <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
+    <pitest.version>1.25.9</pitest.version>
+    <spotless.version>3.10.0</spotless.version>
+    <tedee.client.package>com.tedee.bridge.client</tedee.client.package>
   </properties>
 
   <dependencies>
@@ -46,10 +49,26 @@
       <optional>true</optional>
     </dependency>
 
+    <!-- Generated Tedee Bridge API client (openapi-generator, java/restclient) -->
+    <dependency>
+      <groupId>org.openapitools</groupId>
+      <artifactId>jackson-databind-nullable</artifactId>
+      <version>0.2.6</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+    </dependency>
+
     <!-- Test dependencies -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-restclient-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -68,9 +87,9 @@
         <version>${spotless.version}</version>
         <configuration>
           <java>
-            <eclipse>
-              <file>config/eclipse-google-style.xml</file>
-            </eclipse>
+            <googleJavaFormat>
+              <version>${google-java-format.version}</version>
+            </googleJavaFormat>
             <trimTrailingWhitespace/>
             <endWithNewline/>
           </java>
@@ -115,9 +134,45 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
       <plugin>
+        <groupId>org.openapitools</groupId>
+        <artifactId>openapi-generator-maven-plugin</artifactId>
+        <version>${openapi-generator.version}</version>
+        <executions>
+          <execution>
+            <id>generate-tedee-client</id>
+            <goals>
+              <goal>generate</goal>
+            </goals>
+            <configuration>
+              <inputSpec>${project.basedir}/openapi/tedee-bridge-api.json</inputSpec>
+              <generatorName>java</generatorName>
+              <library>restclient</library>
+              <apiPackage>${tedee.client.package}.api</apiPackage>
+              <modelPackage>${tedee.client.package}.model</modelPackage>
+              <invokerPackage>${tedee.client.package}</invokerPackage>
+              <generateApiTests>false</generateApiTests>
+              <generateModelTests>false</generateModelTests>
+              <generateApiDocumentation>false</generateApiDocumentation>
+              <generateModelDocumentation>false</generateModelDocumentation>
+              <configOptions>
+                <useJakartaEe>true</useJakartaEe>
+                <hideGenerationTimestamp>true</hideGenerationTimestamp>
+                <openApiNullable>false</openApiNullable>
+                <useBeanValidation>false</useBeanValidation>
+              </configOptions>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+      <plugin>
         <groupId>org.jacoco</groupId>
         <artifactId>jacoco-maven-plugin</artifactId>
         <version>${jacoco.version}</version>
+        <configuration>
+          <includes>
+            <include>org/sanmibuh/**</include>
+          </includes>
+        </configuration>
         <executions>
           <execution>
             <id>prepare-agent</id>
