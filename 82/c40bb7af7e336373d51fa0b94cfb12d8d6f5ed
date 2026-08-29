@@ -1,0 +1,20 @@
+AGENTS.md
+  h_97a91c9e567f87 82-85
+ARCHITECTURE.md
+  h_97a91c9e567f87 102-104
+Makefile
+  h_97a91c9e567f87 27-36
+README.md
+  h_97a91c9e567f87 64-76
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "82c40bb7af7e336373d51fa0b94cfb12d8d6f5ed",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
