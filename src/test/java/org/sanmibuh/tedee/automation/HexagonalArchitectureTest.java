@@ -42,10 +42,7 @@ class HexagonalArchitectureTest {
 
   @ArchTest
   static final ArchRule should_carryOnlyScalarPayloads_whenDomainEvent =
-      classes()
-          .that()
-          .implement(DomainEvent.class)
-          .should(haveOnlyScalarFields());
+      classes().that().implement(DomainEvent.class).should(haveOnlyScalarFields());
 
   private static ArchCondition<JavaClass> haveOnlyScalarFields() {
     return new ArchCondition<>("carry only primitive or standard scalar payloads") {

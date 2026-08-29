@@ -14,8 +14,10 @@ Built as a **GraalVM Native Image**, shipped as a Docker container via GitHub Co
 Base abstractions for DDD.
 
 **Aggregate modelling:**
-- `AggregateRoot` — base class for aggregate roots. Records domain events via the protected `recordEvent(DomainEvent)` and exposes them through the read-only `domainEvents()` (an unmodifiable list). Secondary adapters read these events to decide what to persist.
-- `DomainEvent` — marker interface for domain events (business facts recorded by an aggregate, e.g. `LockLocked`).
+- `ValueObject<T>` — shared interface for value objects. Exposes the underlying primitive/standard value through `T value()`, standardising how primitive-wrapping domain types surface their raw value.
+- `AggregateRootId<T>` — interface for aggregate identifiers, extends `ValueObject<T>`. Makes aggregate ids first-class DDD concepts and gives a shared type to constrain aggregates.
+- `AggregateRoot<ID extends AggregateRootId<?>>` — base class for aggregate roots, generic over its identifier type. Owns the aggregate `id` (exposed via `id()`), records domain events via the protected `recordEvent(DomainEvent)`, and exposes them through the read-only `domainEvents()` (an unmodifiable list). Secondary adapters read these events to decide what to persist.
+- `DomainEvent` — marker interface for domain events (business facts recorded by an aggregate, e.g. `LockLocked`). **Payload rule:** domain events must carry only primitive or standard scalar values (e.g. `String`, `UUID`, `int`, `Instant`, enums) — never value objects, aggregates, or other rich domain types. This keeps events stable, serializable, and integration-friendly, avoids coupling subscribers to internal domain structures, and aligns with the rule that commands and queries use only primitive or standard Java types. The rule is both documented here and **enforced by ArchUnit** (`HexagonalArchitectureTest.should_carryOnlyScalarPayloads_whenDomainEvent`), which inspects the fields of every `DomainEvent` implementation and rejects any non-scalar payload.
 
 **Exceptions** — categories model the possible outcomes of a failed operation, and `GlobalExceptionHandler` maps each to an HTTP status:
 - `DomainException` — a business rule was violated (the request is invalid). Mapped to HTTP 400.
@@ -50,6 +52,7 @@ infrastructure/  — Spring beans: controllers, adapters, schedulers
 
 Rules enforced at build time by ArchUnit:
 - `domain` must not depend on Spring or `infrastructure`
+- Domain events (`DomainEvent` implementations) must carry only primitive or standard scalar payloads
 - Cross-aggregate coupling at infrastructure level is forbidden (not yet enforced by ArchUnit — rule will be added once multiple aggregates with `infrastructure` sub-packages exist)
 
 Failures are modelled with the `ddd` exception categories (`DomainException` → 400, `AggregateNotFoundException` → 404, `IntegrationException` → 500, `TransientIntegrationException` → 503) and mapped globally by `GlobalExceptionHandler` (extends `ResponseEntityExceptionHandler`). Spring resolves the most-specific `@ExceptionHandler`, so a transient failure yields 503 rather than 500, and a missing aggregate yields 404 rather than 400.
@@ -61,10 +64,10 @@ Failures are modelled with the `ddd` exception categories (`DomainException` →
 Automates operations against a physical Tedee lock exposed through a **Tedee Bridge** on the local network.
 
 **`domain`** — pure business logic:
-- `Lock` — aggregate root (`extends AggregateRoot`) holding a `LockId` and a mutable `LockStatus`. `lock()` is idempotent: when the lock is not already `LOCKED` it transitions to `LOCKED` and records a `LockLocked` domain event; when already `LOCKED` it does nothing. The lock is treated as authoritative — the aggregate never rejects the operation on a safety invariant; a bridge that refuses surfaces as an infrastructure exception.
+- `Lock` — aggregate root (`extends AggregateRoot<LockId>`) holding a `LockId` (owned by the base class) and a mutable `LockStatus`. `lock()` is idempotent: when the lock is not already `LOCKED` it transitions to `LOCKED` and records a `LockLocked` domain event; when already `LOCKED` it does nothing. The lock is treated as authoritative — the aggregate never rejects the operation on a safety invariant; a bridge that refuses surfaces as an infrastructure exception.
 - `LockStatus` — enum (`LOCKED`, `UNLOCKED`). `UNLOCKED` means "not confirmed locked"; the mapping from the bridge's richer device `state` is the adapter's responsibility.
-- `LockLocked` — domain event (`record LockLocked(LockId lockId)`) recorded when a lock transitions to `LOCKED`.
-- `LockId` — value object wrapping the device id, with a guard clause (`deviceId > 0`).
+- `LockLocked` — domain event (`record LockLocked(int deviceId)`) recorded when a lock transitions to `LOCKED`. Its payload is a scalar snapshot (the device id), per the shared `DomainEvent` payload rule.
+- `LockId` — aggregate identifier (`record LockId(Integer value) implements AggregateRootId<Integer>`) wrapping the device id, with a guard clause (`value > 0`). The identifier type is `Integer` because generics cannot be parameterised with primitives; under the project's non-null-by-default policy this is treated as a non-null scalar.
 - `LockPort` — secondary (output) port, repository-style: `Optional<Lock> findById(LockId)` and `save(Lock)`. Decoupled from any HTTP or generated-client type. Absence is reported as an empty `Optional` (infrastructure never decides the not-found policy).
 - Exceptions, each modelling an outcome rather than a specific bridge cause. Every bridge-translated exception wraps the original `RestClientException` as its cause, so no infrastructure exception ever leaks into the domain:
   - `InvalidLockIdException` (extends `DomainException`, → 400) — invalid `LockId` construction.
