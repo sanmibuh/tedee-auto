@@ -35,13 +35,11 @@ class HandlerLookup<H> {
     return typeArgs[0];
   }
 
-  // The cast is safe: the index is keyed by message type and populated with matching handlers.
-  @SuppressWarnings({"unchecked", "TypeParameterUnusedInFormals"})
-  <T extends H> T find(final Class<?> messageType) {
+  H find(final Class<?> messageType) {
     final var handler = index.get(messageType);
     if (handler == null) {
       throw new HandlerNotFoundException(messageType);
     }
-    return (T) handler;
+    return handler;
   }
 }
