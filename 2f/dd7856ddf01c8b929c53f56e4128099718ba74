@@ -1,0 +1,14 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 51-53,61-62,71-99,102,118
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "2fdd7856ddf01c8b929c53f56e4128099718ba74",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
