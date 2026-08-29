@@ -14,13 +14,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockLocked;
-import org.sanmibuh.tedee.lock.domain.LockPort;
+import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.LockStatus;
 
 @ExtendWith(MockitoExtension.class)
 class CloseLockHandlerTest {
 
-  @Mock LockPort lockPort;
+  @Mock LockRepository repository;
 
   @InjectMocks CloseLockHandler sut;
 
@@ -28,21 +28,21 @@ class CloseLockHandlerTest {
 
   @Test
   void should_recordLockLocked_whenClosingAnOpenLock() {
-    given(lockPort.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
+    given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
 
     sut.handle(new CloseLockCommand(1));
 
-    verify(lockPort).save(savedLock.capture());
+    verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents()).containsExactly(new LockLocked(1));
   }
 
   @Test
   void should_notRecordEvent_whenClosingAnAlreadyClosedLock() {
-    given(lockPort.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.LOCKED));
+    given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.LOCKED));
 
     sut.handle(new CloseLockCommand(1));
 
-    verify(lockPort).save(savedLock.capture());
+    verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents()).isEmpty();
   }
 }

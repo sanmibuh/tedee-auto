@@ -9,7 +9,7 @@ import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockLocked;
 import org.sanmibuh.tedee.lock.domain.LockOperationFailedException;
-import org.sanmibuh.tedee.lock.domain.LockPort;
+import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.LockStatus;
 import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
 import org.springframework.http.HttpStatus;
@@ -19,7 +19,7 @@ import org.springframework.web.client.RestClientResponseException;
 
 @Component
 @RequiredArgsConstructor
-public class TedeeApiAdapter implements LockPort {
+public class TedeeApiAdapter implements LockRepository {
 
   private final LockApi lockApi;
 
