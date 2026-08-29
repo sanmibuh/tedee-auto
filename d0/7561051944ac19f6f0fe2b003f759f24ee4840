@@ -1,0 +1,28 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockSchedulerProperties.java
+  h_97a91c9e567f87 5,8
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockSchedulingConfiguration.java
+  h_97a91c9e567f87 1-22
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfiguration.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockRepository.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeProperties.java
+  h_97a91c9e567f87 1
+src/main/resources/application.yml
+  h_97a91c9e567f87 10-13
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfigurationTest.java
+  h_97a91c9e567f87 1
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockRepositoryTest.java
+  h_97a91c9e567f87 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "d07561051944ac19f6f0fe2b003f759f24ee4840",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
