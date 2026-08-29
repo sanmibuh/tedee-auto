@@ -1,0 +1,18 @@
+WIP.md
+  h_97a91c9e567f87 1-28
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/LockScheduler.java
+  h_97a91c9e567f87 1-14
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/LockSchedulerTest.java
+  h_97a91c9e567f87 1-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "1376617776f6d79187207e87ff7465ff457b8ce0",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
