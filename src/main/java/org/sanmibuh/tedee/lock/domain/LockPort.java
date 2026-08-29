@@ -1,10 +1,5 @@
 package org.sanmibuh.tedee.lock.domain;
 
-import java.util.Optional;
+import org.sanmibuh.ddd.domain.Repository;
 
-public interface LockPort {
-
-  Optional<Lock> findById(LockId lockId);
-
-  void save(Lock lock);
-}
+public interface LockPort extends Repository<Lock, LockId> {}
