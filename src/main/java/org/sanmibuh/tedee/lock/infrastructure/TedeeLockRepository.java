@@ -13,13 +13,13 @@ import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.LockStatus;
 import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
-@Component
+@Repository
 @RequiredArgsConstructor
-public class TedeeApiAdapter implements LockRepository {
+public class TedeeLockRepository implements LockRepository {
 
   private final LockApi lockApi;
 
