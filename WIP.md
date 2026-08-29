@@ -22,7 +22,8 @@ ArchUnit enforcement of the slice dependency rules is deferred to #106.
 ## Plan
 1. `LockScheduler` — publishes `CloseLockCommand(deviceId)` to the `CommandBus` for a given deviceId. (RED/GREEN)
 2. `LockSchedulerProperties` — `@ConfigurationProperties(prefix = "sanmibuh.scheduler.lock")` holding `Map<Integer, String> schedules`.
-3. `LockSchedulingConfigurer` — implements `SchedulingConfigurer`, registers one `CronTask` per schedule entry that invokes `LockScheduler.closeLock(deviceId)`.
+3. `LockSchedulingConfigurer` (`@Component`) — implements `SchedulingConfigurer`, registers one `CronTask` per schedule entry that invokes `LockScheduler.closeLock(deviceId)`.
+   `LockScheduler` and `LockSchedulingConfigurer` are Spring `@Component`s (consistent with `@Repository` on the secondary adapter); `LockSchedulingConfiguration` only enables `LockSchedulerProperties`.
 4. Move existing secondary adapters into `secondary` package (`git mv`).
 5. `application.yml` — document/sample schedules block.
 6. Update `ARCHITECTURE.md` with the primary adapter and the primary/secondary split.

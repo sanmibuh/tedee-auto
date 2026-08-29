@@ -4,7 +4,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.scheduling.annotation.SchedulingConfigurer;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.stereotype.Component;
 
+@Component
 @RequiredArgsConstructor
 public class LockSchedulingConfigurer implements SchedulingConfigurer {
 
