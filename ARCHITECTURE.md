@@ -48,13 +48,17 @@ Each bounded context is organised into three layers:
 ```
 domain/          — pure business logic, no framework dependencies
 application/     — commands, queries and their handlers
-infrastructure/  — Spring beans: controllers, adapters, schedulers
+infrastructure/  — Spring beans, split into driving and driven adapters:
+  primary/       — driving adapters (incoming channels: schedulers, controllers, …)
+  secondary/     — driven adapters (outgoing channels: repositories, external clients, …)
 ```
 
 Rules enforced at build time by ArchUnit:
 - `domain` must not depend on Spring or `infrastructure`
 - Domain events (`DomainEvent` implementations) must carry only primitive or standard scalar payloads
 - Cross-aggregate coupling at infrastructure level is forbidden (not yet enforced by ArchUnit — rule will be added once multiple aggregates with `infrastructure` sub-packages exist)
+
+The dependency direction between the `primary`/`secondary` slices and the `application`/`domain` layers (primary → application only; secondary → domain only) is intended to be enforced by ArchUnit as well; that rule set is tracked in #106.
 
 Failures are modelled with the `ddd` exception categories (`DomainException` → 400, `AggregateNotFoundException` → 404, `IntegrationException` → 500, `TransientIntegrationException` → 503) and mapped globally by `GlobalExceptionHandler` (extends `ResponseEntityExceptionHandler`). Spring resolves the most-specific `@ExceptionHandler`, so a transient failure yields 503 rather than 500, and a missing aggregate yields 404 rather than 400.
 
@@ -64,29 +68,38 @@ Failures are modelled with the `ddd` exception categories (`DomainException` →
 
 Automates operations against a physical Tedee lock exposed through a **Tedee Bridge** on the local network.
 
-**`domain`** — pure business logic:
-- `Lock` — aggregate root (`extends AggregateRoot<LockId>`) holding a `LockId` (owned by the base class) and a mutable `LockStatus`. `lock()` is idempotent: when the lock is not already `LOCKED` it transitions to `LOCKED` and records a `LockLocked` domain event; when already `LOCKED` it does nothing. The lock is treated as authoritative — the aggregate never rejects the operation on a safety invariant; a bridge that refuses surfaces as an infrastructure exception.
-- `LockStatus` — enum (`LOCKED`, `UNLOCKED`). `UNLOCKED` means "not confirmed locked"; the mapping from the bridge's richer device `state` is the adapter's responsibility.
-- `LockLocked` — domain event (`record LockLocked(int deviceId)`) recorded when a lock transitions to `LOCKED`. Its payload is a scalar snapshot (the device id), per the shared `DomainEvent` payload rule.
-- `LockId` — aggregate identifier (`record LockId(Integer value) implements AggregateRootId<Integer>`) wrapping the device id, with a guard clause (`value > 0`). The identifier type is `Integer` because generics cannot be parameterised with primitives; under the project's non-null-by-default policy this is treated as a non-null scalar.
-- `LockRepository` — secondary (output) port, `extends Repository<Lock, LockId>` (inheriting `findById`, `save` and the default `get`/not-found policy). Decoupled from any HTTP or generated-client type. Absence is reported as an empty `Optional` (infrastructure never decides the not-found policy).
-- Exceptions, each modelling an outcome rather than a specific bridge cause. Every bridge-translated exception wraps the original `RestClientException` as its cause, so no infrastructure exception ever leaks into the domain:
-  - `InvalidLockIdException` (extends `DomainException`, → 400) — invalid `LockId` construction.
-  - `InvalidLockRequestException` (extends `DomainException`, → 400) — the bridge rejected the request as invalid (bridge HTTP 404, device unknown).
-  - `LockOperationFailedException` (extends `IntegrationException`, → 500) — the bridge failed to perform the operation for a non-recoverable reason (bridge HTTP 401, HTTP 500, and any other unmapped status).
-  - `LockTemporarilyUnavailableException` (extends `TransientIntegrationException`, → 503) — the lock is momentarily unreachable and the operation may succeed if retried (bridge HTTP 405 disconnected, 406 Bluetooth error, the transient gateway statuses 502/503/504, or a connectivity failure such as connection refused / timeout).
+### Aggregate: `Lock`
 
-**`application`** — commands and handlers:
-- `CloseLockCommand` — carries the primitive `int deviceId`.
-- `CloseLockHandler` — `find → mutate → save`: loads the `Lock` via `LockRepository.get` (which throws `AggregateNotFoundException` → 404 when absent), calls `lock()` on the aggregate, and persists it via `LockRepository.save`. The not-found policy lives in the shared `Repository.get` default, not in the adapter.
+The `Lock` aggregate (identified by a `LockId` wrapping the positive device id) owns a single piece of state: whether it is confirmed `LOCKED` or `UNLOCKED` (where `UNLOCKED` means "not confirmed locked"). Its only behaviour, `lock()`, is **idempotent**: it transitions to `LOCKED` and records a `LockLocked` event only when not already locked. The lock is treated as **authoritative** — the aggregate never rejects the operation on a safety invariant; a bridge that refuses surfaces as an infrastructure failure, not a domain rule violation. The `LockLocked` event carries only the scalar device id, per the shared `DomainEvent` payload rule.
 
-**`infrastructure`** — Tedee Bridge secondary adapter:
-- `TedeeLockRepository` — implements `LockRepository`. `save(Lock)` reacts to the aggregate's recorded domain events: it iterates `domainEvents()` and translates each `LockLocked` into a `POST /v1.0/lock/{deviceId}/lock` (expects `204`) on the generated `LockApi`, translating every `RestClientException` (HTTP error responses via status, and connectivity failures) into the `ddd` exception categories, so no `RestClient` exception escapes the port. Unexpected non-`RestClientException` errors are left to propagate to the global handler as `500`. `findById` is currently a **placeholder** returning an `UNLOCKED` `Lock`; its real implementation (reading `GET /lock/{deviceId}` and mapping the device `state` to `LockStatus`, with bridge 404 → empty `Optional`) is deferred.
-- `TedeeClientConfiguration` — wires the generated `ApiClient`/`LockApi` from an injected `RestClient.Builder`, setting the base URL and the `api_token` API key.
-- `TedeeProperties` — `@ConfigurationProperties(prefix = "sanmibuh.rest.tedee")` holding `baseUrl` and `apiKey`. Both are sourced from the mandatory `TEDEE_HOST` and `TEDEE_API_KEY` environment variables (`base-url: http://${TEDEE_HOST}/v1.0`, `api-key: ${TEDEE_API_KEY}`); neither has a default, so the application **fails fast at startup** if either is unset rather than issuing requests against an invalid URL or without credentials.
+Because the behaviour is this simple, the aggregate has no direct test of its own; its invariants are asserted through the use cases below (see the testing strategy).
+
+### Use cases
+
+| Use case | Command / Query | Handler behaviour |
+|----------|-----------------|-------------------|
+| Close a lock | `CloseLockCommand(deviceId)` | `find → mutate → save`: loads the `Lock` (missing → `AggregateNotFoundException` → 404), calls `lock()`, persists it. |
+
+### Ports & adapters
+
+The single **driven (output) port** is `LockRepository` (`extends Repository<Lock, LockId>`), decoupled from any HTTP or generated-client type; absence is reported as an empty `Optional`, and the find-or-throw policy lives in the shared `Repository.get` default rather than in any adapter.
+
+- **Primary (driving) adapter — cron scheduler.** The automation is triggered by *time*: a configurable `deviceId → cron` map (`sanmibuh.scheduler.lock.schedules`) is turned into one Spring `CronTask` per lock, each publishing `CloseLockCommand(deviceId)` onto the `CommandBus`. Registration is **programmatic** (a `SchedulingConfigurer`, not a fixed `@Scheduled`) precisely so every lock can carry its own independent cron expression. Schedules are supplied per environment (e.g. `SANMIBUH_SCHEDULER_LOCK_SCHEDULES_12345="0 0 0,22 * * *"`); no device id is hard-coded, and an absent map binds to empty (no tasks) rather than `null`.
+- **Secondary (driven) adapter — Tedee Bridge.** Implements `LockRepository` by reacting to the aggregate's recorded events: each `LockLocked` becomes a `POST /lock/{deviceId}/lock` on the generated bridge client. Every `RestClientException` is translated into a `ddd` exception **category** — so no client exception escapes the port — following the outcome-based mapping below. `findById` is currently a **placeholder** returning an `UNLOCKED` `Lock`; its real implementation (reading the device `state` and mapping bridge 404 → empty `Optional`) is deferred. The bridge base URL and API key come from the mandatory `TEDEE_HOST` / `TEDEE_API_KEY` environment variables (no defaults), so the application **fails fast at startup** if either is unset.
+
+### Failure model
+
+Bridge failures are mapped to `ddd` exception categories by outcome (not by specific cause), each wrapping the original `RestClientException` so nothing infrastructure-specific leaks into the domain:
+
+| Category (→ HTTP) | Meaning | Bridge triggers |
+|-------------------|---------|-----------------|
+| `InvalidLockIdException` (→ 400) | invalid `LockId` construction | — (domain guard) |
+| `InvalidLockRequestException` (→ 400) | the bridge rejected the request as invalid | HTTP 404 (device unknown) |
+| `LockOperationFailedException` (→ 500) | non-recoverable bridge failure | HTTP 401, 500, any unmapped status |
+| `LockTemporarilyUnavailableException` (→ 503) | momentarily unreachable, retry may succeed | HTTP 405/406, gateway 502/503/504, connectivity failures |
 
 ### Generated Tedee client
-The Bridge client is generated offline by `openapi-generator-maven-plugin` (`7.25.0`, flavour `java` + `library=restclient`) from the vendored spec `openapi/tedee-bridge-api.json`. Generated code lives in package `com.tedee.bridge.client.*` (outside `org.sanmibuh`, so NullAway/Error Prone treat it as third-party) and is emitted to `target/generated-sources/openapi` (not under `src/`, so Spotless ignores it). The generated client is a **collaborator** of `TedeeLockRepository`, never the port itself.
+The Bridge client is generated offline by `openapi-generator-maven-plugin` (`7.25.0`, flavour `java` + `library=restclient`) from the vendored spec `openapi/tedee-bridge-api.json`. Generated code lives in package `com.tedee.bridge.client.*` (outside `org.sanmibuh`, so NullAway/Error Prone treat it as third-party) and is emitted to `target/generated-sources/openapi` (not under `src/`, so Spotless ignores it). The generated client is a **collaborator** of the secondary adapter, never the port itself.
 
 > **GraalVM note:** the current `lock` flow never (de)serializes the generated Jackson models — success is `204` with no body and errors are handled by status code only. Reflection hints for `com.tedee.bridge.client.model.*` are therefore **deferred** (tracked in #96) and must be added (via a `RuntimeHintsRegistrar` or `reflect-config.json`) as soon as response bodies start being parsed.
 
@@ -102,6 +115,7 @@ Domain and application logic is verified with **collaborative (sociable) unit te
 - **Aggregate invariants get their own direct tests only when they grow complex.** Simple behaviour stays expressed as use-case scenarios; there is no separate `LockTest` while `lock()` is a trivial idempotent transition.
 - **Value-object guard clauses** are covered by focused micro-tests (e.g. `LockIdTest`), asserting only invalid input — successful construction is covered indirectly when the value object is used.
 - **Secondary adapters** are tested against the real collaborator boundary (`TedeeLockRepositoryTest` uses `@RestClientTest` + `MockRestServiceServer` to assert HTTP interactions and exception translation).
+- **Primary adapters** are tested as fast sociable unit tests at their own boundary rather than with a full Spring context: `LockSchedulingConfigurerTest` drives `configureTasks` with a real `ScheduledTaskRegistrar`, asserting both that a `CronTask` is registered with the configured expression and that running its runnable calls `LockScheduler.closeLock(deviceId)` (the `CommandBus` is mocked). A `@SpringBootTest` scheduling test is deliberately avoided — it would be slow, flaky, and would verify Spring wiring rather than our logic.
 
 Mutation testing (**PITest**, `targetClasses = org.sanmibuh.*`) guards the strength of these tests and is expected to stay at 100%. It is not bound to `verify`; run it explicitly with `make pitest`, the canonical incremental entrypoint (use the raw `./mvnw test-compile org.pitest:pitest-maven:mutationCoverage` goal only for a deliberate non-incremental run without history).
 
