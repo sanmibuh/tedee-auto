@@ -25,7 +25,8 @@ class LockSchedulingConfigurerTest {
   @BeforeEach
   void configureTasks() {
     final var properties = new LockSchedulerProperties(Map.of(DEVICE_ID, CRON));
-    new LockSchedulingConfigurer(properties, scheduler).configureTasks(registrar);
+    final var sut = new LockSchedulingConfigurer(properties, scheduler);
+    sut.configureTasks(registrar);
   }
 
   @Test
