@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockSchedulingConfigurer.java
+  h_97a91c9e567f87 1-17
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockSchedulingConfigurerTest.java
+  h_97a91c9e567f87 1-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "ee5780b5e33d13810f21263178dbd4e75b07312f",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
