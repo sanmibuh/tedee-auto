@@ -1,0 +1,23 @@
+src/main/java/org/sanmibuh/ddd/domain/AggregateRootId.java
+  s_bbbee5d750a84e::t_db1e281e5d60d4 1-3
+src/main/java/org/sanmibuh/ddd/domain/ValueObject.java
+  s_bbbee5d750a84e::t_97393df3daa050 1-6
+WIP.md
+  s_bbbee5d750a84e::t_3234e9fcdc0724 1-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "75e395bb0358e14e1689cdb5a0634f9419ec42c0",
+  "prompts": {},
+  "sessions": {
+    "s_bbbee5d750a84e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fb3a74c0affeUZX4V5qA1L9u95",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
