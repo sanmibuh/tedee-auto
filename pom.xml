@@ -125,7 +125,7 @@
           <compilerArgs>
             <arg>-XDcompilePolicy=simple</arg>
             <arg>--should-stop=ifError=FLOW</arg>
-            <arg>-Xplugin:ErrorProne -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=org.sanmibuh -XepOpt:NullAway:AcknowledgeRestrictiveAnnotations=true</arg>
+            <arg>-Xplugin:ErrorProne -XepExcludedPaths:.*/generated-sources/.* -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=org.sanmibuh -XepOpt:NullAway:AcknowledgeRestrictiveAnnotations=true</arg>
           </compilerArgs>
         </configuration>
       </plugin>
