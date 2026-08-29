@@ -14,8 +14,11 @@ Built as a **GraalVM Native Image**, shipped as a Docker container via GitHub Co
 Base abstractions for DDD.
 
 **Aggregate modelling:**
-- `AggregateRoot` — base class for aggregate roots. Records domain events via the protected `recordEvent(DomainEvent)` and exposes them through the read-only `domainEvents()` (an unmodifiable list). Secondary adapters read these events to decide what to persist.
-- `DomainEvent` — marker interface for domain events (business facts recorded by an aggregate, e.g. `LockLocked`).
+- `ValueObject<T>` — shared interface for value objects. Exposes the underlying primitive/standard value through `T value()`, standardising how primitive-wrapping domain types surface their raw value.
+- `AggregateRootId<T>` — interface for aggregate identifiers, extends `ValueObject<T>`. Makes aggregate ids first-class DDD concepts and gives a shared type to constrain aggregates.
+- `AggregateRoot<ID extends AggregateRootId<?>>` — base class for aggregate roots, generic over its identifier type. Owns the aggregate `id` (exposed via `id()`), records domain events via the protected `recordEvent(DomainEvent)`, and exposes them through the read-only `domainEvents()` (an unmodifiable list). Secondary adapters read these events to decide what to persist.
+- `Repository<A extends AggregateRoot<ID>, ID extends AggregateRootId<?>>` — generic secondary (output) port for aggregate persistence, following the DDD Repository pattern. Declares `Optional<A> findById(ID)` and `save(A)` (both implemented by adapters), plus a default `get(ID)` that centralises the not-found policy (`findById(id).orElseThrow(() -> new AggregateNotFoundException(id))`). `findById` keeps the present/absent reporting in infrastructure; `get` gives handlers a `find-or-throw` primitive so they never repeat that policy. Aggregate-specific ports (e.g. `LockRepository`) extend it.
+- `DomainEvent` — marker interface for domain events (business facts recorded by an aggregate, e.g. `LockLocked`). **Payload rule:** domain events must carry only primitive or standard scalar values (e.g. `String`, `UUID`, `int`, `Instant`, enums) — never value objects, aggregates, or other rich domain types. This keeps events stable, serializable, and integration-friendly, avoids coupling subscribers to internal domain structures, and aligns with the rule that commands and queries use only primitive or standard Java types. The rule is both documented here and **enforced by ArchUnit** (`HexagonalArchitectureTest.should_carryOnlyScalarPayloads_whenDomainEvent`), which inspects the fields of every `DomainEvent` implementation and rejects any non-scalar payload.
 
 **Exceptions** — categories model the possible outcomes of a failed operation, and `GlobalExceptionHandler` maps each to an HTTP status:
 - `DomainException` — a business rule was violated (the request is invalid). Mapped to HTTP 400.
@@ -50,6 +53,7 @@ infrastructure/  — Spring beans: controllers, adapters, schedulers
 
 Rules enforced at build time by ArchUnit:
 - `domain` must not depend on Spring or `infrastructure`
+- Domain events (`DomainEvent` implementations) must carry only primitive or standard scalar payloads
 - Cross-aggregate coupling at infrastructure level is forbidden (not yet enforced by ArchUnit — rule will be added once multiple aggregates with `infrastructure` sub-packages exist)
 
 Failures are modelled with the `ddd` exception categories (`DomainException` → 400, `AggregateNotFoundException` → 404, `IntegrationException` → 500, `TransientIntegrationException` → 503) and mapped globally by `GlobalExceptionHandler` (extends `ResponseEntityExceptionHandler`). Spring resolves the most-specific `@ExceptionHandler`, so a transient failure yields 503 rather than 500, and a missing aggregate yields 404 rather than 400.
@@ -61,11 +65,11 @@ Failures are modelled with the `ddd` exception categories (`DomainException` →
 Automates operations against a physical Tedee lock exposed through a **Tedee Bridge** on the local network.
 
 **`domain`** — pure business logic:
-- `Lock` — aggregate root (`extends AggregateRoot`) holding a `LockId` and a mutable `LockStatus`. `lock()` is idempotent: when the lock is not already `LOCKED` it transitions to `LOCKED` and records a `LockLocked` domain event; when already `LOCKED` it does nothing. The lock is treated as authoritative — the aggregate never rejects the operation on a safety invariant; a bridge that refuses surfaces as an infrastructure exception.
+- `Lock` — aggregate root (`extends AggregateRoot<LockId>`) holding a `LockId` (owned by the base class) and a mutable `LockStatus`. `lock()` is idempotent: when the lock is not already `LOCKED` it transitions to `LOCKED` and records a `LockLocked` domain event; when already `LOCKED` it does nothing. The lock is treated as authoritative — the aggregate never rejects the operation on a safety invariant; a bridge that refuses surfaces as an infrastructure exception.
 - `LockStatus` — enum (`LOCKED`, `UNLOCKED`). `UNLOCKED` means "not confirmed locked"; the mapping from the bridge's richer device `state` is the adapter's responsibility.
-- `LockLocked` — domain event (`record LockLocked(LockId lockId)`) recorded when a lock transitions to `LOCKED`.
-- `LockId` — value object wrapping the device id, with a guard clause (`deviceId > 0`).
-- `LockPort` — secondary (output) port, repository-style: `Optional<Lock> findById(LockId)` and `save(Lock)`. Decoupled from any HTTP or generated-client type. Absence is reported as an empty `Optional` (infrastructure never decides the not-found policy).
+- `LockLocked` — domain event (`record LockLocked(int deviceId)`) recorded when a lock transitions to `LOCKED`. Its payload is a scalar snapshot (the device id), per the shared `DomainEvent` payload rule.
+- `LockId` — aggregate identifier (`record LockId(Integer value) implements AggregateRootId<Integer>`) wrapping the device id, with a guard clause (`value > 0`). The identifier type is `Integer` because generics cannot be parameterised with primitives; under the project's non-null-by-default policy this is treated as a non-null scalar.
+- `LockRepository` — secondary (output) port, `extends Repository<Lock, LockId>` (inheriting `findById`, `save` and the default `get`/not-found policy). Decoupled from any HTTP or generated-client type. Absence is reported as an empty `Optional` (infrastructure never decides the not-found policy).
 - Exceptions, each modelling an outcome rather than a specific bridge cause. Every bridge-translated exception wraps the original `RestClientException` as its cause, so no infrastructure exception ever leaks into the domain:
   - `InvalidLockIdException` (extends `DomainException`, → 400) — invalid `LockId` construction.
   - `InvalidLockRequestException` (extends `DomainException`, → 400) — the bridge rejected the request as invalid (bridge HTTP 404, device unknown).
@@ -74,15 +78,15 @@ Automates operations against a physical Tedee lock exposed through a **Tedee Bri
 
 **`application`** — commands and handlers:
 - `CloseLockCommand` — carries the primitive `int deviceId`.
-- `CloseLockHandler` — `find → mutate → save`: loads the `Lock` via `LockPort.findById`, throwing `AggregateNotFoundException` (→ 404) when absent, calls `lock()` on the aggregate, and persists it via `LockPort.save`. The not-found policy lives in the application layer, not in the adapter.
+- `CloseLockHandler` — `find → mutate → save`: loads the `Lock` via `LockRepository.get` (which throws `AggregateNotFoundException` → 404 when absent), calls `lock()` on the aggregate, and persists it via `LockRepository.save`. The not-found policy lives in the shared `Repository.get` default, not in the adapter.
 
 **`infrastructure`** — Tedee Bridge secondary adapter:
-- `TedeeApiAdapter` — implements `LockPort`. `save(Lock)` reacts to the aggregate's recorded domain events: it iterates `domainEvents()` and translates each `LockLocked` into a `POST /v1.0/lock/{deviceId}/lock` (expects `204`) on the generated `LockApi`, translating every `RestClientException` (HTTP error responses via status, and connectivity failures) into the `ddd` exception categories, so no `RestClient` exception escapes the port. Unexpected non-`RestClientException` errors are left to propagate to the global handler as `500`. `findById` is currently a **placeholder** returning an `UNLOCKED` `Lock`; its real implementation (reading `GET /lock/{deviceId}` and mapping the device `state` to `LockStatus`, with bridge 404 → empty `Optional`) is deferred.
+- `TedeeLockRepository` — implements `LockRepository`. `save(Lock)` reacts to the aggregate's recorded domain events: it iterates `domainEvents()` and translates each `LockLocked` into a `POST /v1.0/lock/{deviceId}/lock` (expects `204`) on the generated `LockApi`, translating every `RestClientException` (HTTP error responses via status, and connectivity failures) into the `ddd` exception categories, so no `RestClient` exception escapes the port. Unexpected non-`RestClientException` errors are left to propagate to the global handler as `500`. `findById` is currently a **placeholder** returning an `UNLOCKED` `Lock`; its real implementation (reading `GET /lock/{deviceId}` and mapping the device `state` to `LockStatus`, with bridge 404 → empty `Optional`) is deferred.
 - `TedeeClientConfiguration` — wires the generated `ApiClient`/`LockApi` from an injected `RestClient.Builder`, setting the base URL and the `api_token` API key.
 - `TedeeProperties` — `@ConfigurationProperties(prefix = "sanmibuh.rest.tedee")` holding `baseUrl` and `apiKey`. Both are sourced from the mandatory `TEDEE_HOST` and `TEDEE_API_KEY` environment variables (`base-url: http://${TEDEE_HOST}/v1.0`, `api-key: ${TEDEE_API_KEY}`); neither has a default, so the application **fails fast at startup** if either is unset rather than issuing requests against an invalid URL or without credentials.
 
 ### Generated Tedee client
-The Bridge client is generated offline by `openapi-generator-maven-plugin` (`7.25.0`, flavour `java` + `library=restclient`) from the vendored spec `openapi/tedee-bridge-api.json`. Generated code lives in package `com.tedee.bridge.client.*` (outside `org.sanmibuh`, so NullAway/Error Prone treat it as third-party) and is emitted to `target/generated-sources/openapi` (not under `src/`, so Spotless ignores it). The generated client is a **collaborator** of `TedeeApiAdapter`, never the port itself.
+The Bridge client is generated offline by `openapi-generator-maven-plugin` (`7.25.0`, flavour `java` + `library=restclient`) from the vendored spec `openapi/tedee-bridge-api.json`. Generated code lives in package `com.tedee.bridge.client.*` (outside `org.sanmibuh`, so NullAway/Error Prone treat it as third-party) and is emitted to `target/generated-sources/openapi` (not under `src/`, so Spotless ignores it). The generated client is a **collaborator** of `TedeeLockRepository`, never the port itself.
 
 > **GraalVM note:** the current `lock` flow never (de)serializes the generated Jackson models — success is `204` with no body and errors are handled by status code only. Reflection hints for `com.tedee.bridge.client.model.*` are therefore **deferred** (tracked in #96) and must be added (via a `RuntimeHintsRegistrar` or `reflect-config.json`) as soon as response bodies start being parsed.
 
@@ -94,10 +98,10 @@ The Bridge client is generated offline by `openapi-generator-maven-plugin` (`7.2
 Domain and application logic is verified with **collaborative (sociable) unit tests** written at the use-case boundary — the command/query handler:
 
 - The **handler is the subject under test** (`sut`), exercised with a **real aggregate**. Business logic (aggregate state transitions, event recording, idempotency) is never mocked; it is asserted *through* the use case. `CloseLockHandlerTest` is the reference example.
-- Only the **port** (the I/O boundary, e.g. `LockPort`) is mocked, since it represents an actuator/side effect. The handler's output is asserted on what it hands to `save(...)` — an `ArgumentCaptor<Lock>` inspecting the aggregate's immutable `domainEvents()` rather than mutable getters (the aggregate exposes no state getters).
+- Only the **port** (the I/O boundary, e.g. `LockRepository`) is mocked, since it represents an actuator/side effect. The handler's output is asserted on what it hands to `save(...)` — an `ArgumentCaptor<Lock>` inspecting the aggregate's immutable `domainEvents()` rather than mutable getters (the aggregate exposes no state getters).
 - **Aggregate invariants get their own direct tests only when they grow complex.** Simple behaviour stays expressed as use-case scenarios; there is no separate `LockTest` while `lock()` is a trivial idempotent transition.
 - **Value-object guard clauses** are covered by focused micro-tests (e.g. `LockIdTest`), asserting only invalid input — successful construction is covered indirectly when the value object is used.
-- **Secondary adapters** are tested against the real collaborator boundary (`TedeeApiAdapterTest` uses `@RestClientTest` + `MockRestServiceServer` to assert HTTP interactions and exception translation).
+- **Secondary adapters** are tested against the real collaborator boundary (`TedeeLockRepositoryTest` uses `@RestClientTest` + `MockRestServiceServer` to assert HTTP interactions and exception translation).
 
 Mutation testing (**PITest**, `targetClasses = org.sanmibuh.*`) guards the strength of these tests and is expected to stay at 100%. It is not bound to `verify`; run it explicitly with `make pitest`, the canonical incremental entrypoint (use the raw `./mvnw test-compile org.pitest:pitest-maven:mutationCoverage` goal only for a deliberate non-incremental run without history).
 

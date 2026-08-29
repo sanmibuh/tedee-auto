@@ -16,6 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
 import org.sanmibuh.ddd.domain.AggregateNotFoundException;
+import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.domain.IntegrationException;
 import org.sanmibuh.ddd.domain.TransientIntegrationException;
@@ -53,7 +54,7 @@ class GlobalExceptionHandlerTest {
     final var response = get("/test/aggregate-not-found");
 
     softly.then(response.statusCode()).isEqualTo(HttpStatus.NOT_FOUND.value());
-    softly.then(response.body()).contains("Object not found: 1");
+    softly.then(response.body()).contains("StubAggregateRootId not found: 1");
   }
 
   @Test
@@ -112,7 +113,7 @@ class GlobalExceptionHandlerTest {
 
     @GetMapping("/test/aggregate-not-found")
     void throwAggregateNotFoundException() {
-      throw new AggregateNotFoundException(Object.class, 1);
+      throw new AggregateNotFoundException(new StubAggregateRootId(1));
     }
 
     @GetMapping("/test/transient-integration-exception")
@@ -134,6 +135,8 @@ class GlobalExceptionHandlerTest {
     void throwUnexpectedException() {
       throw new StubUnexpectedException();
     }
+
+    record StubAggregateRootId(Integer value) implements AggregateRootId<Integer> {}
 
     static class StubDomainException extends DomainException {
 

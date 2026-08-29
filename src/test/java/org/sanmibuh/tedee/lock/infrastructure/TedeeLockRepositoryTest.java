@@ -29,21 +29,21 @@ import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 
-@RestClientTest(TedeeApiAdapter.class)
+@RestClientTest(TedeeLockRepository.class)
 @Import(TedeeClientConfiguration.class)
 @TestPropertySource(
     properties = {
-      "sanmibuh.rest.tedee.base-url=" + TedeeApiAdapterTest.BASE_URL,
-      "sanmibuh.rest.tedee.api-key=" + TedeeApiAdapterTest.API_KEY
+      "sanmibuh.rest.tedee.base-url=" + TedeeLockRepositoryTest.BASE_URL,
+      "sanmibuh.rest.tedee.api-key=" + TedeeLockRepositoryTest.API_KEY
     })
-class TedeeApiAdapterTest {
+class TedeeLockRepositoryTest {
 
   static final String BASE_URL = "http://localhost/v1.0";
   static final String API_KEY = "test-api-key";
   private static final int DEVICE_ID = 42;
   private static final String LOCK_URL = BASE_URL + "/lock/" + DEVICE_ID + "/lock";
 
-  @Autowired private TedeeApiAdapter sut;
+  @Autowired private TedeeLockRepository sut;
 
   @Autowired private MockRestServiceServer server;
 

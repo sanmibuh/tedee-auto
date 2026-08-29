@@ -9,17 +9,17 @@ import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockLocked;
 import org.sanmibuh.tedee.lock.domain.LockOperationFailedException;
-import org.sanmibuh.tedee.lock.domain.LockPort;
+import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.LockStatus;
 import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Repository;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
-@Component
+@Repository
 @RequiredArgsConstructor
-public class TedeeApiAdapter implements LockPort {
+public class TedeeLockRepository implements LockRepository {
 
   private final LockApi lockApi;
 
@@ -34,28 +34,28 @@ public class TedeeApiAdapter implements LockPort {
   }
 
   private void apply(final DomainEvent event) {
-    if (event instanceof LockLocked(LockId lockId)) {
-      lock(lockId);
+    if (event instanceof LockLocked(int deviceId)) {
+      lock(deviceId);
     }
   }
 
-  private void lock(final LockId lockId) {
+  private void lock(final int deviceId) {
     try {
-      lockApi.postLock(lockId.deviceId());
+      lockApi.postLock(deviceId);
     } catch (final RestClientResponseException exception) {
-      throw toDomainException(exception, lockId);
+      throw toDomainException(exception, deviceId);
     } catch (final RestClientException exception) {
-      throw new LockTemporarilyUnavailableException(lockId.deviceId(), exception);
+      throw new LockTemporarilyUnavailableException(deviceId, exception);
     }
   }
 
   private RuntimeException toDomainException(
-      final RestClientResponseException exception, final LockId lockId) {
+      final RestClientResponseException exception, final int deviceId) {
     return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
-      case NOT_FOUND -> new InvalidLockRequestException(lockId.deviceId(), exception);
+      case NOT_FOUND -> new InvalidLockRequestException(deviceId, exception);
       case METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT ->
-          new LockTemporarilyUnavailableException(lockId.deviceId(), exception);
-      case null, default -> new LockOperationFailedException(lockId.deviceId(), exception);
+          new LockTemporarilyUnavailableException(deviceId, exception);
+      case null, default -> new LockOperationFailedException(deviceId, exception);
     };
   }
 }
