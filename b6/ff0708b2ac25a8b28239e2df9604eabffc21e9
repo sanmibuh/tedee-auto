@@ -1,0 +1,14 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeBridgeRuntimeHints.java
+  h_97a91c9e567f87 26,29,34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "b6ff0708b2ac25a8b28239e2df9604eabffc21e9",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
