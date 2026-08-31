@@ -1,7 +1,7 @@
 package com.example;
 
-import org.sanmibuh.cqrs.domain.Query;
-import org.sanmibuh.cqrs.domain.QueryHandler;
+import org.sanmibuh.cqrs.api.Query;
+import org.sanmibuh.cqrs.api.QueryHandler;
 
 public class StubQueryHandler implements QueryHandler<StubQueryHandler.StubQuery, String> {
 

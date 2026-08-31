@@ -56,7 +56,7 @@ infrastructure/  — Spring beans, split into driving and driven adapters:
 Rules enforced at build time by ArchUnit (`HexagonalArchitectureTest`):
 - `domain` must not depend on Spring, `infrastructure`, or `application`
 - `application` must not depend on `infrastructure`
-- `primary` slice must not depend on the business `domain` layer (`org.sanmibuh.tedee..domain..`) or on `secondary` — it may only consume `application` types (commands, queries, projections) plus CQRS/DDD framework abstractions
+- `primary` slice must not depend on `domain` or `secondary` — it may only consume `application` types (commands, queries, projections) plus CQRS/DDD framework abstractions (`cqrs.api`, `ddd.domain`)
 - `secondary` slice must not depend on `primary` or `application` — it may only depend on `domain` (ports, aggregates, value objects)
 - Domain events (`DomainEvent` implementations) must carry only primitive or standard scalar payloads
 - Cross-aggregate coupling at infrastructure level is forbidden (not yet enforced by ArchUnit — rule will be added once multiple aggregates with `infrastructure` sub-packages exist)

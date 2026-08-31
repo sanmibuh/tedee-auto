@@ -1,9 +1,9 @@
 package org.sanmibuh.cqrs.infrastructure;
 
 import java.util.List;
-import org.sanmibuh.cqrs.domain.Command;
-import org.sanmibuh.cqrs.domain.CommandBus;
-import org.sanmibuh.cqrs.domain.CommandHandler;
+import org.sanmibuh.cqrs.api.Command;
+import org.sanmibuh.cqrs.api.CommandBus;
+import org.sanmibuh.cqrs.api.CommandHandler;
 
 public class SimpleCommandBus implements CommandBus {
 

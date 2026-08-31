@@ -5,9 +5,9 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
-import org.sanmibuh.cqrs.domain.Query;
-import org.sanmibuh.cqrs.domain.QueryHandler;
+import org.sanmibuh.cqrs.api.HandlerNotFoundException;
+import org.sanmibuh.cqrs.api.Query;
+import org.sanmibuh.cqrs.api.QueryHandler;
 
 class SimpleQueryBusTest {
 

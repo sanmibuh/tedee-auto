@@ -3,7 +3,7 @@ package org.sanmibuh.cqrs.infrastructure;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
+import org.sanmibuh.cqrs.api.HandlerNotFoundException;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.core.GenericTypeResolver;
 

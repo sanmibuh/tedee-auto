@@ -1,7 +1,7 @@
 package com.example;
 
-import org.sanmibuh.cqrs.domain.Command;
-import org.sanmibuh.cqrs.domain.CommandHandler;
+import org.sanmibuh.cqrs.api.Command;
+import org.sanmibuh.cqrs.api.CommandHandler;
 import org.springframework.stereotype.Component;
 
 @Component

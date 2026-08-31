@@ -1,4 +1,4 @@
-package org.sanmibuh.cqrs.domain;
+package org.sanmibuh.cqrs.api;
 
 import java.io.Serial;
 

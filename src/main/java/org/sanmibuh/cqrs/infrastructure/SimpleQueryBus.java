@@ -1,9 +1,9 @@
 package org.sanmibuh.cqrs.infrastructure;
 
 import java.util.List;
-import org.sanmibuh.cqrs.domain.Query;
-import org.sanmibuh.cqrs.domain.QueryBus;
-import org.sanmibuh.cqrs.domain.QueryHandler;
+import org.sanmibuh.cqrs.api.Query;
+import org.sanmibuh.cqrs.api.QueryBus;
+import org.sanmibuh.cqrs.api.QueryHandler;
 
 public class SimpleQueryBus implements QueryBus {
 
