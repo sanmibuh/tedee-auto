@@ -7,7 +7,7 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.sanmibuh.cqrs.domain.CommandBus;
+import org.sanmibuh.cqrs.api.CommandBus;
 import org.sanmibuh.tedee.lock.application.CloseLockCommand;
 
 @ExtendWith(MockitoExtension.class)

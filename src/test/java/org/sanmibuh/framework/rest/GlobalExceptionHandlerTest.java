@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.automation.configuration;
+package org.sanmibuh.framework.rest;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
@@ -14,7 +14,7 @@ import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.sanmibuh.cqrs.domain.HandlerNotFoundException;
+import org.sanmibuh.cqrs.api.HandlerNotFoundException;
 import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainException;

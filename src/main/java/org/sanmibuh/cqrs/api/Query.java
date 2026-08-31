@@ -1,4 +1,4 @@
-package org.sanmibuh.cqrs.domain;
+package org.sanmibuh.cqrs.api;
 
 @SuppressWarnings("unused")
 public interface Query<R> {}

@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.automation.configuration;
+package org.sanmibuh.framework.rest;
 
 import lombok.extern.slf4j.Slf4j;
 import org.sanmibuh.ddd.domain.AggregateNotFoundException;
