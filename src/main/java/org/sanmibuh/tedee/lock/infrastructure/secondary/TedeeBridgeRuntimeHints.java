@@ -9,6 +9,7 @@ import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 
 class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
@@ -22,6 +23,7 @@ class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
   public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
     var effectiveLoader = classLoader != null ? classLoader : getClass().getClassLoader();
     var scanner = new ClassPathScanningCandidateComponentProvider(false);
+    scanner.setResourceLoader(new DefaultResourceLoader(effectiveLoader));
     scanner.addIncludeFilter(new AssignableTypeFilter(Object.class));
     scanner.findCandidateComponents(MODEL_PACKAGE).stream()
         .flatMap(bd -> loadWithDeclaredClasses(bd, effectiveLoader))
