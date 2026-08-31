@@ -1,0 +1,63 @@
+src/main/java/org/sanmibuh/cqrs/api/Command.java
+  s_7632adec4647c8::t_5d2c25585e3590 1
+src/main/java/org/sanmibuh/cqrs/api/CommandBus.java
+  s_7632adec4647c8::t_23970b2400926c 1
+src/main/java/org/sanmibuh/cqrs/api/CommandHandler.java
+  s_7632adec4647c8::t_c63e5f1eab3704 1
+src/main/java/org/sanmibuh/cqrs/api/HandlerNotFoundException.java
+  s_7632adec4647c8::t_32869aa5943ae1 1
+src/main/java/org/sanmibuh/cqrs/api/Query.java
+  s_7632adec4647c8::t_61830338055db2 1
+src/main/java/org/sanmibuh/cqrs/api/QueryBus.java
+  s_7632adec4647c8::t_c1060c24fcf862 1
+src/main/java/org/sanmibuh/cqrs/api/QueryHandler.java
+  s_7632adec4647c8::t_e36d768044a1d6 1
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfiguration.java
+  s_7632adec4647c8::t_6856be3bdbd651 4-7
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSHandlerRegistrar.java
+  s_7632adec4647c8::t_58b520fc142029 7-8
+src/main/java/org/sanmibuh/cqrs/infrastructure/HandlerLookup.java
+  s_7632adec4647c8::t_2445988d82106d 6
+src/main/java/org/sanmibuh/cqrs/infrastructure/SimpleCommandBus.java
+  s_7632adec4647c8::t_efc226605647a6 4-6
+src/main/java/org/sanmibuh/cqrs/infrastructure/SimpleQueryBus.java
+  s_7632adec4647c8::t_af018addf036dc 4-6
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockCommand.java
+  s_7632adec4647c8::t_83e654488717b8 3
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockHandler.java
+  s_7632adec4647c8::t_46351ae8c0ba0b 4
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockScheduler.java
+  s_7632adec4647c8::t_16b2814944e2a4 4
+src/test/java/com/example/StubCommandHandler.java
+  s_7632adec4647c8::t_17ca1133be8117 3-4
+src/test/java/com/example/StubComponentCommandHandler.java
+  s_7632adec4647c8::t_0142ac2801207e 3-4
+src/test/java/com/example/StubQueryHandler.java
+  s_7632adec4647c8::t_04843ee03bf9be 3-4
+src/test/java/org/sanmibuh/cqrs/infrastructure/HandlerLookupTest.java
+  s_7632adec4647c8::t_4bb0567e83687d 8
+src/test/java/org/sanmibuh/cqrs/infrastructure/SimpleCommandBusTest.java
+  s_7632adec4647c8::t_ffbdc254634150 8-10
+src/test/java/org/sanmibuh/cqrs/infrastructure/SimpleQueryBusTest.java
+  s_7632adec4647c8::t_396b2f1a5a015a 8-10
+src/test/java/org/sanmibuh/tedee/automation/configuration/GlobalExceptionHandlerTest.java
+  s_7632adec4647c8::t_d65738e17a5a0f 17
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockSchedulerTest.java
+  s_7632adec4647c8::t_4293344129ef0e 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "9c446392c99c42bad70a7f1b6898cb9d3150924f",
+  "prompts": {},
+  "sessions": {
+    "s_7632adec4647c8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa98075c2ffensTlOpKSW0yw7a",
+        "model": "claude-sonnet-4.6"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
