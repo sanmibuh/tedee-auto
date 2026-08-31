@@ -22,23 +22,20 @@ class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
 
   @Override
   public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-    configureScannerPITEquivalent(classLoader).findCandidateComponents(MODEL_PACKAGE).stream()
+    var scanner =
+        setResourceLoaderPITEquivalent(
+            new ClassPathScanningCandidateComponentProvider(false), classLoader);
+    scanner.addIncludeFilter(new AssignableTypeFilter(Object.class));
+    scanner.findCandidateComponents(MODEL_PACKAGE).stream()
         .flatMap(bd -> loadWithDeclaredClasses(bd, classLoader))
         .forEach(type -> hints.reflection().registerType(type, JACKSON_CATEGORIES));
   }
 
-  private ClassPathScanningCandidateComponentProvider configureScannerPITEquivalent(
-      final @Nullable ClassLoader classLoader) {
-    var scanner = new ClassPathScanningCandidateComponentProvider(false);
-    scanner.setResourceLoader(new DefaultResourceLoader(classLoader));
-    scanner.addIncludeFilter(new AssignableTypeFilter(Object.class));
-    return scanner;
-  }
-
-  private void configureScannerPITEquivalent(
+  private ClassPathScanningCandidateComponentProvider setResourceLoaderPITEquivalent(
       final ClassPathScanningCandidateComponentProvider scanner,
       final @Nullable ClassLoader classLoader) {
     scanner.setResourceLoader(new DefaultResourceLoader(classLoader));
+    return scanner;
   }
 
   private Stream<Class<?>> loadWithDeclaredClasses(
