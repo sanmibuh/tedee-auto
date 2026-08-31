@@ -73,7 +73,9 @@ Use the `tdd` skill for any implementation task: load it with the `skill` tool a
 
 Apply TDD for all implementation work: domain logic, use cases, services, and infrastructure adapters.
 
-Skip TDD for pure configuration that contains no logic: Spring `@Configuration` classes, `application.yml`, GraalVM hints, Dockerfile, and build descriptors.
+Skip TDD for pure configuration that contains no logic and no decision that can break silently: Spring `@Configuration` classes, `application.yml`, static GraalVM hint files (`reflect-config.json`), Dockerfile, and build descriptors.
+
+Do apply TDD when configuration encodes an explicit decision that can break silently — for example, a `RuntimeHintsRegistrar` that lists specific types to register: if a type is missing the native binary fails at runtime, not at compile time. A test using `RuntimeHintsPredicates` makes that contract explicit and catches omissions early.
 
 ### LSP
 
