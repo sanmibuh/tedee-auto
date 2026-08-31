@@ -1,13 +1,11 @@
 package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import java.util.Arrays;
-import java.util.Objects;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
-import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.type.filter.AssignableTypeFilter;
@@ -29,7 +27,13 @@ class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
             new ClassPathScanningCandidateComponentProvider(false), classLoader);
     scanner.addIncludeFilter(new AssignableTypeFilter(Object.class));
     scanner.findCandidateComponents(MODEL_PACKAGE).stream()
-        .flatMap(bd -> loadWithDeclaredClasses(bd, classLoader))
+        .flatMap(
+            bd -> {
+              var className = bd.getBeanClassName();
+              return className != null
+                  ? loadWithDeclaredClasses(className, classLoader)
+                  : Stream.empty();
+            })
         .forEach(type -> hints.reflection().registerType(type, JACKSON_CATEGORIES));
   }
 
@@ -41,11 +45,8 @@ class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
   }
 
   private Stream<Class<?>> loadWithDeclaredClasses(
-      final BeanDefinition bd, final @Nullable ClassLoader loader) {
-    var type =
-        ClassUtils.resolveClassName(
-            Objects.requireNonNull(bd.getBeanClassName(), "scanned component has no class name"),
-            loader);
+      final String className, final @Nullable ClassLoader loader) {
+    var type = ClassUtils.resolveClassName(className, loader);
     return Stream.concat(Stream.of(type), Arrays.stream(type.getDeclaredClasses()));
   }
 }
