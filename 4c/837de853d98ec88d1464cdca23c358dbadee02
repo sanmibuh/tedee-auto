@@ -1,0 +1,22 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 59-60
+src/main/java/org/sanmibuh/framework/rest/GlobalExceptionHandler.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/framework/rest/RestAutoConfiguration.java
+  h_97a91c9e567f87 1-8
+src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+  h_97a91c9e567f87 2
+src/test/java/org/sanmibuh/framework/rest/GlobalExceptionHandlerTest.java
+  h_97a91c9e567f87 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "4c837de853d98ec88d1464cdca23c358dbadee02",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
