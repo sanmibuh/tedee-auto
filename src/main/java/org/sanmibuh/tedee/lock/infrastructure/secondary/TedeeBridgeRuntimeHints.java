@@ -1,6 +1,7 @@
 package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import java.util.Arrays;
+import java.util.Objects;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.MemberCategory;
@@ -27,9 +28,11 @@ class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
   }
 
   private Stream<Class<?>> loadWithDeclaredClasses(
-      final BeanDefinition bd, final @Nullable ClassLoader classLoader) {
+      final BeanDefinition bd, final @Nullable ClassLoader loader) {
     try {
-      var type = Class.forName(bd.getBeanClassName(), false, classLoader);
+      var className =
+          Objects.requireNonNull(bd.getBeanClassName(), "scanned component has no class name");
+      var type = Class.forName(className, false, loader);
       return Stream.concat(Stream.of(type), Arrays.stream(type.getDeclaredClasses()));
     } catch (ClassNotFoundException e) {
       throw new IllegalStateException("Cannot load model class: " + bd.getBeanClassName(), e);
