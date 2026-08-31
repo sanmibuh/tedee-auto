@@ -17,7 +17,9 @@ class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
 
   private static final String MODEL_PACKAGE = "com.tedee.bridge.client.model";
   private static final MemberCategory[] JACKSON_CATEGORIES = {
-    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS
+    MemberCategory.INVOKE_PUBLIC_CONSTRUCTORS,
+    MemberCategory.INVOKE_PUBLIC_METHODS,
+    MemberCategory.ACCESS_DECLARED_FIELDS
   };
 
   @Override
