@@ -14,8 +14,9 @@ public class SimpleCommandBus implements CommandBus {
   }
 
   @Override
+  @SuppressWarnings("unchecked")
   public void dispatch(final Command command) {
-    final CommandHandler<Command> handler = lookup.find(command.getClass());
+    final var handler = (CommandHandler<Command>) lookup.find(command.getClass());
     handler.handle(command);
   }
 }

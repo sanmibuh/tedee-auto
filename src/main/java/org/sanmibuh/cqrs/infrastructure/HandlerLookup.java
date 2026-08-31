@@ -35,12 +35,11 @@ class HandlerLookup<H> {
     return typeArgs[0];
   }
 
-  @SuppressWarnings("unchecked")
-  <T extends H> T find(final Class<?> messageType) {
+  H find(final Class<?> messageType) {
     final var handler = index.get(messageType);
     if (handler == null) {
       throw new HandlerNotFoundException(messageType);
     }
-    return (T) handler;
+    return handler;
   }
 }
