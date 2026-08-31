@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.automation.configuration;
+package org.sanmibuh.framework.rest;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
