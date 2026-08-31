@@ -53,12 +53,13 @@ infrastructure/  — Spring beans, split into driving and driven adapters:
   secondary/     — driven adapters (outgoing channels: repositories, external clients, …)
 ```
 
-Rules enforced at build time by ArchUnit:
-- `domain` must not depend on Spring or `infrastructure`
+Rules enforced at build time by ArchUnit (`HexagonalArchitectureTest`):
+- `domain` must not depend on Spring, `infrastructure`, or `application`
+- `application` must not depend on `infrastructure`
+- `primary` slice must not depend on the business `domain` layer (`org.sanmibuh.tedee..domain..`) or on `secondary` — it may only consume `application` types (commands, queries, projections) plus CQRS/DDD framework abstractions
+- `secondary` slice must not depend on `primary` or `application` — it may only depend on `domain` (ports, aggregates, value objects)
 - Domain events (`DomainEvent` implementations) must carry only primitive or standard scalar payloads
 - Cross-aggregate coupling at infrastructure level is forbidden (not yet enforced by ArchUnit — rule will be added once multiple aggregates with `infrastructure` sub-packages exist)
-
-The dependency direction between the `primary`/`secondary` slices and the `application`/`domain` layers (primary → application only; secondary → domain only) is intended to be enforced by ArchUnit as well; that rule set is tracked in #106.
 
 Failures are modelled with the `ddd` exception categories (`DomainException` → 400, `AggregateNotFoundException` → 404, `IntegrationException` → 500, `TransientIntegrationException` → 503) and mapped globally by `GlobalExceptionHandler` (extends `ResponseEntityExceptionHandler`). Spring resolves the most-specific `@ExceptionHandler`, so a transient failure yields 503 rather than 500, and a missing aggregate yields 404 rather than 400.
 

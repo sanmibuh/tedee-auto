@@ -33,6 +33,42 @@ class HexagonalArchitectureTest {
           "java.util.UUID");
 
   @ArchTest
+  static final ArchRule should_forbidApplicationDependencies_whenInDomainLayer =
+      noClasses()
+          .that()
+          .resideInAPackage("..domain..")
+          .should()
+          .dependOnClassesThat()
+          .resideInAPackage("..application..");
+
+  @ArchTest
+  static final ArchRule should_forbidInfrastructureDependencies_whenInApplicationLayer =
+      noClasses()
+          .that()
+          .resideInAPackage("..application..")
+          .should()
+          .dependOnClassesThat()
+          .resideInAPackage("..infrastructure..");
+
+  @ArchTest
+  static final ArchRule should_forbidDomainAndSecondaryDependencies_whenInPrimarySlice =
+      noClasses()
+          .that()
+          .resideInAPackage("..infrastructure.primary..")
+          .should()
+          .dependOnClassesThat()
+          .resideInAnyPackage("org.sanmibuh.tedee..domain..", "..infrastructure.secondary..");
+
+  @ArchTest
+  static final ArchRule should_forbidPrimaryAndApplicationDependencies_whenInSecondarySlice =
+      noClasses()
+          .that()
+          .resideInAPackage("..infrastructure.secondary..")
+          .should()
+          .dependOnClassesThat()
+          .resideInAnyPackage("..infrastructure.primary..", "..application..");
+
+  @ArchTest
   static final ArchRule should_forbidSpringDependencies_whenInDomainLayer =
       noClasses()
           .that()
