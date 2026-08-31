@@ -3,7 +3,6 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.stream.Stream;
-import lombok.SneakyThrows;
 import org.jspecify.annotations.Nullable;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
@@ -12,6 +11,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
 import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.type.filter.AssignableTypeFilter;
+import org.springframework.util.ClassUtils;
 
 class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
 
@@ -31,12 +31,12 @@ class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
         .forEach(type -> hints.reflection().registerType(type, JACKSON_CATEGORIES));
   }
 
-  @SneakyThrows
   private Stream<Class<?>> loadWithDeclaredClasses(
       final BeanDefinition bd, final ClassLoader loader) {
-    var className =
-        Objects.requireNonNull(bd.getBeanClassName(), "scanned component has no class name");
-    var type = Class.forName(className, false, loader);
+    var type =
+        ClassUtils.resolveClassName(
+            Objects.requireNonNull(bd.getBeanClassName(), "scanned component has no class name"),
+            loader);
     return Stream.concat(Stream.of(type), Arrays.stream(type.getDeclaredClasses()));
   }
 }
