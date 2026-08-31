@@ -5,10 +5,12 @@ import com.tedee.bridge.client.api.LockApi;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.web.client.RestClient;
 
 @Configuration
 @EnableConfigurationProperties(TedeeProperties.class)
+@ImportRuntimeHints(TedeeBridgeRuntimeHints.class)
 public class TedeeClientConfiguration {
 
   @Bean
