@@ -7,7 +7,7 @@
   <parent>
     <groupId>org.springframework.boot</groupId>
     <artifactId>spring-boot-starter-parent</artifactId>
-    <version>4.1.0</version>
+    <version>4.1.1</version>
     <relativePath/>
   </parent>
 
@@ -23,7 +23,7 @@
     <google-java-format.version>1.36.1</google-java-format.version>
     <jacoco.version>0.8.15</jacoco.version>
     <java.version>25</java.version>
-    <nullaway.version>0.13.7</nullaway.version>
+    <nullaway.version>0.14.0</nullaway.version>
     <openapi-generator.version>7.25.0</openapi-generator.version>
     <pitest-history-plugin.version>0.0.1</pitest-history-plugin.version>
     <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
@@ -53,7 +53,7 @@
     <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>jackson-databind-nullable</artifactId>
-      <version>0.2.6</version>
+      <version>0.2.11</version>
     </dependency>
     <dependency>
       <groupId>com.fasterxml.jackson.datatype</groupId>
