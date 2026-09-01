@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/ddd/cqrs/DomainEventPublishingCommandBus.java
+  h_97a91c9e567f87 7,12-14,17-18,22,24-28
+src/main/java/org/sanmibuh/ddd/cqrs/HandlerLookup.java
+  h_97a91c9e567f87 1-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "585ff0c8c0ad1e9e14aa9872988f25dfb76a5b02",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
