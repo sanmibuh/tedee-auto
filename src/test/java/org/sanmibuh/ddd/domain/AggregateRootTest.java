@@ -45,6 +45,9 @@ class AggregateRootTest {
 
     softly.then(sut).isEqualTo(other);
     softly.then(sut).hasSameHashCodeAs(other);
+    // Pins the exact hash value only to kill PIT's primitive-returns mutant (return 0) on hashCode;
+    // the behavioural contract above is what actually matters.
+    softly.then(sut.hashCode()).isEqualTo(new TestId(42).hashCode());
   }
 
   @Test
