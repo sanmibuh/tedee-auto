@@ -1,0 +1,14 @@
+src/test/java/org/sanmibuh/tedee/TedeeAutomationApplicationTest.java
+  h_97a91c9e567f87 3,16-18,28-29,32-36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "c89d8e70ffe18ac565e5134879f752b8d07a1712",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
