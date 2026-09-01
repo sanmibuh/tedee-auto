@@ -1,0 +1,24 @@
+src/main/java/org/sanmibuh/ddd/cqrs/infrastructure/DomainEventPublishingCommandBus.java
+  h_97a91c9e567f87 1,12,17
+src/main/java/org/sanmibuh/ddd/cqrs/infrastructure/HandlerLookup.java
+  h_97a91c9e567f87 1,11,13,15-16,34
+src/main/java/org/sanmibuh/ddd/cqrs/port/AggregateCommandHandler.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockHandler.java
+  h_97a91c9e567f87 4
+src/test/java/org/sanmibuh/ddd/cqrs/infrastructure/DomainEventPublishingCommandBusTest.java
+  h_97a91c9e567f87 1,9
+src/test/java/org/sanmibuh/ddd/cqrs/port/AggregateCommandHandlerTest.java
+  h_97a91c9e567f87 1
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "79baac89074a7a2f312036deb305799bfaeb4072",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
