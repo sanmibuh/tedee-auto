@@ -18,11 +18,11 @@ class CQRSAutoConfigurationTest {
 
   @Test
   void should_returnCommandBus_whenCommandHandlersProvided() {
-    then(config.commandBus(List.of())).isInstanceOf(SimpleCommandBus.class);
+    then(config.commandBus(List.of())).isInstanceOf(InMemoryCommandBus.class);
   }
 
   @Test
   void should_returnQueryBus_whenQueryHandlersProvided() {
-    then(config.queryBus(List.of())).isInstanceOf(SimpleQueryBus.class);
+    then(config.queryBus(List.of())).isInstanceOf(InMemoryQueryBus.class);
   }
 }

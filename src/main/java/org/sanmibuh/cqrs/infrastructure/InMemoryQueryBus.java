@@ -5,11 +5,11 @@ import org.sanmibuh.cqrs.api.Query;
 import org.sanmibuh.cqrs.api.QueryBus;
 import org.sanmibuh.cqrs.api.QueryHandler;
 
-public class SimpleQueryBus implements QueryBus {
+public class InMemoryQueryBus implements QueryBus {
 
   private final HandlerLookup<QueryHandler<?, ?>> lookup;
 
-  public SimpleQueryBus(final List<QueryHandler<?, ?>> handlers) {
+  public InMemoryQueryBus(final List<QueryHandler<?, ?>> handlers) {
     lookup = new HandlerLookup<>(handlers, QueryHandler.class);
   }
 

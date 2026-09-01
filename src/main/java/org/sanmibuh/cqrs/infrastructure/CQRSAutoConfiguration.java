@@ -20,13 +20,13 @@ public class CQRSAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(CommandBus.class)
-  public SimpleCommandBus commandBus(final List<CommandHandler<?>> handlers) {
-    return new SimpleCommandBus(handlers);
+  public InMemoryCommandBus commandBus(final List<CommandHandler<?>> handlers) {
+    return new InMemoryCommandBus(handlers);
   }
 
   @Bean
   @ConditionalOnMissingBean(QueryBus.class)
-  public SimpleQueryBus queryBus(final List<QueryHandler<?, ?>> handlers) {
-    return new SimpleQueryBus(handlers);
+  public InMemoryQueryBus queryBus(final List<QueryHandler<?, ?>> handlers) {
+    return new InMemoryQueryBus(handlers);
   }
 }
