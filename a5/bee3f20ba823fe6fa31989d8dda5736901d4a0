@@ -1,0 +1,14 @@
+.mvn/jvm.config
+  h_97a91c9e567f87 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "a5bee3f20ba823fe6fa31989d8dda5736901d4a0",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
