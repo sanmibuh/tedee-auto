@@ -1,0 +1,16 @@
+WIP.md
+  h_97a91c9e567f87 10-12,16-18,20
+src/main/java/org/sanmibuh/ddd/cqrs/infrastructure/DddCqrsAutoConfiguration.java
+  h_97a91c9e567f87 18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "d0ceb0f98bef5aad40f03fda1c2fefa2fe251bc3",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
