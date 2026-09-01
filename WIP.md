@@ -7,13 +7,17 @@
 - ~~`AggregateCommandHandler` (returns the mutated aggregate) (+ tests)~~
 - ~~`DomainEventPublishingCommandBus` — drains aggregate events and publishes to `EventBus` (+ tests)~~
 - ~~`CloseLockHandler` extends `AggregateCommandHandler`~~
+- ~~`DomainEventHandlerRegistrar` — scans `DomainEventHandler.class` in autoconfig packages (+ tests, idempotent)~~
+- ~~`AggregateRoot` identity `equals`/`hashCode` (hand-written, by concrete type + id) (+ tests)~~
+- ~~Final-by-default retrofit across the project + `AGENTS.md` convention~~
 
 ## Remaining steps (wiring / registration)
 
-- [ ] RED/GREEN: `CQRSHandlerRegistrar` scans `DomainEventHandler.class` (stub handler in `com.example`)
-- [ ] RED/GREEN: auto-configuration that registers `EventBus` (`InMemoryEventBus`) and, as the default `CommandBus`, `DomainEventPublishingCommandBus`
+- ~~RED/GREEN: `DddAutoConfiguration` exposes `EventBus` (`InMemoryEventBus`)~~
+- ~~RED/GREEN: `DddAutoConfiguration` registers the `DomainEventHandlerRegistrar`~~
+- [ ] RED/GREEN: `DddCqrsAutoConfiguration` exposes `DomainEventPublishingCommandBus` as the default `CommandBus` (RED done)
 - [ ] RED/GREEN: priority — the `ddd.cqrs` publishing bus wins; `cqrs` `InMemoryCommandBus` stays as a fallback that backs off (`@AutoConfigureBefore` + `@ConditionalOnMissingBean`)
-- [ ] Register new auto-config in `AutoConfiguration.imports`
+- [ ] Register new auto-configs (`DddAutoConfiguration`, `DddCqrsAutoConfiguration`) in `AutoConfiguration.imports`
 - [ ] Update `ARCHITECTURE.md`
 - [ ] `make format` + `./mvnw verify` + `make pitest`
 

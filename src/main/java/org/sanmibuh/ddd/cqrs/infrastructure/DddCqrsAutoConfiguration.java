@@ -15,6 +15,6 @@ public class DddCqrsAutoConfiguration {
   @ConditionalOnMissingBean(CommandBus.class)
   public DomainEventPublishingCommandBus commandBus(
       final List<BaseCommandHandler<?, ?>> handlers, final EventBus eventBus) {
-    throw new UnsupportedOperationException();
+    return new DomainEventPublishingCommandBus(handlers, eventBus);
   }
 }
