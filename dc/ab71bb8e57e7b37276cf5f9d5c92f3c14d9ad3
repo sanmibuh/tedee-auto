@@ -1,0 +1,26 @@
+AGENTS.md
+  h_97a91c9e567f87 88-90
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfiguration.java
+  h_97a91c9e567f87 23-24,29-30
+src/main/java/org/sanmibuh/cqrs/infrastructure/InMemoryCommandBus.java
+  h_97a91c9e567f87 8,12
+src/main/java/org/sanmibuh/cqrs/infrastructure/InMemoryQueryBus.java
+  h_97a91c9e567f87 8,12
+src/test/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfigurationTest.java
+  h_97a91c9e567f87 21,26
+src/test/java/org/sanmibuh/cqrs/infrastructure/InMemoryCommandBusTest.java
+  h_97a91c9e567f87 12,17,26
+src/test/java/org/sanmibuh/cqrs/infrastructure/InMemoryQueryBusTest.java
+  h_97a91c9e567f87 12,26,35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "dcab71bb8e57e7b37276cf5f9d5c92f3c14d9ad3",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
