@@ -9,12 +9,12 @@ import org.sanmibuh.cqrs.api.Command;
 import org.sanmibuh.cqrs.api.CommandHandler;
 import org.sanmibuh.cqrs.api.HandlerNotFoundException;
 
-class SimpleCommandBusTest {
+class InMemoryCommandBusTest {
 
   @Test
   void should_dispatchCommand_whenHandlerIsRegistered() {
     final var handler = new StubCommandHandler();
-    final var bus = new SimpleCommandBus(List.of(handler));
+    final var bus = new InMemoryCommandBus(List.of(handler));
 
     bus.dispatch(new StubCommand());
 
@@ -23,7 +23,7 @@ class SimpleCommandBusTest {
 
   @Test
   void should_throwHandlerNotFoundException_whenNoHandlerRegistered() {
-    final var bus = new SimpleCommandBus(List.of());
+    final var bus = new InMemoryCommandBus(List.of());
 
     thenThrownBy(() -> bus.dispatch(new StubCommand()))
         .isInstanceOf(HandlerNotFoundException.class)

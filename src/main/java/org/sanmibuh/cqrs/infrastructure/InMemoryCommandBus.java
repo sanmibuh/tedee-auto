@@ -5,11 +5,11 @@ import org.sanmibuh.cqrs.api.Command;
 import org.sanmibuh.cqrs.api.CommandBus;
 import org.sanmibuh.cqrs.api.CommandHandler;
 
-public class SimpleCommandBus implements CommandBus {
+public class InMemoryCommandBus implements CommandBus {
 
   private final HandlerLookup<CommandHandler<?>> lookup;
 
-  public SimpleCommandBus(final List<CommandHandler<?>> handlers) {
+  public InMemoryCommandBus(final List<CommandHandler<?>> handlers) {
     lookup = new HandlerLookup<>(handlers, CommandHandler.class);
   }
 

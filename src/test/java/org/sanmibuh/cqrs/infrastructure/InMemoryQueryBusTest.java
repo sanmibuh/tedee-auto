@@ -9,7 +9,7 @@ import org.sanmibuh.cqrs.api.HandlerNotFoundException;
 import org.sanmibuh.cqrs.api.Query;
 import org.sanmibuh.cqrs.api.QueryHandler;
 
-class SimpleQueryBusTest {
+class InMemoryQueryBusTest {
 
   record StubQuery() implements Query<String> {}
 
@@ -23,7 +23,7 @@ class SimpleQueryBusTest {
 
   @Test
   void should_returnQueryResult_whenHandlerIsRegistered() {
-    final var bus = new SimpleQueryBus(List.of(new StubQueryHandler()));
+    final var bus = new InMemoryQueryBus(List.of(new StubQueryHandler()));
 
     final var result = bus.dispatch(new StubQuery());
 
@@ -32,7 +32,7 @@ class SimpleQueryBusTest {
 
   @Test
   void should_throwHandlerNotFoundException_whenNoHandlerRegistered() {
-    final var bus = new SimpleQueryBus(List.of());
+    final var bus = new InMemoryQueryBus(List.of());
 
     thenThrownBy(() -> bus.dispatch(new StubQuery()))
         .isInstanceOf(HandlerNotFoundException.class)

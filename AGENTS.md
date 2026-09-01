@@ -85,6 +85,9 @@ Java LSP (`jdtls`) is enabled via `opencode.json`. OpenCode will automatically s
 - Always run mutation testing via `make pitest`. It restores the incremental history from the orphan `coverage-data` branch and mirrors CI exactly.
 - Do not run `./mvnw pitest:mutationCoverage` (or the raw `org.pitest:pitest-maven:mutationCoverage` goal) directly unless you deliberately want a non-incremental run without history.
 
+### File operations
+- When renaming a file, always use `git mv <old> <new>` instead of creating a new file and deleting the old one. This preserves Git history.
+
 ### Before finishing
 - Run `make format` to auto-format all code. This is mandatory for both AI-generated and human-authored changes.
 - Run `./mvnw verify` — all checks must pass.
