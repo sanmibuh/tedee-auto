@@ -5,9 +5,9 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.sanmibuh.cqrs.api.Command;
-import org.sanmibuh.cqrs.api.CommandHandler;
-import org.sanmibuh.cqrs.api.HandlerNotFoundException;
+import org.sanmibuh.cqrs.port.Command;
+import org.sanmibuh.cqrs.port.CommandHandler;
+import org.sanmibuh.cqrs.port.HandlerNotFoundException;
 
 class InMemoryCommandBusTest {
 

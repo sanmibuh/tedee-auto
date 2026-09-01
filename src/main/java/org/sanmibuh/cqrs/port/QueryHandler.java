@@ -1,4 +1,4 @@
-package org.sanmibuh.cqrs.api;
+package org.sanmibuh.cqrs.port;
 
 public interface QueryHandler<Q extends Query<R>, R> {
 

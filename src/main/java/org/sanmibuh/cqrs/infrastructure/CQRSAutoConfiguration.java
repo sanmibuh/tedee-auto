@@ -1,10 +1,10 @@
 package org.sanmibuh.cqrs.infrastructure;
 
 import java.util.List;
-import org.sanmibuh.cqrs.api.CommandBus;
-import org.sanmibuh.cqrs.api.CommandHandler;
-import org.sanmibuh.cqrs.api.QueryBus;
-import org.sanmibuh.cqrs.api.QueryHandler;
+import org.sanmibuh.cqrs.port.CommandBus;
+import org.sanmibuh.cqrs.port.CommandHandler;
+import org.sanmibuh.cqrs.port.QueryBus;
+import org.sanmibuh.cqrs.port.QueryHandler;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
