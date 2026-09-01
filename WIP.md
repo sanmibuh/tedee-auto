@@ -5,8 +5,8 @@
 - ~~REFACTOR: `cqrs/api` → `cqrs/port`; `Repository`, `EventBus`, `DomainEventHandler` → `ddd/port`~~
 - ~~RED: `DomainEventHandler` + `EventBus` interfaces (stubs) + `InMemoryEventBus` dispatches to a single handler~~
 - [ ] GREEN: Implement `InMemoryEventBus` with single-handler dispatch
-- [ ] RED: `InMemoryEventBus` dispatches to N handlers per event type
-- [ ] GREEN: Extend to multi-handler lookup
+- ~~RED: `InMemoryEventBus` dispatches to N handlers per event type (covered by implementation)~~
+- ~~GREEN: Multi-handler lookup~~
 - [ ] RED: `CommandHandler` returns `List<DomainEvent>`; `AggregateCommandHandler` base
 - [ ] GREEN: Implement `AggregateCommandHandler`; update `CloseLockHandler`
 - [ ] RED: `InMemoryCommandBus.dispatch` drains and publishes events
