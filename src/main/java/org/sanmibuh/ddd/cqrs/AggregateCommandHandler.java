@@ -9,7 +9,7 @@ public abstract class AggregateCommandHandler<C extends Command, A extends Aggre
 
   @Override
   public final A process(final C command) {
-    throw new UnsupportedOperationException();
+    return handle(command);
   }
 
   protected abstract A handle(C command);
