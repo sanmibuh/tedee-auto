@@ -2,7 +2,8 @@
 
 ## Planned steps
 
-- [ ] RED: `EventHandler` + `EventBus` interfaces (stubs) + `InMemoryEventBus` dispatches to a single handler
+- ~~REFACTOR: `cqrs/api` → `cqrs/port`; `Repository`, `EventBus`, `DomainEventHandler` → `ddd/port`~~
+- ~~RED: `DomainEventHandler` + `EventBus` interfaces (stubs) + `InMemoryEventBus` dispatches to a single handler~~
 - [ ] GREEN: Implement `InMemoryEventBus` with single-handler dispatch
 - [ ] RED: `InMemoryEventBus` dispatches to N handlers per event type
 - [ ] GREEN: Extend to multi-handler lookup
@@ -10,8 +11,7 @@
 - [ ] GREEN: Implement `AggregateCommandHandler`; update `CloseLockHandler`
 - [ ] RED: `InMemoryCommandBus.dispatch` drains and publishes events
 - [ ] GREEN: Wire `EventBus` into `InMemoryCommandBus`
-- [ ] Update `CQRSHandlerRegistrar` to scan `EventHandler.class`
-- [ ] Update existing tests broken by `CommandHandler` contract change
+- [ ] Update `CQRSHandlerRegistrar` to scan `DomainEventHandler.class`
 - [ ] `make format` + `./mvnw verify` + `make pitest`
 
 ## Open decisions
