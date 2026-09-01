@@ -5,6 +5,7 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import java.util.Optional;
 import org.junit.jupiter.api.Test;
+import org.sanmibuh.ddd.port.Repository;
 
 class RepositoryTest {
 
