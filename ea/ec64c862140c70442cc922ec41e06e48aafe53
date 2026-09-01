@@ -1,0 +1,24 @@
+src/main/java/org/sanmibuh/ddd/infrastructure/InMemoryEventBus.java
+  h_97a91c9e567f87 1-18
+src/main/java/org/sanmibuh/ddd/port/DomainEventHandler.java
+  h_97a91c9e567f87 1-8
+src/main/java/org/sanmibuh/ddd/port/EventBus.java
+  h_97a91c9e567f87 1-8
+src/main/java/org/sanmibuh/ddd/port/Repository.java
+  h_97a91c9e567f87 1,4-6
+src/test/java/org/sanmibuh/ddd/domain/RepositoryTest.java
+  h_97a91c9e567f87 8
+src/test/java/org/sanmibuh/ddd/infrastructure/InMemoryEventBusTest.java
+  h_97a91c9e567f87 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "eaec64c862140c70442cc922ec41e06e48aafe53",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
