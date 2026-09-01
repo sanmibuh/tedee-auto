@@ -13,7 +13,7 @@ public class DddAutoConfiguration {
 
   @Bean
   static DomainEventHandlerRegistrar domainEventHandlerRegistrar(final BeanFactory beanFactory) {
-    throw new UnsupportedOperationException();
+    return new DomainEventHandlerRegistrar(beanFactory);
   }
 
   @Bean
