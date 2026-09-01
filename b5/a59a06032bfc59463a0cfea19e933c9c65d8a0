@@ -1,0 +1,14 @@
+src/test/java/org/sanmibuh/ddd/infrastructure/DomainEventHandlerRegistrarTest.java
+  h_97a91c9e567f87 5,8,33-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "b5a59a06032bfc59463a0cfea19e933c9c65d8a0",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
