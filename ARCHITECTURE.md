@@ -16,9 +16,19 @@ Base abstractions for DDD.
 **Aggregate modelling:**
 - `ValueObject<T>` — shared interface for value objects. Exposes the underlying primitive/standard value through `T value()`, standardising how primitive-wrapping domain types surface their raw value.
 - `AggregateRootId<T>` — interface for aggregate identifiers, extends `ValueObject<T>`. Makes aggregate ids first-class DDD concepts and gives a shared type to constrain aggregates.
-- `AggregateRoot<ID extends AggregateRootId<?>>` — base class for aggregate roots, generic over its identifier type. Owns the aggregate `id` (exposed via `id()`), records domain events via the protected `recordEvent(DomainEvent)`, and exposes them through the read-only `domainEvents()` (an unmodifiable list). Secondary adapters read these events to decide what to persist.
+- `AggregateRoot<ID extends AggregateRootId<?>>` — base class for aggregate roots, generic over its identifier type. Owns the aggregate `id` (exposed via `id()`), records domain events via the protected `recordEvent(DomainEvent)`, and exposes them through the read-only `domainEvents()` (an unmodifiable list). Secondary adapters read these events to decide what to persist. Defines **identity equality** by hand (`equals`/`hashCode`): two aggregates are equal iff they share the same concrete type (`getClass()`) and `id`, ignoring state and recorded events. It is not delegated to Lombok on purpose — identity is defined once in the base so every aggregate inherits it and it cannot be silently forgotten, and `getClass()` (rather than Lombok's `instanceof`/`canEqual`) prevents two different aggregate types that share an id from comparing equal. This is sound because concrete aggregates are always `final`.
 - `Repository<A extends AggregateRoot<ID>, ID extends AggregateRootId<?>>` — generic secondary (output) port for aggregate persistence, following the DDD Repository pattern. Declares `Optional<A> findById(ID)` and `save(A)` (both implemented by adapters), plus a default `get(ID)` that centralises the not-found policy (`findById(id).orElseThrow(() -> new AggregateNotFoundException(id))`). `findById` keeps the present/absent reporting in infrastructure; `get` gives handlers a `find-or-throw` primitive so they never repeat that policy. Aggregate-specific ports (e.g. `LockRepository`) extend it.
 - `DomainEvent` — marker interface for domain events (business facts recorded by an aggregate, e.g. `LockLocked`). **Payload rule:** domain events must carry only primitive or standard scalar values (e.g. `String`, `UUID`, `int`, `Instant`, enums) — never value objects, aggregates, or other rich domain types. This keeps events stable, serializable, and integration-friendly, avoids coupling subscribers to internal domain structures, and aligns with the rule that commands and queries use only primitive or standard Java types. The rule is both documented here and **enforced by ArchUnit** (`HexagonalArchitectureTest.should_carryOnlyScalarPayloads_whenDomainEvent`), which inspects the fields of every `DomainEvent` implementation and rejects any non-scalar payload.
+
+**Domain event publishing (ports):**
+- `EventBus` — output port to publish a `DomainEvent` to interested subscribers.
+- `DomainEventHandler<E extends DomainEvent>` — subscriber contract for a single event type.
+
+**`infrastructure`** — Spring-backed implementations:
+- `InMemoryEventBus` — synchronous `EventBus` that indexes handlers by event type (`GenericTypeResolver`) and fans each event out to all matching `DomainEventHandler`s (0..N per type).
+- `DomainEventHandlerRegistrar` — `BeanDefinitionRegistryPostProcessor` that scans the auto-configuration packages for `DomainEventHandler` implementations and registers them as beans (idempotently), mirroring how `CQRSHandlerRegistrar` discovers command/query handlers.
+- `DddAutoConfiguration` — `@AutoConfiguration` that registers the `DomainEventHandlerRegistrar` and an `InMemoryEventBus` as the `EventBus` (`@ConditionalOnMissingBean`, so applications can override it). Registered in `META-INF/spring/…AutoConfiguration.imports`.
+
 
 **Exceptions** — categories model the possible outcomes of a failed operation, and `GlobalExceptionHandler` maps each to an HTTP status:
 - `DomainException` — a business rule was violated (the request is invalid). Mapped to HTTP 400.
@@ -37,7 +47,14 @@ CQRS building blocks.
 **`infrastructure`** — Spring-backed implementations:
 - `InMemoryCommandBus` / `InMemoryQueryBus` — resolve handlers at startup via `HandlerLookup` (O(1) dispatch)
 - `HandlerLookup` — builds a `Map<messageType, handler>` on construction using `GenericTypeResolver`
-- `CQRSAutoConfiguration` — `@AutoConfiguration` that registers `InMemoryCommandBus` and `InMemoryQueryBus` as `@ConditionalOnMissingBean` beans (allowing applications to override either with a custom implementation), and scans `org.sanmibuh` for all `CommandHandler` / `QueryHandler` implementations. Registered in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`.
+- `CQRSAutoConfiguration` — `@AutoConfiguration` that registers `InMemoryCommandBus` and `InMemoryQueryBus` as `@ConditionalOnMissingBean` beans (allowing applications to override either with a custom implementation), and scans `org.sanmibuh` for all `CommandHandler` / `QueryHandler` implementations. Registered in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`. In the running application the `CommandBus` is **not** the `InMemoryCommandBus` but the event-publishing bus contributed by `ddd.cqrs` (see below), which registers first and makes this one back off.
+
+### `org.sanmibuh.ddd.cqrs`
+Thin bridge that wires the `ddd` domain-event mechanism onto the `cqrs` command pipeline. It depends on both `cqrs` and `ddd`, keeping those two free of each other.
+
+- `AggregateCommandHandler<C, A extends AggregateRoot<?>>` — base command handler whose `handle` returns the **mutated aggregate** (rather than `Void`), so the surrounding bus can read its recorded events. `CloseLockHandler` extends it.
+- `DomainEventPublishingCommandBus` — `CommandBus` decorator that dispatches a command to its handler and, if the result is an `AggregateRoot`, drains its `domainEvents()` and publishes each to the `EventBus`. This is where recorded events actually leave the aggregate.
+- `DddCqrsAutoConfiguration` — `@AutoConfiguration(before = CQRSAutoConfiguration.class)` that registers the `DomainEventPublishingCommandBus` as the `CommandBus` (`@ConditionalOnMissingBean`). Because it is ordered **before** `CQRSAutoConfiguration`, it wins the `CommandBus` slot and the `cqrs` `InMemoryCommandBus` backs off — so event publishing is the default behaviour, while `InMemoryCommandBus` remains the fallback when this bridge is absent. Registered in `META-INF/spring/…AutoConfiguration.imports`.
 
 ---
 
@@ -59,7 +76,10 @@ Rules enforced at build time by ArchUnit (`HexagonalArchitectureTest`):
 - `primary` slice must not depend on any `domain` package or on `secondary`
 - `secondary` slice must not depend on `primary` or `application`
 - Domain events (`DomainEvent` implementations) must carry only primitive or standard scalar payloads
+- Concrete aggregates (non-abstract `AggregateRoot` subtypes) must be `final` (`should_beFinal_whenConcreteAggregate`)
 - Cross-aggregate coupling at infrastructure level is forbidden (not yet enforced by ArchUnit — rule will be added once multiple aggregates with `infrastructure` sub-packages exist)
+
+**Final by default.** Every concrete class is `final` unless it is explicitly designed for extension; leaf exceptions, handlers, buses, adapters, registrars and aggregates are all `final`. The only non-final classes are the ones Spring must subclass with a CGLIB proxy — `@Configuration`, `@AutoConfiguration` and `@SpringBootApplication` classes with `@Bean` methods — since a proxy cannot extend a final class. The aggregate case is enforced by the ArchUnit rule above.
 
 Failures are modelled with the `ddd` exception categories (`DomainException` → 400, `AggregateNotFoundException` → 404, `IntegrationException` → 500, `TransientIntegrationException` → 503) and mapped globally by `GlobalExceptionHandler` (extends `ResponseEntityExceptionHandler`). Spring resolves the most-specific `@ExceptionHandler`, so a transient failure yields 503 rather than 500, and a missing aggregate yields 404 rather than 400.
 
