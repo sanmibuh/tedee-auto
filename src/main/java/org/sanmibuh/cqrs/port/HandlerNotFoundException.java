@@ -2,7 +2,7 @@ package org.sanmibuh.cqrs.port;
 
 import java.io.Serial;
 
-public class HandlerNotFoundException extends RuntimeException {
+public final class HandlerNotFoundException extends RuntimeException {
 
   @Serial private static final long serialVersionUID = 3945626113256578325L;
 

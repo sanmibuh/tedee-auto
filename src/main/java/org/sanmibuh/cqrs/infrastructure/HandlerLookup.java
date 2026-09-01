@@ -7,7 +7,7 @@ import org.sanmibuh.cqrs.port.HandlerNotFoundException;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.core.GenericTypeResolver;
 
-class HandlerLookup<H> {
+final class HandlerLookup<H> {
 
   private final Map<Class<?>, H> index;
 

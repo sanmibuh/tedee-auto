@@ -19,7 +19,7 @@ import org.springframework.web.client.RestClientResponseException;
 
 @Repository
 @RequiredArgsConstructor
-public class TedeeLockRepository implements LockRepository {
+public final class TedeeLockRepository implements LockRepository {
 
   private final LockApi lockApi;
 

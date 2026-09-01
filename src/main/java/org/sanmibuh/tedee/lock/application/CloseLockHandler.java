@@ -7,7 +7,7 @@ import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
 
 @RequiredArgsConstructor
-public class CloseLockHandler extends AggregateCommandHandler<CloseLockCommand, Lock> {
+public final class CloseLockHandler extends AggregateCommandHandler<CloseLockCommand, Lock> {
 
   private final LockRepository repository;
 

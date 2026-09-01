@@ -3,7 +3,7 @@ package org.sanmibuh.tedee.lock.domain;
 import java.io.Serial;
 import org.sanmibuh.ddd.domain.DomainException;
 
-public class InvalidLockIdException extends DomainException {
+public final class InvalidLockIdException extends DomainException {
 
   @Serial private static final long serialVersionUID = 1L;
 

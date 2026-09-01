@@ -17,7 +17,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 
 @RequiredArgsConstructor(access = lombok.AccessLevel.PACKAGE)
-class DomainEventHandlerRegistrar implements BeanDefinitionRegistryPostProcessor {
+final class DomainEventHandlerRegistrar implements BeanDefinitionRegistryPostProcessor {
 
   private static final AnnotationBeanNameGenerator NAME_GENERATOR =
       new AnnotationBeanNameGenerator();

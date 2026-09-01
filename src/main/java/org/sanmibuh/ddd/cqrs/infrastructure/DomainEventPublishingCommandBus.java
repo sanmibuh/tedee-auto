@@ -7,7 +7,7 @@ import org.sanmibuh.cqrs.port.CommandBus;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.port.EventBus;
 
-public class DomainEventPublishingCommandBus implements CommandBus {
+public final class DomainEventPublishingCommandBus implements CommandBus {
 
   private final HandlerLookup<BaseCommandHandler<?, ?>> lookup;
   private final EventBus eventBus;

@@ -31,7 +31,7 @@ class DomainEventPublishingCommandBusTest {
 
   record StubId(Integer value) implements AggregateRootId<Integer> {}
 
-  static class StubAggregate extends AggregateRoot<StubId> {
+  static final class StubAggregate extends AggregateRoot<StubId> {
 
     StubAggregate() {
       super(new StubId(1));

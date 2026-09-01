@@ -38,6 +38,7 @@ These standards apply to all code in this project and are the basis for any code
 - Small methods, descriptive names, no magic numbers or strings.
 - No dead code.
 - Use `final` on all fields and parameters where the value is not reassigned. Use `var` for local variables, unless doing so would require an explicit unchecked cast — in that case, declare the explicit type instead.
+- Final by default: every concrete class is `final` unless it is explicitly designed for extension. Leaf exceptions, handlers, buses, adapters, registrars and aggregates are all `final`. The only classes left non-final are those Spring proxies with CGLIB — `@Configuration`, `@AutoConfiguration` and `@SpringBootApplication` classes with `@Bean` methods — since a subclassing proxy cannot extend a final class. Concrete aggregates being final is enforced at build time by ArchUnit.
 - Use 2-space indentation.
 - Do not write comments that restate what the code already says. Only comment to explain a non-obvious decision or constraint that cannot be expressed in the code itself.
 - Use Lombok to remove boilerplate: `@RequiredArgsConstructor` for constructor injection. Never write constructors or getters by hand when Lombok can generate them.

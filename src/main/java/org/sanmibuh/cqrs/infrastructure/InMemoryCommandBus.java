@@ -5,7 +5,7 @@ import org.sanmibuh.cqrs.port.BaseCommandHandler;
 import org.sanmibuh.cqrs.port.Command;
 import org.sanmibuh.cqrs.port.CommandBus;
 
-public class InMemoryCommandBus implements CommandBus {
+public final class InMemoryCommandBus implements CommandBus {
 
   private final HandlerLookup<BaseCommandHandler<?, ?>> lookup;
 

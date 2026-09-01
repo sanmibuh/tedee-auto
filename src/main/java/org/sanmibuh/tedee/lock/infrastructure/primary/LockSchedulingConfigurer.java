@@ -8,7 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class LockSchedulingConfigurer implements SchedulingConfigurer {
+public final class LockSchedulingConfigurer implements SchedulingConfigurer {
 
   private final LockSchedulerProperties properties;
   private final LockScheduler scheduler;

@@ -10,7 +10,7 @@ import org.sanmibuh.ddd.port.EventBus;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.core.GenericTypeResolver;
 
-public class InMemoryEventBus implements EventBus {
+public final class InMemoryEventBus implements EventBus {
 
   private final Map<Class<?>, List<DomainEventHandler<?>>> index;
 

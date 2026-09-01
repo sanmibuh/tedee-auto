@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 @RequiredArgsConstructor
-public class LockScheduler {
+public final class LockScheduler {
 
   private final CommandBus commandBus;
 
