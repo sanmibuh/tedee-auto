@@ -1,7 +1,7 @@
 package org.sanmibuh.tedee.lock.application;
 
 import lombok.RequiredArgsConstructor;
-import org.sanmibuh.ddd.cqrs.AggregateCommandHandler;
+import org.sanmibuh.ddd.cqrs.port.AggregateCommandHandler;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockRepository;

@@ -1,4 +1,4 @@
-package org.sanmibuh.ddd.cqrs;
+package org.sanmibuh.ddd.cqrs.port;
 
 import org.sanmibuh.cqrs.port.BaseCommandHandler;
 import org.sanmibuh.cqrs.port.Command;

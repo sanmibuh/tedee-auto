@@ -1,27 +1,22 @@
-package org.sanmibuh.ddd.cqrs;
+package org.sanmibuh.ddd.cqrs.port;
 
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.verify;
+import static org.assertj.core.api.BDDAssertions.then;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.cqrs.port.Command;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainEvent;
-import org.sanmibuh.ddd.port.EventBus;
 
-class DomainEventPublishingCommandBusTest {
+class AggregateCommandHandlerTest {
 
   @Test
-  void should_publishDomainEvents_whenHandlerReturnsAggregate() {
-    final var eventBus = mock(EventBus.class);
-    final var sut =
-        new DomainEventPublishingCommandBus(List.of(new StubAggregateHandler()), eventBus);
+  void should_returnAggregateWithEvents_whenProcessIsCalled() {
+    final var sut = new StubAggregateCommandHandler();
 
-    sut.dispatch(new StubCommand());
+    final var aggregate = sut.handle(new StubCommand());
 
-    verify(eventBus).publish(new StubEvent());
+    then(aggregate.domainEvents()).containsExactly(new StubEvent());
   }
 
   record StubCommand() implements Command {}
@@ -38,7 +33,8 @@ class DomainEventPublishingCommandBusTest {
     }
   }
 
-  static class StubAggregateHandler extends AggregateCommandHandler<StubCommand, StubAggregate> {
+  static class StubAggregateCommandHandler
+      extends AggregateCommandHandler<StubCommand, StubAggregate> {
 
     @Override
     protected StubAggregate execute(final StubCommand command) {

@@ -1,4 +1,4 @@
-package org.sanmibuh.ddd.cqrs;
+package org.sanmibuh.ddd.cqrs.infrastructure;
 
 import java.util.HashMap;
 import java.util.List;
@@ -8,12 +8,12 @@ import org.sanmibuh.cqrs.port.HandlerNotFoundException;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.core.GenericTypeResolver;
 
-class HandlerLookup {
+class HandlerLookup<H> {
 
-  private final Map<Class<?>, BaseCommandHandler<?, ?>> index;
+  private final Map<Class<?>, H> index;
 
-  HandlerLookup(final List<BaseCommandHandler<?, ?>> handlers) {
-    final Map<Class<?>, BaseCommandHandler<?, ?>> map = new HashMap<>();
+  HandlerLookup(final List<H> handlers) {
+    final Map<Class<?>, H> map = new HashMap<>();
     for (final var handler : handlers) {
       final var typeArgs =
           GenericTypeResolver.resolveTypeArguments(
@@ -31,7 +31,7 @@ class HandlerLookup {
     index = Map.copyOf(map);
   }
 
-  BaseCommandHandler<?, ?> find(final Class<?> commandType) {
+  H find(final Class<?> commandType) {
     final var handler = index.get(commandType);
     if (handler == null) {
       throw new HandlerNotFoundException(commandType);

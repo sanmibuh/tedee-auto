@@ -1,4 +1,4 @@
-package org.sanmibuh.ddd.cqrs;
+package org.sanmibuh.ddd.cqrs.infrastructure;
 
 import java.util.List;
 import org.sanmibuh.cqrs.port.BaseCommandHandler;
@@ -9,12 +9,12 @@ import org.sanmibuh.ddd.port.EventBus;
 
 public class DomainEventPublishingCommandBus implements CommandBus {
 
-  private final HandlerLookup lookup;
+  private final HandlerLookup<BaseCommandHandler<?, ?>> lookup;
   private final EventBus eventBus;
 
   public DomainEventPublishingCommandBus(
       final List<BaseCommandHandler<?, ?>> handlers, final EventBus eventBus) {
-    this.lookup = new HandlerLookup(handlers);
+    this.lookup = new HandlerLookup<>(handlers);
     this.eventBus = eventBus;
   }
 
