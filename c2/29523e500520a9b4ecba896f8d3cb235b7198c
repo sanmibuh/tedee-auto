@@ -1,0 +1,36 @@
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfiguration.java
+  h_97a91c9e567f87 4,23
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSHandlerRegistrar.java
+  h_97a91c9e567f87 7,36
+src/main/java/org/sanmibuh/cqrs/infrastructure/InMemoryCommandBus.java
+  h_97a91c9e567f87 4,10,12-13,19
+src/main/java/org/sanmibuh/cqrs/port/BaseCommandHandler.java
+  h_97a91c9e567f87 3,5
+src/main/java/org/sanmibuh/cqrs/port/CommandHandler.java
+  h_97a91c9e567f87 3,5,8-9
+src/main/java/org/sanmibuh/ddd/cqrs/AggregateCommandHandler.java
+  h_97a91c9e567f87 8,11-12,15
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockHandler.java
+  h_97a91c9e567f87 15
+src/test/java/com/example/StubCommandHandler.java
+  h_97a91c9e567f87 6,11
+src/test/java/com/example/StubComponentCommandHandler.java
+  h_97a91c9e567f87 9,14
+src/test/java/org/sanmibuh/cqrs/infrastructure/InMemoryCommandBusTest.java
+  h_97a91c9e567f87 35,40
+src/test/java/org/sanmibuh/ddd/cqrs/AggregateCommandHandlerTest.java
+  h_97a91c9e567f87 17,40
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  h_97a91c9e567f87 33,43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "c229523e500520a9b4ecba896f8d3cb235b7198c",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
