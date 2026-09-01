@@ -8,9 +8,9 @@ public abstract class AggregateCommandHandler<C extends Command, A extends Aggre
     implements BaseCommandHandler<C, A> {
 
   @Override
-  public final A process(final C command) {
-    return handle(command);
+  public final A handle(final C command) {
+    return execute(command);
   }
 
-  protected abstract A handle(C command);
+  protected abstract A execute(C command);
 }

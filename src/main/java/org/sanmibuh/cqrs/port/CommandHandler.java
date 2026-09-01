@@ -1,12 +1,12 @@
 package org.sanmibuh.cqrs.port;
 
-public interface CommandHandler<C extends Command> extends BaseCommandHandler<C, Void> {
+public abstract class CommandHandler<C extends Command> implements BaseCommandHandler<C, Void> {
 
-  void handle(C command);
+  protected abstract void execute(C command);
 
   @Override
-  default Void process(C command) {
-    handle(command);
+  public final Void handle(final C command) {
+    execute(command);
     return null;
   }
 }

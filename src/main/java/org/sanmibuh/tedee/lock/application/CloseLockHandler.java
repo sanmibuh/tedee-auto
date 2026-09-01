@@ -12,7 +12,7 @@ public class CloseLockHandler extends AggregateCommandHandler<CloseLockCommand, 
   private final LockRepository repository;
 
   @Override
-  protected Lock handle(final CloseLockCommand command) {
+  protected Lock execute(final CloseLockCommand command) {
     final var lock = repository.get(new LockId(command.deviceId()));
     lock.lock();
     repository.save(lock);

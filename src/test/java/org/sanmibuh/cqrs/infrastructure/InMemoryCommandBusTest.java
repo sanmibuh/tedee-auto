@@ -32,12 +32,12 @@ class InMemoryCommandBusTest {
 
   record StubCommand() implements Command {}
 
-  static class StubCommandHandler implements CommandHandler<StubCommand> {
+  static class StubCommandHandler extends CommandHandler<StubCommand> {
 
     boolean handled;
 
     @Override
-    public void handle(final StubCommand command) {
+    protected void execute(final StubCommand command) {
       handled = true;
     }
   }

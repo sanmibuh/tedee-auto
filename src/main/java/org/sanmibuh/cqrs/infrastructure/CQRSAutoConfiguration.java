@@ -1,8 +1,8 @@
 package org.sanmibuh.cqrs.infrastructure;
 
 import java.util.List;
+import org.sanmibuh.cqrs.port.BaseCommandHandler;
 import org.sanmibuh.cqrs.port.CommandBus;
-import org.sanmibuh.cqrs.port.CommandHandler;
 import org.sanmibuh.cqrs.port.QueryBus;
 import org.sanmibuh.cqrs.port.QueryHandler;
 import org.springframework.beans.factory.BeanFactory;
@@ -20,7 +20,7 @@ public class CQRSAutoConfiguration {
 
   @Bean
   @ConditionalOnMissingBean(CommandBus.class)
-  public InMemoryCommandBus commandBus(final List<CommandHandler<?>> handlers) {
+  public InMemoryCommandBus commandBus(final List<BaseCommandHandler<?, ?>> handlers) {
     return new InMemoryCommandBus(handlers);
   }
 

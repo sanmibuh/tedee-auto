@@ -14,7 +14,7 @@ class AggregateCommandHandlerTest {
   void should_returnAggregateWithEvents_whenProcessIsCalled() {
     final var sut = new StubAggregateCommandHandler();
 
-    final var aggregate = sut.process(new StubCommand());
+    final var aggregate = sut.handle(new StubCommand());
 
     then(aggregate.domainEvents()).containsExactly(new StubEvent());
   }
@@ -37,7 +37,7 @@ class AggregateCommandHandlerTest {
       extends AggregateCommandHandler<StubCommand, StubAggregate> {
 
     @Override
-    protected StubAggregate handle(final StubCommand command) {
+    protected StubAggregate execute(final StubCommand command) {
       return new StubAggregate();
     }
   }

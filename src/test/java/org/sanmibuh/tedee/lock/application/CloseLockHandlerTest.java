@@ -30,7 +30,7 @@ class CloseLockHandlerTest {
   void should_recordLockLocked_whenClosingAnOpenLock() {
     given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
 
-    sut.process(new CloseLockCommand(1));
+    sut.handle(new CloseLockCommand(1));
 
     verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents()).containsExactly(new LockLocked(1));
@@ -40,7 +40,7 @@ class CloseLockHandlerTest {
   void should_notRecordEvent_whenClosingAnAlreadyClosedLock() {
     given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.LOCKED));
 
-    sut.process(new CloseLockCommand(1));
+    sut.handle(new CloseLockCommand(1));
 
     verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents()).isEmpty();
