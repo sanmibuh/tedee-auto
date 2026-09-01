@@ -1,0 +1,14 @@
+src/test/java/org/sanmibuh/ddd/cqrs/infrastructure/DddCqrsAutoConfigurationContextTest.java
+  h_97a91c9e567f87 1-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "198f04fff620e6e11ee84268953297eda674bebe",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
