@@ -13,6 +13,6 @@ public class DddAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean(EventBus.class)
   public InMemoryEventBus eventBus(final List<DomainEventHandler<?>> handlers) {
-    throw new UnsupportedOperationException();
+    return new InMemoryEventBus(handlers);
   }
 }
