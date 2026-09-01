@@ -1,0 +1,62 @@
+WIP.md
+  h_97a91c9e567f87 1-18
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSAutoConfiguration.java
+  h_97a91c9e567f87 4-7
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSHandlerRegistrar.java
+  h_97a91c9e567f87 7-8
+src/main/java/org/sanmibuh/cqrs/infrastructure/HandlerLookup.java
+  h_97a91c9e567f87 6
+src/main/java/org/sanmibuh/cqrs/infrastructure/InMemoryCommandBus.java
+  h_97a91c9e567f87 4-6
+src/main/java/org/sanmibuh/cqrs/infrastructure/InMemoryQueryBus.java
+  h_97a91c9e567f87 4-6
+src/main/java/org/sanmibuh/cqrs/port/Command.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/cqrs/port/CommandBus.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/cqrs/port/CommandHandler.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/cqrs/port/HandlerNotFoundException.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/cqrs/port/Query.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/cqrs/port/QueryBus.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/cqrs/port/QueryHandler.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockCommand.java
+  h_97a91c9e567f87 3
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockHandler.java
+  h_97a91c9e567f87 4
+src/main/java/org/sanmibuh/tedee/lock/domain/LockRepository.java
+  h_97a91c9e567f87 3
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockScheduler.java
+  h_97a91c9e567f87 4
+src/test/java/com/example/StubCommandHandler.java
+  h_97a91c9e567f87 3-4
+src/test/java/com/example/StubComponentCommandHandler.java
+  h_97a91c9e567f87 3-4
+src/test/java/com/example/StubQueryHandler.java
+  h_97a91c9e567f87 3-4
+src/test/java/org/sanmibuh/cqrs/infrastructure/HandlerLookupTest.java
+  h_97a91c9e567f87 8
+src/test/java/org/sanmibuh/cqrs/infrastructure/InMemoryCommandBusTest.java
+  h_97a91c9e567f87 8-10
+src/test/java/org/sanmibuh/cqrs/infrastructure/InMemoryQueryBusTest.java
+  h_97a91c9e567f87 8-10
+src/test/java/org/sanmibuh/framework/rest/GlobalExceptionHandlerTest.java
+  h_97a91c9e567f87 17
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockSchedulerTest.java
+  h_97a91c9e567f87 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "17a60972a909cf4655579276af7cbd7358f27f4f",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
