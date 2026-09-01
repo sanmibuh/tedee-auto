@@ -7,16 +7,14 @@ import org.sanmibuh.cqrs.port.CommandBus;
 
 public final class InMemoryCommandBus implements CommandBus {
 
-  private final HandlerLookup<BaseCommandHandler<?, ?>> lookup;
+  private final CommandDispatcher dispatcher;
 
   public InMemoryCommandBus(final List<BaseCommandHandler<?, ?>> handlers) {
-    lookup = new HandlerLookup<>(handlers, BaseCommandHandler.class);
+    dispatcher = new CommandDispatcher(handlers);
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void dispatch(final Command command) {
-    final var handler = (BaseCommandHandler<Command, ?>) lookup.find(command.getClass());
-    handler.handle(command);
+    dispatcher.dispatch(command);
   }
 }

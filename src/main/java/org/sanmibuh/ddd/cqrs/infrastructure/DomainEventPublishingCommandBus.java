@@ -1,6 +1,7 @@
 package org.sanmibuh.ddd.cqrs.infrastructure;
 
 import java.util.List;
+import org.sanmibuh.cqrs.infrastructure.CommandDispatcher;
 import org.sanmibuh.cqrs.port.BaseCommandHandler;
 import org.sanmibuh.cqrs.port.Command;
 import org.sanmibuh.cqrs.port.CommandBus;
@@ -9,20 +10,18 @@ import org.sanmibuh.ddd.port.EventBus;
 
 public final class DomainEventPublishingCommandBus implements CommandBus {
 
-  private final HandlerLookup<BaseCommandHandler<?, ?>> lookup;
+  private final CommandDispatcher dispatcher;
   private final EventBus eventBus;
 
   public DomainEventPublishingCommandBus(
       final List<BaseCommandHandler<?, ?>> handlers, final EventBus eventBus) {
-    this.lookup = new HandlerLookup<>(handlers);
+    dispatcher = new CommandDispatcher(handlers);
     this.eventBus = eventBus;
   }
 
   @Override
-  @SuppressWarnings("unchecked")
   public void dispatch(final Command command) {
-    final var handler = (BaseCommandHandler<Command, ?>) lookup.find(command.getClass());
-    final var result = handler.handle(command);
+    final var result = dispatcher.dispatch(command);
     if (result instanceof final AggregateRoot<?> aggregate) {
       aggregate.domainEvents().forEach(eventBus::publish);
     }
