@@ -1,0 +1,62 @@
+AGENTS.md
+  h_97a91c9e567f87 41
+src/main/java/org/sanmibuh/cqrs/infrastructure/CQRSHandlerRegistrar.java
+  h_97a91c9e567f87 21
+src/main/java/org/sanmibuh/cqrs/infrastructure/HandlerLookup.java
+  h_97a91c9e567f87 10
+src/main/java/org/sanmibuh/cqrs/infrastructure/InMemoryCommandBus.java
+  h_97a91c9e567f87 8
+src/main/java/org/sanmibuh/cqrs/infrastructure/InMemoryQueryBus.java
+  h_97a91c9e567f87 8
+src/main/java/org/sanmibuh/cqrs/port/HandlerNotFoundException.java
+  h_97a91c9e567f87 5
+src/main/java/org/sanmibuh/ddd/cqrs/infrastructure/DomainEventPublishingCommandBus.java
+  h_97a91c9e567f87 10
+src/main/java/org/sanmibuh/ddd/cqrs/infrastructure/HandlerLookup.java
+  h_97a91c9e567f87 11
+src/main/java/org/sanmibuh/ddd/domain/AggregateNotFoundException.java
+  h_97a91c9e567f87 3
+src/main/java/org/sanmibuh/ddd/infrastructure/DomainEventHandlerRegistrar.java
+  h_97a91c9e567f87 20
+src/main/java/org/sanmibuh/ddd/infrastructure/InMemoryEventBus.java
+  h_97a91c9e567f87 13
+src/main/java/org/sanmibuh/framework/rest/GlobalExceptionHandler.java
+  h_97a91c9e567f87 16
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockHandler.java
+  h_97a91c9e567f87 10
+src/main/java/org/sanmibuh/tedee/lock/domain/InvalidLockIdException.java
+  h_97a91c9e567f87 6
+src/main/java/org/sanmibuh/tedee/lock/domain/InvalidLockRequestException.java
+  h_97a91c9e567f87 5
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  h_97a91c9e567f87 5
+src/main/java/org/sanmibuh/tedee/lock/domain/LockOperationFailedException.java
+  h_97a91c9e567f87 5
+src/main/java/org/sanmibuh/tedee/lock/domain/LockTemporarilyUnavailableException.java
+  h_97a91c9e567f87 5
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockScheduler.java
+  h_97a91c9e567f87 10
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockSchedulingConfigurer.java
+  h_97a91c9e567f87 11
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeBridgeRuntimeHints.java
+  h_97a91c9e567f87 14
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockRepository.java
+  h_97a91c9e567f87 22
+src/test/java/org/sanmibuh/ddd/cqrs/infrastructure/DomainEventPublishingCommandBusTest.java
+  h_97a91c9e567f87 34
+src/test/java/org/sanmibuh/ddd/cqrs/port/AggregateCommandHandlerTest.java
+  h_97a91c9e567f87 28
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  h_97a91c9e567f87 15,94-103
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "9e09c8c58f2384e657e99e462c25bfb7efe6b93a",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
