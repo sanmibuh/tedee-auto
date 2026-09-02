@@ -31,24 +31,24 @@ class CloseLockHandlerTest {
   @InjectSoftAssertions BDDSoftAssertions softly;
 
   @Test
-  void should_recordLockLockedAndReturnAggregate_whenClosingAnOpenLock() {
+  void should_recordLockLockedAndReturnEvents_whenClosingAnOpenLock() {
     given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
 
     final var actual = sut.handle(new CloseLockCommand(1));
 
     verify(repository).save(savedLock.capture());
     softly.then(savedLock.getValue().domainEvents()).containsExactly(new LockLocked(1));
-    softly.then(actual).isSameAs(savedLock.getValue());
+    softly.then(actual).containsExactly(new LockLocked(1));
   }
 
   @Test
-  void should_notRecordEventAndReturnAggregate_whenClosingAnAlreadyClosedLock() {
+  void should_notRecordEventAndReturnNoEvents_whenClosingAnAlreadyClosedLock() {
     given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.LOCKED));
 
     final var actual = sut.handle(new CloseLockCommand(1));
 
     verify(repository).save(savedLock.capture());
     softly.then(savedLock.getValue().domainEvents()).isEmpty();
-    softly.then(actual).isSameAs(savedLock.getValue());
+    softly.then(actual).isEmpty();
   }
 }

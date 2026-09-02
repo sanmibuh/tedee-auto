@@ -7,6 +7,7 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.cqrs.port.Command;
 import org.sanmibuh.ddd.cqrs.port.AggregateCommandHandler;
+import org.sanmibuh.ddd.cqrs.port.DomainEventCommandHandler;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainEvent;
@@ -25,7 +26,19 @@ class DomainEventPublishingCommandBusTest {
     verify(eventBus).publish(new StubEvent());
   }
 
+  @Test
+  void should_publishDomainEvents_whenHandlerReturnsEventsWithoutAggregate() {
+    final var eventBus = mock(EventBus.class);
+    final var sut = new DomainEventPublishingCommandBus(List.of(new StubEventHandler()), eventBus);
+
+    sut.dispatch(new StubEventCommand());
+
+    verify(eventBus).publish(new StubEvent());
+  }
+
   record StubCommand() implements Command {}
+
+  record StubEventCommand() implements Command {}
 
   record StubEvent() implements DomainEvent {}
 
@@ -44,6 +57,14 @@ class DomainEventPublishingCommandBusTest {
     @Override
     protected StubAggregate execute(final StubCommand command) {
       return new StubAggregate();
+    }
+  }
+
+  static class StubEventHandler implements DomainEventCommandHandler<StubEventCommand> {
+
+    @Override
+    public List<DomainEvent> handle(final StubEventCommand command) {
+      return List.of(new StubEvent());
     }
   }
 }

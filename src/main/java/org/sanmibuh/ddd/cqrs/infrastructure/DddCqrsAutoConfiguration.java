@@ -2,8 +2,8 @@ package org.sanmibuh.ddd.cqrs.infrastructure;
 
 import java.util.List;
 import org.sanmibuh.cqrs.infrastructure.CQRSAutoConfiguration;
-import org.sanmibuh.cqrs.port.BaseCommandHandler;
 import org.sanmibuh.cqrs.port.CommandBus;
+import org.sanmibuh.ddd.cqrs.port.DomainEventCommandHandler;
 import org.sanmibuh.ddd.port.EventBus;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
@@ -15,7 +15,7 @@ public class DddCqrsAutoConfiguration {
   @Bean
   @ConditionalOnMissingBean(CommandBus.class)
   public DomainEventPublishingCommandBus commandBus(
-      final List<BaseCommandHandler<?, ?>> handlers, final EventBus eventBus) {
+      final List<DomainEventCommandHandler<?>> handlers, final EventBus eventBus) {
     return new DomainEventPublishingCommandBus(handlers, eventBus);
   }
 }

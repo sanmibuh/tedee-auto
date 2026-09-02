@@ -11,12 +11,12 @@ import org.sanmibuh.ddd.domain.DomainEvent;
 class AggregateCommandHandlerTest {
 
   @Test
-  void should_returnAggregateWithEvents_whenProcessIsCalled() {
+  void should_returnRecordedEvents_whenHandleIsCalled() {
     final var sut = new StubAggregateCommandHandler();
 
-    final var aggregate = sut.handle(new StubCommand());
+    final var events = sut.handle(new StubCommand());
 
-    then(aggregate.domainEvents()).containsExactly(new StubEvent());
+    then(events).containsExactly(new StubEvent());
   }
 
   record StubCommand() implements Command {}
