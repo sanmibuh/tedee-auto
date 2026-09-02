@@ -1,4 +1,4 @@
-package org.sanmibuh.cqrs.infrastructure;
+package org.sanmibuh.ddd.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.then;
 

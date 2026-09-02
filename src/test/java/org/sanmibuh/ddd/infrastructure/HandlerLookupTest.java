@@ -1,11 +1,11 @@
-package org.sanmibuh.cqrs.infrastructure;
+package org.sanmibuh.ddd.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.sanmibuh.cqrs.port.HandlerNotFoundException;
+import org.sanmibuh.ddd.port.HandlerNotFoundException;
 import org.springframework.aop.framework.ProxyFactory;
 
 class HandlerLookupTest {

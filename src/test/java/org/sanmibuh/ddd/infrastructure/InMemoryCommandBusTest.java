@@ -1,4 +1,4 @@
-package org.sanmibuh.cqrs.infrastructure;
+package org.sanmibuh.ddd.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.Mockito.mock;
@@ -6,13 +6,13 @@ import static org.mockito.Mockito.verify;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.sanmibuh.cqrs.port.Command;
-import org.sanmibuh.cqrs.port.CommandHandler;
-import org.sanmibuh.cqrs.port.HandlerNotFoundException;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainEvent;
+import org.sanmibuh.ddd.port.Command;
+import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.ddd.port.EventBus;
+import org.sanmibuh.ddd.port.HandlerNotFoundException;
 
 class InMemoryCommandBusTest {
 

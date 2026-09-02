@@ -24,10 +24,22 @@ Base abstractions for DDD.
 - `EventBus` — output port to publish a `DomainEvent` to interested subscribers.
 - `DomainEventHandler<E extends DomainEvent>` — subscriber contract for a single event type.
 
+**Command & query dispatch (ports):**
+- `Command`, `Query<R>` — marker interfaces for the two message kinds. Both carry only primitive or standard Java types; the handler constructs domain objects from them.
+- `CommandHandler<C extends Command, A extends AggregateRoot<?>>` — the single command handler contract. Subclasses implement `protected abstract A execute(C)` with pure business logic (no `EventBus`), returning the **mutated aggregate**; the base exposes `public final List<DomainEvent> handle(C) = execute(command).domainEvents()`, so the bus can read the recorded events. `CloseLockHandler` extends it. There is no `Void` command handler: a command mutates exactly one aggregate and returns it.
+- `QueryHandler<Q extends Query<R>, R>` — handler contract for a single query type.
+- `CommandBus`, `QueryBus` — dispatch ports.
+- `HandlerNotFoundException` — thrown when no handler is registered for a given command or query type.
+
 **`infrastructure`** — Spring-backed implementations:
 - `InMemoryEventBus` — synchronous `EventBus` that indexes handlers by event type (`GenericTypeResolver`) and fans each event out to all matching `DomainEventHandler`s (0..N per type).
 - `DomainEventHandlerRegistrar` — `BeanDefinitionRegistryPostProcessor` that scans the auto-configuration packages for `DomainEventHandler` implementations and registers them as beans (idempotently), mirroring how `CQRSHandlerRegistrar` discovers command/query handlers.
 - `DddAutoConfiguration` — `@AutoConfiguration` that registers the `DomainEventHandlerRegistrar` and an `InMemoryEventBus` as the `EventBus` (`@ConditionalOnMissingBean`, so applications can override it). Registered in `META-INF/spring/…AutoConfiguration.imports`.
+- `HandlerLookup` — builds a `Map<messageType, handler>` on construction using `GenericTypeResolver`, giving O(1) dispatch. Shared by the command and query buses.
+- `InMemoryCommandBus` — resolves the `CommandHandler` for a command via `HandlerLookup`, invokes `handle`, and publishes each returned `DomainEvent` to the `EventBus`. This is where recorded events leave the aggregate: the domain **records** events, the command bus **publishes** them, and the repository stays a pure persistence port. It is the only `CommandBus` — there is no separate publishing decorator.
+- `InMemoryQueryBus` — resolves the `QueryHandler` for a query via `HandlerLookup` and returns its result.
+- `CQRSHandlerRegistrar` — `BeanDefinitionRegistryPostProcessor` that scans the auto-configuration packages for `CommandHandler` / `QueryHandler` implementations and registers them as beans (idempotently), mirroring how `DomainEventHandlerRegistrar` discovers event handlers.
+- `CQRSAutoConfiguration` — `@AutoConfiguration` that registers the `CQRSHandlerRegistrar`, plus `InMemoryCommandBus` (injecting the `EventBus`) and `InMemoryQueryBus` as `@ConditionalOnMissingBean` beans (applications can override either). Registered in `META-INF/spring/…AutoConfiguration.imports`.
 
 
 **Exceptions** — categories model the possible outcomes of a failed operation, and `GlobalExceptionHandler` maps each to an HTTP status:
@@ -35,26 +47,6 @@ Base abstractions for DDD.
 - `AggregateNotFoundException` (extends `DomainException`) — a requested aggregate does not exist. Mapped to HTTP 404 (a more-specific handler than the generic `DomainException` → 400).
 - `IntegrationException` — an external dependency failed in a way that is not the caller's fault. Mapped to HTTP 500.
 - `TransientIntegrationException` (extends `IntegrationException`) — an external dependency is temporarily unavailable and the operation may succeed if retried. Mapped to HTTP 503.
-
-### `org.sanmibuh.cqrs`
-CQRS building blocks.
-
-**`domain`** — framework-agnostic interfaces:
-- `Command`, `CommandHandler<C>`, `CommandBus`
-- `Query<R>`, `QueryHandler<Q, R>`, `QueryBus`
-- `HandlerNotFoundException` — thrown when no handler is registered for a given command or query type
-
-**`infrastructure`** — Spring-backed implementations:
-- `InMemoryCommandBus` / `InMemoryQueryBus` — resolve handlers at startup via `HandlerLookup` (O(1) dispatch)
-- `HandlerLookup` — builds a `Map<messageType, handler>` on construction using `GenericTypeResolver`
-- `CQRSAutoConfiguration` — `@AutoConfiguration` that registers `InMemoryCommandBus` and `InMemoryQueryBus` as `@ConditionalOnMissingBean` beans (allowing applications to override either with a custom implementation), and scans `org.sanmibuh` for all `CommandHandler` / `QueryHandler` implementations. Registered in `META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports`. In the running application the `CommandBus` is **not** the `InMemoryCommandBus` but the event-publishing bus contributed by `ddd.cqrs` (see below), which registers first and makes this one back off.
-
-### `org.sanmibuh.ddd.cqrs`
-Thin bridge that wires the `ddd` domain-event mechanism onto the `cqrs` command pipeline. It depends on both `cqrs` and `ddd`, keeping those two free of each other.
-
-- `AggregateCommandHandler<C, A extends AggregateRoot<?>>` — base command handler whose `handle` returns the **mutated aggregate** (rather than `Void`), so the surrounding bus can read its recorded events. `CloseLockHandler` extends it.
-- `DomainEventPublishingCommandBus` — `CommandBus` decorator that dispatches a command to its handler and, if the result is an `AggregateRoot`, drains its `domainEvents()` and publishes each to the `EventBus`. This is where recorded events actually leave the aggregate.
-- `DddCqrsAutoConfiguration` — `@AutoConfiguration(before = CQRSAutoConfiguration.class)` that registers the `DomainEventPublishingCommandBus` as the `CommandBus` (`@ConditionalOnMissingBean`). Because it is ordered **before** `CQRSAutoConfiguration`, it wins the `CommandBus` slot and the `cqrs` `InMemoryCommandBus` backs off — so event publishing is the default behaviour, while `InMemoryCommandBus` remains the fallback when this bridge is absent. Registered in `META-INF/spring/…AutoConfiguration.imports`.
 
 ---
 

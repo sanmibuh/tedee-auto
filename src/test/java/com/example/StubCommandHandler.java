@@ -1,7 +1,7 @@
 package com.example;
 
-import org.sanmibuh.cqrs.port.Command;
-import org.sanmibuh.cqrs.port.CommandHandler;
+import org.sanmibuh.ddd.port.Command;
+import org.sanmibuh.ddd.port.CommandHandler;
 
 public class StubCommandHandler
     extends CommandHandler<StubCommandHandler.StubCommand, StubAggregate> {

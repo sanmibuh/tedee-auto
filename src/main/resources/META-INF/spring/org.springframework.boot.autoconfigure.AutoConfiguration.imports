@@ -1,3 +1,3 @@
-org.sanmibuh.cqrs.infrastructure.CQRSAutoConfiguration
+org.sanmibuh.ddd.infrastructure.CQRSAutoConfiguration
 org.sanmibuh.ddd.infrastructure.DddAutoConfiguration
 org.sanmibuh.framework.rest.RestAutoConfiguration

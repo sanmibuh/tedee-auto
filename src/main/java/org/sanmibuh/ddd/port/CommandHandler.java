@@ -1,4 +1,4 @@
-package org.sanmibuh.cqrs.port;
+package org.sanmibuh.ddd.port;
 
 import java.util.List;
 import org.sanmibuh.ddd.domain.AggregateRoot;

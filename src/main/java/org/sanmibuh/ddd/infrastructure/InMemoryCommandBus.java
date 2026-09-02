@@ -1,9 +1,9 @@
-package org.sanmibuh.cqrs.infrastructure;
+package org.sanmibuh.ddd.infrastructure;
 
 import java.util.List;
-import org.sanmibuh.cqrs.port.Command;
-import org.sanmibuh.cqrs.port.CommandBus;
-import org.sanmibuh.cqrs.port.CommandHandler;
+import org.sanmibuh.ddd.port.Command;
+import org.sanmibuh.ddd.port.CommandBus;
+import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.ddd.port.EventBus;
 
 public final class InMemoryCommandBus implements CommandBus {
