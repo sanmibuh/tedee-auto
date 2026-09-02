@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/ddd/cqrs/infrastructure/DomainEventPublishingCommandBusTest.java
+  s_e8441a70219fc9::t_8831d542806f38 10,29-38,41-42,62-69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "93f020761a7a4641f49e0a40a69a3a72be348a21",
+  "prompts": {},
+  "sessions": {
+    "s_e8441a70219fc9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa19b89e1ffeTJhI75O94MQ5DI",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
