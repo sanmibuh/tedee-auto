@@ -12,7 +12,6 @@ import org.sanmibuh.ddd.domain.DomainEvent;
 import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.ddd.port.EventBus;
-import org.sanmibuh.ddd.port.HandlerNotFoundException;
 
 class InMemoryCommandBusTest {
 

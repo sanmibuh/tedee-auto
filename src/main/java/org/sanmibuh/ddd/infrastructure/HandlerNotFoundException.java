@@ -1,4 +1,4 @@
-package org.sanmibuh.ddd.port;
+package org.sanmibuh.ddd.infrastructure;
 
 import java.io.Serial;
 

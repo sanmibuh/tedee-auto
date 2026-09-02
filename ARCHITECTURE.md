@@ -11,40 +11,20 @@ Built as a **GraalVM Native Image**, shipped as a Docker container via GitHub Co
 ## Shared libraries
 
 ### `org.sanmibuh.ddd`
-Base abstractions for DDD.
+Framework-agnostic building blocks for DDD + CQRS, shared by every bounded context and organised into the same three layers as the contexts themselves (`domain`, `port`, `infrastructure`). The types are small and self-describing, so this section records the **decisions** behind them rather than cataloguing signatures — read the package for the exact contracts.
 
-**Aggregate modelling:**
-- `ValueObject<T>` — shared interface for value objects. Exposes the underlying primitive/standard value through `T value()`, standardising how primitive-wrapping domain types surface their raw value.
-- `AggregateRootId<T>` — interface for aggregate identifiers, extends `ValueObject<T>`. Makes aggregate ids first-class DDD concepts and gives a shared type to constrain aggregates.
-- `AggregateRoot<ID extends AggregateRootId<?>>` — base class for aggregate roots, generic over its identifier type. Owns the aggregate `id` (exposed via `id()`), records domain events via the protected `recordEvent(DomainEvent)`, and exposes them through the read-only `domainEvents()` (an unmodifiable list). Secondary adapters read these events to decide what to persist. Defines **identity equality** by hand (`equals`/`hashCode`): two aggregates are equal iff they share the same concrete type (`getClass()`) and `id`, ignoring state and recorded events. It is not delegated to Lombok on purpose — identity is defined once in the base so every aggregate inherits it and it cannot be silently forgotten, and `getClass()` (rather than Lombok's `instanceof`/`canEqual`) prevents two different aggregate types that share an id from comparing equal. This is sound because concrete aggregates are always `final`.
-- `Repository<A extends AggregateRoot<ID>, ID extends AggregateRootId<?>>` — generic secondary (output) port for aggregate persistence, following the DDD Repository pattern. Declares `Optional<A> findById(ID)` and `save(A)` (both implemented by adapters), plus a default `get(ID)` that centralises the not-found policy (`findById(id).orElseThrow(() -> new AggregateNotFoundException(id))`). `findById` keeps the present/absent reporting in infrastructure; `get` gives handlers a `find-or-throw` primitive so they never repeat that policy. Aggregate-specific ports (e.g. `LockRepository`) extend it.
-- `DomainEvent` — marker interface for domain events (business facts recorded by an aggregate, e.g. `LockLocked`). **Payload rule:** domain events must carry only primitive or standard scalar values (e.g. `String`, `UUID`, `int`, `Instant`, enums) — never value objects, aggregates, or other rich domain types. This keeps events stable, serializable, and integration-friendly, avoids coupling subscribers to internal domain structures, and aligns with the rule that commands and queries use only primitive or standard Java types. The rule is both documented here and **enforced by ArchUnit** (`HexagonalArchitectureTest.should_carryOnlyScalarPayloads_whenDomainEvent`), which inspects the fields of every `DomainEvent` implementation and rejects any non-scalar payload.
+- **`domain`** provides the aggregate vocabulary: `ValueObject`, `AggregateRootId`, `AggregateRoot`, `DomainEvent`, and the exception categories. An `AggregateRoot` records events via `recordEvent(...)` and exposes them read-only through `domainEvents()`.
+- **`port`** provides the output/dispatch contracts: `Repository`, `EventBus` + `DomainEventHandler`, and the CQRS side (`Command`/`Query`, `CommandHandler`/`QueryHandler`, `CommandBus`/`QueryBus`).
+- **`infrastructure`** provides the Spring-backed implementations: the in-memory buses, the shared `HandlerLookup`, the two handler registrars, and the single `DddAutoConfiguration`.
 
-**Domain event publishing (ports):**
-- `EventBus` — output port to publish a `DomainEvent` to interested subscribers.
-- `DomainEventHandler<E extends DomainEvent>` — subscriber contract for a single event type.
+Key decisions:
+- **Identity equality is defined once, by hand, on `AggregateRoot`.** Two aggregates are equal iff they share the same concrete type (`getClass()`) and `id`, ignoring state and events. It is not delegated to Lombok so it cannot be silently forgotten on a new aggregate, and `getClass()` (not `instanceof`/`canEqual`) stops two aggregate types with the same id comparing equal — sound because concrete aggregates are always `final`.
+- **Domain events carry only scalar payloads** (`String`, `UUID`, `int`, `Instant`, enums — never value objects or aggregates). This keeps them stable and serializable and decouples subscribers from internal structure. Enforced by ArchUnit (`should_carryOnlyScalarPayloads_whenDomainEvent`).
+- **The domain records events; the command bus publishes them; the repository only persists.** A `CommandHandler` returns the mutated aggregate as pure business logic (no `EventBus`); `InMemoryCommandBus` takes the aggregate's `domainEvents()` and publishes each to the `EventBus`. Recorded events leave the aggregate at the bus, not inside the handler or the repository.
+- **`Repository.get(id)` centralises the find-or-throw policy** (`AggregateNotFoundException`) so handlers never repeat it, while `findById` keeps present/absent reporting in the adapter.
+- **One `@AutoConfiguration` for the whole module** (`DddAutoConfiguration`), registering both handler registrars and all three buses as `@ConditionalOnMissingBean`. The two registrars stay separate collaborators because each has its own scanning responsibility.
 
-**Command & query dispatch (ports):**
-- `Command`, `Query<R>` — marker interfaces for the two message kinds. Both carry only primitive or standard Java types; the handler constructs domain objects from them.
-- `CommandHandler<C extends Command, A extends AggregateRoot<?>>` — the single command handler contract. Subclasses implement `protected abstract A execute(C)` with pure business logic (no `EventBus`), returning the **mutated aggregate**; the base exposes `public final List<DomainEvent> handle(C) = execute(command).domainEvents()`, so the bus can read the recorded events. `CloseLockHandler` extends it. There is no `Void` command handler: a command mutates exactly one aggregate and returns it.
-- `QueryHandler<Q extends Query<R>, R>` — handler contract for a single query type.
-- `CommandBus`, `QueryBus` — dispatch ports.
-- `HandlerNotFoundException` — thrown when no handler is registered for a given command or query type.
-
-**`infrastructure`** — Spring-backed implementations:
-- `InMemoryEventBus` — synchronous `EventBus` that indexes handlers by event type (`GenericTypeResolver`) and fans each event out to all matching `DomainEventHandler`s (0..N per type).
-- `HandlerLookup` — builds a `Map<messageType, handler>` on construction using `GenericTypeResolver`, giving O(1) dispatch. Shared by the command and query buses.
-- `InMemoryCommandBus` — resolves the `CommandHandler` for a command via `HandlerLookup`, invokes `handle`, and publishes each returned `DomainEvent` to the `EventBus`. This is where recorded events leave the aggregate: the domain **records** events, the command bus **publishes** them, and the repository stays a pure persistence port. It is the only `CommandBus` — there is no separate publishing decorator.
-- `InMemoryQueryBus` — resolves the `QueryHandler` for a query via `HandlerLookup` and returns its result.
-- `DomainEventHandlerRegistrar` / `CQRSHandlerRegistrar` — two `BeanDefinitionRegistryPostProcessor`s that scan the auto-configuration packages and register (idempotently) the `DomainEventHandler` implementations and the `CommandHandler` / `QueryHandler` implementations respectively. Kept as separate collaborators because each has its own scanning responsibility.
-- `DddAutoConfiguration` — the module's single `@AutoConfiguration`. Registers both registrars plus the `InMemoryEventBus` (as `EventBus`), `InMemoryCommandBus` (injecting the `EventBus`) and `InMemoryQueryBus` (as `CommandBus` / `QueryBus`), all `@ConditionalOnMissingBean` so applications can override any of them. Registered in `META-INF/spring/…AutoConfiguration.imports`.
-
-
-**Exceptions** — categories model the possible outcomes of a failed operation, and `GlobalExceptionHandler` maps each to an HTTP status:
-- `DomainException` — a business rule was violated (the request is invalid). Mapped to HTTP 400.
-- `AggregateNotFoundException` (extends `DomainException`) — a requested aggregate does not exist. Mapped to HTTP 404 (a more-specific handler than the generic `DomainException` → 400).
-- `IntegrationException` — an external dependency failed in a way that is not the caller's fault. Mapped to HTTP 500.
-- `TransientIntegrationException` (extends `IntegrationException`) — an external dependency is temporarily unavailable and the operation may succeed if retried. Mapped to HTTP 503.
+Failures are modelled with four exception categories that `GlobalExceptionHandler` maps to HTTP status by outcome — see [Architectural style](#architectural-style-hexagonal-ports--adapters) below.
 
 ---
 

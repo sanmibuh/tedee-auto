@@ -5,7 +5,6 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
-import org.sanmibuh.ddd.port.HandlerNotFoundException;
 import org.sanmibuh.ddd.port.Query;
 import org.sanmibuh.ddd.port.QueryHandler;
 

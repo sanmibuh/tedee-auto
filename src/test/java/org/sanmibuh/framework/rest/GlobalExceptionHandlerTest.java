@@ -19,7 +19,7 @@ import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.domain.IntegrationException;
 import org.sanmibuh.ddd.domain.TransientIntegrationException;
-import org.sanmibuh.ddd.port.HandlerNotFoundException;
+import org.sanmibuh.ddd.infrastructure.HandlerNotFoundException;
 import org.sanmibuh.tedee.TedeeAutomationApplication;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
