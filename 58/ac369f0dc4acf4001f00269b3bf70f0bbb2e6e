@@ -1,0 +1,18 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 39-40
+src/main/java/org/sanmibuh/ddd/infrastructure/DddAutoConfiguration.java
+  h_97a91c9e567f87 4-5,8-9,23-27,33-45
+src/test/java/org/sanmibuh/ddd/infrastructure/DddAutoConfigurationTest.java
+  h_97a91c9e567f87 19-24,29-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "58ac369f0dc4acf4001f00269b3bf70f0bbb2e6e",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
