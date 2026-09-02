@@ -1,12 +1,14 @@
 package org.sanmibuh.cqrs.port;
 
-public abstract class CommandHandler<C extends Command> implements BaseCommandHandler<C, Void> {
+import java.util.List;
+import org.sanmibuh.ddd.domain.AggregateRoot;
+import org.sanmibuh.ddd.domain.DomainEvent;
 
-  protected abstract void execute(C command);
+public abstract class CommandHandler<C extends Command, A extends AggregateRoot<?>> {
 
-  @Override
-  public final Void handle(final C command) {
-    execute(command);
-    return null;
+  protected abstract A execute(C command);
+
+  public final List<DomainEvent> handle(final C command) {
+    return execute(command).domainEvents();
   }
 }

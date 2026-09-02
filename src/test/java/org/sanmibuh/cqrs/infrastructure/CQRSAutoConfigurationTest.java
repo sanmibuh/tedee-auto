@@ -4,6 +4,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.sanmibuh.ddd.infrastructure.InMemoryEventBus;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 class CQRSAutoConfigurationTest {
@@ -18,7 +19,8 @@ class CQRSAutoConfigurationTest {
 
   @Test
   void should_returnCommandBus_whenCommandHandlersProvided() {
-    then(config.commandBus(List.of())).isInstanceOf(InMemoryCommandBus.class);
+    then(config.commandBus(List.of(), new InMemoryEventBus(List.of())))
+        .isInstanceOf(InMemoryCommandBus.class);
   }
 
   @Test

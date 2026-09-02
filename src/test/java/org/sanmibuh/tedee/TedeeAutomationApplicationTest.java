@@ -13,8 +13,8 @@ import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.sanmibuh.cqrs.infrastructure.InMemoryCommandBus;
 import org.sanmibuh.cqrs.port.CommandBus;
-import org.sanmibuh.ddd.cqrs.infrastructure.DomainEventPublishingCommandBus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -30,8 +30,8 @@ class TedeeAutomationApplicationTest {
   @InjectSoftAssertions private BDDSoftAssertions softly;
 
   @Test
-  void should_wireThePublishingCommandBus_whenApplicationStarts() {
-    then(commandBus).isInstanceOf(DomainEventPublishingCommandBus.class);
+  void should_wireTheInMemoryCommandBus_whenApplicationStarts() {
+    then(commandBus).isInstanceOf(InMemoryCommandBus.class);
   }
 
   @Test

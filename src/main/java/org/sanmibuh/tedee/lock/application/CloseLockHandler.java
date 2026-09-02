@@ -1,13 +1,13 @@
 package org.sanmibuh.tedee.lock.application;
 
 import lombok.RequiredArgsConstructor;
-import org.sanmibuh.ddd.cqrs.port.AggregateCommandHandler;
+import org.sanmibuh.cqrs.port.CommandHandler;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
 
 @RequiredArgsConstructor
-public final class CloseLockHandler extends AggregateCommandHandler<CloseLockCommand, Lock> {
+public final class CloseLockHandler extends CommandHandler<CloseLockCommand, Lock> {
 
   private final LockRepository repository;
 

@@ -3,13 +3,15 @@ package com.example;
 import org.sanmibuh.cqrs.port.Command;
 import org.sanmibuh.cqrs.port.CommandHandler;
 
-public class StubCommandHandler extends CommandHandler<StubCommandHandler.StubCommand> {
+public class StubCommandHandler
+    extends CommandHandler<StubCommandHandler.StubCommand, StubAggregate> {
 
   public boolean handled;
 
   @Override
-  protected void execute(final StubCommand command) {
+  protected StubAggregate execute(final StubCommand command) {
     handled = true;
+    return new StubAggregate();
   }
 
   public record StubCommand() implements Command {}

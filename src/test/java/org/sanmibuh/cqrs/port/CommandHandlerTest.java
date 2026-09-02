@@ -1,18 +1,17 @@
-package org.sanmibuh.ddd.cqrs.port;
+package org.sanmibuh.cqrs.port;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
 import org.junit.jupiter.api.Test;
-import org.sanmibuh.cqrs.port.Command;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainEvent;
 
-class AggregateCommandHandlerTest {
+class CommandHandlerTest {
 
   @Test
   void should_returnRecordedEvents_whenHandleIsCalled() {
-    final var sut = new StubAggregateCommandHandler();
+    final var sut = new StubCommandHandler();
 
     final var events = sut.handle(new StubCommand());
 
@@ -33,8 +32,7 @@ class AggregateCommandHandlerTest {
     }
   }
 
-  static class StubAggregateCommandHandler
-      extends AggregateCommandHandler<StubCommand, StubAggregate> {
+  static class StubCommandHandler extends CommandHandler<StubCommand, StubAggregate> {
 
     @Override
     protected StubAggregate execute(final StubCommand command) {

@@ -6,13 +6,14 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class StubComponentCommandHandler
-    extends CommandHandler<StubComponentCommandHandler.StubComponentCommand> {
+    extends CommandHandler<StubComponentCommandHandler.StubComponentCommand, StubAggregate> {
 
   public boolean handled;
 
   @Override
-  protected void execute(final StubComponentCommand command) {
+  protected StubAggregate execute(final StubComponentCommand command) {
     handled = true;
+    return new StubAggregate();
   }
 
   public record StubComponentCommand() implements Command {}
