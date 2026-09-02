@@ -33,13 +33,11 @@ Base abstractions for DDD.
 
 **`infrastructure`** — Spring-backed implementations:
 - `InMemoryEventBus` — synchronous `EventBus` that indexes handlers by event type (`GenericTypeResolver`) and fans each event out to all matching `DomainEventHandler`s (0..N per type).
-- `DomainEventHandlerRegistrar` — `BeanDefinitionRegistryPostProcessor` that scans the auto-configuration packages for `DomainEventHandler` implementations and registers them as beans (idempotently), mirroring how `CQRSHandlerRegistrar` discovers command/query handlers.
-- `DddAutoConfiguration` — `@AutoConfiguration` that registers the `DomainEventHandlerRegistrar` and an `InMemoryEventBus` as the `EventBus` (`@ConditionalOnMissingBean`, so applications can override it). Registered in `META-INF/spring/…AutoConfiguration.imports`.
 - `HandlerLookup` — builds a `Map<messageType, handler>` on construction using `GenericTypeResolver`, giving O(1) dispatch. Shared by the command and query buses.
 - `InMemoryCommandBus` — resolves the `CommandHandler` for a command via `HandlerLookup`, invokes `handle`, and publishes each returned `DomainEvent` to the `EventBus`. This is where recorded events leave the aggregate: the domain **records** events, the command bus **publishes** them, and the repository stays a pure persistence port. It is the only `CommandBus` — there is no separate publishing decorator.
 - `InMemoryQueryBus` — resolves the `QueryHandler` for a query via `HandlerLookup` and returns its result.
-- `CQRSHandlerRegistrar` — `BeanDefinitionRegistryPostProcessor` that scans the auto-configuration packages for `CommandHandler` / `QueryHandler` implementations and registers them as beans (idempotently), mirroring how `DomainEventHandlerRegistrar` discovers event handlers.
-- `CQRSAutoConfiguration` — `@AutoConfiguration` that registers the `CQRSHandlerRegistrar`, plus `InMemoryCommandBus` (injecting the `EventBus`) and `InMemoryQueryBus` as `@ConditionalOnMissingBean` beans (applications can override either). Registered in `META-INF/spring/…AutoConfiguration.imports`.
+- `DomainEventHandlerRegistrar` / `CQRSHandlerRegistrar` — two `BeanDefinitionRegistryPostProcessor`s that scan the auto-configuration packages and register (idempotently) the `DomainEventHandler` implementations and the `CommandHandler` / `QueryHandler` implementations respectively. Kept as separate collaborators because each has its own scanning responsibility.
+- `DddAutoConfiguration` — the module's single `@AutoConfiguration`. Registers both registrars plus the `InMemoryEventBus` (as `EventBus`), `InMemoryCommandBus` (injecting the `EventBus`) and `InMemoryQueryBus` (as `CommandBus` / `QueryBus`), all `@ConditionalOnMissingBean` so applications can override any of them. Registered in `META-INF/spring/…AutoConfiguration.imports`.
 
 
 **Exceptions** — categories model the possible outcomes of a failed operation, and `GlobalExceptionHandler` maps each to an HTTP status:

@@ -17,7 +17,24 @@ class DddAutoConfigurationTest {
   }
 
   @Test
+  void should_returnRegistrar_whenCqrsHandlerRegistrarCalled() {
+    then(DddAutoConfiguration.cqrsHandlerRegistrar(new DefaultListableBeanFactory()))
+        .isInstanceOf(CQRSHandlerRegistrar.class);
+  }
+
+  @Test
   void should_returnEventBus_whenDomainEventHandlersProvided() {
     then(config.eventBus(List.of())).isInstanceOf(InMemoryEventBus.class);
+  }
+
+  @Test
+  void should_returnCommandBus_whenCommandHandlersProvided() {
+    then(config.commandBus(List.of(), new InMemoryEventBus(List.of())))
+        .isInstanceOf(InMemoryCommandBus.class);
+  }
+
+  @Test
+  void should_returnQueryBus_whenQueryHandlersProvided() {
+    then(config.queryBus(List.of())).isInstanceOf(InMemoryQueryBus.class);
   }
 }
