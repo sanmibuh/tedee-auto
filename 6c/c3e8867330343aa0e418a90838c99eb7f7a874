@@ -1,0 +1,71 @@
+src/main/java/org/sanmibuh/ddd/infrastructure/CQRSAutoConfiguration.java
+  s_e8441a70219fc9::t_0db0f1d5ac8969 1,4-5,7-8
+src/main/java/org/sanmibuh/ddd/infrastructure/CQRSHandlerRegistrar.java
+  s_e8441a70219fc9::t_89806068e8dea6 1,7-8
+src/main/java/org/sanmibuh/ddd/infrastructure/HandlerLookup.java
+  s_e8441a70219fc9::t_139e1d5ae40118 1,6
+src/main/java/org/sanmibuh/ddd/infrastructure/InMemoryCommandBus.java
+  s_e8441a70219fc9::t_a8555b7dd3acd9 1,4-6
+src/main/java/org/sanmibuh/ddd/infrastructure/InMemoryQueryBus.java
+  s_e8441a70219fc9::t_830ec0239a7ed7 1,4-6
+src/main/java/org/sanmibuh/ddd/port/Command.java
+  s_e8441a70219fc9::t_22215fd5f772c8 1
+src/main/java/org/sanmibuh/ddd/port/CommandBus.java
+  s_e8441a70219fc9::t_28e901a666d9d2 1
+src/main/java/org/sanmibuh/ddd/port/CommandHandler.java
+  s_e8441a70219fc9::t_7adeb2e5a3c89c 1
+src/main/java/org/sanmibuh/ddd/port/HandlerNotFoundException.java
+  s_e8441a70219fc9::t_0b1aece3c09209 1
+src/main/java/org/sanmibuh/ddd/port/Query.java
+  s_e8441a70219fc9::t_e46d5744af61ae 1
+src/main/java/org/sanmibuh/ddd/port/QueryBus.java
+  s_e8441a70219fc9::t_c565028c3fef85 1
+src/main/java/org/sanmibuh/ddd/port/QueryHandler.java
+  s_e8441a70219fc9::t_58eea79ec49d37 1
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockCommand.java
+  s_e8441a70219fc9::t_61b1dd07096c6e 3
+src/main/java/org/sanmibuh/tedee/lock/application/CloseLockHandler.java
+  s_e8441a70219fc9::t_f21d9fe2091d14 4
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockScheduler.java
+  s_e8441a70219fc9::t_950a94e371598c 4
+src/test/java/com/example/StubCommandHandler.java
+  s_e8441a70219fc9::t_a57bfc479c1ccc 3-4
+src/test/java/com/example/StubComponentCommandHandler.java
+  s_e8441a70219fc9::t_4fae4c767e6773 3-4
+src/test/java/com/example/StubQueryHandler.java
+  s_e8441a70219fc9::t_b0cc16f4e53e59 3-4
+src/test/java/org/sanmibuh/ddd/infrastructure/CQRSAutoConfigurationTest.java
+  s_e8441a70219fc9::t_33468d55b7eed2 1
+src/test/java/org/sanmibuh/ddd/infrastructure/CQRSHandlerRegistrarTest.java
+  s_e8441a70219fc9::t_d9dd771f05cb58 1
+src/test/java/org/sanmibuh/ddd/infrastructure/HandlerLookupTest.java
+  s_e8441a70219fc9::t_61df2ead79e1e8 1,8
+src/test/java/org/sanmibuh/ddd/infrastructure/InMemoryCommandBusTest.java
+  s_e8441a70219fc9::t_55e7bcf7e9010c 1,12-13,15
+src/test/java/org/sanmibuh/ddd/infrastructure/InMemoryQueryBusTest.java
+  s_e8441a70219fc9::t_5b00f43f6089a4 1,8-10
+src/test/java/org/sanmibuh/ddd/port/CommandHandlerTest.java
+  s_e8441a70219fc9::t_fff25fe8d038d6 1
+src/test/java/org/sanmibuh/framework/rest/GlobalExceptionHandlerTest.java
+  s_e8441a70219fc9::t_ca9d69e8a73e0e 22
+src/test/java/org/sanmibuh/tedee/TedeeAutomationApplicationTest.java
+  s_e8441a70219fc9::t_9ae1b1052d6397 16-17
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockSchedulerTest.java
+  s_e8441a70219fc9::t_291c94d7cc4e1f 10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "6cc3e8867330343aa0e418a90838c99eb7f7a874",
+  "prompts": {},
+  "sessions": {
+    "s_e8441a70219fc9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa19b89e1ffeTJhI75O94MQ5DI",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
