@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/framework/rest/GlobalExceptionHandlerTest.java
+  s_e8441a70219fc9::t_c9c330521f155a 22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "170a3770c3817a6c11250b72203b8d6f4094f4da",
+  "prompts": {},
+  "sessions": {
+    "s_e8441a70219fc9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa19b89e1ffeTJhI75O94MQ5DI",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
