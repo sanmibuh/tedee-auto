@@ -11,7 +11,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.util.ClassUtils;
 
-class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
+final class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
 
   private static final String MODEL_PACKAGE = "com.tedee.bridge.client.model";
   private static final MemberCategory[] JACKSON_CATEGORIES = {

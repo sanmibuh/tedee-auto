@@ -1,4 +1,4 @@
-package org.sanmibuh.cqrs.api;
+package org.sanmibuh.ddd.port;
 
 @SuppressWarnings("unused")
 public interface Query<R> {}

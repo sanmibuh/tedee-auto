@@ -12,6 +12,7 @@ import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import java.util.Set;
+import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.DomainEvent;
 
 @AnalyzeClasses(packages = "org.sanmibuh")
@@ -89,6 +90,16 @@ class HexagonalArchitectureTest {
   @ArchTest
   static final ArchRule should_carryOnlyScalarPayloads_whenDomainEvent =
       classes().that().implement(DomainEvent.class).should(haveOnlyScalarFields());
+
+  @ArchTest
+  static final ArchRule should_beFinal_whenConcreteAggregate =
+      classes()
+          .that()
+          .areAssignableTo(AggregateRoot.class)
+          .and()
+          .doNotHaveModifier(JavaModifier.ABSTRACT)
+          .should()
+          .haveModifier(JavaModifier.FINAL);
 
   private static ArchCondition<JavaClass> haveOnlyScalarFields() {
     return new ArchCondition<>("carry only primitive or standard scalar payloads") {

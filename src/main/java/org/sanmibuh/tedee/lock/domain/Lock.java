@@ -2,7 +2,7 @@ package org.sanmibuh.tedee.lock.domain;
 
 import org.sanmibuh.ddd.domain.AggregateRoot;
 
-public class Lock extends AggregateRoot<LockId> {
+public final class Lock extends AggregateRoot<LockId> {
 
   private LockStatus status;
 

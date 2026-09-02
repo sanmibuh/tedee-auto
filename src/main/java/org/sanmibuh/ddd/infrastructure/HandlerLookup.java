@@ -1,17 +1,16 @@
-package org.sanmibuh.cqrs.infrastructure;
+package org.sanmibuh.ddd.infrastructure;
 
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import org.sanmibuh.cqrs.api.HandlerNotFoundException;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.core.GenericTypeResolver;
 
-class HandlerLookup<H> {
+public final class HandlerLookup<H> {
 
   private final Map<Class<?>, H> index;
 
-  HandlerLookup(final List<H> handlers, final Class<?> handlerInterface) {
+  public HandlerLookup(final List<H> handlers, final Class<?> handlerInterface) {
     final Map<Class<?>, H> map = new HashMap<>();
     for (final var handler : handlers) {
       final var messageType =
@@ -35,7 +34,7 @@ class HandlerLookup<H> {
     return typeArgs[0];
   }
 
-  H find(final Class<?> messageType) {
+  public H find(final Class<?> messageType) {
     final var handler = index.get(messageType);
     if (handler == null) {
       throw new HandlerNotFoundException(messageType);

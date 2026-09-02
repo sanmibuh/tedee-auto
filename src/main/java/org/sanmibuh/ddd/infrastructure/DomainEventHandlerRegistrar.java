@@ -1,11 +1,10 @@
-package org.sanmibuh.cqrs.infrastructure;
+package org.sanmibuh.ddd.infrastructure;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.sanmibuh.cqrs.api.CommandHandler;
-import org.sanmibuh.cqrs.api.QueryHandler;
+import org.sanmibuh.ddd.port.DomainEventHandler;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -18,7 +17,7 @@ import org.springframework.context.annotation.ClassPathScanningCandidateComponen
 import org.springframework.core.type.filter.AssignableTypeFilter;
 
 @RequiredArgsConstructor(access = lombok.AccessLevel.PACKAGE)
-class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor {
+final class DomainEventHandlerRegistrar implements BeanDefinitionRegistryPostProcessor {
 
   private static final AnnotationBeanNameGenerator NAME_GENERATOR =
       new AnnotationBeanNameGenerator();
@@ -33,16 +32,13 @@ class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor {
     }
 
     final var packages = AutoConfigurationPackages.get(beanFactory);
-    registerHandlers(registry, packages, CommandHandler.class);
-    registerHandlers(registry, packages, QueryHandler.class);
+    registerHandlers(registry, packages);
   }
 
   private void registerHandlers(
-      final BeanDefinitionRegistry registry,
-      final List<String> packages,
-      final Class<?> handlerType) {
+      final BeanDefinitionRegistry registry, final List<String> packages) {
     final var scanner = new ClassPathScanningCandidateComponentProvider(false);
-    scanner.addIncludeFilter(new AssignableTypeFilter(handlerType));
+    scanner.addIncludeFilter(new AssignableTypeFilter(DomainEventHandler.class));
     packages.stream()
         .flatMap(basePackage -> scanner.findCandidateComponents(basePackage).stream())
         .forEach(candidate -> registerIfAbsent(registry, candidate));
@@ -50,7 +46,7 @@ class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor {
 
   private void registerIfAbsent(
       final BeanDefinitionRegistry registry, final BeanDefinition candidate) {
-    findBeanClassNamePITEquivalent(candidate)
+    Optional.ofNullable(candidate.getBeanClassName())
         .ifPresent(
             beanClassName -> {
               if (!isClassRegistered(registry, beanClassName)) {
@@ -65,9 +61,5 @@ class CQRSHandlerRegistrar implements BeanDefinitionRegistryPostProcessor {
     return Arrays.stream(registry.getBeanDefinitionNames())
         .map(name -> registry.getBeanDefinition(name).getBeanClassName())
         .anyMatch(beanClassName::equals);
-  }
-
-  private Optional<String> findBeanClassNamePITEquivalent(final BeanDefinition candidate) {
-    return Optional.ofNullable(candidate.getBeanClassName());
   }
 }

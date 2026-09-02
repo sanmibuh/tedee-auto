@@ -1,18 +1,19 @@
 package com.example;
 
-import org.sanmibuh.cqrs.api.Command;
-import org.sanmibuh.cqrs.api.CommandHandler;
+import org.sanmibuh.ddd.port.Command;
+import org.sanmibuh.ddd.port.CommandHandler;
 import org.springframework.stereotype.Component;
 
 @Component
 public class StubComponentCommandHandler
-    implements CommandHandler<StubComponentCommandHandler.StubComponentCommand> {
+    extends CommandHandler<StubComponentCommandHandler.StubComponentCommand, StubAggregate> {
 
   public boolean handled;
 
   @Override
-  public void handle(final StubComponentCommand command) {
+  protected StubAggregate execute(final StubComponentCommand command) {
     handled = true;
+    return new StubAggregate();
   }
 
   public record StubComponentCommand() implements Command {}

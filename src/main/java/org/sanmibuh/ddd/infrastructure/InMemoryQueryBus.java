@@ -1,11 +1,11 @@
-package org.sanmibuh.cqrs.infrastructure;
+package org.sanmibuh.ddd.infrastructure;
 
 import java.util.List;
-import org.sanmibuh.cqrs.api.Query;
-import org.sanmibuh.cqrs.api.QueryBus;
-import org.sanmibuh.cqrs.api.QueryHandler;
+import org.sanmibuh.ddd.port.Query;
+import org.sanmibuh.ddd.port.QueryBus;
+import org.sanmibuh.ddd.port.QueryHandler;
 
-public class InMemoryQueryBus implements QueryBus {
+public final class InMemoryQueryBus implements QueryBus {
 
   private final HandlerLookup<QueryHandler<?, ?>> lookup;
 
