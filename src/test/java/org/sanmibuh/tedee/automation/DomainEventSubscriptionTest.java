@@ -8,7 +8,6 @@ import com.tngtech.archunit.core.domain.JavaClasses;
 import com.tngtech.archunit.core.domain.JavaModifier;
 import com.tngtech.archunit.core.importer.ClassFileImporter;
 import com.tngtech.archunit.core.importer.ImportOption;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -16,6 +15,7 @@ import org.sanmibuh.ddd.domain.DomainEvent;
 import org.sanmibuh.ddd.domain.NoSubscribersRequired;
 import org.sanmibuh.ddd.port.DomainEventHandler;
 import org.springframework.core.GenericTypeResolver;
+import org.springframework.util.ObjectUtils;
 
 class DomainEventSubscriptionTest {
 
@@ -49,8 +49,10 @@ class DomainEventSubscriptionTest {
   private Class<?> resolveEventType(final Class<?> handler) {
     final var typeArgs =
         GenericTypeResolver.resolveTypeArguments(handler, DomainEventHandler.class);
-    return Objects.requireNonNull(typeArgs, "Cannot resolve event type for " + handler.getName())[
-        0];
+    if (ObjectUtils.isEmpty(typeArgs)) {
+      throw new IllegalArgumentException("Cannot resolve event type for " + handler.getName());
+    }
+    return typeArgs[0];
   }
 
   private Stream<JavaClass> concreteImplementationsOf(final Class<?> type) {
