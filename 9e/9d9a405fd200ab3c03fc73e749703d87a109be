@@ -1,0 +1,14 @@
+src/main/java/org/sanmibuh/ddd/infrastructure/DomainEventScanner.java
+  h_97a91c9e567f87 4,6-11,16-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "9e9d9a405fd200ab3c03fc73e749703d87a109be",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
