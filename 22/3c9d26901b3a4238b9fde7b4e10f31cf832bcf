@@ -1,0 +1,14 @@
+src/main/java/org/sanmibuh/ddd/infrastructure/DomainEventSubscriptionValidator.java
+  h_97a91c9e567f87 9-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "223c9d26901b3a4238b9fde7b4e10f31cf832bcf",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
