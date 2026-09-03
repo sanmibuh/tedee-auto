@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/ddd/domain/NoSubscribersRequired.java
+  h_97a91c9e567f87 3,9
+src/test/java/org/sanmibuh/tedee/automation/DomainEventSubscriptionTest.java
+  h_97a91c9e567f87 18,52-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "a33be37c6c2cf367c7499de642282d688a2ce67a",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
