@@ -1,5 +1,6 @@
 package org.sanmibuh.ddd.infrastructure;
 
+import static org.assertj.core.api.BDDAssertions.thenNoException;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import java.util.List;
@@ -16,5 +17,14 @@ class DomainEventSubscriptionVerifierTest {
     final var sut = new DomainEventSubscriptionVerifier(beanFactory, List.of());
 
     thenThrownBy(sut::afterPropertiesSet).isInstanceOf(MissingEventHandlerException.class);
+  }
+
+  @Test
+  void should_notThrowException_whenScannedEventOptsOutOfSubscribers() {
+    final var beanFactory = new DefaultListableBeanFactory();
+    AutoConfigurationPackages.register(beanFactory, "com.example.verifier");
+    final var sut = new DomainEventSubscriptionVerifier(beanFactory, List.of());
+
+    thenNoException().isThrownBy(sut::afterPropertiesSet);
   }
 }
