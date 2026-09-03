@@ -11,7 +11,7 @@ public final class HandlerLookup<H> {
   private final Map<Class<?>, H> index;
 
   public HandlerLookup(final List<H> handlers, final Class<?> handlerInterface) {
-    final Map<Class<?>, H> map = new HashMap<>();
+    final var map = new HashMap<Class<?>, H>();
     for (final var handler : handlers) {
       final var messageType =
           resolveMessageType(AopUtils.getTargetClass(handler), handlerInterface);
