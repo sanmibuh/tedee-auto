@@ -1,11 +1,13 @@
 package org.sanmibuh.ddd.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 
 import java.util.List;
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.domain.DomainEvent;
+import org.sanmibuh.ddd.domain.NoSubscribersRequired;
 import org.sanmibuh.ddd.port.DomainEventHandler;
 
 class InMemoryEventBusTest {
@@ -39,11 +41,25 @@ class InMemoryEventBusTest {
     try (final var logCaptor = LogCaptor.forClass(InMemoryEventBus.class)) {
       sut.publish(new StubEvent());
 
-      then(logCaptor.getWarnLogs()).anyMatch(log -> log.contains(StubEvent.class.getName()));
+      then(logCaptor.getWarnLogs()).singleElement(STRING).contains(StubEvent.class.getName());
+    }
+  }
+
+  @Test
+  void should_notWarn_whenEventHasNoHandlerButIsOptedOut() {
+    final var sut = new InMemoryEventBus(List.of());
+
+    try (final var logCaptor = LogCaptor.forClass(InMemoryEventBus.class)) {
+      sut.publish(new OptedOutEvent());
+
+      then(logCaptor.getWarnLogs()).isEmpty();
     }
   }
 
   record StubEvent() implements DomainEvent {}
+
+  @NoSubscribersRequired
+  record OptedOutEvent() implements DomainEvent {}
 
   static class StubEventHandler implements DomainEventHandler<StubEvent> {
 
