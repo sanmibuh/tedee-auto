@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/ddd/infrastructure/InMemoryEventBus.java
+  s_e8441a70219fc9::t_8886f225521751 23,33-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "db73d60f8d0eda39e975aa16a3fd6fc1b88f9b12",
+  "prompts": {},
+  "sessions": {
+    "s_e8441a70219fc9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa19b89e1ffeTJhI75O94MQ5DI",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
