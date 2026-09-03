@@ -25,7 +25,7 @@ class DomainEventSubscriptionTest {
           .importPackages("org.sanmibuh");
 
   @Test
-  void should_haveHandlerOrOptOut_forEveryDomainEvent() {
+  void should_haveHandlerOrOptOut_whenDomainEventIsConcrete() {
     final var handledEventTypes = handledEventTypes();
 
     final var uncovered =
@@ -50,7 +50,7 @@ class DomainEventSubscriptionTest {
     final var typeArgs =
         GenericTypeResolver.resolveTypeArguments(handler, DomainEventHandler.class);
     if (ObjectUtils.isEmpty(typeArgs)) {
-      throw new IllegalArgumentException("Cannot resolve event type for " + handler.getName());
+      throw new IllegalArgumentException("Cannot resolve event type for: " + handler.getName());
     }
     return typeArgs[0];
   }
