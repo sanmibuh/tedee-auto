@@ -8,11 +8,13 @@ final class DomainEventSubscriptionValidator {
 
   void validate(
       final Collection<Class<?>> publishableEvents, final Set<Class<?>> handledEventTypes) {
-    for (final var eventType : publishableEvents) {
-      if (!handledEventTypes.contains(eventType)
-          && !eventType.isAnnotationPresent(NoSubscribersRequired.class)) {
-        throw new MissingEventHandlerException(eventType);
-      }
-    }
+    publishableEvents.stream()
+        .filter(eventType -> !handledEventTypes.contains(eventType))
+        .filter(eventType -> !eventType.isAnnotationPresent(NoSubscribersRequired.class))
+        .findFirst()
+        .ifPresent(
+            eventType -> {
+              throw new MissingEventHandlerException(eventType);
+            });
   }
 }
