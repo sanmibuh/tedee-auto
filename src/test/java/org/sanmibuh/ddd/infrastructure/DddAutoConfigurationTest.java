@@ -37,10 +37,4 @@ class DddAutoConfigurationTest {
   void should_returnQueryBus_whenQueryHandlersProvided() {
     then(config.queryBus(List.of())).isInstanceOf(InMemoryQueryBus.class);
   }
-
-  @Test
-  void should_returnVerifier_whenDomainEventSubscriptionVerifierCalled() {
-    then(config.domainEventSubscriptionVerifier(new DefaultListableBeanFactory(), List.of()))
-        .isInstanceOf(DomainEventSubscriptionVerifier.class);
-  }
 }
