@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/ddd/infrastructure/DomainEventSubscriptionValidatorTest.java
+  s_e8441a70219fc9::t_2d731067e8842d 3,10,23-27,29-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "a70e8f999a8b2cbe1b4bb4a5caf7e5949e38cde7",
+  "prompts": {},
+  "sessions": {
+    "s_e8441a70219fc9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_fa19b89e1ffeTJhI75O94MQ5DI",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
