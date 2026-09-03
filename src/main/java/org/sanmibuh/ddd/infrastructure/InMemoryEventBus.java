@@ -22,7 +22,7 @@ public final class InMemoryEventBus implements EventBus {
     final var handlers = registry.handlersFor(event.getClass());
     if (isDropped(event, handlers)) {
       log.warn(
-          "No handler registered for domain event {}; it was dropped silently.",
+          "No handler registered for domain event {}; the event was dropped and not delivered.",
           event.getClass().getName());
       return;
     }
