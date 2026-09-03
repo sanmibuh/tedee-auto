@@ -3,7 +3,6 @@ package org.sanmibuh.framework.rest;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import java.io.Serial;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -140,16 +139,12 @@ class GlobalExceptionHandlerTest {
 
     static class StubDomainException extends DomainException {
 
-      @Serial private static final long serialVersionUID = -1440054683212399969L;
-
       StubDomainException() {
         super("domain rule violated");
       }
     }
 
     static class StubIntegrationException extends IntegrationException {
-
-      @Serial private static final long serialVersionUID = 1L;
 
       StubIntegrationException() {
         super("integration failed");
@@ -158,16 +153,12 @@ class GlobalExceptionHandlerTest {
 
     static class StubTransientIntegrationException extends TransientIntegrationException {
 
-      @Serial private static final long serialVersionUID = 1L;
-
       StubTransientIntegrationException() {
         super("integration temporarily unavailable");
       }
     }
 
     static class StubUnexpectedException extends RuntimeException {
-
-      @Serial private static final long serialVersionUID = 1L;
 
       StubUnexpectedException() {
         super("something went wrong internally");
