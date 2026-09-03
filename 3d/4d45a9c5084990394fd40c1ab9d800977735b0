@@ -1,0 +1,16 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 24
+src/test/java/org/sanmibuh/tedee/automation/DomainEventSubscriptionTest.java
+  h_97a91c9e567f87 28,53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "3d4d45a9c5084990394fd40c1ab9d800977735b0",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
