@@ -3,6 +3,7 @@ package org.sanmibuh.ddd.infrastructure;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import java.util.List;
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.domain.DomainEvent;
 import org.sanmibuh.ddd.port.DomainEventHandler;
@@ -29,6 +30,17 @@ class InMemoryEventBusTest {
 
     then(handler1.handled).isTrue();
     then(handler2.handled).isTrue();
+  }
+
+  @Test
+  void should_warn_whenEventHasNoHandlerAndIsNotOptedOut() {
+    final var sut = new InMemoryEventBus(List.of());
+
+    try (final var logCaptor = LogCaptor.forClass(InMemoryEventBus.class)) {
+      sut.publish(new StubEvent());
+
+      then(logCaptor.getWarnLogs()).anyMatch(log -> log.contains(StubEvent.class.getName()));
+    }
   }
 
   record StubEvent() implements DomainEvent {}

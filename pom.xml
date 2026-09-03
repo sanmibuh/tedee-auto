@@ -22,6 +22,7 @@
     <error-prone.version>2.50.0</error-prone.version>
     <google-java-format.version>1.36.1</google-java-format.version>
     <jacoco.version>0.8.15</jacoco.version>
+    <logcaptor.version>2.11.0</logcaptor.version>
     <java.version>25</java.version>
     <nullaway.version>0.14.0</nullaway.version>
     <openapi-generator.version>7.25.0</openapi-generator.version>
@@ -75,6 +76,12 @@
       <groupId>com.tngtech.archunit</groupId>
       <artifactId>archunit-junit5</artifactId>
       <version>${archunit.version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>io.github.hakky54</groupId>
+      <artifactId>logcaptor</artifactId>
+      <version>${logcaptor.version}</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
