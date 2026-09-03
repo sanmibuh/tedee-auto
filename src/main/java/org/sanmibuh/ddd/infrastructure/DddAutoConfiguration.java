@@ -43,4 +43,10 @@ public class DddAutoConfiguration {
   public InMemoryQueryBus queryBus(final List<QueryHandler<?, ?>> handlers) {
     return new InMemoryQueryBus(handlers);
   }
+
+  @Bean
+  public DomainEventSubscriptionVerifier domainEventSubscriptionVerifier(
+      final BeanFactory beanFactory, final List<DomainEventHandler<?>> handlers) {
+    return new DomainEventSubscriptionVerifier(beanFactory, handlers);
+  }
 }
