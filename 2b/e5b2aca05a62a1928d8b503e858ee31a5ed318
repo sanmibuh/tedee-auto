@@ -1,0 +1,15 @@
+src/test/java/org/sanmibuh/ddd/infrastructure/InMemoryEventBusTest.java
+  h_97a91c9e567f87 10,44-55,61-63
+  h_97a91c9e567f87 4
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "2be5b2aca05a62a1928d8b503e858ee31a5ed318",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
