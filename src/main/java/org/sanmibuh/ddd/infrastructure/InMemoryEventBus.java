@@ -20,7 +20,7 @@ public final class InMemoryEventBus implements EventBus {
   @SuppressWarnings("unchecked")
   public void publish(final DomainEvent event) {
     final var handlers = registry.handlersFor(event.getClass());
-    if (handlers.isEmpty() && !event.getClass().isAnnotationPresent(NoSubscribersRequired.class)) {
+    if (isDropped(event, handlers)) {
       log.warn(
           "No handler registered for domain event {}; it was dropped silently.",
           event.getClass().getName());
@@ -29,5 +29,10 @@ public final class InMemoryEventBus implements EventBus {
     for (final var handler : handlers) {
       ((DomainEventHandler<DomainEvent>) handler).handle(event);
     }
+  }
+
+  private static boolean isDropped(
+      final DomainEvent event, final List<DomainEventHandler<?>> handlers) {
+    return handlers.isEmpty() && !event.getClass().isAnnotationPresent(NoSubscribersRequired.class);
   }
 }
