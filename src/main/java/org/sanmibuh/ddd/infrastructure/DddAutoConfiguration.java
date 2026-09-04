@@ -8,6 +8,7 @@ import org.sanmibuh.ddd.port.EventBus;
 import org.sanmibuh.ddd.port.QueryBus;
 import org.sanmibuh.ddd.port.QueryHandler;
 import org.springframework.beans.factory.BeanFactory;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
@@ -16,12 +17,13 @@ import org.springframework.context.annotation.Bean;
 public class DddAutoConfiguration {
 
   @Bean
-  static DomainEventHandlerRegistrar domainEventHandlerRegistrar(final BeanFactory beanFactory) {
+  static BeanDefinitionRegistryPostProcessor domainEventHandlerRegistrar(
+      final BeanFactory beanFactory) {
     return new DomainEventHandlerRegistrar(beanFactory);
   }
 
   @Bean
-  static CQRSHandlerRegistrar cqrsHandlerRegistrar(final BeanFactory beanFactory) {
+  static BeanDefinitionRegistryPostProcessor cqrsHandlerRegistrar(final BeanFactory beanFactory) {
     return new CQRSHandlerRegistrar(beanFactory);
   }
 
