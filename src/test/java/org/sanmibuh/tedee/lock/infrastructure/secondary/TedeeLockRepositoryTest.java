@@ -97,7 +97,7 @@ class TedeeLockRepositoryTest {
   }
 
   @Test
-  void should_throwLockTemporarilyUnavailable_whenBridgeIsUnreachable() {
+  void should_throwLockTemporarilyUnavailableException_whenBridgeIsUnreachable() {
     server
         .expect(requestTo(LOCK_URL))
         .andExpect(method(HttpMethod.POST))
