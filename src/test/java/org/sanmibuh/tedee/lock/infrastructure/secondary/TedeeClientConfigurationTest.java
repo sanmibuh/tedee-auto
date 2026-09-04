@@ -19,7 +19,7 @@ class TedeeClientConfigurationTest {
   @InjectSoftAssertions private BDDSoftAssertions softly;
 
   @Test
-  void should_configureApiClientWithBaseUrlAndApiToken() {
+  void should_configureApiClient_whenPropertiesAreProvided() {
     final var properties = new TedeeProperties("http://bridge.local/v1.0", "secret-token");
 
     final var apiClient = sut.tedeeApiClient(RestClient.builder(), properties);
@@ -31,7 +31,7 @@ class TedeeClientConfigurationTest {
   }
 
   @Test
-  void should_createLockApiBackedByGivenApiClient() {
+  void should_createLockApi_whenApiClientIsProvided() {
     final var apiClient = new ApiClient();
 
     final var lockApi = sut.lockApi(apiClient);
