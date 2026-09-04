@@ -1,0 +1,22 @@
+src/test/java/org/sanmibuh/ddd/infrastructure/CQRSHandlerRegistrarTest.java
+  h_97a91c9e567f87 24,26,52-53,69-70,80-81
+src/test/java/org/sanmibuh/ddd/infrastructure/DddAutoConfigurationTest.java
+  h_97a91c9e567f87 11,27,32,38
+src/test/java/org/sanmibuh/ddd/infrastructure/HandlerLookupTest.java
+  h_97a91c9e567f87 28,30,37,39,60,62,74,76
+src/test/java/org/sanmibuh/ddd/infrastructure/InMemoryCommandBusTest.java
+  h_97a91c9e567f87 22,24,31,33
+src/test/java/org/sanmibuh/ddd/infrastructure/InMemoryQueryBusTest.java
+  h_97a91c9e567f87 25,27,34,36
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.6.22",
+  "base_commit_sha": "fb060a7d1cf4600839c98092ab396d1ec363512e",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
