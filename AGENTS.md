@@ -49,6 +49,13 @@ These standards apply to all code in this project and are the basis for any code
 - Cross-aggregate coupling at infrastructure level is forbidden.
 - Commands and queries use only primitive or standard Java types (`String`, `UUID`, etc.). They must not reference domain value objects or aggregates. The handler is responsible for constructing domain objects from those primitives.
 
+### Non-null by default (NullAway)
+- The `org.sanmibuh` packages are non-null by default, enforced at compile time by NullAway as an error (`-Xep:NullAway:ERROR`, `AnnotatedPackages=org.sanmibuh`). Treat every field, parameter, and return type as non-null unless it is explicitly annotated `@Nullable`.
+- Never add defensive null checks (e.g. `Objects.requireNonNull`, `if (x == null)`) on non-`@Nullable` values: passing `null` there is a compile error, not a runtime risk, so the check is dead code.
+- A field that is non-null but not initialized in the constructor (e.g. a Spring lifecycle field) must be annotated `@SuppressWarnings("NullAway.Init")`.
+- Prefer primitive types (`int`, `long`, `boolean`) over their boxed counterparts when the value is conceptually always present. Value object guard clauses only cover domain-invalid values, not `null`.
+- When reviewing, do not flag potential `NullPointerException` for passing `null` to a non-`@Nullable` parameter or constructor.
+
 ### Documentation
 - `ARCHITECTURE.md` must always reflect the current state of the project.
 - Update it when a module or package is added, renamed, or removed, when a key design decision changes, or when a new workflow or release mechanism is introduced.
