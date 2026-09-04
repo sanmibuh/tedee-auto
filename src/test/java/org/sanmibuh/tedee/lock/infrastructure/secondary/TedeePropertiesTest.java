@@ -61,6 +61,13 @@ class TedeePropertiesTest {
                 "base-url is blank",
                 new String[] {
                   "sanmibuh.rest.tedee.base-url=  ", "sanmibuh.rest.tedee.api-key=secret-token"
+                })),
+        Arguments.of(
+            Named.of(
+                "api-key is blank",
+                new String[] {
+                  "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+                  "sanmibuh.rest.tedee.api-key=  "
                 })));
   }
 
