@@ -85,7 +85,7 @@ Java LSP (`jdtls`) is enabled via `opencode.json`. OpenCode will automatically s
 ### Mutation testing
 - Always run mutation testing via `make pitest`. It restores the incremental history from the orphan `coverage-data` branch and mirrors CI exactly.
 - Do not run `./mvnw pitest:mutationCoverage` (or the raw `org.pitest:pitest-maven:mutationCoverage` goal) directly unless you deliberately want a non-incremental run without history.
-- The mutation score is held at 100%. To handle an unavoidable **equivalent mutant** (one no test can kill because it does not change observable behaviour), extract the offending expression into a small private method whose name ends in `PITEquivalent`. The `pitest-maven` config excludes `*PITEquivalent` methods project-wide (`pom.xml`), so this suffix is a deliberate, load-bearing marker. Never rename or inline a `*PITEquivalent` method to "clean it up" — that reintroduces the equivalent mutant and breaks the 100% gate. See `ARCHITECTURE.md` for details.
+- The mutation score is held at 100%. To handle an unavoidable **equivalent mutant** (one no test can kill because it does not change observable behavior), extract the offending expression into a small private method whose name ends in `PITEquivalent`. The `pitest-maven` config excludes `*PITEquivalent` methods project-wide (`pom.xml`), so this suffix is a deliberate, load-bearing marker. Never rename or inline a `*PITEquivalent` method to "clean it up" — that reintroduces the equivalent mutant and breaks the 100% gate. See `ARCHITECTURE.md` for details.
 
 ### File operations
 - When renaming a file, always use `git mv <old> <new>` instead of creating a new file and deleting the old one. This preserves Git history.
