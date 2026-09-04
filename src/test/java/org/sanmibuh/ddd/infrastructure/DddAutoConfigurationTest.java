@@ -8,7 +8,7 @@ import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 
 class DddAutoConfigurationTest {
 
-  private final DddAutoConfiguration config = new DddAutoConfiguration();
+  private final DddAutoConfiguration sut = new DddAutoConfiguration();
 
   @Test
   void should_returnRegistrar_whenDomainEventHandlerRegistrarCalled() {
@@ -24,17 +24,17 @@ class DddAutoConfigurationTest {
 
   @Test
   void should_returnEventBus_whenDomainEventHandlersProvided() {
-    then(config.eventBus(List.of())).isInstanceOf(InMemoryEventBus.class);
+    then(sut.eventBus(List.of())).isInstanceOf(InMemoryEventBus.class);
   }
 
   @Test
   void should_returnCommandBus_whenCommandHandlersProvided() {
-    then(config.commandBus(List.of(), new InMemoryEventBus(List.of())))
+    then(sut.commandBus(List.of(), new InMemoryEventBus(List.of())))
         .isInstanceOf(InMemoryCommandBus.class);
   }
 
   @Test
   void should_returnQueryBus_whenQueryHandlersProvided() {
-    then(config.queryBus(List.of())).isInstanceOf(InMemoryQueryBus.class);
+    then(sut.queryBus(List.of())).isInstanceOf(InMemoryQueryBus.class);
   }
 }

@@ -13,9 +13,9 @@ class DomainEventHandlerRegistrarTest {
   @Test
   void should_notRegisterAnyBean_whenAutoConfigurationPackagesNotPresent() {
     final var beanFactory = new DefaultListableBeanFactory();
-    final var registrar = new DomainEventHandlerRegistrar(beanFactory);
+    final var sut = new DomainEventHandlerRegistrar(beanFactory);
 
-    registrar.postProcessBeanDefinitionRegistry(beanFactory);
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
 
     then(beanFactory.getBeanDefinitionCount()).isZero();
   }
@@ -24,9 +24,9 @@ class DomainEventHandlerRegistrarTest {
   void should_registerEventHandlerBean_whenFoundInAutoConfigurationPackage() {
     final var beanFactory = new DefaultListableBeanFactory();
     AutoConfigurationPackages.register(beanFactory, "com.example");
-    final var registrar = new DomainEventHandlerRegistrar(beanFactory);
+    final var sut = new DomainEventHandlerRegistrar(beanFactory);
 
-    registrar.postProcessBeanDefinitionRegistry(beanFactory);
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
 
     then(beanFactory.containsBeanDefinition("stubEventHandler")).isTrue();
   }
@@ -38,8 +38,8 @@ class DomainEventHandlerRegistrarTest {
     beanFactory.registerBeanDefinition(
         "myEventHandler", new RootBeanDefinition(StubEventHandler.class));
 
-    final var registrar = new DomainEventHandlerRegistrar(beanFactory);
-    registrar.postProcessBeanDefinitionRegistry(beanFactory);
+    final var sut = new DomainEventHandlerRegistrar(beanFactory);
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
 
     then(beanFactory.getBeansOfType(StubEventHandler.class)).hasSize(1);
   }

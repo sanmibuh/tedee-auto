@@ -22,18 +22,18 @@ class InMemoryQueryBusTest {
 
   @Test
   void should_returnQueryResult_whenHandlerIsRegistered() {
-    final var bus = new InMemoryQueryBus(List.of(new StubQueryHandler()));
+    final var sut = new InMemoryQueryBus(List.of(new StubQueryHandler()));
 
-    final var result = bus.dispatch(new StubQuery());
+    final var result = sut.dispatch(new StubQuery());
 
     then(result).isEqualTo("result");
   }
 
   @Test
   void should_throwHandlerNotFoundException_whenNoHandlerRegistered() {
-    final var bus = new InMemoryQueryBus(List.of());
+    final var sut = new InMemoryQueryBus(List.of());
 
-    thenThrownBy(() -> bus.dispatch(new StubQuery()))
+    thenThrownBy(() -> sut.dispatch(new StubQuery()))
         .isInstanceOf(HandlerNotFoundException.class)
         .hasMessageContaining(StubQuery.class.getName());
   }
