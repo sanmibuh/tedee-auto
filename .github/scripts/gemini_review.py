@@ -81,6 +81,7 @@ Rules:
 - Each finding must be specific: reference actual class names and method names.
 - Do NOT report findings already listed in "ALREADY REPORTED" above.
 - Do NOT invent problems. If the code is clean in an area, skip it.
+- This project targets Java 25. A non-public, package-private `main` method is a valid, intentional entry point in Java 25 — do NOT flag `static void main` for lacking the `public` modifier.
 - Return ONLY a JSON array. No explanation outside the JSON.
 
 Each finding must have:
