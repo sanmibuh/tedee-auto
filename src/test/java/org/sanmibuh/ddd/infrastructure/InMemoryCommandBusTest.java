@@ -19,18 +19,18 @@ class InMemoryCommandBusTest {
 
   @Test
   void should_publishRecordedEvents_whenHandlerIsRegistered() {
-    final var bus = new InMemoryCommandBus(List.of(new StubCommandHandler()), eventBus);
+    final var sut = new InMemoryCommandBus(List.of(new StubCommandHandler()), eventBus);
 
-    bus.dispatch(new StubCommand());
+    sut.dispatch(new StubCommand());
 
     verify(eventBus).publish(new StubEvent());
   }
 
   @Test
   void should_throwHandlerNotFoundException_whenNoHandlerRegistered() {
-    final var bus = new InMemoryCommandBus(List.of(), eventBus);
+    final var sut = new InMemoryCommandBus(List.of(), eventBus);
 
-    thenThrownBy(() -> bus.dispatch(new StubCommand()))
+    thenThrownBy(() -> sut.dispatch(new StubCommand()))
         .isInstanceOf(HandlerNotFoundException.class)
         .hasMessageContaining(StubCommand.class.getName());
   }

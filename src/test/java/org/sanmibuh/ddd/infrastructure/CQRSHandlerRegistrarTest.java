@@ -21,9 +21,9 @@ class CQRSHandlerRegistrarTest {
   @Test
   void should_notRegisterAnyBean_whenAutoConfigurationPackagesNotPresent() {
     final var beanFactory = new DefaultListableBeanFactory();
-    final var registrar = new CQRSHandlerRegistrar(beanFactory);
+    final var sut = new CQRSHandlerRegistrar(beanFactory);
 
-    registrar.postProcessBeanDefinitionRegistry(beanFactory);
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
 
     then(beanFactory.getBeanDefinitionCount()).isZero();
   }
@@ -49,8 +49,8 @@ class CQRSHandlerRegistrarTest {
     beanFactory.registerBeanDefinition(
         "stubComponentCommandHandler", new RootBeanDefinition(StubComponentCommandHandler.class));
 
-    final var registrar = new CQRSHandlerRegistrar(beanFactory);
-    registrar.postProcessBeanDefinitionRegistry(beanFactory);
+    final var sut = new CQRSHandlerRegistrar(beanFactory);
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
 
     softly
         .then(beanFactory.getBeanDefinition("stubComponentCommandHandler").getBeanClassName())
@@ -66,8 +66,8 @@ class CQRSHandlerRegistrarTest {
     beanFactory.registerBeanDefinition(
         "myCustomHandlerName", new RootBeanDefinition(StubComponentCommandHandler.class));
 
-    final var registrar = new CQRSHandlerRegistrar(beanFactory);
-    registrar.postProcessBeanDefinitionRegistry(beanFactory);
+    final var sut = new CQRSHandlerRegistrar(beanFactory);
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
 
     softly.then(beanFactory.getBeansOfType(StubComponentCommandHandler.class)).hasSize(1);
     softly.then(beanFactory.containsBeanDefinition("myCustomHandlerName")).isTrue();
@@ -77,8 +77,8 @@ class CQRSHandlerRegistrarTest {
   private DefaultListableBeanFactory registrarAppliedTo(final String basePackage) {
     final var beanFactory = new DefaultListableBeanFactory();
     AutoConfigurationPackages.register(beanFactory, basePackage);
-    final var registrar = new CQRSHandlerRegistrar(beanFactory);
-    registrar.postProcessBeanDefinitionRegistry(beanFactory);
+    final var sut = new CQRSHandlerRegistrar(beanFactory);
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
     return beanFactory;
   }
 }

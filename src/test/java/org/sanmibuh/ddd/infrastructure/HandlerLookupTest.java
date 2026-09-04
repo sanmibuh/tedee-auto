@@ -25,18 +25,18 @@ class HandlerLookupTest {
   @Test
   void should_returnHandler_whenMessageTypeIsRegistered() {
     final var handler = new ConcreteStubHandler();
-    final var lookup = new HandlerLookup<>(List.of(handler), StubHandler.class);
+    final var sut = new HandlerLookup<>(List.of(handler), StubHandler.class);
 
-    final var found = lookup.find(StubMessage.class);
+    final var found = sut.find(StubMessage.class);
 
     then(found).isSameAs(handler);
   }
 
   @Test
   void should_throwHandlerNotFoundException_whenNoHandlerRegistered() {
-    final var lookup = new HandlerLookup<>(List.of(), StubHandler.class);
+    final var sut = new HandlerLookup<>(List.of(), StubHandler.class);
 
-    thenThrownBy(() -> lookup.find(StubMessage.class))
+    thenThrownBy(() -> sut.find(StubMessage.class))
         .isInstanceOf(HandlerNotFoundException.class)
         .hasMessageContaining(StubMessage.class.getName());
   }
@@ -57,9 +57,9 @@ class HandlerLookupTest {
     final var proxyFactory = new ProxyFactory(handler);
     proxyFactory.setProxyTargetClass(false);
     final var proxy = (StubHandler<StubMessage>) proxyFactory.getProxy();
-    final var lookup = new HandlerLookup<>(List.of(proxy), StubHandler.class);
+    final var sut = new HandlerLookup<>(List.of(proxy), StubHandler.class);
 
-    final var found = lookup.find(StubMessage.class);
+    final var found = sut.find(StubMessage.class);
 
     then(found).isSameAs(proxy);
   }
@@ -71,9 +71,9 @@ class HandlerLookupTest {
     final var proxyFactory = new ProxyFactory(handler);
     proxyFactory.setProxyTargetClass(true);
     final var proxy = (StubHandler<StubMessage>) proxyFactory.getProxy();
-    final var lookup = new HandlerLookup<>(List.of(proxy), StubHandler.class);
+    final var sut = new HandlerLookup<>(List.of(proxy), StubHandler.class);
 
-    final var found = lookup.find(StubMessage.class);
+    final var found = sut.find(StubMessage.class);
 
     then(found).isSameAs(proxy);
   }
