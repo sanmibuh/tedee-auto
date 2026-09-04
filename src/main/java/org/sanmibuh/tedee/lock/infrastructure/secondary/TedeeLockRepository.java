@@ -43,13 +43,13 @@ public final class TedeeLockRepository implements LockRepository {
     try {
       lockApi.postLock(deviceId);
     } catch (final RestClientResponseException exception) {
-      throw toDomainException(exception, deviceId);
+      throw translateException(exception, deviceId);
     } catch (final RestClientException exception) {
       throw new LockTemporarilyUnavailableException(deviceId, exception);
     }
   }
 
-  private RuntimeException toDomainException(
+  private RuntimeException translateException(
       final RestClientResponseException exception, final int deviceId) {
     return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
       case NOT_FOUND -> new InvalidLockRequestException(deviceId, exception);
