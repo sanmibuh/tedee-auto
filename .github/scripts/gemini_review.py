@@ -59,7 +59,7 @@ if closed_issues:
       for i in closed_issues
   )
   closed_issues_section = (
-      "\nPREVIOUSLY CLOSED (do NOT re-report these unless the exact same problem has clearly reappeared as a regression):\n"
+      "\nPREVIOUSLY CLOSED (these were reviewed by a human and deliberately rejected — do NOT re-report them; a closed issue is NOT a regression just because the code still looks the same, since the closure means the code was intentionally left as-is):\n"
       + closed_issues_text
       + "\n"
   )
