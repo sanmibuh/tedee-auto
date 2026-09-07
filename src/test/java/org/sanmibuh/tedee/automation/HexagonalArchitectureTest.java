@@ -14,6 +14,8 @@ import com.tngtech.archunit.lang.SimpleConditionEvent;
 import java.util.Set;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.DomainEvent;
+import org.sanmibuh.ddd.port.Command;
+import org.sanmibuh.ddd.port.Query;
 
 @AnalyzeClasses(packages = "org.sanmibuh")
 class HexagonalArchitectureTest {
@@ -100,6 +102,17 @@ class HexagonalArchitectureTest {
           .doNotHaveModifier(JavaModifier.ABSTRACT)
           .should()
           .haveModifier(JavaModifier.FINAL);
+
+  @ArchTest
+  static final ArchRule should_forbidDomainDependencies_whenCommandOrQuery =
+      noClasses()
+          .that()
+          .implement(Command.class)
+          .or()
+          .implement(Query.class)
+          .should()
+          .dependOnClassesThat()
+          .resideInAPackage("..domain..");
 
   private static ArchCondition<JavaClass> haveOnlyScalarFields() {
     return new ArchCondition<>("carry only primitive or standard scalar payloads") {
