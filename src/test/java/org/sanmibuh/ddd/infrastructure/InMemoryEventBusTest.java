@@ -5,11 +5,15 @@ import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 
 import java.util.List;
 import nl.altindag.log.LogCaptor;
+import org.assertj.core.api.BDDSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sanmibuh.ddd.domain.DomainEvent;
 import org.sanmibuh.ddd.domain.NoSubscribersRequired;
 import org.sanmibuh.ddd.port.DomainEventHandler;
 
+@ExtendWith(SoftAssertionsExtension.class)
 class InMemoryEventBusTest {
 
   @Test
@@ -23,15 +27,16 @@ class InMemoryEventBusTest {
   }
 
   @Test
-  void should_deliverEvent_whenMultipleHandlersAreRegisteredForSameEventType() {
+  void should_deliverEvent_whenMultipleHandlersAreRegisteredForSameEventType(
+      final BDDSoftAssertions softly) {
     final var handler1 = new StubEventHandler();
     final var handler2 = new StubEventHandler();
     final var sut = new InMemoryEventBus(List.of(handler1, handler2));
 
     sut.publish(new StubEvent());
 
-    then(handler1.handled).isTrue();
-    then(handler2.handled).isTrue();
+    softly.then(handler1.handled).isTrue();
+    softly.then(handler2.handled).isTrue();
   }
 
   @Test
