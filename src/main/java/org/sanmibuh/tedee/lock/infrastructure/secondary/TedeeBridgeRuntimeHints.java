@@ -22,14 +22,14 @@ final class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
 
   @Override
   public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
-    var scanner =
+    final var scanner =
         setResourceLoaderPITEquivalent(
             new ClassPathScanningCandidateComponentProvider(false), classLoader);
     scanner.addIncludeFilter(new AssignableTypeFilter(Object.class));
     scanner.findCandidateComponents(MODEL_PACKAGE).stream()
         .flatMap(
             bd -> {
-              var className = bd.getBeanClassName();
+              final var className = bd.getBeanClassName();
               return className != null
                   ? loadWithDeclaredClasses(className, classLoader)
                   : Stream.empty();
@@ -46,7 +46,7 @@ final class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
 
   private Stream<Class<?>> loadWithDeclaredClasses(
       final String className, final @Nullable ClassLoader loader) {
-    var type = ClassUtils.resolveClassName(className, loader);
+    final var type = ClassUtils.resolveClassName(className, loader);
     return Stream.concat(Stream.of(type), Arrays.stream(type.getDeclaredClasses()));
   }
 }
