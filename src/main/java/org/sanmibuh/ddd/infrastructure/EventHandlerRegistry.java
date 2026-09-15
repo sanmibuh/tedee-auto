@@ -13,7 +13,7 @@ final class EventHandlerRegistry {
   private final Map<Class<?>, List<DomainEventHandler<?>>> index;
 
   EventHandlerRegistry(final List<DomainEventHandler<?>> handlers) {
-    final Map<Class<?>, List<DomainEventHandler<?>>> map = new HashMap<>();
+    final var map = new HashMap<Class<?>, List<DomainEventHandler<?>>>();
     for (final var handler : handlers) {
       final var eventType = resolveEventType(AopUtils.getTargetClass(handler));
       map.computeIfAbsent(eventType, k -> new ArrayList<>()).add(handler);
