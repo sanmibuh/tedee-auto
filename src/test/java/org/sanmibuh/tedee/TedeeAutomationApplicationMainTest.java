@@ -13,7 +13,7 @@ class TedeeAutomationApplicationMainTest {
   @Test
   void should_delegateToSpringApplication_whenMainIsCalled() {
     final var args = new String[] {};
-    try (var mocked = mockStatic(SpringApplication.class)) {
+    try (final var mocked = mockStatic(SpringApplication.class)) {
       sut.accept(args);
 
       mocked.verify(() -> SpringApplication.run(TedeeAutomationApplication.class, args));
