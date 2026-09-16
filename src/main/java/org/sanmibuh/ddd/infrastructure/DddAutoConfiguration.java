@@ -17,12 +17,14 @@ import org.springframework.context.annotation.Bean;
 public class DddAutoConfiguration {
 
   @Bean
+  @ConditionalOnMissingBean(name = "domainEventHandlerRegistrar")
   static BeanDefinitionRegistryPostProcessor domainEventHandlerRegistrar(
       final BeanFactory beanFactory) {
     return new DomainEventHandlerRegistrar(beanFactory);
   }
 
   @Bean
+  @ConditionalOnMissingBean(name = "cqrsHandlerRegistrar")
   static BeanDefinitionRegistryPostProcessor cqrsHandlerRegistrar(final BeanFactory beanFactory) {
     return new CQRSHandlerRegistrar(beanFactory);
   }
