@@ -1,0 +1,19 @@
+ARCHITECTURE.md
+  s_f55e8919a49be2::t_4d1a792c27f90f 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "13d0426ecc9031cee41bd1565488736e8e0ae899",
+  "prompts": {},
+  "sessions": {
+    "s_f55e8919a49be2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f5b515a2cffezbY7lDNkPDwJda",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
