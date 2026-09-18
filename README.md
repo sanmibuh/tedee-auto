@@ -1,5 +1,9 @@
 # tedee-auto
 
+[![Latest release](https://img.shields.io/github/v/release/sanmibuh/tedee-auto?sort=semver)](https://github.com/sanmibuh/tedee-auto/releases/latest)
+[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsanmibuh%2Ftedee-auto%2Fcoverage-data%2Fcoverage-badge.json)](https://github.com/sanmibuh/tedee-auto/actions/workflows/main.yml)
+[![Mutation score](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsanmibuh%2Ftedee-auto%2Fcoverage-data%2Fmutation-badge.json)](https://github.com/sanmibuh/tedee-auto/actions/workflows/main.yml)
+
 Backend service that automates a [Tedee](https://tedee.com) smart lock — built with Spring Boot and compiled to a GraalVM native image.
 
 ## Requirements
@@ -132,7 +136,7 @@ sanmibuh:
 ```yaml
 services:
   tedee-automation:
-    image: ghcr.io/sanmibuh/tedee-auto/tedee-automation:0.1.1
+    image: ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest
     container_name: tedee-automation
     restart: unless-stopped
     volumes:
@@ -144,6 +148,8 @@ services:
         max-size: "10m"
         max-file: "3"
 ```
+
+> Use `:latest` for the newest build, or pin a specific version tag (e.g. `:0.1.1`) for reproducible deployments. Available tags are listed on the [package page](https://github.com/sanmibuh/tedee-auto/pkgs/container/tedee-auto%2Ftedee-automation) and [releases](https://github.com/sanmibuh/tedee-auto/releases).
 
 ### 4. Run
 

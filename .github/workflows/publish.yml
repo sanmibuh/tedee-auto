@@ -139,13 +139,13 @@ jobs:
             -B
 
           git add pom.xml
-          git commit -m "chore: prepare next development iteration v${NEXT}"
+          git commit -m "Prepare development iteration v${NEXT}"
           git push origin "$BRANCH"
 
           gh pr create \
             --base main \
             --head "$BRANCH" \
-            --title "chore: prepare next development iteration v${NEXT}" \
+            --title "Prepare development iteration v${NEXT}" \
             --body "Bump version to \`${NEXT}\` after releasing \`v${VERSION}\`."
 
           gh pr merge "$BRANCH" --auto --squash

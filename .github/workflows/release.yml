@@ -91,9 +91,11 @@ jobs:
             SINCE="1970-01-01T00:00:00Z"
           fi
 
+          # Exclude mechanical release PRs (the release PR itself and the
+          # post-release snapshot bump) so they never leak into the changelog.
           PRS=$(gh api \
             "repos/${{ github.repository }}/pulls?state=closed&base=main&per_page=100&sort=updated&direction=desc" \
-            --jq "[.[] | select(.merged_at != null and .merged_at > \"${SINCE}\") | {title: .title, number: .number, url: .html_url}]")
+            --jq "[.[] | select(.merged_at != null and .merged_at > \"${SINCE}\" and (.head.ref | test(\"^(release/v|chore/next-snapshot-v)\") | not)) | {title: .title, number: .number, url: .html_url}]")
 
           echo "$PRS" > /tmp/prs.json
 
