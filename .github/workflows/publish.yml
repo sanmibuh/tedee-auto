@@ -1,8 +1,12 @@
-name: Publish — Tag, Docker, GitHub Release
+name: Publish — Docker, Changelog, Tag, GitHub Release
 
 on:
   push:
     branches: [main]
+
+concurrency:
+  group: publish
+  cancel-in-progress: false
 
 jobs:
   detect:
@@ -33,18 +37,22 @@ jobs:
             echo "version="            >> "$GITHUB_OUTPUT"
           fi
 
-  publish:
+  # Build and push the Docker image FIRST. A failed native build must leave no
+  # dangling tag and no half-published release, so nothing downstream runs until
+  # the image exists in GHCR.
+  build-image:
     runs-on: ubuntu-latest
     needs: detect
     if: needs.detect.outputs.is_release == 'true'
     permissions:
-      contents: write
+      contents: read
       packages: write
-      pull-requests: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout merged commit
         uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
 
       - name: Set up GraalVM (Java 25)
         uses: graalvm/setup-graalvm@v1
@@ -53,22 +61,17 @@ jobs:
           distribution: 'graalvm'
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Read and validate release version from pom.xml
-        id: version
+      - name: Validate release version in pom.xml
         run: |
           POM_VERSION=$(./mvnw help:evaluate -Dexpression=project.version -q -DforceStdout)
           if [[ "$POM_VERSION" == *-SNAPSHOT ]]; then
             echo "ERROR: project.version is '${POM_VERSION}' — still a SNAPSHOT on main after release merge. Aborting."
             exit 1
           fi
-          echo "release=${POM_VERSION}" >> "$GITHUB_OUTPUT"
-
-      - name: Create and push version tag
-        run: |
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git tag "v${{ steps.version.outputs.release }}"
-          git push origin "v${{ steps.version.outputs.release }}"
+          if [[ "$POM_VERSION" != "${{ needs.detect.outputs.version }}" ]]; then
+            echo "ERROR: pom version '${POM_VERSION}' does not match release branch version '${{ needs.detect.outputs.version }}'. Aborting."
+            exit 1
+          fi
 
       - name: Log in to GHCR
         uses: docker/login-action@v4
@@ -86,51 +89,137 @@ jobs:
           context: .
           push: true
           tags: |
-            ghcr.io/sanmibuh/tedee-auto/tedee-automation:${{ steps.version.outputs.release }}
+            ghcr.io/sanmibuh/tedee-auto/tedee-automation:${{ needs.detect.outputs.version }}
             ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
-      - name: Extract changelog section for GitHub Release
-        id: notes
+  # Only after the image is published: generate the authoritative CHANGELOG.md
+  # on main, commit it, then tag and create the GitHub Release. Committing the
+  # changelog before tagging guarantees the tag, image and notes reflect the
+  # same final state.
+  tag-and-release:
+    runs-on: ubuntu-latest
+    needs: [detect, build-image]
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          fetch-depth: 0
+          token: ${{ secrets.RELEASE_PAT }}
+
+      - name: Configure git identity
         run: |
-          VERSION="${{ steps.version.outputs.release }}"
-          python3 << 'PYEOF'
-          import re, os
+          git config user.name  "${{ vars.RELEASE_BOT_NAME || 'github-actions[bot]' }}"
+          git config user.email "${{ vars.RELEASE_BOT_EMAIL || 'github-actions[bot]@users.noreply.github.com' }}"
 
-          version = os.environ["VERSION"]
-          with open("CHANGELOG.md") as f:
-              content = f.read()
-
-          pattern = rf"(## \[{re.escape(version)}\].*?)(?=\n## \[|\Z)"
-          match = re.search(pattern, content, re.DOTALL)
-          section = match.group(1).strip() if match else f"## [{version}]"
-
-          with open("release_notes.md", "w") as f:
-              f.write(section)
-          PYEOF
+      - name: Generate and commit CHANGELOG.md
+        id: changelog
         env:
-          VERSION: ${{ steps.version.outputs.release }}
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+        run: |
+          export VERSION="${{ needs.detect.outputs.version }}"
+          export TODAY=$(date +%Y-%m-%d)
+
+          PREV_TAG=$(git tag --sort=-version:refname | head -1)
+          if [ -n "$PREV_TAG" ]; then
+            # Normalize to UTC 'Z' so the lexical string comparison against
+            # GitHub's UTC merged_at timestamps is correct.
+            SINCE=$(date -u -d "$(git log -1 --format=%aI "$PREV_TAG")" +%Y-%m-%dT%H:%M:%SZ)
+          else
+            SINCE="1970-01-01T00:00:00Z"
+          fi
+
+          # All PRs merged since the last tag, excluding the mechanical release
+          # and snapshot-bump PRs, so they never leak into the changelog.
+          PRS=$(gh api \
+            "repos/${{ github.repository }}/pulls?state=closed&base=main&per_page=100&sort=updated&direction=desc" \
+            --jq "[.[] | select(.merged_at != null and .merged_at > \"${SINCE}\" and (.head.ref | test(\"^(release/v|chore/next-snapshot-v)\") | not)) | {title: .title, number: .number, url: .html_url}]")
+          echo "$PRS" > "$RUNNER_TEMP/prs.json"
+
+          PRS_FILE="$RUNNER_TEMP/prs.json" python3 .github/scripts/render_changelog.py > "$RUNNER_TEMP/entry.md"
+
+          # Prepend the new entry into CHANGELOG.md, keeping the "# Changelog"
+          # header at the top if present.
+          ENTRY_FILE="$RUNNER_TEMP/entry.md" python3 - <<'PYEOF'
+          import os
+
+          with open(os.environ["ENTRY_FILE"]) as f:
+              entry = f.read().strip()
+
+          if os.path.exists("CHANGELOG.md"):
+              with open("CHANGELOG.md") as f:
+                  existing = f.read()
+              if existing.startswith("# Changelog"):
+                  header, _, rest = existing.partition("\n")
+                  content = f"{header}\n\n{entry}\n\n{rest.lstrip()}"
+              else:
+                  content = f"{entry}\n\n{existing}"
+          else:
+              content = f"# Changelog\n\n{entry}\n"
+
+          with open("CHANGELOG.md", "w") as f:
+              f.write(content)
+          PYEOF
+
+          cp "$RUNNER_TEMP/entry.md" release_notes.md
+
+          git add CHANGELOG.md
+          git commit -m "Update changelog for v${VERSION}"
+          git push origin main
+
+      - name: Create and push version tag
+        run: |
+          git tag "v${{ needs.detect.outputs.version }}"
+          git push origin "v${{ needs.detect.outputs.version }}"
 
       - name: Create GitHub Release
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
         run: |
-          gh release create "v${{ steps.version.outputs.release }}" \
-            --title "v${{ steps.version.outputs.release }}" \
+          gh release create "v${{ needs.detect.outputs.version }}" \
+            --title "v${{ needs.detect.outputs.version }}" \
             --notes-file release_notes.md
+
+  snapshot-bump:
+    runs-on: ubuntu-latest
+    needs: [detect, tag-and-release]
+    permissions:
+      contents: write
+      pull-requests: write
+
+    steps:
+      - name: Checkout main
+        uses: actions/checkout@v7
+        with:
+          ref: main
+          token: ${{ secrets.RELEASE_PAT }}
+
+      - name: Set up GraalVM (Java 25)
+        uses: graalvm/setup-graalvm@v1
+        with:
+          java-version: '25'
+          distribution: 'graalvm'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Configure git identity
+        run: |
+          git config user.name  "${{ vars.RELEASE_BOT_NAME || 'github-actions[bot]' }}"
+          git config user.email "${{ vars.RELEASE_BOT_EMAIL || 'github-actions[bot]@users.noreply.github.com' }}"
 
       - name: Create post-release snapshot bump PR
         env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
         run: |
-          VERSION="${{ steps.version.outputs.release }}"
+          VERSION="${{ needs.detect.outputs.version }}"
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
           NEXT="${MAJOR}.${MINOR}.$((PATCH + 1))-SNAPSHOT"
           BRANCH="chore/next-snapshot-v${NEXT}"
 
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
           git checkout -b "$BRANCH"
 
           ./mvnw versions:set \
