@@ -56,6 +56,10 @@
 
     <!-- Generated Tedee Bridge API client (openapi-generator, java/restclient) -->
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-restclient</artifactId>
+    </dependency>
+    <dependency>
       <groupId>org.openapitools</groupId>
       <artifactId>jackson-databind-nullable</artifactId>
       <version>0.2.11</version>
