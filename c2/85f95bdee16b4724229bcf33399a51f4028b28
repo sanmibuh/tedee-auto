@@ -1,0 +1,19 @@
+pom.xml
+  s_f668a305f74efd::t_e524b872f5d6fe 16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c285f95bdee16b4724229bcf33399a51f4028b28",
+  "prompts": {},
+  "sessions": {
+    "s_f668a305f74efd": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f4a6cba3fffelpsZE4fcPnN3OD",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
