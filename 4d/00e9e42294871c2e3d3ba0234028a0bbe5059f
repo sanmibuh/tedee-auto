@@ -1,0 +1,14 @@
+Dockerfile
+  h_97a91c9e567f87 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4d00e9e42294871c2e3d3ba0234028a0bbe5059f",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
