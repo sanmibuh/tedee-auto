@@ -253,7 +253,7 @@
             <configuration>
               <buildArgs>
                 <buildArg>-H:+StaticExecutableWithDynamicLibC</buildArg>
-                <buildArg>-march=x86-64-v2</buildArg>
+                <buildArg>-march=compatibility</buildArg>
               </buildArgs>
             </configuration>
           </plugin>
