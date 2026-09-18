@@ -16,6 +16,8 @@ RUN ./mvnw -Pnative native:compile -B -DskipTests -q
 # Stage 2: minimal distroless runtime (non-root, CA certs included)
 FROM gcr.io/distroless/base-debian12:nonroot
 
+LABEL org.opencontainers.image.source=https://github.com/sanmibuh/tedee-auto
+
 COPY --from=builder /app/target/tedee-automation /tedee-automation
 
 USER nonroot

@@ -8,6 +8,9 @@ target/
 /config/application.yml
 /application-local.yml
 
+# Local deployment config (compose + secrets, not versioned)
+/deploy/
+
 # PITest incremental analysis
 .pit/
 
