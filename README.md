@@ -82,15 +82,19 @@ The container starts from `/`, so Spring Boot automatically picks up `./config/a
 
 ### 1. Prepare the host
 
-All examples below use `/srv/tedee-auto` as the base host path. Replace every occurrence with your own path (config file, Compose volumes and the `tail` command must all point to the same base).
+All examples below use `/srv/tedee-auto` as the base host path. Replace every occurrence with your own path (config file, Compose volumes and the `tail` command must all point to the same base). If you don't have root, pick a base under your home directory (e.g. `$HOME/tedee-auto`) instead.
 
 ```bash
-mkdir -p /srv/tedee-auto/config /srv/tedee-auto/logs
+# Creating directories under a system path such as /srv requires root; drop sudo
+# if you use a user-writable base path.
+sudo mkdir -p /srv/tedee-auto/config /srv/tedee-auto/logs
 
-# The distroless image runs as the non-root user (UID/GID 65532);
-# the log directory must be writable by it
-chown -R 65532:65532 /srv/tedee-auto/logs
+# The distroless image runs as the non-root user (UID/GID 65532); the log
+# directory must be owned by it. chown always needs elevated privileges.
+sudo chown -R 65532:65532 /srv/tedee-auto/logs
 ```
+
+Then create `/srv/tedee-auto/config/application.yml` with the content from the next step (edit it with `sudo` if the directory is root-owned).
 
 ### 2. `config/application.yml`
 
@@ -145,8 +149,13 @@ services:
 
 ```bash
 docker compose up -d
-docker compose logs -f      # container stdout
-tail -f /srv/tedee-auto/logs/tedee-automation.log   # rolling file log
+```
+
+Follow the logs (each command runs in the foreground, so use a separate terminal for each):
+
+```bash
+docker compose logs -f                               # container stdout
+tail -f /srv/tedee-auto/logs/tedee-automation.log    # rolling file log
 ```
 
 ## Architecture
