@@ -9,6 +9,11 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
 
     steps:
       - name: Checkout code
@@ -161,3 +166,57 @@ jobs:
           git add coverage.json pitest.json coverage-badge.json mutation-badge.json pitest-history.bin
           git commit -m "coverage: ${{ github.sha }}"
           git push origin HEAD:coverage-data
+
+      - name: Assemble Pages site
+        run: |
+          rm -rf site
+          mkdir -p site/coverage site/mutation
+          cp -r target/site/jacoco/. site/coverage/
+          cp -r target/pit-reports/. site/mutation/
+          rm -f site/mutation/mutations.xml
+
+          LINE_PCT=$(grep -oP '"message": "\K[^"]+' coverage-badge.json)
+          MUT_PCT=$(grep -oP '"message": "\K[^"]+' mutation-badge.json)
+          cat > site/index.html <<EOF
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="utf-8">
+            <meta name="viewport" content="width=device-width, initial-scale=1">
+            <title>tedee-auto — Quality reports</title>
+            <style>
+              body { font-family: system-ui, sans-serif; max-width: 40rem; margin: 4rem auto; padding: 0 1rem; line-height: 1.6; }
+              h1 { margin-bottom: 0.25rem; }
+              .cards { display: grid; gap: 1rem; margin-top: 2rem; }
+              a.card { display: block; padding: 1.25rem 1.5rem; border: 1px solid #d0d7de; border-radius: 8px; text-decoration: none; color: inherit; }
+              a.card:hover { border-color: #0969da; }
+              .metric { font-weight: 600; color: #0969da; }
+              footer { margin-top: 3rem; color: #57606a; font-size: 0.9rem; }
+            </style>
+          </head>
+          <body>
+            <h1>tedee-auto</h1>
+            <p>Quality reports for the latest <code>main</code> build.</p>
+            <div class="cards">
+              <a class="card" href="coverage/index.html">
+                <div>JaCoCo Coverage report</div>
+                <div class="metric">Lines: ${LINE_PCT}</div>
+              </a>
+              <a class="card" href="mutation/index.html">
+                <div>PITest Mutation report</div>
+                <div class="metric">Mutation score: ${MUT_PCT}</div>
+              </a>
+            </div>
+            <footer>Commit <code>${{ github.sha }}</code></footer>
+          </body>
+          </html>
+          EOF
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v4
+        with:
+          path: site
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
