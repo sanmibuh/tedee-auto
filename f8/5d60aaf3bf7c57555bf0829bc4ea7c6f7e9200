@@ -1,0 +1,16 @@
+.gitignore
+  h_97a91c9e567f87 7-10
+pom.xml
+  h_97a91c9e567f87 58-61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f85d60aaf3bf7c57555bf0829bc4ea7c6f7e9200",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
