@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeApiTokenInterceptor.java
+  h_97a91c9e567f87 1-26
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeApiTokenInterceptorTest.java
+  h_97a91c9e567f87 1-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7a2b117cc83a41aba0f95d35bda77e54376ec4c6",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
