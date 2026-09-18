@@ -1,0 +1,14 @@
+pom.xml
+  h_97a91c9e567f87 256
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "197f7f83841b9207b3afa66e60938ff82580cb27",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
