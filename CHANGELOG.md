@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.3] - 2026-09-18
+
+### Other
+- Native image fails on CPUs without AVX2 (CPU ISA level is lower than required) ([#192](https://github.com/sanmibuh/tedee-auto/pull/192))
+- Clean up release automation: changelog noise, PR naming, and README version pinning ([#189](https://github.com/sanmibuh/tedee-auto/pull/189))
+
 ## [0.1.2] - 2026-09-18
 
 ### Other

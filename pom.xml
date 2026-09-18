@@ -13,7 +13,7 @@
 
   <groupId>org.sanmibuh.tedee</groupId>
   <artifactId>tedee-automation</artifactId>
-  <version>0.1.3-SNAPSHOT</version>
+  <version>0.1.3</version>
   <name>tedee-automation</name>
   <description>Tedee smart lock automation backend</description>
 
