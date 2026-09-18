@@ -132,7 +132,7 @@ sanmibuh:
 ```yaml
 services:
   tedee-automation:
-    image: ghcr.io/sanmibuh/tedee-auto/tedee-automation:0.1.1
+    image: ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest
     container_name: tedee-automation
     restart: unless-stopped
     volumes:
@@ -144,6 +144,8 @@ services:
         max-size: "10m"
         max-file: "3"
 ```
+
+> Use `:latest` for the newest build, or pin a specific version tag (e.g. `:0.1.1`) for reproducible deployments. Available tags are listed on the [package page](https://github.com/sanmibuh/tedee-auto/pkgs/container/tedee-auto%2Ftedee-automation) and [releases](https://github.com/sanmibuh/tedee-auto/releases).
 
 ### 4. Run
 
