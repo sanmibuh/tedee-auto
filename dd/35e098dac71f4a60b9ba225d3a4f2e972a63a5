@@ -1,0 +1,16 @@
+.github/workflows/release.yml
+  h_97a91c9e567f87 97,105-124,127-135,137
+CHANGELOG.md
+  h_97a91c9e567f87 4-21,47-62,78-102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dd35e098dac71f4a60b9ba225d3a4f2e972a63a5",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
