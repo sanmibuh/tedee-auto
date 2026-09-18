@@ -82,14 +82,14 @@ The container starts from `/`, so Spring Boot automatically picks up `./config/a
 
 ### 1. Prepare the host
 
+All examples below use `/srv/tedee-auto` as the base host path. Replace every occurrence with your own path (config file, Compose volumes and the `tail` command must all point to the same base).
+
 ```bash
-# Adjust the base path to your host
-BASE=/srv/tedee-auto
-mkdir -p "$BASE/config" "$BASE/logs"
+mkdir -p /srv/tedee-auto/config /srv/tedee-auto/logs
 
 # The distroless image runs as the non-root user (UID/GID 65532);
 # the log directory must be writable by it
-chown -R 65532:65532 "$BASE/logs"
+chown -R 65532:65532 /srv/tedee-auto/logs
 ```
 
 ### 2. `config/application.yml`
@@ -118,7 +118,9 @@ sanmibuh:
   scheduler:
     lock:
       schedules:
-        <lock-id>: "0 * * * * *"   # Quartz cron per lock
+        # Map key is the numeric lock device id; value is a Spring cron expression.
+        # Replace 12345 with your lock id. Example below closes the lock daily at 21:30 and 23:30.
+        12345: "0 30 21,23 * * *"
 ```
 
 ### 3. `docker-compose.yml`
