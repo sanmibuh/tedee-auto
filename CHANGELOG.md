@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.1.1] - 2026-09-18
+
+### Bug Fixes
+- fix(docker): copy the OpenAPI spec into the image so the native build doesn't fail ([#177](https://github.com/sanmibuh/tedee-auto/pull/177))
+
+### Build & CI
+- chore: prepare next development iteration v0.1.1-SNAPSHOT ([#178](https://github.com/sanmibuh/tedee-auto/pull/178))
+
 ## [0.1.0] - 2026-09-18
 
 ### Features
