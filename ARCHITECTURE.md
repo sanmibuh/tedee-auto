@@ -140,6 +140,25 @@ The required JVM flags for these tools (`--add-exports`/`--add-opens` on `jdk.co
 
 ---
 
+## Release & publish
+
+Releasing is a two-workflow flow — `release.yml` prepares a release PR, `publish.yml` acts on its merge — designed so the tag, the Docker image and the release notes always describe the same final state, and so the mechanical PRs can auto-merge unattended.
+
+**`release.yml` (manual `workflow_dispatch`, prepares the PR).** A single-release guard aborts immediately if any `release/v*` or `chore/next-snapshot-v*` PR is already open, and a `concurrency: release` group prevents two dispatches running at once. It computes the next version from the current `-SNAPSHOT`, sets it in `pom.xml`, and opens a `release/vX.Y.Z` PR. The PR body contains a **non-authoritative changelog preview** (clearly labelled) of the PRs merged so far; it deliberately does **not** freeze `CHANGELOG.md`, because more PRs may land before the release PR merges.
+
+**`publish.yml` (on push to `main`, acts on the merge).** It is split into four jobs so each stage shows its own status and duration, with `concurrency: publish` guarding against overlap:
+
+1. **`detect`** — is this merge a `release/v*` PR? If not, nothing else runs.
+2. **`build-image`** — builds and pushes the GraalVM native Docker image to GHCR **first**. A failed native build stops here, leaving no dangling tag and no half-published release. It also validates that `pom.xml` is a non-`SNAPSHOT` version matching the release branch.
+3. **`tag-and-release`** — only after the image exists: generates the **authoritative** `CHANGELOG.md` on `main` from all PRs merged since the last tag (excluding `release/v*` and `chore/next-snapshot-v*` branches), commits it, then creates and pushes the `vX.Y.Z` tag, then the GitHub Release. Committing the changelog before tagging is what guarantees the tag, image and notes reflect the same final state — closing the "changelog frozen too early" data-loss race.
+4. **`snapshot-bump`** — opens a `chore/next-snapshot-vX.Y.(Z+1)-SNAPSHOT` PR and enables auto-merge, returning `main` to a development version.
+
+The changelog rendering (category matching and Markdown formatting) lives in one shared script, `.github/scripts/render_changelog.py`, used by both the release-PR preview and the published changelog so they never diverge.
+
+**Auto-merge of mechanical PRs.** Both the release PR and the snapshot-bump PR are created with a fine-grained PAT (secret `RELEASE_PAT`, `contents:write` + `pull-requests:write`) instead of the default `GITHUB_TOKEN`. This is required because GitHub does not trigger workflows from events raised by the default token, so the required checks (`lint`/`test`/`pitest`) would otherwise never run and `--auto` would hang forever. Commits are attributed to a real identity via git config (`vars.RELEASE_BOT_NAME` / `vars.RELEASE_BOT_EMAIL`, falling back to the `github-actions[bot]` identity), which also satisfies the `main` ruleset's `require_extra_approval_for_unattributed_changes` constraint. Setup required once per repository: create the PAT and store it as `RELEASE_PAT`; optionally set the two identity variables.
+
+---
+
 ## Build & run
 
 ```bash
