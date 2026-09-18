@@ -94,7 +94,7 @@ jobs:
           echo "$PRS" > /tmp/prs.json
 
           python3 << 'PYEOF'
-          import json, os
+          import json, os, re
 
           version = os.environ["VERSION"]
           today   = os.environ["TODAY"]
@@ -102,11 +102,39 @@ jobs:
           with open("/tmp/prs.json") as f:
               prs = json.load(f)
 
+          # Ordered category definitions: (heading, matcher on lowercased title).
+          CATEGORIES = [
+              ("Features",         lambda t: t.startswith("feat") or t.startswith("[feature]")),
+              ("Bug Fixes",       lambda t: t.startswith("fix") or t.startswith("[fix]") or "fix " in t[:12]),
+              ("Code Quality",    lambda t: any(t.startswith(p) for p in ("[refactor]", "[clean code]", "[solid]", "[tdd]", "refactor"))),
+              ("Dependencies",    lambda t: t.startswith("build(deps") or t.startswith("build(deps-dev") or "bump " in t),
+              ("Build & CI",      lambda t: t.startswith("build") or t.startswith("ci") or t.startswith("chore")),
+          ]
+
+          def categorize(title):
+              low = title.lower()
+              for heading, matches in CATEGORIES:
+                  if matches(low):
+                      return heading
+              return "Other"
+
+          groups = {}
+          for pr in prs:
+              groups.setdefault(categorize(pr["title"]), []).append(pr)
+
           lines = [f"## [{version}] - {today}"]
           if prs:
-              for pr in prs:
-                  lines.append(f"- {pr['title']} ([#{pr['number']}]({pr['url']}))")
+              order = [h for h, _ in CATEGORIES] + ["Other"]
+              for heading in order:
+                  items = groups.get(heading)
+                  if not items:
+                      continue
+                  lines.append("")
+                  lines.append(f"### {heading}")
+                  for pr in items:
+                      lines.append(f"- {pr['title']} ([#{pr['number']}]({pr['url']}))")
           else:
+              lines.append("")
               lines.append("_No changes._")
           entry = "\n".join(lines)
 
