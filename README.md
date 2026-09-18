@@ -1,6 +1,6 @@
 [![Latest release](https://img.shields.io/github/v/release/sanmibuh/tedee-auto?sort=semver)](https://github.com/sanmibuh/tedee-auto/releases/latest)
-[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsanmibuh%2Ftedee-auto%2Fcoverage-data%2Fcoverage-badge.json)](https://github.com/sanmibuh/tedee-auto/actions/workflows/main.yml)
-[![Mutation score](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsanmibuh%2Ftedee-auto%2Fcoverage-data%2Fmutation-badge.json)](https://github.com/sanmibuh/tedee-auto/actions/workflows/main.yml)
+[![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsanmibuh%2Ftedee-auto%2Fcoverage-data%2Fcoverage-badge.json)](https://sanmibuh.github.io/tedee-auto/coverage/)
+[![Mutation score](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsanmibuh%2Ftedee-auto%2Fcoverage-data%2Fmutation-badge.json)](https://sanmibuh.github.io/tedee-auto/mutation/)
 
 Backend service that automates a [Tedee](https://tedee.com) smart lock — built with Spring Boot and compiled to a GraalVM native image.
 
@@ -61,7 +61,7 @@ Every pull request (non-draft) runs:
 
 Results are posted as a comment on the PR. Baseline metrics are stored in the orphan branch `coverage-data`.
 
-On merge to `main`, the updated metrics and PITest history are saved back to `coverage-data`.
+On merge to `main`, the updated metrics and PITest history are saved back to `coverage-data`, and the JaCoCo and PITest HTML reports are published to [GitHub Pages](https://sanmibuh.github.io/tedee-auto/) (linked from the coverage and mutation badges above).
 
 ## Incremental mutation testing
 
