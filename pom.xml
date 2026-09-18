@@ -13,7 +13,7 @@
 
   <groupId>org.sanmibuh.tedee</groupId>
   <artifactId>tedee-automation</artifactId>
-  <version>0.1.4-SNAPSHOT</version>
+  <version>0.1.5-SNAPSHOT</version>
   <name>tedee-automation</name>
   <description>Tedee smart lock automation backend</description>
 
@@ -253,7 +253,7 @@
             <configuration>
               <buildArgs>
                 <buildArg>-H:+StaticExecutableWithDynamicLibC</buildArg>
-                <buildArg>-march=x86-64-v2</buildArg>
+                <buildArg>-march=compatibility</buildArg>
               </buildArgs>
             </configuration>
           </plugin>
