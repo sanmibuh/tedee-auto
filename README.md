@@ -1,5 +1,3 @@
-# tedee-auto
-
 [![Latest release](https://img.shields.io/github/v/release/sanmibuh/tedee-auto?sort=semver)](https://github.com/sanmibuh/tedee-auto/releases/latest)
 [![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsanmibuh%2Ftedee-auto%2Fcoverage-data%2Fcoverage-badge.json)](https://github.com/sanmibuh/tedee-auto/actions/workflows/main.yml)
 [![Mutation score](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsanmibuh%2Ftedee-auto%2Fcoverage-data%2Fmutation-badge.json)](https://github.com/sanmibuh/tedee-auto/actions/workflows/main.yml)
@@ -43,15 +41,15 @@ Or directly with Maven:
 
 ## Tech stack
 
-| Concern        | Choice                          |
-|----------------|---------------------------------|
-| Runtime        | Java 25 / GraalVM Native Image  |
-| Framework      | Spring Boot 4.1                 |
-| Architecture   | Hexagonal (Ports & Adapters)    |
-| Design         | DDD + CQRS                      |
-| Tests          | JUnit 5 · JaCoCo · PITest       |
-| Architecture tests | ArchUnit                    |
-| Container registry | GitHub Container Registry   |
+| Concern            | Choice                         |
+|--------------------|--------------------------------|
+| Runtime            | Java 25 / GraalVM Native Image |
+| Framework          | Spring Boot 4.1                |
+| Architecture       | Hexagonal (Ports & Adapters)   |
+| Design             | DDD + CQRS                     |
+| Tests              | JUnit 5 · JaCoCo · PITest      |
+| Architecture tests | ArchUnit                       |
+| Container registry | GitHub Container Registry      |
 
 ## CI
 
