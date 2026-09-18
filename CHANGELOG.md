@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.4] - 2026-09-18
+
+### Other
+- Native image still fails with 'CPU ISA level is lower than required' on QNAP TS-464 (Celeron N5095) ([#198](https://github.com/sanmibuh/tedee-auto/pull/198))
+- Publish JaCoCo and PITest HTML reports to GitHub Pages ([#194](https://github.com/sanmibuh/tedee-auto/pull/194))
+
 ## [0.1.3] - 2026-09-18
 
 ### Other
