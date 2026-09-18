@@ -6,13 +6,13 @@ import org.junit.jupiter.api.Test;
 
 class TedeeApiTokenGeneratorTest {
 
-  private final TedeeApiTokenGenerator sut = new TedeeApiTokenGenerator("FAKE_TEST_TOKEN");
+  private final TedeeApiTokenGenerator sut = new TedeeApiTokenGenerator("BE9xnPnGfVUS");
 
   @Test
   void should_generateEncryptedToken_whenTimestampIsProvided() {
     final var apiToken = sut.generate(1691058833000L);
 
     then(apiToken)
-        .isEqualTo("244ff2dbcb627d504cc85876098ed4e2de89acafbee8fdd6442e5ba2cebdb1501691058833000");
+        .isEqualTo("e59d9763edc6e59f2faccf9a769e5cf170d68439c3fd67afae5e3e72d0463a711691058833000");
   }
 }
