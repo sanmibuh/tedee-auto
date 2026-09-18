@@ -79,6 +79,16 @@ The single **driven (output) port** is `LockRepository` (`extends Repository<Loc
 - **Primary (driving) adapter — cron scheduler.** The automation is triggered by *time*: a configurable `deviceId → cron` map (`sanmibuh.scheduler.lock.schedules`) is turned into one Spring `CronTask` per lock, each publishing `CloseLockCommand(deviceId)` onto the `CommandBus`. Registration is **programmatic** (a `SchedulingConfigurer`, not a fixed `@Scheduled`) precisely so every lock can carry its own independent cron expression. Schedules are supplied per environment (e.g. `SANMIBUH_SCHEDULER_LOCK_SCHEDULES_12345="0 0 0,22 * * *"`); no device id is hard-coded, and an absent map binds to empty (no tasks) rather than `null`.
 - **Secondary (driven) adapter — Tedee Bridge.** Implements `LockRepository` by reacting to the aggregate's recorded events: each `LockLocked` becomes a `POST /lock/{deviceId}/lock` on the generated bridge client. Every `RestClientException` is translated into a `ddd` exception **category** — so no client exception escapes the port — following the outcome-based mapping below. `findById` is currently a **placeholder** returning an `UNLOCKED` `Lock`; its real implementation (reading the device `state` and mapping bridge 404 → empty `Optional`) is deferred. The bridge base URL and API key come from the mandatory `TEDEE_HOST` / `TEDEE_API_KEY` environment variables (no defaults), so the application **fails fast at startup** if either is unset.
 
+#### Authentication: encrypted `api_token`
+
+The Tedee Bridge's default authentication mode is the **encrypted token**, not the raw key. Each request must carry an `api_token` header computed as `SHA-256(apiKey + timestampMillis)` (hex) concatenated with the same `timestampMillis`, so the value is short-lived and changes on every call. This replaces the generated client's default `ApiKeyAuth` (which would send the raw key verbatim).
+
+The mechanism is split into two collaborators in the `secondary` slice:
+- `TedeeApiTokenGenerator` — pure function `generate(timestampMillis)` producing the encrypted token from the configured key. It holds no clock and no HTTP concern, so it is trivially unit-tested against a fixed vector.
+- `TedeeApiTokenInterceptor` — a `ClientHttpRequestInterceptor` that, on each request, reads the current time from an injected `Clock`, asks the generator for a fresh token, and sets the `api_token` header before delegating to the execution chain.
+
+`TedeeClientConfiguration` wires the interceptor onto the `RestClient.Builder` (instead of calling `apiClient.setApiKey(...)`) and exposes a `Clock` (`Clock.systemUTC()`) bean. Injecting the `Clock` keeps token generation deterministic under test: `TedeeLockRepositoryTest` replaces it with a `@MockitoBean` stubbed to a fixed instant and asserts the exact expected header value as a literal (never recomputed with production code, to avoid a self-consistent double failure).
+
 ### Failure model
 
 Bridge failures are mapped to `ddd` exception categories by outcome (not by specific cause), each wrapping the original `RestClientException` so nothing infrastructure-specific leaks into the domain:
