@@ -1,10 +1,13 @@
 package org.sanmibuh.ddd.infrastructure;
 
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
+import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
 import java.util.List;
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
@@ -21,7 +24,7 @@ class InMemoryCommandBusTest {
   void should_publishRecordedEvents_whenHandlerIsRegistered() {
     final var sut = new InMemoryCommandBus(List.of(new StubCommandHandler()), eventBus);
 
-    sut.dispatch(new StubCommand());
+    sut.dispatch(new StubCommand(42));
 
     verify(eventBus).publish(new StubEvent());
   }
@@ -30,12 +33,24 @@ class InMemoryCommandBusTest {
   void should_throwHandlerNotFoundException_whenNoHandlerRegistered() {
     final var sut = new InMemoryCommandBus(List.of(), eventBus);
 
-    thenThrownBy(() -> sut.dispatch(new StubCommand()))
+    thenThrownBy(() -> sut.dispatch(new StubCommand(42)))
         .isInstanceOf(HandlerNotFoundException.class)
         .hasMessageContaining(StubCommand.class.getName());
   }
 
-  record StubCommand() implements Command {}
+  @Test
+  void should_logDispatchedCommand_whenHandlerIsRegistered() {
+    final var command = new StubCommand(42);
+    final var sut = new InMemoryCommandBus(List.of(new StubCommandHandler()), eventBus);
+
+    try (final var logCaptor = LogCaptor.forClass(InMemoryCommandBus.class)) {
+      sut.dispatch(command);
+
+      then(logCaptor.getInfoLogs()).singleElement(STRING).contains(command.toString());
+    }
+  }
+
+  record StubCommand(int deviceId) implements Command {}
 
   record StubEvent() implements DomainEvent {}
 
