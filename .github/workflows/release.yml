@@ -82,7 +82,11 @@ jobs:
 
           PREV_TAG=$(git tag --sort=-version:refname | head -1)
           if [ -n "$PREV_TAG" ]; then
-            SINCE=$(git log -1 --format=%aI "$PREV_TAG")
+            # Normalize to UTC 'Z' so the lexical string comparison against
+            # GitHub's UTC merged_at timestamps is correct. The tag's authored
+            # date carries a local offset (e.g. +02:00), which would otherwise
+            # break the comparison and drop legitimately newer PRs.
+            SINCE=$(date -u -d "$(git log -1 --format=%aI "$PREV_TAG")" +%Y-%m-%dT%H:%M:%SZ)
           else
             SINCE="1970-01-01T00:00:00Z"
           fi

@@ -2,7 +2,12 @@
 
 ## [0.1.2] - 2026-09-18
 
-_No changes._
+### Build & CI
+- chore: prepare next development iteration v0.1.2-SNAPSHOT ([#180](https://github.com/sanmibuh/tedee-auto/pull/180))
+
+### Other
+- Docs: add Docker Compose deployment guide and link package/releases ([#183](https://github.com/sanmibuh/tedee-auto/pull/183))
+- Native image fails to start: libz.so.1 missing in distroless runtime ([#185](https://github.com/sanmibuh/tedee-auto/pull/185))
 
 ## [0.1.1] - 2026-09-18
 
