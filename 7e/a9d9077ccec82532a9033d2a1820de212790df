@@ -1,0 +1,18 @@
+.gitignore
+  h_97a91c9e567f87 11-13
+Dockerfile
+  h_97a91c9e567f87 19-20
+README.md
+  h_97a91c9e567f87 77-149
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7ea9d9077ccec82532a9033d2a1820de212790df",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
