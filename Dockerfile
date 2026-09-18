@@ -8,6 +8,7 @@ COPY mvnw pom.xml ./
 
 RUN ./mvnw dependency:go-offline -B -q
 
+COPY openapi ./openapi
 COPY src ./src
 
 RUN ./mvnw -Pnative native:compile -B -DskipTests -q
