@@ -1,0 +1,18 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfiguration.java
+  h_97a91c9e567f87 5,18-27
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfigurationTest.java
+  h_97a91c9e567f87 6,15,18,20
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockRepositoryTest.java
+  h_97a91c9e567f87 5,14,32,46,54-55,83-84,87
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6631624a4f46a68f4dd4c7875e98f29602a1bd95",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
