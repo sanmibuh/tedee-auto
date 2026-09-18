@@ -2,6 +2,7 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
+import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -10,6 +11,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
 import java.io.IOException;
+import java.time.Clock;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -27,6 +29,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 @RestClientTest(TedeeLockRepository.class)
@@ -40,12 +43,17 @@ class TedeeLockRepositoryTest {
 
   static final String BASE_URL = "http://localhost/v1.0";
   static final String API_KEY = "test-api-key";
+  private static final long FIXED_MILLIS = 1691058833000L;
+  private static final String EXPECTED_API_TOKEN =
+      "22c5b83639c9978010974b1d1a0e516251d5871cc90a2205d6ef2626cef2f0f11691058833000";
   private static final int DEVICE_ID = 42;
   private static final String LOCK_URL = BASE_URL + "/lock/" + DEVICE_ID + "/lock";
 
   @Autowired private TedeeLockRepository sut;
 
   @Autowired private MockRestServiceServer server;
+
+  @MockitoBean private Clock clock;
 
   static Stream<Arguments> bridgeErrorsToDomainExceptions() {
     return Stream.of(
@@ -74,9 +82,10 @@ class TedeeLockRepositoryTest {
 
   @Test
   void should_sendApiToken_whenSavingLockedLock() {
+    given(clock.millis()).willReturn(FIXED_MILLIS);
     server
         .expect(requestTo(LOCK_URL))
-        .andExpect(header("api_token", API_KEY))
+        .andExpect(header("api_token", EXPECTED_API_TOKEN))
         .andRespond(withNoContent());
 
     sut.save(lockedLock());
