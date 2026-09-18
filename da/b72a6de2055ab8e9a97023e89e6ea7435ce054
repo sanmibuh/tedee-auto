@@ -1,0 +1,16 @@
+Dockerfile
+  h_97a91c9e567f87 1-2,16-17
+pom.xml
+  h_97a91c9e567f87 255-257
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dab72a6de2055ab8e9a97023e89e6ea7435ce054",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
