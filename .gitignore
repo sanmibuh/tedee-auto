@@ -4,6 +4,10 @@ target/
 # Local tool config
 .tool-versions
 
+# Local runtime config overrides (secrets)
+/config/application.yml
+/application-local.yml
+
 # PITest incremental analysis
 .pit/
 
