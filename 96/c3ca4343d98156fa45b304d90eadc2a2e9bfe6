@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockLockedHandler.java
+  h_97a91c9e567f87 1-19
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockLockedHandlerTest.java
+  h_97a91c9e567f87 1-115
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "96c3ca4343d98156fa45b304d90eadc2a2e9bfe6",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
