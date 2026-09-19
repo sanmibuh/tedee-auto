@@ -171,3 +171,5 @@ docker build -t tedee-automation .
 # Build native binary locally (requires GraalVM 25)
 ./mvnw -Pnative native:compile
 ```
+
+The `native` profile links a **fully static musl binary** (`--static --libc=musl`, `-muslib` builder, `distroless/static` runtime) targeting **`x86-64-v2`**. Static linking avoids the glibc dynamic loader, whose `x86-64-v3` ISA gate (inherited from the Oracle Linux 10 builder base) otherwise aborts startup on v2 CPUs. See issue #202.

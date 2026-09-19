@@ -80,7 +80,7 @@ On the first run — or whenever `coverage-data` is missing, cannot be fetched, 
 
 The service is published as a GraalVM native image to the GitHub Container Registry: `ghcr.io/sanmibuh/tedee-auto/tedee-automation`. Browse all published versions on the [package page](https://github.com/sanmibuh/tedee-auto/pkgs/container/tedee-auto%2Ftedee-automation) and the corresponding changelogs under [Releases](https://github.com/sanmibuh/tedee-auto/releases).
 
-The container starts from `/`, so Spring Boot automatically picks up `./config/application.yml`. Mount your config directory (read-only) at `/config` and a writable directory at `/var/log/tedee` for the rolling log files.
+The container's working directory is `/home/nonroot`, so Spring Boot automatically picks up `./config/application.yml`. Mount your config directory (read-only) at `/home/nonroot/config` and a writable directory at `/var/log/tedee` for the rolling log files.
 
 ### 1. Prepare the host
 
@@ -138,7 +138,7 @@ services:
     container_name: tedee-automation
     restart: unless-stopped
     volumes:
-      - /srv/tedee-auto/config:/config:ro
+      - /srv/tedee-auto/config:/home/nonroot/config:ro
       - /srv/tedee-auto/logs:/var/log/tedee
     logging:
       driver: json-file
