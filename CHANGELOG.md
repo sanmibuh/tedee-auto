@@ -1,5 +1,11 @@
 # Changelog
 
+## [0.1.5] - 2026-09-19
+
+### Other
+- Native image aborts with "CPU ISA level is lower than required" on CPUs without AVX2 (x86-64-v2) ([#203](https://github.com/sanmibuh/tedee-auto/pull/203))
+- Harden release/publish workflow: order-independent changelog, fail-fast publish, single-release guard ([#201](https://github.com/sanmibuh/tedee-auto/pull/201))
+
 ## [0.1.4] - 2026-09-18
 
 ### Other
