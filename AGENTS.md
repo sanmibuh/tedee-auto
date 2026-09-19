@@ -65,6 +65,9 @@ These standards apply to all code in this project and are the basis for any code
 
 ## For interactive agents making code changes
 
+### Language
+- Always write all repository artifacts in English: GitHub issues, pull requests, commit messages, code comments, documentation, `WIP.md`, and any file content. This applies even when the conversation with the user is in another language.
+
 ### Session continuity
 - If a `WIP.md` file exists at the project root, read it at the start of the session, continue from where it left off, and delete it when the work described in it is complete.
 - When asked to implement an issue, create `WIP.md` at the project root with the planned steps before writing any code.

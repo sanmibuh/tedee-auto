@@ -252,8 +252,9 @@
             <artifactId>native-maven-plugin</artifactId>
             <configuration>
               <buildArgs>
-                <buildArg>-H:+StaticExecutableWithDynamicLibC</buildArg>
-                <buildArg>-march=compatibility</buildArg>
+                <buildArg>--static</buildArg>
+                <buildArg>--libc=musl</buildArg>
+                <buildArg>-march=x86-64-v2</buildArg>
               </buildArgs>
             </configuration>
           </plugin>
