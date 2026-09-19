@@ -27,9 +27,15 @@ jobs:
     steps:
       - name: Resolve release version
         id: version
+        env:
+          HEAD_REF: ${{ github.event.pull_request.head.ref }}
         run: |
-          HEAD_REF="${{ github.event.pull_request.head.ref }}"
-          echo "version=${HEAD_REF#release/v}" >> "$GITHUB_OUTPUT"
+          VERSION="${HEAD_REF#release/v}"
+          if [[ ! "$VERSION" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "ERROR: unexpected release branch name '$HEAD_REF'. Aborting." >&2
+            exit 1
+          fi
+          echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
 
       - name: Checkout merged commit
         uses: actions/checkout@v7
