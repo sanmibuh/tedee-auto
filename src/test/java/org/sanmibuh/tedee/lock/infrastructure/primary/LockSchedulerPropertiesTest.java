@@ -16,7 +16,7 @@ class LockSchedulerPropertiesTest {
     runner.run(
         context -> {
           final var properties = context.getBean(LockSchedulerProperties.class);
-          then(properties.zone()).isEqualTo("UTC");
+          then(properties.zone()).isEqualTo(LockSchedulerProperties.DEFAULT_ZONE);
         });
   }
 
