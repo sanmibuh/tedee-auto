@@ -117,6 +117,9 @@ logging:
       clean-history-on-start: true
 
 sanmibuh:
+  # Human-friendly timezone for scheduler cron expressions and log timestamps.
+  # The JVM stays in UTC internally; use a region id so DST is handled automatically.
+  timezone: Europe/Madrid
   rest:
     tedee:
       base-url: http://<tedee-bridge-ip>/v1.0
