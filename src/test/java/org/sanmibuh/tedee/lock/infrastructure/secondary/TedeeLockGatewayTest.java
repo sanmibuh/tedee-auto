@@ -27,6 +27,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
+import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 @RestClientTest(TedeeLockGateway.class)
@@ -35,7 +36,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
     properties = {
       "sanmibuh.rest.tedee.base-url=" + TedeeLockGatewayTest.BASE_URL,
       "sanmibuh.rest.tedee.api-key=" + TedeeLockGatewayTest.API_KEY,
-      "sanmibuh.rest.tedee.retry.max-attempts=3",
+      "sanmibuh.rest.tedee.retry.max-retries=2",
       "sanmibuh.rest.tedee.retry.initial-interval=1",
       "sanmibuh.rest.tedee.retry.multiplier=1",
       "sanmibuh.rest.tedee.retry.max-interval=1"
@@ -99,7 +100,7 @@ class TedeeLockGatewayTest {
   void should_translateBridgeError_whenBridgeRespondsWithError(
       final HttpStatus status, final Class<? extends Throwable> expectedException) {
     server
-        .expect(requestTo(LOCK_URL))
+        .expect(ExpectedCount.manyTimes(), requestTo(LOCK_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(status));
 
@@ -109,7 +110,7 @@ class TedeeLockGatewayTest {
   @Test
   void should_throwLockTemporarilyUnavailableException_whenBridgeIsUnreachable() {
     server
-        .expect(requestTo(LOCK_URL))
+        .expect(ExpectedCount.manyTimes(), requestTo(LOCK_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withException(new IOException("bridge unreachable")));
 

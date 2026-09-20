@@ -13,7 +13,11 @@ class TedeeClientConfigurationTest {
 
   @Test
   void should_configureApiClientBasePath_whenPropertiesAreProvided() {
-    final var properties = new TedeeProperties("http://bridge.local/v1.0", "secret-token");
+    final var properties =
+        new TedeeProperties(
+            "http://bridge.local/v1.0",
+            "secret-token",
+            new TedeeProperties.Retry(2, 500L, 2.0, 5000L));
 
     final var apiClient = sut.tedeeApiClient(RestClient.builder(), properties, Clock.systemUTC());
 

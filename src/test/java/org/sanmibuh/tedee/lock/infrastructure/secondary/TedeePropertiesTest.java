@@ -32,7 +32,11 @@ class TedeePropertiesTest {
     runner
         .withPropertyValues(
             "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
-            "sanmibuh.rest.tedee.api-key=secret-token")
+            "sanmibuh.rest.tedee.api-key=secret-token",
+            "sanmibuh.rest.tedee.retry.max-retries=2",
+            "sanmibuh.rest.tedee.retry.initial-interval=500",
+            "sanmibuh.rest.tedee.retry.multiplier=2.0",
+            "sanmibuh.rest.tedee.retry.max-interval=5000")
         .run(
             context -> {
               final var properties = context.getBean(TedeeProperties.class);

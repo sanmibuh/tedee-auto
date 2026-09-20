@@ -1,6 +1,9 @@
 spring:
   application:
     name: tedee-automation
+  aop:
+    # Use JDK dynamic proxies (interface-based) so final adapters can be advised via their ports.
+    proxy-target-class: false
 
 sanmibuh:
   timezone: UTC
@@ -8,6 +11,12 @@ sanmibuh:
     tedee:
       base-url: http://${TEDEE_HOST}/v1.0
       api-key: ${TEDEE_API_KEY}
+      retry:
+        # Retry policy for transient Tedee bridge errors (device disconnected / BLE recovery).
+        max-retries: 2
+        initial-interval: 500
+        multiplier: 2.0
+        max-interval: 5000
   scheduler:
     lock:
       # Timezone in which the cron expressions below are interpreted.
