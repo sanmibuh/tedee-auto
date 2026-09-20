@@ -87,7 +87,7 @@ The mechanism is split into two collaborators in the `secondary` slice:
 - `TedeeApiTokenGenerator` — pure function `generate(timestampMillis)` producing the encrypted token from the configured key. It holds no clock and no HTTP concern, so it is trivially unit-tested against a fixed vector.
 - `TedeeApiTokenInterceptor` — a `ClientHttpRequestInterceptor` that, on each request, reads the current time from an injected `Clock`, asks the generator for a fresh token, and sets the `api_token` header before delegating to the execution chain.
 
-`TedeeClientConfiguration` wires the interceptor onto the `RestClient.Builder` (instead of calling `apiClient.setApiKey(...)`) and exposes a `Clock` (`Clock.systemUTC()`) bean. Injecting the `Clock` keeps token generation deterministic under test: `TedeeLockRepositoryTest` replaces it with a `@MockitoBean` stubbed to a fixed instant and asserts the exact expected header value as a literal (never recomputed with production code, to avoid a self-consistent double failure).
+`TedeeClientConfiguration` wires the interceptor onto the `RestClient.Builder` (instead of calling `apiClient.setApiKey(...)`). The injected `Clock` is a shared bean exposed by `ClockConfiguration` at the composition root (`Clock.systemUTC()`), since it is not specific to the Tedee client. Injecting the `Clock` keeps token generation deterministic under test: `TedeeLockRepositoryTest` replaces it with a `@MockitoBean` stubbed to a fixed instant and asserts the exact expected header value as a literal (never recomputed with production code, to avoid a self-consistent double failure).
 
 ### Failure model
 
@@ -99,6 +99,11 @@ Bridge failures are mapped to `ddd` exception categories by outcome (not by spec
 | `InvalidLockRequestException` (→ 400) | the bridge rejected the request as invalid | HTTP 404 (device unknown) |
 | `LockOperationFailedException` (→ 500) | non-recoverable bridge failure | HTTP 401, 500, any unmapped status |
 | `LockTemporarilyUnavailableException` (→ 503) | momentarily unreachable, retry may succeed | HTTP 405/406, gateway 502/503/504, connectivity failures |
+
+#### Retry on transient failures
+
+Because `LockTemporarilyUnavailableException` marks an outcome that may succeed on a later attempt, the lock call is retried automatically with exponential backoff. Retry is declared with Spring Framework's built-in `@Retryable` (`org.springframework.resilience`, no external `spring-retry` dependency), enabled by `@EnableResilientMethods` and restricted via `includes` to `LockTemporarilyUnavailableException` so non-recoverable categories fail fast. The annotation is placed on the `LockGateway` interface method so the advice is carried by a JDK dynamic proxy (`spring.aop.proxy-target-class: false`), which lets `TedeeLockGateway` stay `final` — a better fit for GraalVM native image than CGLIB subclass proxies. The policy is fully externalised under `sanmibuh.rest.tedee.retry.*` and bound through `TedeeProperties.Retry`.
+
 
 ### Generated Tedee client
 The Bridge client is generated offline by `openapi-generator-maven-plugin` (`7.25.0`, flavour `java` + `library=restclient`) from the vendored spec `openapi/tedee-bridge-api.json`. Generated code lives in package `com.tedee.bridge.client.*` (outside `org.sanmibuh`, so NullAway/Error Prone treat it as third-party) and is emitted to `target/generated-sources/openapi` (not under `src/`, so Spotless ignores it). The generated client is a **collaborator** of the secondary adapter, never the port itself.
