@@ -34,7 +34,11 @@ import org.springframework.test.web.client.MockRestServiceServer;
 @TestPropertySource(
     properties = {
       "sanmibuh.rest.tedee.base-url=" + TedeeLockGatewayTest.BASE_URL,
-      "sanmibuh.rest.tedee.api-key=" + TedeeLockGatewayTest.API_KEY
+      "sanmibuh.rest.tedee.api-key=" + TedeeLockGatewayTest.API_KEY,
+      "sanmibuh.rest.tedee.retry.max-attempts=3",
+      "sanmibuh.rest.tedee.retry.initial-interval=1",
+      "sanmibuh.rest.tedee.retry.multiplier=1",
+      "sanmibuh.rest.tedee.retry.max-interval=1"
     })
 class TedeeLockGatewayTest {
 
@@ -46,7 +50,7 @@ class TedeeLockGatewayTest {
   private static final int DEVICE_ID = 42;
   private static final String LOCK_URL = BASE_URL + "/lock/" + DEVICE_ID + "/lock";
 
-  @Autowired private TedeeLockGateway sut;
+  @Autowired private LockGateway sut;
 
   @Autowired private MockRestServiceServer server;
 
@@ -111,5 +115,21 @@ class TedeeLockGatewayTest {
 
     thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
         .isInstanceOf(LockTemporarilyUnavailableException.class);
+  }
+
+  @Test
+  void should_retryUntilSuccess_whenBridgeRespondsWithTransientErrorThenSucceeds() {
+    server
+        .expect(requestTo(LOCK_URL))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+    server
+        .expect(requestTo(LOCK_URL))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withNoContent());
+
+    sut.lock(new LockId(DEVICE_ID));
+
+    server.verify();
   }
 }
