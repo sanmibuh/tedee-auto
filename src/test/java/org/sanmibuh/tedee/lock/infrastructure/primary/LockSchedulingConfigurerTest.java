@@ -3,6 +3,9 @@ package org.sanmibuh.tedee.lock.infrastructure.primary;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.Mockito.verify;
 
+import java.time.Clock;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Map;
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Named;
@@ -15,6 +18,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.scheduling.config.CronTask;
 import org.springframework.scheduling.config.ScheduledTaskRegistrar;
+import org.springframework.scheduling.support.SimpleTriggerContext;
 
 @ExtendWith(MockitoExtension.class)
 class LockSchedulingConfigurerTest {
@@ -23,6 +27,7 @@ class LockSchedulingConfigurerTest {
   private static final int OTHER_DEVICE_ID = 67890;
   private static final String CRON = "0 0 0,22 * * *";
   private static final String OTHER_CRON = "0 30 6 * * *";
+  private static final String ZONE = "UTC";
 
   @Mock LockScheduler scheduler;
 
@@ -57,8 +62,25 @@ class LockSchedulingConfigurerTest {
     verify(scheduler).closeLock(DEVICE_ID);
   }
 
+  @Test
+  void should_scheduleInConfiguredZone_whenConfiguringTasks() {
+    final var tokyo = ZoneId.of("Asia/Tokyo");
+    configureTasks(Map.of(DEVICE_ID, "0 30 21 * * *"), "Asia/Tokyo");
+
+    final var trigger = registrar.getCronTaskList().getFirst().getTrigger();
+    final var schedulerClock =
+        Clock.fixed(ZonedDateTime.of(2026, 1, 15, 0, 0, 0, 0, tokyo).toInstant(), ZoneId.of("UTC"));
+    final var next = trigger.nextExecution(new SimpleTriggerContext(schedulerClock));
+
+    then(next).isEqualTo(ZonedDateTime.of(2026, 1, 15, 21, 30, 0, 0, tokyo).toInstant());
+  }
+
   private void configureTasks(final Map<Integer, String> schedules) {
-    final var properties = new LockSchedulerProperties(schedules);
+    configureTasks(schedules, ZONE);
+  }
+
+  private void configureTasks(final Map<Integer, String> schedules, final String zone) {
+    final var properties = new LockSchedulerProperties(zone, schedules);
     final var sut = new LockSchedulingConfigurer(properties, scheduler);
     sut.configureTasks(registrar);
   }
