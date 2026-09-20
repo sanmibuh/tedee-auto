@@ -1,6 +1,9 @@
 spring:
   application:
     name: tedee-automation
+  aop:
+    # Use JDK dynamic proxies so retry advice targets the LockGateway interface and TedeeLockGateway stays final.
+    proxy-target-class: false
 
 sanmibuh:
   timezone: UTC

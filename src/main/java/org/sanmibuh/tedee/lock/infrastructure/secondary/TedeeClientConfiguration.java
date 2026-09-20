@@ -11,7 +11,7 @@ import org.springframework.resilience.annotation.EnableResilientMethods;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-@EnableResilientMethods(proxyTargetClass = true)
+@EnableResilientMethods
 @EnableConfigurationProperties(TedeeProperties.class)
 @ImportRuntimeHints(TedeeBridgeRuntimeHints.class)
 public class TedeeClientConfiguration {
