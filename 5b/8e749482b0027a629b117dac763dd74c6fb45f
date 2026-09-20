@@ -1,0 +1,22 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 105
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockGateway.java
+  h_97a91c9e567f87 4-5,9-14
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfiguration.java
+  h_97a91c9e567f87 14
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockGateway.java
+  h_97a91c9e567f87 16
+src/main/resources/application.yml
+  h_97a91c9e567f87 4-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5b8e749482b0027a629b117dac763dd74c6fb45f",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
