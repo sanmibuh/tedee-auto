@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/primary/LockSchedulingConfigurerTest.java
+  s_1db0273de01a57::t_efd756493e62f1 6-8,21,30,65-77,79-83
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "65b3d0cc0810b66b776e23271466c3ea400ad6c3",
+  "prompts": {},
+  "sessions": {
+    "s_1db0273de01a57": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f4042c9bdffe6uymM5ESE16ORA",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
