@@ -119,6 +119,19 @@ class TedeeLockGatewayTest {
   }
 
   @Test
+  void should_notRetry_whenBridgeRespondsWithNonTransientError() {
+    server
+        .expect(ExpectedCount.once(), requestTo(LOCK_URL))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
+        .isInstanceOf(InvalidLockRequestException.class);
+
+    server.verify();
+  }
+
+  @Test
   void should_retryUntilSuccess_whenBridgeRespondsWithTransientErrorThenSucceeds() {
     server
         .expect(requestTo(LOCK_URL))
