@@ -146,4 +146,17 @@ class TedeeLockGatewayTest {
 
     server.verify();
   }
+
+  @Test
+  void should_giveUpAfterMaxAttempts_whenBridgeKeepsRespondingWithTransientError() {
+    server
+        .expect(ExpectedCount.times(3), requestTo(LOCK_URL))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
+        .isInstanceOf(LockTemporarilyUnavailableException.class);
+
+    server.verify();
+  }
 }
