@@ -1,9 +1,6 @@
 spring:
   application:
     name: tedee-automation
-  aop:
-    # Use JDK dynamic proxies (interface-based) so final adapters can be advised via their ports.
-    proxy-target-class: false
 
 sanmibuh:
   timezone: UTC

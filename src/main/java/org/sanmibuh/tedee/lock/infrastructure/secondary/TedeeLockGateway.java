@@ -7,17 +7,24 @@ import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
 import org.springframework.http.HttpStatus;
+import org.springframework.resilience.annotation.Retryable;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
 @Component
 @RequiredArgsConstructor
-final class TedeeLockGateway implements LockGateway {
+class TedeeLockGateway implements LockGateway {
 
   private final LockApi lockApi;
 
   @Override
+  @Retryable(
+      includes = LockTemporarilyUnavailableException.class,
+      maxRetriesString = "${sanmibuh.rest.tedee.retry.max-retries}",
+      delayString = "${sanmibuh.rest.tedee.retry.initial-interval}",
+      multiplierString = "${sanmibuh.rest.tedee.retry.multiplier}",
+      maxDelayString = "${sanmibuh.rest.tedee.retry.max-interval}")
   public void lock(final LockId lockId) {
     final int deviceId = lockId.value();
     try {

@@ -25,11 +25,6 @@ class TedeeClientConfigurationTest {
   }
 
   @Test
-  void should_provideSystemUtcClock_whenClockIsRequested() {
-    then(sut.clock()).isEqualTo(Clock.systemUTC());
-  }
-
-  @Test
   void should_createLockApi_whenApiClientIsProvided() {
     final var apiClient = new ApiClient();
 

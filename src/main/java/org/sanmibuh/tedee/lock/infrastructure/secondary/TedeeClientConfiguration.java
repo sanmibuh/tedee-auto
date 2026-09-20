@@ -11,15 +11,10 @@ import org.springframework.resilience.annotation.EnableResilientMethods;
 import org.springframework.web.client.RestClient;
 
 @Configuration
-@EnableResilientMethods
+@EnableResilientMethods(proxyTargetClass = true)
 @EnableConfigurationProperties(TedeeProperties.class)
 @ImportRuntimeHints(TedeeBridgeRuntimeHints.class)
 public class TedeeClientConfiguration {
-
-  @Bean
-  Clock clock() {
-    return Clock.systemUTC();
-  }
 
   @Bean
   ApiClient tedeeApiClient(
