@@ -13,7 +13,7 @@ sanmibuh:
       api-key: ${TEDEE_API_KEY}
       retry:
         # Retry policy for transient Tedee bridge errors (device disconnected / BLE recovery).
-        max-retries: 2
+        max-retries: 3
         initial-interval: 500
         multiplier: 2.0
         max-interval: 5000
