@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockGatewayTest.java
+  s_d7320b402771b2::t_4d5e2fd40264de 30,39,103,113
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f9a54b2ee8040df4d6c3b4127307cddafe1c559a",
+  "prompts": {},
+  "sessions": {
+    "s_d7320b402771b2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3fd25404ffexnBHlDd88Z798U",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
