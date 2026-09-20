@@ -36,7 +36,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
     properties = {
       "sanmibuh.rest.tedee.base-url=" + TedeeLockGatewayTest.BASE_URL,
       "sanmibuh.rest.tedee.api-key=" + TedeeLockGatewayTest.API_KEY,
-      "sanmibuh.rest.tedee.retry.max-retries=2",
+      "sanmibuh.rest.tedee.retry.max-retries=" + TedeeLockGatewayTest.MAX_RETRIES,
       "sanmibuh.rest.tedee.retry.initial-interval=1",
       "sanmibuh.rest.tedee.retry.multiplier=1",
       "sanmibuh.rest.tedee.retry.max-interval=1"
@@ -45,6 +45,8 @@ class TedeeLockGatewayTest {
 
   static final String BASE_URL = "http://localhost/v1.0";
   static final String API_KEY = "BE9xnPnGfVUS";
+  static final int MAX_RETRIES = 2;
+  private static final int EXPECTED_ATTEMPTS = MAX_RETRIES + 1;
   private static final long FIXED_MILLIS = 1691058833000L;
   private static final String EXPECTED_API_TOKEN =
       "e59d9763edc6e59f2faccf9a769e5cf170d68439c3fd67afae5e3e72d0463a711691058833000";
@@ -57,17 +59,21 @@ class TedeeLockGatewayTest {
 
   @MockitoBean private Clock clock;
 
-  static Stream<Arguments> bridgeErrorsToDomainExceptions() {
+  static Stream<Arguments> nonTransientBridgeErrors() {
     return Stream.of(
         Arguments.of(HttpStatus.NOT_FOUND, InvalidLockRequestException.class),
         Arguments.of(HttpStatus.UNAUTHORIZED, LockOperationFailedException.class),
         Arguments.of(HttpStatus.BAD_REQUEST, LockOperationFailedException.class),
-        Arguments.of(HttpStatus.METHOD_NOT_ALLOWED, LockTemporarilyUnavailableException.class),
-        Arguments.of(HttpStatus.NOT_ACCEPTABLE, LockTemporarilyUnavailableException.class),
-        Arguments.of(HttpStatus.INTERNAL_SERVER_ERROR, LockOperationFailedException.class),
-        Arguments.of(HttpStatus.BAD_GATEWAY, LockTemporarilyUnavailableException.class),
-        Arguments.of(HttpStatus.SERVICE_UNAVAILABLE, LockTemporarilyUnavailableException.class),
-        Arguments.of(HttpStatus.GATEWAY_TIMEOUT, LockTemporarilyUnavailableException.class));
+        Arguments.of(HttpStatus.INTERNAL_SERVER_ERROR, LockOperationFailedException.class));
+  }
+
+  static Stream<Arguments> transientBridgeErrors() {
+    return Stream.of(
+        Arguments.of(HttpStatus.METHOD_NOT_ALLOWED),
+        Arguments.of(HttpStatus.NOT_ACCEPTABLE),
+        Arguments.of(HttpStatus.BAD_GATEWAY),
+        Arguments.of(HttpStatus.SERVICE_UNAVAILABLE),
+        Arguments.of(HttpStatus.GATEWAY_TIMEOUT));
   }
 
   @Test
@@ -96,37 +102,43 @@ class TedeeLockGatewayTest {
   }
 
   @ParameterizedTest
-  @MethodSource("bridgeErrorsToDomainExceptions")
-  void should_translateBridgeError_whenBridgeRespondsWithError(
+  @MethodSource("nonTransientBridgeErrors")
+  void should_translateWithoutRetrying_whenBridgeRespondsWithNonTransientError(
       final HttpStatus status, final Class<? extends Throwable> expectedException) {
     server
-        .expect(ExpectedCount.manyTimes(), requestTo(LOCK_URL))
+        .expect(ExpectedCount.once(), requestTo(LOCK_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(status));
 
     thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID))).isInstanceOf(expectedException);
+
+    server.verify();
+  }
+
+  @ParameterizedTest
+  @MethodSource("transientBridgeErrors")
+  void should_retryUpToConfiguredAttemptsThenGiveUp_whenBridgeKeepsRespondingWithTransientError(
+      final HttpStatus status) {
+    server
+        .expect(ExpectedCount.times(EXPECTED_ATTEMPTS), requestTo(LOCK_URL))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(status));
+
+    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
+        .isInstanceOf(LockTemporarilyUnavailableException.class);
+
+    server.verify();
   }
 
   @Test
-  void should_throwLockTemporarilyUnavailableException_whenBridgeIsUnreachable() {
+  void should_retryThenGiveUp_whenBridgeIsUnreachable() {
     server
-        .expect(ExpectedCount.manyTimes(), requestTo(LOCK_URL))
+        .expect(ExpectedCount.times(EXPECTED_ATTEMPTS), requestTo(LOCK_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withException(new IOException("bridge unreachable")));
 
     thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
         .isInstanceOf(LockTemporarilyUnavailableException.class);
-  }
-
-  @Test
-  void should_notRetry_whenBridgeRespondsWithNonTransientError() {
-    server
-        .expect(ExpectedCount.once(), requestTo(LOCK_URL))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(HttpStatus.NOT_FOUND));
-
-    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
-        .isInstanceOf(InvalidLockRequestException.class);
 
     server.verify();
   }
@@ -143,19 +155,6 @@ class TedeeLockGatewayTest {
         .andRespond(withNoContent());
 
     sut.lock(new LockId(DEVICE_ID));
-
-    server.verify();
-  }
-
-  @Test
-  void should_giveUpAfterMaxAttempts_whenBridgeKeepsRespondingWithTransientError() {
-    server
-        .expect(ExpectedCount.times(3), requestTo(LOCK_URL))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
-
-    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
-        .isInstanceOf(LockTemporarilyUnavailableException.class);
 
     server.verify();
   }
