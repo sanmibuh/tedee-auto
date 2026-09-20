@@ -80,7 +80,7 @@ jobs:
             ghcr.io/sanmibuh/tedee-auto/tedee-automation:${{ steps.version.outputs.version }}
             ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest
           cache-from: type=gha
-          cache-to: type=gha,mode=max
+          cache-to: type=gha,mode=min
 
   # Only after the image is published: generate the authoritative CHANGELOG.md
   # on main, commit it, then tag and create the GitHub Release. Committing the
