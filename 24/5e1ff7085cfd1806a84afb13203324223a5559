@@ -1,0 +1,18 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 79
+README.md
+  h_97a91c9e567f87 120-122
+src/main/resources/application.yml
+  h_97a91c9e567f87 6,13-14,17-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "245e1ff7085cfd1806a84afb13203324223a5559",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
