@@ -1,0 +1,14 @@
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockGatewayTest.java
+  h_97a91c9e567f87 37-41,53,119-134
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "78b2c055fec88d17987343cb99721cb4c21ff288",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

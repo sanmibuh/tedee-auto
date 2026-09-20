@@ -1,0 +1,22 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 90,103-107
+src/main/java/org/sanmibuh/tedee/ClockConfiguration.java
+  h_97a91c9e567f87 1-14
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfiguration.java
+  h_97a91c9e567f87 14
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockGateway.java
+  h_97a91c9e567f87 10,17,22-27
+src/test/java/org/sanmibuh/tedee/ClockConfigurationTest.java
+  h_97a91c9e567f87 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "13a839248199c54ac411c136c483a664fe994116",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
