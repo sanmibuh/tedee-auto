@@ -42,13 +42,49 @@ class TedeePropertiesTest {
               final var properties = context.getBean(TedeeProperties.class);
               softly.then(properties.baseUrl()).isEqualTo("http://bridge.local/v1.0");
               softly.then(properties.apiKey()).isEqualTo("secret-token");
+              softly.then(properties.retry().maxRetries()).isEqualTo(2);
+              softly.then(properties.retry().initialInterval()).isEqualTo(500L);
+              softly.then(properties.retry().multiplier()).isEqualTo(2.0);
+              softly.then(properties.retry().maxInterval()).isEqualTo(5000L);
             });
+  }
+
+  @ParameterizedTest
+  @MethodSource("validBoundaryProperties")
+  void should_startUp_whenRetryValuesAreAtTheirValidBoundary(final String... properties) {
+    runner.withPropertyValues(properties).run(context -> then(context).hasNotFailed());
+  }
+
+  private static Stream<Arguments> validBoundaryProperties() {
+    return Stream.of(
+        Arguments.of(
+            Named.of("max-retries is zero (retry disabled)", retry("0", "500", "2.0", "5000"))),
+        Arguments.of(
+            Named.of(
+                "multiplier is exactly one (fixed backoff)", retry("2", "500", "1.0", "5000"))),
+        Arguments.of(
+            Named.of("initial-interval equals max-interval", retry("2", "5000", "2.0", "5000"))));
   }
 
   @ParameterizedTest
   @MethodSource("invalidProperties")
   void should_failStartup_whenPropertyIsMissingOrBlank(final String... properties) {
     runner.withPropertyValues(properties).run(context -> then(context).hasFailed());
+  }
+
+  private static String[] retry(
+      final String maxRetries,
+      final String initialInterval,
+      final String multiplier,
+      final String maxInterval) {
+    return new String[] {
+      "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+      "sanmibuh.rest.tedee.api-key=secret-token",
+      "sanmibuh.rest.tedee.retry.max-retries=" + maxRetries,
+      "sanmibuh.rest.tedee.retry.initial-interval=" + initialInterval,
+      "sanmibuh.rest.tedee.retry.multiplier=" + multiplier,
+      "sanmibuh.rest.tedee.retry.max-interval=" + maxInterval
+    };
   }
 
   private static Stream<Arguments> invalidProperties() {
@@ -72,7 +108,20 @@ class TedeePropertiesTest {
                 new String[] {
                   "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
                   "sanmibuh.rest.tedee.api-key=  "
-                })));
+                })),
+        Arguments.of(
+            Named.of(
+                "retry is missing",
+                new String[] {
+                  "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+                  "sanmibuh.rest.tedee.api-key=secret-token"
+                })),
+        Arguments.of(Named.of("max-retries is negative", retry("-1", "500", "2.0", "5000"))),
+        Arguments.of(Named.of("initial-interval is not positive", retry("2", "0", "2.0", "5000"))),
+        Arguments.of(Named.of("multiplier is below one", retry("2", "500", "0.5", "5000"))),
+        Arguments.of(Named.of("max-interval is not positive", retry("2", "500", "2.0", "0"))),
+        Arguments.of(
+            Named.of("initial-interval exceeds max-interval", retry("2", "6000", "2.0", "5000"))));
   }
 
   @EnableConfigurationProperties(TedeeProperties.class)
