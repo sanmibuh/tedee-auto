@@ -109,11 +109,15 @@ jobs:
           fi
 
           # All PRs merged since the last tag, excluding mechanical release and
-          # snapshot-bump PRs, so they never leak into the changelog.
-          PRS=$(gh api \
+          # snapshot-bump PRs, so they never leak into the changelog. --paginate
+          # follows every page so a release window with more than 100 updated PRs
+          # is not silently truncated; the per-page --jq streams matching objects,
+          # which `jq -s` then collects into a single array.
+          gh api --paginate \
             "repos/${{ github.repository }}/pulls?state=closed&base=main&per_page=100&sort=updated&direction=desc" \
-            --jq "[.[] | select(.merged_at != null and .merged_at > \"${SINCE}\" and (.head.ref | test(\"^(release/v|chore/next-snapshot-v)\") | not)) | {title: .title, number: .number, url: .html_url}]")
-          echo "$PRS" > "$RUNNER_TEMP/prs.json"
+            --jq ".[] | select(.merged_at != null and .merged_at > \"${SINCE}\" and (.head.ref | test(\"^(release/v|chore/next-snapshot-v)\") | not)) | {title: .title, number: .number, url: .html_url}" \
+            | jq -s '.' > "$RUNNER_TEMP/prs.json"
+          PRS=$(cat "$RUNNER_TEMP/prs.json")
 
           # Empty-changelog guard: with no human review, a broken SINCE filter
           # would otherwise silently publish a release with empty notes.
@@ -188,32 +192,26 @@ jobs:
             docker push "$REF"
           done
 
-      # 7: only now touch main. Commit the release (pom + CHANGELOG), tag it, and
-      # push both. A rebase-and-retry loop tolerates a concurrent push to main.
-      - name: Commit, tag and push release
+      # 7: only now touch main. Commit the release (pom + CHANGELOG) and push it
+      # with a rebase-and-retry loop that FAILS the job if every attempt fails —
+      # otherwise the tag/release would be created without the commit on main.
+      # The tag is created only AFTER the push succeeds, so it points at the
+      # actual (possibly rebased) commit that landed on main, never a stale one.
+      - name: Commit and push release
         run: |
           VERSION="${{ steps.version.outputs.release }}"
+
           git add pom.xml CHANGELOG.md
           git commit -m "Release v${VERSION}"
-          git tag "v${VERSION}"
+          .github/scripts/push-main-with-retry.sh
 
-          for attempt in 1 2 3; do
-            git pull --rebase origin main && git push origin main && break
-            echo "Push attempt ${attempt} failed, retrying..."
-            sleep 5
-          done
+          git tag "v${VERSION}"
           git push origin "v${VERSION}"
 
-      # 8: create the GitHub Release from the tag using the frozen release notes.
-      - name: Create GitHub Release
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
-        run: |
-          gh release create "v${{ steps.version.outputs.release }}" \
-            --title "v${{ steps.version.outputs.release }}" \
-            --notes-file release_notes.md
-
-      # 9: return main to a development version with a second commit.
+      # 8: return main to a development version with a second commit, BEFORE
+      # creating the GitHub Release. This ordering guarantees both commits are on
+      # main (and main is back on -SNAPSHOT) before the only remaining fallible
+      # step; a failure here still leaves the tag and image intact for retry.
       - name: Bump to next development snapshot
         run: |
           VERSION="${{ steps.version.outputs.release }}"
@@ -227,9 +225,30 @@ jobs:
 
           git add pom.xml
           git commit -m "Prepare development iteration v${NEXT}"
+          .github/scripts/push-main-with-retry.sh
 
+      # 9: create the GitHub Release from the tag using the frozen release notes.
+      # This runs last because it is the only externally-visible step that cannot
+      # leave main inconsistent: main already carries both commits and is back on
+      # -SNAPSHOT. The release is created idempotently with retry, and can always
+      # be recreated by hand from the existing tag if it still fails.
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+        run: |
+          VERSION="${{ steps.version.outputs.release }}"
           for attempt in 1 2 3; do
-            git pull --rebase origin main && git push origin main && break
-            echo "Push attempt ${attempt} failed, retrying..."
+            if gh release view "v${VERSION}" >/dev/null 2>&1; then
+              echo "Release v${VERSION} already exists."
+              exit 0
+            fi
+            if gh release create "v${VERSION}" \
+              --title "v${VERSION}" \
+              --notes-file release_notes.md; then
+              exit 0
+            fi
+            echo "Release creation attempt ${attempt} failed, retrying..."
             sleep 5
           done
+          echo "ERROR: failed to create GitHub Release v${VERSION} after 3 attempts. The tag exists; recreate the release from it manually."
+          exit 1
