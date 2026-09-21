@@ -192,46 +192,40 @@ jobs:
             docker push "$REF"
           done
 
-      # 7: only now touch main. Commit the release (pom + CHANGELOG) and push it
-      # with a rebase-and-retry loop that FAILS the job if every attempt fails —
-      # otherwise the tag/release would be created without the commit on main.
-      # The tag is created only AFTER the push succeeds, so it points at the
-      # actual (possibly rebased) commit that landed on main, never a stale one.
-      - name: Commit and push release
-        run: |
-          VERSION="${{ steps.version.outputs.release }}"
-
-          git add pom.xml CHANGELOG.md
-          git commit -m "Release v${VERSION}"
-          .github/scripts/push-main-with-retry.sh
-
-          git tag "v${VERSION}"
-          git push origin "v${VERSION}"
-
-      # 8: return main to a development version with a second commit, BEFORE
-      # creating the GitHub Release. This ordering guarantees both commits are on
-      # main (and main is back on -SNAPSHOT) before the only remaining fallible
-      # step; a failure here still leaves the tag and image intact for retry.
-      - name: Bump to next development snapshot
+      # 7: only now touch main. Build BOTH commits locally — the release and the
+      # snapshot bump — and push them in a SINGLE atomic push, so main can never
+      # end up carrying only one of the two. The push uses a rebase-and-retry
+      # loop that FAILS the job if every attempt fails, so a tag/release is never
+      # created without the commits on main. The tag is created only AFTER the
+      # push succeeds and points at the release commit (HEAD~1, the parent of the
+      # snapshot commit), so it matches the exact commit that landed on main even
+      # if a concurrent push forced a rebase.
+      - name: Commit release + snapshot and push atomically
         run: |
           VERSION="${{ steps.version.outputs.release }}"
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
           NEXT="${MAJOR}.${MINOR}.$((PATCH + 1))-SNAPSHOT"
 
+          git add pom.xml CHANGELOG.md
+          git commit -m "Release v${VERSION}"
+
           ./mvnw versions:set \
             -DnewVersion="${NEXT}" \
             -DgenerateBackupPoms=false \
             -B
-
           git add pom.xml
           git commit -m "Prepare development iteration v${NEXT}"
+
           .github/scripts/push-main-with-retry.sh
 
-      # 9: create the GitHub Release from the tag using the frozen release notes.
+          git tag "v${VERSION}" HEAD~1
+          git push origin "v${VERSION}"
+
+      # 8: create the GitHub Release from the tag using the frozen release notes.
       # This runs last because it is the only externally-visible step that cannot
-      # leave main inconsistent: main already carries both commits and is back on
-      # -SNAPSHOT. The release is created idempotently with retry, and can always
-      # be recreated by hand from the existing tag if it still fails.
+      # leave main inconsistent: both commits are already on main and main is back
+      # on -SNAPSHOT. The release is created idempotently with retry, and can
+      # always be recreated by hand from the existing tag if it still fails.
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
