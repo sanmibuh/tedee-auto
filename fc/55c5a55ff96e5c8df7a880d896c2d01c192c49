@@ -1,0 +1,18 @@
+.github/scripts/render_changelog.py
+  h_97a91c9e567f87 17-19
+.github/workflows/release.yml
+  h_97a91c9e567f87 1,12-13,23,26,29,31-32,50-57,76,85-95,104-105,111-112,118-123,125-156,158-208,212-214,216-217,219-235
+ARCHITECTURE.md
+  h_97a91c9e567f87 150,152,154,156-163,165,167-169
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fc55c5a55ff96e5c8df7a880d896c2d01c192c49",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
