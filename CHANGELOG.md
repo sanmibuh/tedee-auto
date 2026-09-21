@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.1] - 2026-09-21
+
+### Other
+- Native image: container exits at startup with MissingReflectionRegistrationError on TedeeProperties$Retry.multiplier ([#224](https://github.com/sanmibuh/tedee-auto/pull/224))
+
 ## [0.2.0] - 2026-09-21
 
 ### Features
