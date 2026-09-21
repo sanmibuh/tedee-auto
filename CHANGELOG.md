@@ -1,5 +1,28 @@
 # Changelog
 
+## [0.2.0] - 2026-09-21
+
+### Features
+- feat: configure retry policy for transient Tedee bridge errors ([#214](https://github.com/sanmibuh/tedee-auto/pull/214))
+
+### Bug Fixes
+- Docs: fix deployment config mount path (workdir is /home/nonroot, not /) ([#207](https://github.com/sanmibuh/tedee-auto/pull/207))
+
+### Code Quality
+- [Refactor] Make Lock write-side event-driven: pure save + LockLocked event handler ([#211](https://github.com/sanmibuh/tedee-auto/pull/211))
+
+### Dependencies
+- build(deps): bump actions/upload-pages-artifact from 4 to 5 ([#209](https://github.com/sanmibuh/tedee-auto/pull/209))
+- build(deps): bump actions/deploy-pages from 4 to 5 ([#210](https://github.com/sanmibuh/tedee-auto/pull/210))
+
+### Build & CI
+- CI: publish Docker build fails with 'failed to reserve cache' (drop type=gha cache) ([#220](https://github.com/sanmibuh/tedee-auto/pull/220))
+- CI: reduce GHA cache usage (publish Docker + Qodana) ([#217](https://github.com/sanmibuh/tedee-auto/pull/217))
+- ci(publish): trigger the publish workflow only on release PR merges ([#208](https://github.com/sanmibuh/tedee-auto/pull/208))
+
+### Other
+- Make timezone human-friendly for scheduler and logs (keep JVM in UTC) ([#213](https://github.com/sanmibuh/tedee-auto/pull/213))
+
 ## [0.1.5] - 2026-09-19
 
 ### Other
