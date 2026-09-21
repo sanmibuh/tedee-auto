@@ -243,23 +243,12 @@ jobs:
             exit 1
           fi
 
-      # 8: only after the release has atomically landed on main is the mutable
-      # `latest` alias advanced to this build. Retagging the already-pushed
-      # immutable image and pushing `latest` is cheap and, crucially, conditional
-      # on the git landing having succeeded — so an aborted run never moves
-      # `latest` onto an unreleased image.
-      - name: Update GHCR latest alias
-        run: |
-          VERSION="${{ steps.version.outputs.release }}"
-          docker tag "tedee-automation:${VERSION}" \
-            "ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest"
-          docker push "ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest"
-
-      # 9: create the GitHub Release from the tag using the frozen release notes.
-      # This runs last because it is the only externally-visible step that cannot
-      # leave main inconsistent: both commits are already on main and main is back
-      # on -SNAPSHOT. The release is created idempotently with retry, and can
-      # always be recreated by hand from the existing tag if it still fails.
+      # 7: with the release atomically landed on main, create the GitHub Release
+      # from the tag using the frozen release notes. This runs BEFORE the mutable
+      # `latest` alias update so a transient GHCR failure on that convenience alias
+      # can never skip release creation. It is idempotent (skips if the release
+      # already exists) and retried, and can always be recreated by hand from the
+      # existing tag if it still fails.
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
@@ -279,4 +268,24 @@ jobs:
             sleep 5
           done
           echo "ERROR: failed to create GitHub Release v${VERSION} after 3 attempts. The tag exists; recreate the release from it manually."
+          exit 1
+
+      # 8: last, advance the mutable `latest` alias to this build — only now that
+      # main, the tag and the GitHub Release are all published, so an aborted run
+      # never moves `latest` onto an unreleased image. Retried on transient GHCR
+      # errors; a persistent failure leaves the immutable :version image, tag and
+      # release intact, and `latest` can be repointed by hand.
+      - name: Update GHCR latest alias
+        run: |
+          VERSION="${{ steps.version.outputs.release }}"
+          docker tag "tedee-automation:${VERSION}" \
+            "ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest"
+          for attempt in 1 2 3; do
+            if docker push "ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest"; then
+              exit 0
+            fi
+            echo "latest push attempt ${attempt} failed, retrying..."
+            sleep 5
+          done
+          echo "ERROR: failed to push latest after 3 attempts. The :${VERSION} image, tag and release are published; repoint latest manually."
           exit 1
