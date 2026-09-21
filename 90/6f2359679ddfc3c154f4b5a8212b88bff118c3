@@ -1,0 +1,16 @@
+.github/workflows/release.yml
+  h_97a91c9e567f87 199-205,208-210,246-258
+ARCHITECTURE.md
+  h_97a91c9e567f87 160,162-163,165
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "906f2359679ddfc3c154f4b5a8212b88bff118c3",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
