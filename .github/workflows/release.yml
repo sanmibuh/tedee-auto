@@ -193,14 +193,15 @@ jobs:
           done
 
       # 7: only now touch main. Build BOTH commits locally — the release and the
-      # snapshot bump — and push them in a SINGLE atomic push, so main can never
-      # end up carrying only one of the two. The push uses a rebase-and-retry
-      # loop that FAILS the job if every attempt fails, so a tag/release is never
-      # created without the commits on main. The tag is created only AFTER the
-      # push succeeds and points at the release commit (HEAD~1, the parent of the
-      # snapshot commit), so it matches the exact commit that landed on main even
-      # if a concurrent push forced a rebase.
-      - name: Commit release + snapshot and push atomically
+      # snapshot bump — tag the release commit, and publish everything in a SINGLE
+      # `--atomic` push of `HEAD:main` plus the tag: the branch and the tag update
+      # together or not at all, so main can never carry the commits without the
+      # tag (or vice versa). The push is fast-forward only and is NOT rebased: if
+      # main advanced since checkout, the push is rejected and the release aborts
+      # rather than publishing code that was never verified, built or changelogged.
+      # `concurrency: release` serialises releases, so the operator simply re-runs
+      # from the new main state.
+      - name: Commit release + snapshot, tag and push atomically
         run: |
           VERSION="${{ steps.version.outputs.release }}"
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
@@ -216,10 +217,14 @@ jobs:
           git add pom.xml
           git commit -m "Prepare development iteration v${NEXT}"
 
-          .github/scripts/push-main-with-retry.sh
-
+          # Tag the release commit (HEAD~1, the parent of the snapshot commit).
           git tag "v${VERSION}" HEAD~1
-          git push origin "v${VERSION}"
+
+          if ! git push --atomic origin HEAD:main "refs/tags/v${VERSION}"; then
+            echo "ERROR: push rejected — main advanced since this release was verified and built."
+            echo "Nothing was published. Re-run the release from the current main state."
+            exit 1
+          fi
 
       # 8: create the GitHub Release from the tag using the frozen release notes.
       # This runs last because it is the only externally-visible step that cannot
