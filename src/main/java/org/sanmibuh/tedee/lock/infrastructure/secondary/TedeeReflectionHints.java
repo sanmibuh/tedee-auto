@@ -37,8 +37,14 @@ final class TedeeReflectionHints implements RuntimeHintsRegistrar {
         .forEach(type -> hints.reflection().registerType(type, JACKSON_CATEGORIES));
     hints
         .reflection()
-        .registerType(TedeeProperties.class, MemberCategory.ACCESS_DECLARED_FIELDS)
-        .registerType(TedeeProperties.Retry.class, MemberCategory.ACCESS_DECLARED_FIELDS);
+        .registerType(
+            TedeeProperties.class,
+            MemberCategory.ACCESS_DECLARED_FIELDS,
+            MemberCategory.INVOKE_DECLARED_METHODS)
+        .registerType(
+            TedeeProperties.Retry.class,
+            MemberCategory.ACCESS_DECLARED_FIELDS,
+            MemberCategory.INVOKE_DECLARED_METHODS);
   }
 
   private ClassPathScanningCandidateComponentProvider setResourceLoaderPITEquivalent(
