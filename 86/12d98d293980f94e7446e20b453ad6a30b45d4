@@ -1,0 +1,19 @@
+.github/scripts/native-smoke-test.sh
+  s_fcb8a7865f4788::t_190f20b9f280ae 1-52
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8612d98d293980f94e7446e20b453ad6a30b45d4",
+  "prompts": {},
+  "sessions": {
+    "s_fcb8a7865f4788": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3f4a0555ffe4cdi7RogJQY57F",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
