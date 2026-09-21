@@ -35,6 +35,10 @@ final class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
                   : Stream.empty();
             })
         .forEach(type -> hints.reflection().registerType(type, JACKSON_CATEGORIES));
+    hints
+        .reflection()
+        .registerType(TedeeProperties.class, MemberCategory.ACCESS_DECLARED_FIELDS)
+        .registerType(TedeeProperties.Retry.class, MemberCategory.ACCESS_DECLARED_FIELDS);
   }
 
   private ClassPathScanningCandidateComponentProvider setResourceLoaderPITEquivalent(
