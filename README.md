@@ -1,6 +1,7 @@
 [![Latest release](https://img.shields.io/github/v/release/sanmibuh/tedee-auto?sort=semver)](https://github.com/sanmibuh/tedee-auto/releases/latest)
 [![Coverage](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsanmibuh%2Ftedee-auto%2Fcoverage-data%2Fcoverage-badge.json)](https://sanmibuh.github.io/tedee-auto/coverage/)
 [![Mutation score](https://img.shields.io/endpoint?url=https%3A%2F%2Fraw.githubusercontent.com%2Fsanmibuh%2Ftedee-auto%2Fcoverage-data%2Fmutation-badge.json)](https://sanmibuh.github.io/tedee-auto/mutation/)
+[![Native image](https://github.com/sanmibuh/tedee-auto/actions/workflows/native.yml/badge.svg)](https://github.com/sanmibuh/tedee-auto/actions/workflows/native.yml)
 
 Backend service that automates a [Tedee](https://tedee.com) smart lock — built with Spring Boot and compiled to a GraalVM native image.
 

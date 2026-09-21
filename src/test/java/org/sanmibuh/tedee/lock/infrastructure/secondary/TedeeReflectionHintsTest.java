@@ -43,17 +43,19 @@ class TedeeReflectionHintsTest {
         .then(
             RuntimeHintsPredicates.reflection()
                 .onType(TedeeProperties.Retry.class)
-                .withMemberCategory(MemberCategory.ACCESS_DECLARED_FIELDS)
+                .withMemberCategories(
+                    MemberCategory.ACCESS_DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_METHODS)
                 .test(hints))
-        .as("config properties nested record fields for JSR-303 validation")
+        .as("config properties nested record fields and @AssertTrue methods for JSR-303 validation")
         .isTrue();
     softly
         .then(
             RuntimeHintsPredicates.reflection()
                 .onType(TedeeProperties.class)
-                .withMemberCategory(MemberCategory.ACCESS_DECLARED_FIELDS)
+                .withMemberCategories(
+                    MemberCategory.ACCESS_DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_METHODS)
                 .test(hints))
-        .as("config properties record fields for JSR-303 validation")
+        .as("config properties record fields and @AssertTrue methods for JSR-303 validation")
         .isTrue();
   }
 }

@@ -71,14 +71,37 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
 
-      - name: Build and push Docker image
+      # Build the native image and load it into the local Docker daemon WITHOUT
+      # pushing. Nothing reaches GHCR until the smoke test below proves the
+      # native binary actually boots — otherwise a broken image would remain
+      # published under :version and :latest even when the release is aborted.
+      - name: Build native image
         uses: docker/build-push-action@v7
         with:
           context: .
-          push: true
-          tags: |
-            ghcr.io/sanmibuh/tedee-auto/tedee-automation:${{ steps.version.outputs.version }}
-            ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest
+          load: true
+          tags: tedee-automation:${{ steps.version.outputs.version }}
+
+      # Prove the freshly built native image actually boots before it is pushed
+      # or any tag/release is created. A missing reflection hint aborts the
+      # Spring context only in the native binary — never on the JVM — so
+      # ./mvnw verify cannot catch it. This smoke test is the gate that stops a
+      # broken image from ever reaching GHCR.
+      - name: Smoke test native image
+        run: .github/scripts/native-smoke-test.sh tedee-automation:${{ steps.version.outputs.version }}
+
+      # Only a smoke-tested image is published. Retag the validated local image
+      # to its GHCR references and push.
+      - name: Push validated image to GHCR
+        run: |
+          VERSION="${{ steps.version.outputs.version }}"
+          LOCAL="tedee-automation:${VERSION}"
+          for REF in \
+            "ghcr.io/sanmibuh/tedee-auto/tedee-automation:${VERSION}" \
+            "ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest"; do
+            docker tag "$LOCAL" "$REF"
+            docker push "$REF"
+          done
 
   # Only after the image is published: generate the authoritative CHANGELOG.md
   # on main, commit it, then tag and create the GitHub Release. Committing the
