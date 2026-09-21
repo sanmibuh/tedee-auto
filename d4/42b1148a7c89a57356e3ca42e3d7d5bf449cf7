@@ -1,0 +1,24 @@
+.github/scripts/push-main-with-retry.sh
+  s_72b1f2fe8a824e::t_55a9092d449716 1-16
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d442b1148a7c89a57356e3ca42e3d7d5bf449cf7",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_72b1f2fe8a824e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3d075d58ffeu3mU7lnIgAEhxv",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
