@@ -18,6 +18,11 @@ exclude:
   - name: All
     paths:
       - target
+  # Nullability across org.sanmibuh is enforced at compile time by NullAway
+  # (-Xep:NullAway:ERROR, AnnotatedPackages=org.sanmibuh), which fails the build on any
+  # violation. Qodana's own nullability inspection is redundant there and only produces
+  # false positives from heuristics that do not read NullAway's configuration.
+  - name: NullableProblems
 
 failureConditions:
   severityThresholds:
