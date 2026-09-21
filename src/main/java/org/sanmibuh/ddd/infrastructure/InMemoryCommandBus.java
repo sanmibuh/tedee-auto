@@ -22,7 +22,8 @@ public final class InMemoryCommandBus implements CommandBus {
   @SuppressWarnings("unchecked")
   public void dispatch(final Command command) {
     log.info("Dispatching command {}", command);
-    final var handler = (CommandHandler<Command, ?>) lookup.find(command.getClass());
+    final CommandHandler<Command, ?> handler =
+        (CommandHandler<Command, ?>) lookup.find(command.getClass());
     handler.handle(command).forEach(eventBus::publish);
   }
 }
