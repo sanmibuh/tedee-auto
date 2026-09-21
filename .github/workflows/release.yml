@@ -1,4 +1,4 @@
-name: Release — Create Release PR
+name: Release — Full-auto (build, publish, tag, changelog)
 
 on:
   workflow_dispatch:
@@ -9,6 +9,8 @@ on:
         type: choice
         options: [patch, minor, major]
 
+# Serialise releases: only one may run at a time. This replaces the old
+# "single-release guard" that inspected open PRs.
 concurrency:
   group: release
   cancel-in-progress: false
@@ -18,29 +20,17 @@ jobs:
     runs-on: ubuntu-latest
     permissions:
       contents: write
-      pull-requests: write
-      issues: write
+      packages: write
 
     steps:
-      - name: Checkout code
+      - name: Checkout main
         uses: actions/checkout@v7
         with:
+          ref: main
           fetch-depth: 0
-          # A non-default token so the release PR's pull_request event fires and
-          # the required checks (lint/test/pitest) run automatically for --auto.
+          # A PAT with bypass so the release commits can be pushed directly to
+          # protected main and attributed to a real identity.
           token: ${{ secrets.RELEASE_PAT }}
-
-      - name: Single-release guard
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
-        run: |
-          OPEN_RELEASE=$(gh pr list --state open --base main \
-            --json headRefName \
-            --jq '[.[] | select(.headRefName | test("^(release/v|chore/next-snapshot-v)"))] | length')
-          if [ "$OPEN_RELEASE" -gt 0 ]; then
-            echo "ERROR: a release or snapshot-bump PR is already open. Aborting to keep a single release in progress."
-            exit 1
-          fi
 
       - name: Set up GraalVM (Java 25)
         uses: graalvm/setup-graalvm@v1
@@ -57,6 +47,14 @@ jobs:
           restore-keys: |
             ${{ runner.os }}-maven-
 
+      - name: Configure git identity
+        run: |
+          git config user.name  "${{ vars.RELEASE_BOT_NAME || 'github-actions[bot]' }}"
+          git config user.email "${{ vars.RELEASE_BOT_EMAIL || 'github-actions[bot]@users.noreply.github.com' }}"
+
+      # 2 + 3: compute the release version from the current -SNAPSHOT and set it
+      # in pom.xml on the runner. Nothing is committed yet — main is untouched
+      # until the release is proven good.
       - name: Compute release version
         id: version
         run: |
@@ -75,17 +73,7 @@ jobs:
           esac
 
           RELEASE="${MAJOR}.${MINOR}.${PATCH}"
-
-          echo "release=${RELEASE}"           >> "$GITHUB_OUTPUT"
-          echo "branch=release/v${RELEASE}"   >> "$GITHUB_OUTPUT"
-
-      - name: Configure git identity
-        run: |
-          git config user.name  "${{ vars.RELEASE_BOT_NAME || 'github-actions[bot]' }}"
-          git config user.email "${{ vars.RELEASE_BOT_EMAIL || 'github-actions[bot]@users.noreply.github.com' }}"
-
-      - name: Create release branch
-        run: git checkout -b "${{ steps.version.outputs.branch }}"
+          echo "release=${RELEASE}" >> "$GITHUB_OUTPUT"
 
       - name: Set release version in pom.xml
         run: |
@@ -94,8 +82,17 @@ jobs:
             -DgenerateBackupPoms=false \
             -B
 
-      - name: Generate changelog preview for PR body
-        id: notes
+      # 4: technical gate on the exact release state. Replaces the CI checks the
+      # old PR-based flow ran on the release commit.
+      - name: Verify
+        run: ./mvnw -B verify
+
+      # Generate the authoritative CHANGELOG entry BEFORE building the image, so
+      # a bad/empty changelog aborts the run before anything irreversible. The
+      # entry is written into CHANGELOG.md (uncommitted) and kept as release
+      # notes for the GitHub Release.
+      - name: Generate changelog entry
+        id: changelog
         env:
           GH_TOKEN: ${{ secrets.RELEASE_PAT }}
         run: |
@@ -104,53 +101,135 @@ jobs:
 
           PREV_TAG=$(git tag --sort=-version:refname | head -1)
           if [ -n "$PREV_TAG" ]; then
-            # Normalize to UTC 'Z' so the lexical string comparison against
-            # GitHub's UTC merged_at timestamps is correct. The tag's authored
-            # date carries a local offset (e.g. +02:00), which would otherwise
-            # break the comparison and drop legitimately newer PRs.
+            # Normalize to UTC 'Z' so the lexical comparison against GitHub's UTC
+            # merged_at timestamps is correct.
             SINCE=$(date -u -d "$(git log -1 --format=%aI "$PREV_TAG")" +%Y-%m-%dT%H:%M:%SZ)
           else
             SINCE="1970-01-01T00:00:00Z"
           fi
 
-          # Exclude mechanical release PRs (the release PR itself and the
-          # post-release snapshot bump) so they never leak into the changelog.
+          # All PRs merged since the last tag, excluding mechanical release and
+          # snapshot-bump PRs, so they never leak into the changelog.
           PRS=$(gh api \
             "repos/${{ github.repository }}/pulls?state=closed&base=main&per_page=100&sort=updated&direction=desc" \
             --jq "[.[] | select(.merged_at != null and .merged_at > \"${SINCE}\" and (.head.ref | test(\"^(release/v|chore/next-snapshot-v)\") | not)) | {title: .title, number: .number, url: .html_url}]")
-
           echo "$PRS" > "$RUNNER_TEMP/prs.json"
 
-          PRS_FILE="$RUNNER_TEMP/prs.json" python3 .github/scripts/render_changelog.py > pr_body.md
+          # Empty-changelog guard: with no human review, a broken SINCE filter
+          # would otherwise silently publish a release with empty notes.
+          if [ "$(echo "$PRS" | jq 'length')" -eq 0 ]; then
+            echo "ERROR: no merged PRs found since ${SINCE}. Refusing to publish a release with an empty changelog."
+            exit 1
+          fi
 
-      - name: Commit and push release branch
+          PRS_FILE="$RUNNER_TEMP/prs.json" python3 .github/scripts/render_changelog.py > "$RUNNER_TEMP/entry.md"
+          cp "$RUNNER_TEMP/entry.md" release_notes.md
+
+          # Prepend the new entry into CHANGELOG.md, keeping the "# Changelog"
+          # header at the top if present.
+          ENTRY_FILE="$RUNNER_TEMP/entry.md" python3 - <<'PYEOF'
+          import os
+
+          with open(os.environ["ENTRY_FILE"]) as f:
+              entry = f.read().strip()
+
+          if os.path.exists("CHANGELOG.md"):
+              with open("CHANGELOG.md") as f:
+                  existing = f.read()
+              if existing.startswith("# Changelog"):
+                  header, _, rest = existing.partition("\n")
+                  content = f"{header}\n\n{entry}\n\n{rest.lstrip()}"
+              else:
+                  content = f"{entry}\n\n{existing}"
+          else:
+              content = f"# Changelog\n\n{entry}\n"
+
+          with open("CHANGELOG.md", "w") as f:
+              f.write(content)
+          PYEOF
+
+      - name: Log in to GHCR
+        uses: docker/login-action@v4
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v4
+
+      # 5: build the native image and load it locally WITHOUT pushing. Nothing
+      # reaches GHCR until the smoke test proves the native binary actually boots.
+      - name: Build native image
+        uses: docker/build-push-action@v7
+        with:
+          context: .
+          load: true
+          tags: tedee-automation:${{ steps.version.outputs.release }}
+
+      # Prove the freshly built native image boots before it is pushed or any
+      # tag/release is created. A missing reflection hint aborts the Spring
+      # context only in the native binary — ./mvnw verify cannot catch it.
+      - name: Smoke test native image
+        run: .github/scripts/native-smoke-test.sh tedee-automation:${{ steps.version.outputs.release }}
+
+      # 6: first irreversible external effect. Only a smoke-tested image is
+      # published. If a later git push fails, the worst case is an orphan image
+      # tag (harmless, overwritten next run) — never a tag/release pointing at a
+      # non-existent image.
+      - name: Push validated image to GHCR
         run: |
+          VERSION="${{ steps.version.outputs.release }}"
+          LOCAL="tedee-automation:${VERSION}"
+          for REF in \
+            "ghcr.io/sanmibuh/tedee-auto/tedee-automation:${VERSION}" \
+            "ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest"; do
+            docker tag "$LOCAL" "$REF"
+            docker push "$REF"
+          done
+
+      # 7: only now touch main. Commit the release (pom + CHANGELOG), tag it, and
+      # push both. A rebase-and-retry loop tolerates a concurrent push to main.
+      - name: Commit, tag and push release
+        run: |
+          VERSION="${{ steps.version.outputs.release }}"
+          git add pom.xml CHANGELOG.md
+          git commit -m "Release v${VERSION}"
+          git tag "v${VERSION}"
+
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin main && break
+            echo "Push attempt ${attempt} failed, retrying..."
+            sleep 5
+          done
+          git push origin "v${VERSION}"
+
+      # 8: create the GitHub Release from the tag using the frozen release notes.
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
+        run: |
+          gh release create "v${{ steps.version.outputs.release }}" \
+            --title "v${{ steps.version.outputs.release }}" \
+            --notes-file release_notes.md
+
+      # 9: return main to a development version with a second commit.
+      - name: Bump to next development snapshot
+        run: |
+          VERSION="${{ steps.version.outputs.release }}"
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION"
+          NEXT="${MAJOR}.${MINOR}.$((PATCH + 1))-SNAPSHOT"
+
+          ./mvnw versions:set \
+            -DnewVersion="${NEXT}" \
+            -DgenerateBackupPoms=false \
+            -B
+
           git add pom.xml
-          git commit -m "Release v${{ steps.version.outputs.release }}"
-          git push origin "${{ steps.version.outputs.branch }}"
+          git commit -m "Prepare development iteration v${NEXT}"
 
-      - name: Ensure release label exists
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
-        run: |
-          gh label create release \
-            --color "0075ca" \
-            --description "Release PR" \
-            2>/dev/null || true
-
-      - name: Open release PR
-        env:
-          GH_TOKEN: ${{ secrets.RELEASE_PAT }}
-        run: |
-          {
-            echo "> **Preview only.** The authoritative \`CHANGELOG.md\` and release notes are generated at publish time from all PRs merged up to this PR's merge commit. If more PRs land before this one merges, they will be included then."
-            echo
-            cat pr_body.md
-          } > pr_final.md
-
-          gh pr create \
-            --base main \
-            --head "${{ steps.version.outputs.branch }}" \
-            --title "Release v${{ steps.version.outputs.release }}" \
-            --body-file pr_final.md \
-            --label release
+          for attempt in 1 2 3; do
+            git pull --rebase origin main && git push origin main && break
+            echo "Push attempt ${attempt} failed, retrying..."
+            sleep 5
+          done
