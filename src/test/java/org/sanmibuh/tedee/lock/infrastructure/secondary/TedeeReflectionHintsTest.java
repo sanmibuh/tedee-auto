@@ -9,18 +9,19 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 
 @ExtendWith(SoftAssertionsExtension.class)
-class TedeeBridgeRuntimeHintsTest {
+class TedeeReflectionHintsTest {
 
-  private final TedeeBridgeRuntimeHints sut = new TedeeBridgeRuntimeHints();
+  private final TedeeReflectionHints sut = new TedeeReflectionHints();
 
   @InjectSoftAssertions private BDDSoftAssertions softly;
 
   static Stream<ClassLoader> classLoaders() {
-    return Stream.of(TedeeBridgeRuntimeHintsTest.class.getClassLoader(), null);
+    return Stream.of(TedeeReflectionHintsTest.class.getClassLoader(), null);
   }
 
   @ParameterizedTest
@@ -37,6 +38,22 @@ class TedeeBridgeRuntimeHintsTest {
     softly
         .then(RuntimeHintsPredicates.reflection().onType(LockDetails.StateEnum.class).test(hints))
         .as("inner enum of a model class")
+        .isTrue();
+    softly
+        .then(
+            RuntimeHintsPredicates.reflection()
+                .onType(TedeeProperties.Retry.class)
+                .withMemberCategory(MemberCategory.ACCESS_DECLARED_FIELDS)
+                .test(hints))
+        .as("config properties nested record fields for JSR-303 validation")
+        .isTrue();
+    softly
+        .then(
+            RuntimeHintsPredicates.reflection()
+                .onType(TedeeProperties.class)
+                .withMemberCategory(MemberCategory.ACCESS_DECLARED_FIELDS)
+                .test(hints))
+        .as("config properties record fields for JSR-303 validation")
         .isTrue();
   }
 }

@@ -11,7 +11,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.util.ClassUtils;
 
-final class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
+final class TedeeReflectionHints implements RuntimeHintsRegistrar {
 
   private static final String MODEL_PACKAGE = "com.tedee.bridge.client.model";
   private static final MemberCategory[] JACKSON_CATEGORIES = {
@@ -35,6 +35,10 @@ final class TedeeBridgeRuntimeHints implements RuntimeHintsRegistrar {
                   : Stream.empty();
             })
         .forEach(type -> hints.reflection().registerType(type, JACKSON_CATEGORIES));
+    hints
+        .reflection()
+        .registerType(TedeeProperties.class, MemberCategory.ACCESS_DECLARED_FIELDS)
+        .registerType(TedeeProperties.Retry.class, MemberCategory.ACCESS_DECLARED_FIELDS);
   }
 
   private ClassPathScanningCandidateComponentProvider setResourceLoaderPITEquivalent(
