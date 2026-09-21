@@ -14,9 +14,9 @@ Environment:
     TODAY    ISO date, e.g. "2026-09-18"     (required)
     PRS_FILE path to the PR JSON             (required)
 
-The output is the authoritative source for both the release-PR preview
-(release.yml) and the published CHANGELOG.md / release notes (publish.yml),
-so both always categorise and format identically.
+The output is the authoritative source for the published CHANGELOG.md and the
+GitHub Release notes, generated once by the full-auto release workflow
+(release.yml).
 """
 
 import json
