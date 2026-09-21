@@ -1,0 +1,18 @@
+.github/scripts/push-main-with-retry.sh
+  h_97a91c9e567f87 2-6,10-11,14
+.github/workflows/release.yml
+  h_97a91c9e567f87 195-203,206-207,218,221-224,226-228
+ARCHITECTURE.md
+  h_97a91c9e567f87 161-162,164,166
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ef166c7c46c1d22d4fd4a8525d624f39acc13126",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
