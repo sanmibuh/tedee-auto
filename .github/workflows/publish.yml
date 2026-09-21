@@ -76,7 +76,6 @@ jobs:
         with:
           context: .
           push: true
-          load: true
           tags: |
             ghcr.io/sanmibuh/tedee-auto/tedee-automation:${{ steps.version.outputs.version }}
             ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest
