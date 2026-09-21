@@ -1,0 +1,14 @@
+.github/workflows/publish.yml
+  h_97a91c9e567f87 74-78,82-83,85-89,91-104
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5e84f13d0cbc051d6121c1fe33f27264c17ff1ad",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
