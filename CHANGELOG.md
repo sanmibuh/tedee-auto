@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.2.2] - 2026-09-21
+
+### Other
+- Native image: TedeeProperties JSR-303 @AssertTrue methods missing reflection hints + no pre-publish native validation ([#228](https://github.com/sanmibuh/tedee-auto/pull/228))
+
 ## [0.2.1] - 2026-09-21
 
 ### Other
