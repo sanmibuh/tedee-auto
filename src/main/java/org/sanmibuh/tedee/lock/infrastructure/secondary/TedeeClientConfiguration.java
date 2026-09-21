@@ -13,7 +13,7 @@ import org.springframework.web.client.RestClient;
 @Configuration
 @EnableResilientMethods
 @EnableConfigurationProperties(TedeeProperties.class)
-@ImportRuntimeHints(TedeeBridgeRuntimeHints.class)
+@ImportRuntimeHints(TedeeReflectionHints.class)
 public class TedeeClientConfiguration {
 
   @Bean

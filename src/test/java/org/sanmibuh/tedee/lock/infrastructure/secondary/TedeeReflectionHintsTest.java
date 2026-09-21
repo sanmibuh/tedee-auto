@@ -14,14 +14,14 @@ import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 
 @ExtendWith(SoftAssertionsExtension.class)
-class TedeeBridgeRuntimeHintsTest {
+class TedeeReflectionHintsTest {
 
-  private final TedeeBridgeRuntimeHints sut = new TedeeBridgeRuntimeHints();
+  private final TedeeReflectionHints sut = new TedeeReflectionHints();
 
   @InjectSoftAssertions private BDDSoftAssertions softly;
 
   static Stream<ClassLoader> classLoaders() {
-    return Stream.of(TedeeBridgeRuntimeHintsTest.class.getClassLoader(), null);
+    return Stream.of(TedeeReflectionHintsTest.class.getClassLoader(), null);
   }
 
   @ParameterizedTest
