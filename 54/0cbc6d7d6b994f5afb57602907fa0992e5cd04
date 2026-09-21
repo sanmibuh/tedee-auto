@@ -1,0 +1,20 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 111,133
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfiguration.java
+  h_97a91c9e567f87 16
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeReflectionHints.java
+  h_97a91c9e567f87 14
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeReflectionHintsTest.java
+  h_97a91c9e567f87 17,19,24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "540cbc6d7d6b994f5afb57602907fa0992e5cd04",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
