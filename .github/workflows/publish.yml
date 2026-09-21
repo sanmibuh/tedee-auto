@@ -76,9 +76,20 @@ jobs:
         with:
           context: .
           push: true
+          load: true
           tags: |
             ghcr.io/sanmibuh/tedee-auto/tedee-automation:${{ steps.version.outputs.version }}
             ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest
+
+      # Prove the freshly built native image actually boots before any tag or
+      # release is created. A missing reflection hint aborts the Spring context
+      # only in the native binary — never on the JVM — so ./mvnw verify cannot
+      # catch it. This smoke test is the gate that stops a broken image from
+      # ever reaching a published release.
+      - name: Smoke test native image
+        run: >
+          .github/scripts/native-smoke-test.sh
+          ghcr.io/sanmibuh/tedee-auto/tedee-automation:${{ steps.version.outputs.version }}
 
   # Only after the image is published: generate the authoritative CHANGELOG.md
   # on main, commit it, then tag and create the GitHub Release. Committing the
