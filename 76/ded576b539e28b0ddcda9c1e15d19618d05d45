@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeBridgeRuntimeHintsTest.java
+  s_fcb8a7865f4788::t_77383ce2dbccc4 12,42-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "76ded576b539e28b0ddcda9c1e15d19618d05d45",
+  "prompts": {},
+  "sessions": {
+    "s_fcb8a7865f4788": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f3f4a0555ffe4cdi7RogJQY57F",
+        "model": "claude-opus-4.8"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
