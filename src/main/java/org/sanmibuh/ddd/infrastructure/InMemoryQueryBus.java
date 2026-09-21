@@ -16,7 +16,8 @@ public final class InMemoryQueryBus implements QueryBus {
   @Override
   @SuppressWarnings("unchecked")
   public <R> R dispatch(final Query<R> query) {
-    final var handler = (QueryHandler<Query<R>, R>) lookup.find(query.getClass());
+    final QueryHandler<Query<R>, R> handler =
+        (QueryHandler<Query<R>, R>) lookup.find(query.getClass());
     return handler.handle(query);
   }
 }
