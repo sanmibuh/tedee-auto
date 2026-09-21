@@ -196,19 +196,18 @@ jobs:
         run: .github/scripts/native-smoke-test.sh tedee-automation:${{ steps.version.outputs.release }}
 
       # 6: first irreversible external effect. Only a smoke-tested image is
-      # published. If a later git push fails, the worst case is an orphan image
-      # tag (harmless, overwritten next run) — never a tag/release pointing at a
-      # non-existent image.
-      - name: Push validated image to GHCR
+      # published, and only under its IMMUTABLE version tag. The mutable `latest`
+      # alias is intentionally NOT updated here: if the atomic git push below is
+      # rejected (main advanced) the release aborts, and `latest` must keep
+      # pointing at the previous release — never at this unreleased build. The
+      # worst case here is an orphan `:version` image (harmless, overwritten next
+      # run), never a moved `latest` without a corresponding tag/release.
+      - name: Push validated image to GHCR (version tag only)
         run: |
           VERSION="${{ steps.version.outputs.release }}"
-          LOCAL="tedee-automation:${VERSION}"
-          for REF in \
-            "ghcr.io/sanmibuh/tedee-auto/tedee-automation:${VERSION}" \
-            "ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest"; do
-            docker tag "$LOCAL" "$REF"
-            docker push "$REF"
-          done
+          docker tag "tedee-automation:${VERSION}" \
+            "ghcr.io/sanmibuh/tedee-auto/tedee-automation:${VERSION}"
+          docker push "ghcr.io/sanmibuh/tedee-auto/tedee-automation:${VERSION}"
 
       # 7: only now touch main. Build BOTH commits locally — the release and the
       # snapshot bump — tag the release commit, and publish everything in a SINGLE
@@ -244,7 +243,19 @@ jobs:
             exit 1
           fi
 
-      # 8: create the GitHub Release from the tag using the frozen release notes.
+      # 8: only after the release has atomically landed on main is the mutable
+      # `latest` alias advanced to this build. Retagging the already-pushed
+      # immutable image and pushing `latest` is cheap and, crucially, conditional
+      # on the git landing having succeeded — so an aborted run never moves
+      # `latest` onto an unreleased image.
+      - name: Update GHCR latest alias
+        run: |
+          VERSION="${{ steps.version.outputs.release }}"
+          docker tag "tedee-automation:${VERSION}" \
+            "ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest"
+          docker push "ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest"
+
+      # 9: create the GitHub Release from the tag using the frozen release notes.
       # This runs last because it is the only externally-visible step that cannot
       # leave main inconsistent: both commits are already on main and main is back
       # on -SNAPSHOT. The release is created idempotently with retry, and can
