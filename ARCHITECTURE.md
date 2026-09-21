@@ -163,7 +163,7 @@ The job proceeds in order, doing all fallible and irreversible work **before** t
 
 The net effect is exactly two commits and one tag on `main` — published atomically and only on full success against the exact verified state. On any failure before step 6, `main` is left untouched on its `-SNAPSHOT` version, with no tag and no release.
 
-The changelog rendering (category matching and Markdown formatting) lives in `.github/scripts/render_changelog.py`. The changelog query uses `gh api --paginate` so a release window with more than 100 updated PRs is never silently truncated.
+The changelog rendering (category matching and Markdown formatting) lives in `.github/scripts/render_changelog.py`. The changelog query uses `gh api --paginate` so a release window with more than 100 updated PRs is never silently truncated, and it is pinned to the checked-out `main` SHA: each candidate PR is kept only if its merge commit is an ancestor of that SHA, so a PR merged into `main` while the release is building (which `concurrency: release` does not prevent) is excluded and the changelog describes exactly the built and tagged source state.
 
 **Direct pushes to protected `main`.** The workflow pushes commits and the tag directly to `main` using a fine-grained PAT (secret `RELEASE_PAT`, `contents:write`) that can bypass branch protection, instead of the default `GITHUB_TOKEN`. Commits are attributed to a real identity via git config (`vars.RELEASE_BOT_NAME` / `vars.RELEASE_BOT_EMAIL`, falling back to the `github-actions[bot]` identity), which also satisfies the `main` ruleset's `require_extra_approval_for_unattributed_changes` constraint. Setup required once per repository: create the PAT and store it as `RELEASE_PAT`; optionally set the two identity variables.
 

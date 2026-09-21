@@ -108,15 +108,33 @@ jobs:
             SINCE="1970-01-01T00:00:00Z"
           fi
 
-          # All PRs merged since the last tag, excluding mechanical release and
-          # snapshot-bump PRs, so they never leak into the changelog. --paginate
-          # follows every page so a release window with more than 100 updated PRs
-          # is not silently truncated; the per-page --jq streams matching objects,
-          # which `jq -s` then collects into a single array.
+          # The changelog must describe exactly the source state that was built,
+          # verified and is about to be tagged — no more. Pin it to the checked-out
+          # main commit so a PR that merges into main WHILE this release is building
+          # (concurrency: release does not serialise ordinary merges) is not listed
+          # for code that is absent from the image and the published commits.
+          BASE_SHA=$(git rev-parse HEAD)
+
+          # Candidate PRs merged since the last tag, excluding mechanical release
+          # and snapshot-bump PRs. --paginate follows every page so a window with
+          # more than 100 updated PRs is not silently truncated; the per-page --jq
+          # streams matching objects, which `jq -s` collects into a single array.
+          # merge_commit_sha is kept so the reachability filter below can run.
           gh api --paginate \
             "repos/${{ github.repository }}/pulls?state=closed&base=main&per_page=100&sort=updated&direction=desc" \
-            --jq ".[] | select(.merged_at != null and .merged_at > \"${SINCE}\" and (.head.ref | test(\"^(release/v|chore/next-snapshot-v)\") | not)) | {title: .title, number: .number, url: .html_url}" \
-            | jq -s '.' > "$RUNNER_TEMP/prs.json"
+            --jq ".[] | select(.merged_at != null and .merged_at > \"${SINCE}\" and (.head.ref | test(\"^(release/v|chore/next-snapshot-v)\") | not)) | {title: .title, number: .number, url: .html_url, merge_commit_sha: .merge_commit_sha}" \
+            | jq -s '.' > "$RUNNER_TEMP/candidates.json"
+
+          # Keep only PRs whose merge commit is an ancestor of the checked-out main
+          # SHA. A PR merged after this checkout is not reachable from BASE_SHA (its
+          # commit may not even be fetched), so it is excluded — the changelog and
+          # the artifact therefore describe the same frozen source state.
+          jq -c '.[]' "$RUNNER_TEMP/candidates.json" | while read -r pr; do
+            sha=$(printf '%s' "$pr" | jq -r '.merge_commit_sha')
+            if [ "$sha" != "null" ] && git merge-base --is-ancestor "$sha" "$BASE_SHA" 2>/dev/null; then
+              printf '%s' "$pr" | jq '{title, number, url}'
+            fi
+          done | jq -s '.' > "$RUNNER_TEMP/prs.json"
           PRS=$(cat "$RUNNER_TEMP/prs.json")
 
           # Empty-changelog guard: with no human review, a broken SINCE filter
