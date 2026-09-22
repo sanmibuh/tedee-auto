@@ -153,10 +153,10 @@ candidates = data.get("candidates", [])
 if not candidates or not candidates[0].get("content", {}).get("parts"):
   finish = candidates[0].get("finishReason",
                              "UNKNOWN") if candidates else "NO_CANDIDATES"
-  print(f"Gemini returned no content (model={model}). finishReason: {finish}",
-        file=sys.stderr)
+  print(f"Gemini returned no content (model={model}). finishReason: {finish}, "
+        "trying next model", file=sys.stderr)
   write_attempt("nok", reason="no_content")
-  sys.exit(1)
+  sys.exit(2)
 
 finish_reason = candidates[0].get("finishReason", "")
 raw = candidates[0]["content"]["parts"][0]["text"]
@@ -177,10 +177,10 @@ except json.JSONDecodeError as e:
   sys.exit(2)
 
 if not isinstance(findings, list):
-  print(f"Gemini response is not a JSON array. Got: {type(findings).__name__}",
-        file=sys.stderr)
+  print(f"Gemini response is not a JSON array. Got: {type(findings).__name__}, "
+        "trying next model", file=sys.stderr)
   write_attempt("nok", reason="unexpected_format")
-  sys.exit(1)
+  sys.exit(2)
 
 with open("findings.json", "w") as f:
   json.dump({"model": model, "findings": findings}, f)
