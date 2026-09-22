@@ -87,7 +87,7 @@ jobs:
             fi
           done
           if [ $SUCCESS -ne 1 ]; then
-            echo "::error::All ${#MODELS[@]} Gemini models were exhausted (unavailable, quota exceeded, or timeout). No review was produced." >&2
+            echo "::error::All ${#MODELS[@]} Gemini models were exhausted (unavailable, quota exceeded, high demand, timeout, or a truncated/malformed response). No review was produced." >&2
             exit 1
           fi
 
