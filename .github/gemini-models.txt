@@ -1,6 +1,9 @@
 # Gemini model fallback chain for the nightly AI review.
 # Models are tried in order — first success wins.
-# On 404 (model unavailable) or 429 (quota exceeded) the next model is tried.
+# On a transient failure (404 unavailable, 429 quota exceeded, 503 high demand,
+# a request timeout, or a truncated/malformed response) the next model is tried.
+# If the whole chain is exhausted without a successful review, the nightly job
+# fails loudly.
 # Update this list when models are deprecated or better ones become available.
 
 # Primary: deep architectural reasoning, 1M token context
