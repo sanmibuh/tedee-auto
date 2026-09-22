@@ -68,10 +68,12 @@ jobs:
             echo "Error: .github/gemini-models.txt is empty or missing." >&2
             exit 1
           fi
+          SUCCESS=0
           for MODEL in "${MODELS[@]}"; do
             echo "Trying model: $MODEL"
             if python3 .github/scripts/gemini_review.py "$MODEL"; then
               python3 .github/scripts/accumulate_attempt.py
+              SUCCESS=1
               break
             else
               EXIT=$?
@@ -84,6 +86,10 @@ jobs:
               fi
             fi
           done
+          if [ $SUCCESS -ne 1 ]; then
+            echo "::error::All ${#MODELS[@]} Gemini models were exhausted (unavailable, quota exceeded, or timeout). No review was produced." >&2
+            exit 1
+          fi
 
       - name: Create issues for new findings
         if: env.GEMINI_API_KEY != '' && hashFiles('findings.json') != ''
@@ -145,7 +151,7 @@ jobs:
             }
 
       - name: Persist model stats
-        if: env.GEMINI_API_KEY != '' && hashFiles('run-results.json') != ''
+        if: always() && env.GEMINI_API_KEY != '' && hashFiles('run-results.json') != ''
         run: |
           WORK_DIR="$(mktemp -d)"
           cp run-results.json "$WORK_DIR/run-results.json"

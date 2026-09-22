@@ -136,7 +136,15 @@ except urllib.error.HTTPError as e:
   print(f"Gemini API error: {e.code} {e.read().decode()}", file=sys.stderr)
   write_attempt("nok", reason="api_error")
   sys.exit(1)
+except TimeoutError:
+  print(f"Model {model} timed out, will try next model", file=sys.stderr)
+  write_attempt("nok", reason="timeout")
+  sys.exit(2)
 except urllib.error.URLError as e:
+  if isinstance(e.reason, TimeoutError):
+    print(f"Model {model} timed out, will try next model", file=sys.stderr)
+    write_attempt("nok", reason="timeout")
+    sys.exit(2)
   print(f"Network error calling Gemini API: {e.reason}", file=sys.stderr)
   write_attempt("nok", reason="network_error")
   sys.exit(1)
