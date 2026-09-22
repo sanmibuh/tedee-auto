@@ -1,0 +1,14 @@
+.github/scripts/gemini_review.py
+  h_97a91c9e567f87 156-157,159,180-181,183
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "597ba0a70e8f88a74590ce1b582b10cb1e48fb93",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
