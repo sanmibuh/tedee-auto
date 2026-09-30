@@ -1,0 +1,18 @@
+.github/scripts/native-smoke-test.sh
+  h_97a91c9e567f87 37
+ARCHITECTURE.md
+  h_97a91c9e567f87 87-88
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockGatewayTest.java
+  h_97a91c9e567f87 39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "302cac1c239920aa6790a293c7657dd1e9bc7019",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
