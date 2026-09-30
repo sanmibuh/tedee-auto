@@ -63,6 +63,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
     final var id = registeredId;
     if (id != null) {
       delete(id);
+      registeredId = null;
     }
   }
 
