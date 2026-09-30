@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
+import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,6 +16,7 @@ import tools.jackson.databind.json.JsonMapper;
 @Slf4j
 @RestController
 @RequiredArgsConstructor
+@ImportRuntimeHints(TedeeEventRuntimeHints.class)
 final class TedeeEventController {
 
   private static final String LOCK_STATUS_CHANGED = "lock-status-changed";
