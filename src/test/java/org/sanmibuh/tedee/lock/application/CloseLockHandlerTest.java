@@ -15,8 +15,8 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
-import org.sanmibuh.tedee.lock.domain.LockLocked;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
+import org.sanmibuh.tedee.lock.domain.LockRequested;
 import org.sanmibuh.tedee.lock.domain.LockStatus;
 
 @ExtendWith({MockitoExtension.class, SoftAssertionsExtension.class})
@@ -31,14 +31,14 @@ class CloseLockHandlerTest {
   @InjectSoftAssertions BDDSoftAssertions softly;
 
   @Test
-  void should_recordLockLockedAndReturnEvents_whenClosingAnOpenLock() {
+  void should_recordLockRequestedAndReturnEvents_whenClosingAnOpenLock() {
     given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
 
     final var actual = sut.handle(new CloseLockCommand(1));
 
     verify(repository).save(savedLock.capture());
-    softly.then(savedLock.getValue().domainEvents()).containsExactly(new LockLocked(1));
-    softly.then(actual).containsExactly(new LockLocked(1));
+    softly.then(savedLock.getValue().domainEvents()).containsExactly(new LockRequested(1));
+    softly.then(actual).containsExactly(new LockRequested(1));
   }
 
   @Test
