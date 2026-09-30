@@ -1,0 +1,20 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 82
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/TedeeInfrastructureConfiguration.java
+  h_97a91c9e567f87 8-12
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeEventController.java
+  h_97a91c9e567f87 3-6,36-37,39,43,58
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistration.java
+  h_97a91c9e567f87 3-4,39,77
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fad24d5b9f64f8761d8f286f19e0e49fa2357d28",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
