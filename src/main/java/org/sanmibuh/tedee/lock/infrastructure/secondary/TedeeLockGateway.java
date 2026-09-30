@@ -19,7 +19,7 @@ final class TedeeLockGateway implements LockGateway {
 
   @Override
   public void lock(final LockId lockId) {
-    final int deviceId = lockId.value();
+    final var deviceId = lockId.value();
     try {
       lockApi.postLock(deviceId);
     } catch (final RestClientResponseException exception) {
