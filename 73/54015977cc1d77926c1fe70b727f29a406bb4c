@@ -1,0 +1,27 @@
+.github/scripts/native-smoke-test.sh
+  s_5c67868f43c704::t_01d80fe0aed223 37
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistration.java
+  s_5c67868f43c704::t_d3d9a5a56f7334 14,18
+src/main/resources/application.yml
+  s_5c67868f43c704::t_caed3a976042d5 10-13
+src/test/java/org/sanmibuh/tedee/ServerPropertiesTest.java
+  s_5c67868f43c704::t_f002ac88624542 16
+src/test/java/org/sanmibuh/tedee/TedeeAutomationApplicationTest.java
+  s_5c67868f43c704::t_5ffa6957806a55 17,36-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7354015977cc1d77926c1fe70b727f29a406bb4c",
+  "prompts": {},
+  "sessions": {
+    "s_5c67868f43c704": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0d408721ffeR1xg3iWdIyBIdh",
+        "model": "claude-opus-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
