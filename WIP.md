@@ -18,7 +18,8 @@
 4. ~~RED/GREEN: `stop()` deletes `/callback/{id}` with the kept id (posted or reused).~~
 5. ~~RED/GREEN: `stop()` does nothing when not registered; `isRunning()` reflects state.~~
 6. ~~RED/GREEN: `start()` logs WARN and does not throw when the bridge fails.~~
-7. RED/GREEN: `ServerProperties` validation (blank/missing `public-url` fails startup) + wiring as `@Component` + `application.yml`.
+7. ~~RED/GREEN: `ServerProperties` validation (blank/missing `public-url` fails startup).~~
+7b. Wiring: enable `ServerProperties`, register `TedeeCallbackRegistration` as a bean, `application.yml` (`public-url: ${PUBLIC_URL}`), mock `CallbackApi` in `@SpringBootTest`; verify unresolved-placeholder fail-fast.
 8. RED/GREEN: reflection hints for `ServerProperties`.
 9. Graceful shutdown (`server.shutdown: graceful`), smoke test `PUBLIC_URL` env var, `ARCHITECTURE.md`.
 10. `make format`, `./mvnw verify`, `make pitest`.
