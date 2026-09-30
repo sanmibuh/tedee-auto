@@ -6,6 +6,7 @@ import com.tedee.bridge.client.model.CallbackDetailsNoId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
@@ -16,7 +17,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   private final CallbackApi callbackApi;
   private final String callbackUrl;
-  private long registeredId;
+  private @Nullable Long registeredId;
 
   TedeeCallbackRegistration(
       final CallbackApi callbackApi, final ServerProperties serverProperties) {
@@ -59,11 +60,14 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   @Override
   public void stop() {
-    delete(registeredId);
+    final var id = registeredId;
+    if (id != null) {
+      delete(id);
+    }
   }
 
   @Override
   public boolean isRunning() {
-    return false;
+    return registeredId != null;
   }
 }
