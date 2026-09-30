@@ -129,7 +129,7 @@ class TedeeCallbackRegistrationTest {
   }
 
   @Test
-  void should_notDeleteCallback_whenStoppedWithoutStarting() {
+  void should_notCallBridge_whenStoppedWhileNotRunning() {
     sut.stop();
 
     server.verify();
