@@ -8,18 +8,18 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.lock.domain.LockId;
-import org.sanmibuh.tedee.lock.domain.LockLocked;
+import org.sanmibuh.tedee.lock.domain.LockRequested;
 
 @ExtendWith(MockitoExtension.class)
-class LockLockedHandlerTest {
+class LockRequestedHandlerTest {
 
   @Mock LockGateway lockGateway;
 
-  @InjectMocks LockLockedHandler sut;
+  @InjectMocks LockRequestedHandler sut;
 
   @Test
-  void should_lockTheDevice_whenHandlingLockLocked() {
-    sut.handle(new LockLocked(42));
+  void should_lockTheDevice_whenHandlingLockRequested() {
+    sut.handle(new LockRequested(42));
 
     verify(lockGateway).lock(new LockId(42));
   }

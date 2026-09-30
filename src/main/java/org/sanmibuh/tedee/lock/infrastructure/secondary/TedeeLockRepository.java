@@ -17,7 +17,7 @@ public final class TedeeLockRepository implements LockRepository {
 
   @Override
   public void save(final Lock lock) {
-    // No persistence store yet: locking is a reaction to the LockLocked domain event,
-    // handled by LockLockedHandler. Persisting aggregate state belongs here once a store exists.
+    // No persistence store yet: locking is a reaction to the LockRequested domain event,
+    // handled by LockRequestedHandler. Persisting aggregate state belongs here once a store exists.
   }
 }
