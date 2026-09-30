@@ -60,9 +60,8 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   @Override
   public void stop() {
-    final var id = registeredId;
-    if (id != null) {
-      delete(id);
+    if (registeredId != null) {
+      delete(registeredId);
       registeredId = null;
     }
   }

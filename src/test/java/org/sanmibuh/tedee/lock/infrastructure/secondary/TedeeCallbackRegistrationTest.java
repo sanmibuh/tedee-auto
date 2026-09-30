@@ -5,23 +5,30 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.tedee.bridge.client.api.CallbackApi;
 import java.time.Clock;
+import org.assertj.core.api.BDDSoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sanmibuh.tedee.ServerProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 @RestClientTest
+@ExtendWith(SoftAssertionsExtension.class)
 @Import(TedeeClientConfiguration.class)
 @TestPropertySource(
     properties = {
@@ -48,6 +55,8 @@ class TedeeCallbackRegistrationTest {
   @Autowired private MockRestServiceServer server;
 
   @MockitoBean private Clock clock;
+
+  @InjectSoftAssertions private BDDSoftAssertions softly;
 
   @SuppressWarnings("NullAway.Init")
   private TedeeCallbackRegistration sut;
@@ -153,6 +162,17 @@ class TedeeCallbackRegistrationTest {
     sut.stop();
 
     then(sut.isRunning()).isFalse();
+  }
+
+  @Test
+  void should_startWithoutRegistration_whenBridgeFails() {
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+    softly.thenCode(sut::start).doesNotThrowAnyException();
+    softly.then(sut.isRunning()).isFalse();
   }
 
   private void expectDeletedCallback(final int id) {
