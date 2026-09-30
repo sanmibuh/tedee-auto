@@ -1,6 +1,9 @@
 package org.sanmibuh.tedee.lock.infrastructure.primary;
 
-import java.nio.charset.StandardCharsets;
+import static java.nio.charset.StandardCharsets.*;
+import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration.*;
+import static org.springframework.http.HttpStatus.*;
+
 import java.security.MessageDigest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -8,9 +11,7 @@ import org.jspecify.annotations.Nullable;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
-import org.sanmibuh.tedee.lock.infrastructure.TedeeWebhookEndpoint;
 import org.springframework.context.annotation.ImportRuntimeHints;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -32,14 +33,14 @@ final class TedeeEventController {
   private final JsonMapper jsonMapper;
   private final TedeeProperties tedeeProperties;
 
-  @PostMapping(TedeeWebhookEndpoint.EVENTS_PATH)
-  @ResponseStatus(HttpStatus.NO_CONTENT)
+  @PostMapping(EVENTS_PATH)
+  @ResponseStatus(NO_CONTENT)
   void receive(
-      @RequestHeader(value = TedeeWebhookEndpoint.CALLBACK_SECRET_HEADER, required = false)
+      @RequestHeader(value = CALLBACK_SECRET_HEADER, required = false)
           final @Nullable String callbackSecret,
       @RequestBody final TedeeEvent event) {
     if (!isCallbackSecretValid(callbackSecret)) {
-      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+      throw new ResponseStatusException(UNAUTHORIZED);
     }
     if (LOCK_STATUS_CHANGED.equals(event.event())) {
       final var data = jsonMapper.treeToValue(event.data(), LockStatusChangedData.class);
@@ -54,8 +55,7 @@ final class TedeeEventController {
   private boolean isCallbackSecretValid(final @Nullable String callbackSecret) {
     return callbackSecret != null
         && MessageDigest.isEqual(
-            tedeeProperties.callbackSecret().getBytes(StandardCharsets.UTF_8),
-            callbackSecret.getBytes(StandardCharsets.UTF_8));
+            tedeeProperties.callbackSecret().getBytes(UTF_8), callbackSecret.getBytes(UTF_8));
   }
 
   record TedeeEvent(String event, JsonNode data) {}

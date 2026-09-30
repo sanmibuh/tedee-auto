@@ -1,5 +1,7 @@
 package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
+import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration.*;
+
 import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.model.CallbackDetails;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
@@ -11,7 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
-import org.sanmibuh.tedee.lock.infrastructure.TedeeWebhookEndpoint;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -35,7 +36,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
     callbackSecret = tedeeProperties.callbackSecret();
     callbackUrl =
         UriComponentsBuilder.fromUriString(serverProperties.publicUrl())
-            .path(TedeeWebhookEndpoint.EVENTS_PATH)
+            .path(EVENTS_PATH)
             .toUriString();
   }
 
@@ -73,8 +74,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
                 .method(HttpMethod.POST.name())
                 .addHeadersItem(
                     new CallbackHeader()
-                        .headerName(
-                            TedeeWebhookEndpoint.CALLBACK_SECRET_HEADER + ": " + callbackSecret)));
+                        .headerName(CALLBACK_SECRET_HEADER + ": " + callbackSecret)));
     return Objects.requireNonNull(registered.getId());
   }
 
