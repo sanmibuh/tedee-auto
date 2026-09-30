@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeEventRuntimeHints.java
+  s_6df72a5c5f1958::t_8c8748b04394e8 4-5,11-13,15-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "103c011cddde66fa2dfa99cd0ba96701044ead92",
+  "prompts": {},
+  "sessions": {
+    "s_6df72a5c5f1958": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0c33424fffeRwFW1CsTfl6yTp",
+        "model": "claude-opus-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
