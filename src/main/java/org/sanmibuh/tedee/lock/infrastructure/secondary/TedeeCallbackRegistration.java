@@ -74,8 +74,13 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   @Override
   public void stop() {
     if (registeredId != null) {
-      delete(registeredId);
-      registeredId = null;
+      try {
+        delete(registeredId);
+      } catch (final RestClientException exception) {
+        log.warn("Could not unregister callback {} from the Tedee Bridge", callbackUrl, exception);
+      } finally {
+        registeredId = null;
+      }
     }
   }
 
