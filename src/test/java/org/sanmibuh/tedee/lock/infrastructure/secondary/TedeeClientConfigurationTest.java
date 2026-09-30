@@ -17,6 +17,7 @@ class TedeeClientConfigurationTest {
         new TedeeProperties(
             "http://bridge.local/v1.0",
             "secret-token",
+            "callback-secret",
             new TedeeProperties.Retry(2, 500L, 2.0, 5000L));
 
     final var apiClient = sut.tedeeApiClient(RestClient.builder(), properties, Clock.systemUTC());

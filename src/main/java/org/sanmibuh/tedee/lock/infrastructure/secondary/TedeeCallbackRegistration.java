@@ -3,6 +3,7 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.model.CallbackDetails;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
+import com.tedee.bridge.client.model.CallbackHeader;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -22,11 +23,15 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   private final CallbackApi callbackApi;
   private final String callbackUrl;
+  private final String callbackSecret;
   private @Nullable Long registeredId;
 
   TedeeCallbackRegistration(
-      final CallbackApi callbackApi, final ServerProperties serverProperties) {
+      final CallbackApi callbackApi,
+      final ServerProperties serverProperties,
+      final TedeeProperties tedeeProperties) {
     this.callbackApi = callbackApi;
+    callbackSecret = tedeeProperties.callbackSecret();
     callbackUrl =
         UriComponentsBuilder.fromUriString(serverProperties.publicUrl())
             .path(TedeeWebhookEndpoint.EVENTS_PATH)
@@ -62,7 +67,13 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   private long register() {
     final var registered =
         callbackApi.postSingleCallback(
-            new CallbackDetailsNoId().url(callbackUrl).method(HttpMethod.POST.name()));
+            new CallbackDetailsNoId()
+                .url(callbackUrl)
+                .method(HttpMethod.POST.name())
+                .addHeadersItem(
+                    new CallbackHeader()
+                        .headerName(
+                            TedeeWebhookEndpoint.CALLBACK_SECRET_HEADER + ": " + callbackSecret)));
     return Objects.requireNonNull(registered.getId());
   }
 

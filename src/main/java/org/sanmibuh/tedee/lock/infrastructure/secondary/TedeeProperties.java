@@ -12,7 +12,10 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "sanmibuh.rest.tedee")
 public record TedeeProperties(
-    @NotBlank String baseUrl, @NotBlank String apiKey, @Valid @NotNull Retry retry) {
+    @NotBlank String baseUrl,
+    @NotBlank String apiKey,
+    @NotBlank String callbackSecret,
+    @Valid @NotNull Retry retry) {
 
   public record Retry(
       @PositiveOrZero int maxRetries,

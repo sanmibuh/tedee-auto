@@ -6,4 +6,5 @@ import lombok.experimental.UtilityClass;
 public class TedeeWebhookEndpoint {
 
   public static final String EVENTS_PATH = "/tedee/events";
+  public static final String CALLBACK_SECRET_HEADER = "X-Tedee-Callback-Secret";
 }

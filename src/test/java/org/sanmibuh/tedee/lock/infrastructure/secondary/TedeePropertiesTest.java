@@ -33,6 +33,7 @@ class TedeePropertiesTest {
         .withPropertyValues(
             "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
             "sanmibuh.rest.tedee.api-key=secret-token",
+            "sanmibuh.rest.tedee.callback-secret=callback-secret",
             "sanmibuh.rest.tedee.retry.max-retries=2",
             "sanmibuh.rest.tedee.retry.initial-interval=500",
             "sanmibuh.rest.tedee.retry.multiplier=2.0",
@@ -42,6 +43,7 @@ class TedeePropertiesTest {
               final var properties = context.getBean(TedeeProperties.class);
               softly.then(properties.baseUrl()).isEqualTo("http://bridge.local/v1.0");
               softly.then(properties.apiKey()).isEqualTo("secret-token");
+              softly.then(properties.callbackSecret()).isEqualTo("callback-secret");
               softly.then(properties.retry().maxRetries()).isEqualTo(2);
               softly.then(properties.retry().initialInterval()).isEqualTo(500L);
               softly.then(properties.retry().multiplier()).isEqualTo(2.0);
@@ -80,6 +82,7 @@ class TedeePropertiesTest {
     return new String[] {
       "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
       "sanmibuh.rest.tedee.api-key=secret-token",
+      "sanmibuh.rest.tedee.callback-secret=callback-secret",
       "sanmibuh.rest.tedee.retry.max-retries=" + maxRetries,
       "sanmibuh.rest.tedee.retry.initial-interval=" + initialInterval,
       "sanmibuh.rest.tedee.retry.multiplier=" + multiplier,
@@ -98,6 +101,13 @@ class TedeePropertiesTest {
                 new String[] {"sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0"})),
         Arguments.of(
             Named.of(
+                "callback-secret is missing",
+                new String[] {
+                  "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+                  "sanmibuh.rest.tedee.api-key=secret-token"
+                })),
+        Arguments.of(
+            Named.of(
                 "base-url is blank",
                 new String[] {
                   "sanmibuh.rest.tedee.base-url=  ", "sanmibuh.rest.tedee.api-key=secret-token"
@@ -107,7 +117,16 @@ class TedeePropertiesTest {
                 "api-key is blank",
                 new String[] {
                   "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
-                  "sanmibuh.rest.tedee.api-key=  "
+                  "sanmibuh.rest.tedee.api-key=  ",
+                  "sanmibuh.rest.tedee.callback-secret=callback-secret"
+                })),
+        Arguments.of(
+            Named.of(
+                "callback-secret is blank",
+                new String[] {
+                  "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+                  "sanmibuh.rest.tedee.api-key=secret-token",
+                  "sanmibuh.rest.tedee.callback-secret=  "
                 })),
         Arguments.of(
             Named.of(
