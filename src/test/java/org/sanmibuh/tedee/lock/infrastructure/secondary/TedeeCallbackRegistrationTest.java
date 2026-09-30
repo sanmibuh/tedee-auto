@@ -174,6 +174,19 @@ class TedeeCallbackRegistrationTest {
     softly.then(sut.isRunning()).isFalse();
   }
 
+  @Test
+  void should_stopWithoutFailing_whenBridgeFailsToDeleteCallback() {
+    expectListedCallbacks(callbacks(callback(EXISTING_ID, CALLBACK_URL)));
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT + "/" + EXISTING_ID))
+        .andExpect(method(HttpMethod.DELETE))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+    sut.start();
+
+    softly.thenCode(sut::stop).doesNotThrowAnyException();
+    softly.then(sut.isRunning()).isFalse();
+  }
+
   private void expectRegisteredCallback() {
     server
         .expect(requestTo(CALLBACK_ENDPOINT))
