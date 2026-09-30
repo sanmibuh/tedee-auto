@@ -1,0 +1,14 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistration.java
+  h_97a91c9e567f87 16,31-34
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "14f1a5b5dce40ac3ea0bfe70e2bd349524a05ae9",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
