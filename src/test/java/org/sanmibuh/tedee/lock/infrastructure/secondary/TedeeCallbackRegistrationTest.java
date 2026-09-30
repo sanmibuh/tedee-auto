@@ -38,7 +38,9 @@ class TedeeCallbackRegistrationTest {
   private static final String PUBLIC_URL = "http://automation.local:8080";
   private static final String CALLBACK_URL = PUBLIC_URL + "/tedee/events";
   private static final String FOREIGN_CALLBACK_URL = "http://other-system.local/hook";
-  private static final String REGISTERED_RESPONSE = "{\"id\": 7}";
+  private static final int REGISTERED_ID = 7;
+  private static final int EXISTING_ID = 5;
+  private static final String REGISTERED_RESPONSE = "{\"id\": " + REGISTERED_ID + "}";
 
   @Autowired private CallbackApi callbackApi;
 
@@ -97,6 +99,39 @@ class TedeeCallbackRegistrationTest {
     sut.start();
 
     server.verify();
+  }
+
+  @Test
+  void should_deleteRegisteredCallback_whenStoppedAfterRegistering() {
+    expectListedCallbacks("[]");
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withSuccess(REGISTERED_RESPONSE, MediaType.APPLICATION_JSON));
+    expectDeletedCallback(REGISTERED_ID);
+    sut.start();
+
+    sut.stop();
+
+    server.verify();
+  }
+
+  @Test
+  void should_deleteReusedCallback_whenStoppedAfterReusingExistingOne() {
+    expectListedCallbacks("[" + callback(EXISTING_ID, CALLBACK_URL) + "]");
+    expectDeletedCallback(EXISTING_ID);
+    sut.start();
+
+    sut.stop();
+
+    server.verify();
+  }
+
+  private void expectDeletedCallback(final int id) {
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT + "/" + id))
+        .andExpect(method(HttpMethod.DELETE))
+        .andRespond(withNoContent());
   }
 
   private void expectListedCallbacks(final String callbacks) {
