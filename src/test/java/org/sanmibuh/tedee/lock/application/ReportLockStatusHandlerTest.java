@@ -44,6 +44,7 @@ class ReportLockStatusHandlerTest {
       {7, LockState.PULL_SPRING},
       {8, LockState.PULLING},
       {9, LockState.UNKNOWN},
+      {10, LockState.UNKNOWN},
       {255, LockState.UNPULLING}
     };
   }

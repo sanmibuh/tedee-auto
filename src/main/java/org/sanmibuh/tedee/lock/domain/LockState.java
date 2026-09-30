@@ -1,31 +1,30 @@
 package org.sanmibuh.tedee.lock.domain;
 
 public enum LockState {
-  UNCALIBRATED,
-  CALIBRATION,
-  OPEN,
-  PARTIALLY_OPEN,
-  OPENING,
-  CLOSING,
-  CLOSED,
-  PULL_SPRING,
-  PULLING,
-  UNKNOWN,
-  UNPULLING;
+  UNCALIBRATED(0),
+  CALIBRATION(1),
+  OPEN(2),
+  PARTIALLY_OPEN(3),
+  OPENING(4),
+  CLOSING(5),
+  CLOSED(6),
+  PULL_SPRING(7),
+  PULLING(8),
+  UNKNOWN(9),
+  UNPULLING(255);
+
+  private final int bridgeCode;
+
+  LockState(final int bridgeCode) {
+    this.bridgeCode = bridgeCode;
+  }
 
   public static LockState fromBridgeCode(final int bridgeCode) {
-    return switch (bridgeCode) {
-      case 0 -> UNCALIBRATED;
-      case 1 -> CALIBRATION;
-      case 2 -> OPEN;
-      case 3 -> PARTIALLY_OPEN;
-      case 4 -> OPENING;
-      case 5 -> CLOSING;
-      case 6 -> CLOSED;
-      case 7 -> PULL_SPRING;
-      case 8 -> PULLING;
-      case 255 -> UNPULLING;
-      default -> UNKNOWN;
-    };
+    for (final var state : values()) {
+      if (state.bridgeCode == bridgeCode) {
+        return state;
+      }
+    }
+    return UNKNOWN;
   }
 }
