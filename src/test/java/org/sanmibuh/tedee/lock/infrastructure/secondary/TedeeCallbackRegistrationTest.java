@@ -1,5 +1,6 @@
 package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -125,6 +126,22 @@ class TedeeCallbackRegistrationTest {
     sut.stop();
 
     server.verify();
+  }
+
+  @Test
+  void should_notDeleteCallback_whenStoppedWithoutStarting() {
+    sut.stop();
+
+    server.verify();
+  }
+
+  @Test
+  void should_reportRunning_whenStarted() {
+    expectListedCallbacks("[" + callback(EXISTING_ID, CALLBACK_URL) + "]");
+
+    sut.start();
+
+    then(sut.isRunning()).isTrue();
   }
 
   private void expectDeletedCallback(final int id) {
