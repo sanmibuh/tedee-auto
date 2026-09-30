@@ -36,6 +36,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
     properties = {
       "sanmibuh.rest.tedee.base-url=" + TedeeLockGatewayTest.BASE_URL,
       "sanmibuh.rest.tedee.api-key=" + TedeeLockGatewayTest.API_KEY,
+      "sanmibuh.rest.tedee.callback-secret=callback-secret",
       "sanmibuh.rest.tedee.retry.max-retries=" + TedeeLockGatewayTest.MAX_RETRIES,
       "sanmibuh.rest.tedee.retry.initial-interval=1",
       "sanmibuh.rest.tedee.retry.multiplier=1",
