@@ -1,10 +1,14 @@
 package org.sanmibuh.tedee.lock.infrastructure.primary;
 
+import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import lombok.SneakyThrows;
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
@@ -47,5 +51,31 @@ class TedeeEventControllerTest {
         .andExpect(status().isNoContent());
 
     verify(commandBus).dispatch(new ReportLockStatusCommand(33819, 6, 0, 2));
+  }
+
+  @Test
+  @SneakyThrows
+  void should_acknowledgeWithoutDispatching_whenEventIsUnknown() {
+    try (final var logCaptor = LogCaptor.forClass(TedeeEventController.class)) {
+      sut.perform(
+              post(EVENTS_PATH)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(
+                      """
+                      {
+                        "event": "unknown-event",
+                        "timestamp": "2023-07-25T14:41:48.825Z",
+                        "data": {
+                          "deviceType": 2,
+                          "deviceId": 33819,
+                          "serialNumber": "19420103-000006"
+                        }
+                      }
+                      """))
+          .andExpect(status().isNoContent());
+
+      verifyNoInteractions(commandBus);
+      then(logCaptor.getWarnLogs()).singleElement(STRING).contains("unknown-event");
+    }
   }
 }
