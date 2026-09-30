@@ -34,6 +34,7 @@ echo "Starting container from image: ${IMAGE}"
 docker run -d --name "${CONTAINER}" \
   -e TEDEE_HOST=localhost \
   -e TEDEE_API_KEY=smoke-test \
+  -e PUBLIC_URL=http://localhost:8080 \
   -p 8080:8080 \
   "${IMAGE}" >/dev/null
 

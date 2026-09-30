@@ -11,9 +11,11 @@ import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
+import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 
 @Slf4j
+@Component
 final class TedeeCallbackRegistration implements SmartLifecycle {
 
   private static final String CALLBACK_PATH = "/tedee/events";

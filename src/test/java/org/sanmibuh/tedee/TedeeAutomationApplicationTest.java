@@ -14,6 +14,7 @@ import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.mockito.BDDMockito;
 import org.sanmibuh.ddd.infrastructure.InMemoryCommandBus;
 import org.sanmibuh.ddd.port.CommandBus;
@@ -32,7 +33,8 @@ class TedeeAutomationApplicationTest {
 
   @Autowired private CommandBus commandBus;
 
-  @MockitoBean private CallbackApi callbackApi;
+  @MockitoBean(answers = Answers.RETURNS_MOCKS)
+  private CallbackApi callbackApi;
 
   @InjectSoftAssertions private BDDSoftAssertions softly;
 
