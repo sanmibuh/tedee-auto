@@ -1,0 +1,29 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  s_1ced2d125255cc::t_ab322c49098f42 19
+src/main/java/org/sanmibuh/tedee/lock/domain/LockRequested.java
+  s_1ced2d125255cc::t_fe66e074a39169 5
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockRequestedHandler.java
+  s_1ced2d125255cc::t_09c7ca2e23ff73 6,11,16
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockRepository.java
+  s_1ced2d125255cc::t_285e852097467a 20-21
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  s_1ced2d125255cc::t_982a8bb8847658 19,34,40-41
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockRequestedHandlerTest.java
+  s_1ced2d125255cc::t_44f48f7132bcb6 11,14,18,21-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "662f1ce41f3bf5a50e760a8e93390d4e3ce680fb",
+  "prompts": {},
+  "sessions": {
+    "s_1ced2d125255cc": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0d4b678affeBfDWuiRII4OjqW",
+        "model": "claude-opus-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
