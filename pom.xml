@@ -25,6 +25,7 @@
     <logcaptor.version>2.12.7</logcaptor.version>
     <java.version>25</java.version>
     <nullaway.version>0.14.1</nullaway.version>
+    <test.spring.config.location>classpath:/</test.spring.config.location>
     <openapi-generator.version>7.25.0</openapi-generator.version>
     <pitest-history-plugin.version>0.0.1</pitest-history-plugin.version>
     <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
@@ -96,6 +97,16 @@
 
   <build>
     <plugins>
+      <plugin>
+        <!-- Isolate tests from the git-ignored ./config/application.yml so local runs match CI. -->
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <systemPropertyVariables>
+            <spring.config.location>${test.spring.config.location}</spring.config.location>
+          </systemPropertyVariables>
+        </configuration>
+      </plugin>
       <plugin>
         <groupId>com.diffplug.spotless</groupId>
         <artifactId>spotless-maven-plugin</artifactId>
@@ -230,6 +241,9 @@
           <excludedMethods>
             <excludedMethod>*PITEquivalent</excludedMethod>
           </excludedMethods>
+          <jvmArgs>
+            <jvmArg>-Dspring.config.location=${test.spring.config.location}</jvmArg>
+          </jvmArgs>
           <timestampedReports>false</timestampedReports>
           <historyInputFile>${project.basedir}/.pit/history-input.bin</historyInputFile>
           <historyOutputFile>${project.basedir}/.pit/history-output.bin</historyOutputFile>
