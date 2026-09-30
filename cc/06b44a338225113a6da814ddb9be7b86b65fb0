@@ -1,0 +1,20 @@
+pom.xml
+  h_97a91c9e567f87 84-88
+src/main/java/org/sanmibuh/tedee/lock/application/ReportLockStatusCommand.java
+  h_97a91c9e567f87 1-6
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeEventController.java
+  h_97a91c9e567f87 1-12
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeEventControllerTest.java
+  h_97a91c9e567f87 1-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "cc06b44a338225113a6da814ddb9be7b86b65fb0",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
