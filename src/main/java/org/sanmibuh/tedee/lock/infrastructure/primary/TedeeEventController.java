@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
+import org.sanmibuh.tedee.lock.infrastructure.TedeeWebhookEndpoint;
 import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +25,7 @@ final class TedeeEventController {
   private final CommandBus commandBus;
   private final JsonMapper jsonMapper;
 
-  @PostMapping("/tedee/events")
+  @PostMapping(TedeeWebhookEndpoint.EVENTS_PATH)
   @ResponseStatus(HttpStatus.NO_CONTENT)
   void receive(@RequestBody final TedeeEvent event) {
     if (LOCK_STATUS_CHANGED.equals(event.event())) {
