@@ -6,11 +6,14 @@ import com.tedee.bridge.client.model.CallbackDetailsNoId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
+import org.springframework.web.client.RestClientException;
 
+@Slf4j
 final class TedeeCallbackRegistration implements SmartLifecycle {
 
   private static final String CALLBACK_PATH = "/tedee/events";
@@ -27,10 +30,14 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   @Override
   public void start() {
-    registeredId =
-        keepSingleExistingCallback()
-            .map(callback -> Objects.requireNonNull(callback.getId()))
-            .orElseGet(this::register);
+    try {
+      registeredId =
+          keepSingleExistingCallback()
+              .map(callback -> Objects.requireNonNull(callback.getId()))
+              .orElseGet(this::register);
+    } catch (final RestClientException exception) {
+      log.warn("Could not register callback {} on the Tedee Bridge", callbackUrl, exception);
+    }
   }
 
   private Optional<CallbackDetails> keepSingleExistingCallback() {
