@@ -43,14 +43,14 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   private Optional<CallbackDetails> keepSingleExistingCallback() {
-    final var ourCallbacks = callbacksMatching();
+    final var ourCallbacks = ourCallbacks();
     ourCallbacks.stream()
         .skip(1)
         .forEach(duplicate -> delete(Objects.requireNonNull(duplicate.getId())));
     return ourCallbacks.stream().findFirst();
   }
 
-  private List<CallbackDetails> callbacksMatching() {
+  private List<CallbackDetails> ourCallbacks() {
     return callbackApi.getCallback().stream()
         .filter(callback -> callbackUrl.equals(callback.getUrl()))
         .toList();
