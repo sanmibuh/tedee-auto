@@ -1,0 +1,22 @@
+WIP.md
+  h_97a91c9e567f87 1-19
+src/main/java/org/sanmibuh/tedee/ServerProperties.java
+  h_97a91c9e567f87 1-3
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistration.java
+  h_97a91c9e567f87 1-24
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfiguration.java
+  h_97a91c9e567f87 4,30-34
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistrationTest.java
+  h_97a91c9e567f87 1-68
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9e3cc79a2939f72dc9a9c35ad98d581ae1207c12",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
