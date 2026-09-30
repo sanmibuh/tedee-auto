@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistration.java
+  s_5c67868f43c704::t_62273b92d7dbe1 10,22,26-29,34-36,50-54,57-58,62-64
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9c2dfb03d1554184c49762d9d7ee6b481b27368a",
+  "prompts": {},
+  "sessions": {
+    "s_5c67868f43c704": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0d408721ffeR1xg3iWdIyBIdh",
+        "model": "claude-opus-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
