@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
@@ -19,13 +18,13 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   private final CallbackApi callbackApi;
   private final ServerProperties serverProperties;
-  private int registeredId;
+  private long registeredId;
 
   @Override
   public void start() {
     registeredId =
         keepSingleExistingCallback()
-            .map(callback -> toId(callback.getId()))
+            .map(callback -> Objects.requireNonNull(callback.getId()))
             .orElseGet(this::register);
   }
 
@@ -33,7 +32,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
     final var ourCallbacks = callbacksMatching(callbackUrl());
     ourCallbacks.stream()
         .skip(1)
-        .forEach(duplicate -> callbackApi.deleteCallback(toId(duplicate.getId())));
+        .forEach(duplicate -> delete(Objects.requireNonNull(duplicate.getId())));
     return ourCallbacks.stream().findFirst();
   }
 
@@ -47,20 +46,20 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
         .toList();
   }
 
-  private int register() {
+  private long register() {
     final var registered =
         callbackApi.postSingleCallback(
             new CallbackDetailsNoId().url(callbackUrl()).method(HttpMethod.POST.name()));
-    return toId(registered.getId());
+    return Objects.requireNonNull(registered.getId());
   }
 
-  private static int toId(final @Nullable Long id) {
-    return Math.toIntExact(Objects.requireNonNull(id));
+  private void delete(final long callbackId) {
+    callbackApi.deleteCallback(Math.toIntExact(callbackId));
   }
 
   @Override
   public void stop() {
-    callbackApi.deleteCallback(registeredId);
+    delete(registeredId);
   }
 
   @Override
