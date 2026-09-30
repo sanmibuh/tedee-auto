@@ -2,6 +2,7 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.tedee.ServerProperties;
 import org.springframework.context.SmartLifecycle;
@@ -18,13 +19,20 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   @Override
   public void start() {
     final var callbackUrl = serverProperties.publicUrl() + CALLBACK_PATH;
-    final var alreadyRegistered =
+    final var ourCallbacks =
         callbackApi.getCallback().stream()
-            .anyMatch(callback -> callbackUrl.equals(callback.getUrl()));
-    if (!alreadyRegistered) {
+            .filter(callback -> callbackUrl.equals(callback.getUrl()))
+            .toList();
+    if (ourCallbacks.isEmpty()) {
       callbackApi.postSingleCallback(
           new CallbackDetailsNoId().url(callbackUrl).method(HttpMethod.POST.name()));
     }
+    ourCallbacks.stream()
+        .skip(1)
+        .forEach(
+            duplicate ->
+                callbackApi.deleteCallback(
+                    Math.toIntExact(Objects.requireNonNull(duplicate.getId()))));
   }
 
   @Override
