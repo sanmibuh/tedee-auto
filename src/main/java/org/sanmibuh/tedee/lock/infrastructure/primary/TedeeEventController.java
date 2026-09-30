@@ -9,8 +9,10 @@ import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -27,7 +29,13 @@ final class TedeeEventController {
 
   @PostMapping(TedeeWebhookEndpoint.EVENTS_PATH)
   @ResponseStatus(HttpStatus.NO_CONTENT)
-  void receive(@RequestBody final TedeeEvent event) {
+  void receive(
+      @RequestHeader(value = TedeeWebhookEndpoint.CALLBACK_SECRET_HEADER, required = false)
+          final String callbackSecret,
+      @RequestBody final TedeeEvent event) {
+    if (callbackSecret == null) {
+      throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
+    }
     if (LOCK_STATUS_CHANGED.equals(event.event())) {
       final var data = jsonMapper.treeToValue(event.data(), LockStatusChangedData.class);
       commandBus.dispatch(

@@ -22,6 +22,8 @@ import org.springframework.test.web.servlet.MockMvc;
 class TedeeEventControllerTest {
 
   private static final String EVENTS_PATH = "/tedee/events";
+  private static final String CALLBACK_SECRET_HEADER = "X-Tedee-Callback-Secret";
+  private static final String CALLBACK_SECRET = "callback-secret";
 
   @Autowired MockMvc sut;
 
@@ -41,6 +43,7 @@ class TedeeEventControllerTest {
   void should_dispatchReportLockStatusCommand_whenLockStatusChanged() {
     sut.perform(
             post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     """
@@ -68,6 +71,7 @@ class TedeeEventControllerTest {
     try (final var logCaptor = LogCaptor.forClass(TedeeEventController.class)) {
       sut.perform(
               post(EVENTS_PATH)
+                  .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
                   .contentType(MediaType.APPLICATION_JSON)
                   .content(
                       """
