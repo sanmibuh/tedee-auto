@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeWebhookAuthenticationInterceptor.java
+  s_4d0b40553ff7e5::t_6f4e0657dfab9e 1-37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9b1d3dce61ffffe7af0466de082df69745891536",
+  "prompts": {},
+  "sessions": {
+    "s_4d0b40553ff7e5": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0be601a2ffee4gTkcpdM7xDoA",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
