@@ -6,19 +6,23 @@ import com.tedee.bridge.client.model.CallbackDetailsNoId;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
 import org.sanmibuh.tedee.ServerProperties;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
 
-@RequiredArgsConstructor
 final class TedeeCallbackRegistration implements SmartLifecycle {
 
   private static final String CALLBACK_PATH = "/tedee/events";
 
   private final CallbackApi callbackApi;
-  private final ServerProperties serverProperties;
+  private final String callbackUrl;
   private long registeredId;
+
+  TedeeCallbackRegistration(
+      final CallbackApi callbackApi, final ServerProperties serverProperties) {
+    this.callbackApi = callbackApi;
+    callbackUrl = serverProperties.publicUrl() + CALLBACK_PATH;
+  }
 
   @Override
   public void start() {
@@ -29,18 +33,14 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   private Optional<CallbackDetails> keepSingleExistingCallback() {
-    final var ourCallbacks = callbacksMatching(callbackUrl());
+    final var ourCallbacks = callbacksMatching();
     ourCallbacks.stream()
         .skip(1)
         .forEach(duplicate -> delete(Objects.requireNonNull(duplicate.getId())));
     return ourCallbacks.stream().findFirst();
   }
 
-  private String callbackUrl() {
-    return serverProperties.publicUrl() + CALLBACK_PATH;
-  }
-
-  private List<CallbackDetails> callbacksMatching(final String callbackUrl) {
+  private List<CallbackDetails> callbacksMatching() {
     return callbackApi.getCallback().stream()
         .filter(callback -> callbackUrl.equals(callback.getUrl()))
         .toList();
@@ -49,7 +49,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   private long register() {
     final var registered =
         callbackApi.postSingleCallback(
-            new CallbackDetailsNoId().url(callbackUrl()).method(HttpMethod.POST.name()));
+            new CallbackDetailsNoId().url(callbackUrl).method(HttpMethod.POST.name()));
     return Objects.requireNonNull(registered.getId());
   }
 
