@@ -9,6 +9,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
+import org.sanmibuh.tedee.lock.infrastructure.TedeeWebhookEndpoint;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
@@ -19,8 +20,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 final class TedeeCallbackRegistration implements SmartLifecycle {
 
-  private static final String CALLBACK_PATH = "/tedee/events";
-
   private final CallbackApi callbackApi;
   private final String callbackUrl;
   private @Nullable Long registeredId;
@@ -30,7 +29,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
     this.callbackApi = callbackApi;
     callbackUrl =
         UriComponentsBuilder.fromUriString(serverProperties.publicUrl())
-            .path(CALLBACK_PATH)
+            .path(TedeeWebhookEndpoint.EVENTS_PATH)
             .toUriString();
   }
 
