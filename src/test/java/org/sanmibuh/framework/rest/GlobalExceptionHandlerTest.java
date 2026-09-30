@@ -34,7 +34,10 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
     classes = {TedeeAutomationApplication.class, GlobalExceptionHandlerTest.StubController.class},
-    properties = "sanmibuh.server.public-url=http://automation.local:8080")
+    properties = {
+      "sanmibuh.server.public-url=http://automation.local:8080",
+      "sanmibuh.rest.tedee.callback-secret=callback-secret"
+    })
 @ExtendWith(SoftAssertionsExtension.class)
 class GlobalExceptionHandlerTest {
 

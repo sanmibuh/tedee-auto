@@ -25,7 +25,10 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    properties = "sanmibuh.server.public-url=http://automation.local:8080")
+    properties = {
+      "sanmibuh.server.public-url=http://automation.local:8080",
+      "sanmibuh.rest.tedee.callback-secret=callback-secret"
+    })
 @ExtendWith(SoftAssertionsExtension.class)
 class TedeeAutomationApplicationTest {
 

@@ -20,6 +20,7 @@ import org.sanmibuh.tedee.lock.domain.InvalidLockRequestException;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
+import org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.context.annotation.Import;
@@ -31,11 +32,12 @@ import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 @RestClientTest(TedeeLockGateway.class)
-@Import(TedeeClientConfiguration.class)
+@Import({TedeeClientConfiguration.class, TedeeInfrastructureConfiguration.class})
 @TestPropertySource(
     properties = {
       "sanmibuh.rest.tedee.base-url=" + TedeeLockGatewayTest.BASE_URL,
       "sanmibuh.rest.tedee.api-key=" + TedeeLockGatewayTest.API_KEY,
+      "sanmibuh.rest.tedee.callback-secret=callback-secret",
       "sanmibuh.rest.tedee.retry.max-retries=" + TedeeLockGatewayTest.MAX_RETRIES,
       "sanmibuh.rest.tedee.retry.initial-interval=1",
       "sanmibuh.rest.tedee.retry.multiplier=1",

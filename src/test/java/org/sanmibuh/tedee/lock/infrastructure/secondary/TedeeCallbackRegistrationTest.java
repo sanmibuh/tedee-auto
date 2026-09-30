@@ -19,6 +19,8 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.sanmibuh.tedee.ServerProperties;
+import org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration;
+import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.context.annotation.Import;
@@ -31,11 +33,12 @@ import org.springframework.test.web.client.MockRestServiceServer;
 
 @RestClientTest
 @ExtendWith(SoftAssertionsExtension.class)
-@Import(TedeeClientConfiguration.class)
+@Import({TedeeClientConfiguration.class, TedeeInfrastructureConfiguration.class})
 @TestPropertySource(
     properties = {
       "sanmibuh.rest.tedee.base-url=" + TedeeCallbackRegistrationTest.BASE_URL,
       "sanmibuh.rest.tedee.api-key=secret",
+      "sanmibuh.rest.tedee.callback-secret=" + TedeeCallbackRegistrationTest.CALLBACK_SECRET,
       "sanmibuh.rest.tedee.retry.max-retries=0",
       "sanmibuh.rest.tedee.retry.initial-interval=1",
       "sanmibuh.rest.tedee.retry.multiplier=1",
@@ -47,6 +50,7 @@ class TedeeCallbackRegistrationTest {
   private static final String CALLBACK_ENDPOINT = BASE_URL + "/callback";
   private static final String PUBLIC_URL = "http://automation.local:8080";
   private static final String CALLBACK_URL = PUBLIC_URL + "/tedee/events";
+  static final String CALLBACK_SECRET = "callback-secret";
   private static final String FOREIGN_CALLBACK_URL = "http://other-system.local/hook";
   private static final int FOREIGN_ID = 1;
   private static final int EXISTING_ID = 5;
@@ -60,6 +64,8 @@ class TedeeCallbackRegistrationTest {
 
   @MockitoBean private Clock clock;
 
+  @Autowired private TedeeProperties tedeeProperties;
+
   @InjectSoftAssertions private BDDSoftAssertions softly;
 
   @SuppressWarnings("NullAway.Init")
@@ -67,7 +73,9 @@ class TedeeCallbackRegistrationTest {
 
   @BeforeEach
   void setUp() {
-    sut = new TedeeCallbackRegistration(callbackApi, new ServerProperties(PUBLIC_URL));
+    sut =
+        new TedeeCallbackRegistration(
+            callbackApi, new ServerProperties(PUBLIC_URL), tedeeProperties);
   }
 
   @Test
@@ -82,7 +90,9 @@ class TedeeCallbackRegistrationTest {
 
   @Test
   void should_registerCallbackWithoutDoubleSlash_whenPublicUrlEndsWithSlash() {
-    sut = new TedeeCallbackRegistration(callbackApi, new ServerProperties(PUBLIC_URL + "/"));
+    sut =
+        new TedeeCallbackRegistration(
+            callbackApi, new ServerProperties(PUBLIC_URL + "/"), tedeeProperties);
     expectListedCallbacks(callbacks());
     expectRegisteredCallback();
 
@@ -201,6 +211,9 @@ class TedeeCallbackRegistrationTest {
         .andExpect(method(HttpMethod.POST))
         .andExpect(jsonPath("$.url").value(CALLBACK_URL))
         .andExpect(jsonPath("$.method").value("POST"))
+        .andExpect(
+            jsonPath("$.headers[0].header_name")
+                .value("X-Tedee-Callback-Secret: " + CALLBACK_SECRET))
         .andRespond(withSuccess(REGISTERED_RESPONSE, MediaType.APPLICATION_JSON));
   }
 

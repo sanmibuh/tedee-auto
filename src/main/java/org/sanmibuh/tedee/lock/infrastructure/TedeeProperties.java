@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.lock.infrastructure;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;
@@ -12,7 +12,10 @@ import org.springframework.validation.annotation.Validated;
 @Validated
 @ConfigurationProperties(prefix = "sanmibuh.rest.tedee")
 public record TedeeProperties(
-    @NotBlank String baseUrl, @NotBlank String apiKey, @Valid @NotNull Retry retry) {
+    @NotBlank String baseUrl,
+    @NotBlank String apiKey,
+    @NotBlank String callbackSecret,
+    @Valid @NotNull Retry retry) {
 
   public record Retry(
       @PositiveOrZero int maxRetries,
