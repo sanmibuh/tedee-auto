@@ -1,6 +1,7 @@
 package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -10,6 +11,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import com.tedee.bridge.client.api.CallbackApi;
 import java.time.Clock;
+import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -170,8 +172,11 @@ class TedeeCallbackRegistrationTest {
         .andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
 
-    softly.thenCode(sut::start).doesNotThrowAnyException();
-    softly.then(sut.isRunning()).isFalse();
+    try (final var logCaptor = LogCaptor.forClass(TedeeCallbackRegistration.class)) {
+      softly.thenCode(sut::start).doesNotThrowAnyException();
+      softly.then(sut.isRunning()).isFalse();
+      softly.then(logCaptor.getWarnLogs()).singleElement(STRING).contains(CALLBACK_URL);
+    }
   }
 
   @Test
@@ -183,8 +188,11 @@ class TedeeCallbackRegistrationTest {
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
     sut.start();
 
-    softly.thenCode(sut::stop).doesNotThrowAnyException();
-    softly.then(sut.isRunning()).isFalse();
+    try (final var logCaptor = LogCaptor.forClass(TedeeCallbackRegistration.class)) {
+      softly.thenCode(sut::stop).doesNotThrowAnyException();
+      softly.then(sut.isRunning()).isFalse();
+      softly.then(logCaptor.getWarnLogs()).singleElement(STRING).contains(CALLBACK_URL);
+    }
   }
 
   private void expectRegisteredCallback() {
