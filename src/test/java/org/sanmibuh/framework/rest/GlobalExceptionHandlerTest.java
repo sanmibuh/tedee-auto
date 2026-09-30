@@ -3,6 +3,7 @@ package org.sanmibuh.framework.rest;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
+import com.tedee.bridge.client.api.CallbackApi;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -13,6 +14,7 @@ import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Answers;
 import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainException;
@@ -25,16 +27,21 @@ import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
-    classes = {TedeeAutomationApplication.class, GlobalExceptionHandlerTest.StubController.class})
+    classes = {TedeeAutomationApplication.class, GlobalExceptionHandlerTest.StubController.class},
+    properties = "sanmibuh.server.public-url=http://automation.local:8080")
 @ExtendWith(SoftAssertionsExtension.class)
 class GlobalExceptionHandlerTest {
 
   @LocalServerPort private int port;
+
+  @MockitoBean(answers = Answers.RETURNS_MOCKS)
+  private CallbackApi callbackApi;
 
   @InjectSoftAssertions private BDDSoftAssertions softly;
 

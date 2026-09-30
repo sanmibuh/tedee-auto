@@ -32,4 +32,13 @@ class TedeeClientConfigurationTest {
 
     then(lockApi.getApiClient()).isSameAs(apiClient);
   }
+
+  @Test
+  void should_createCallbackApi_whenApiClientIsProvided() {
+    final var apiClient = new ApiClient();
+
+    final var callbackApi = sut.callbackApi(apiClient);
+
+    then(callbackApi.getApiClient()).isSameAs(apiClient);
+  }
 }

@@ -1,6 +1,7 @@
 package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import com.tedee.bridge.client.ApiClient;
+import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.api.LockApi;
 import java.time.Clock;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
@@ -24,6 +25,11 @@ public class TedeeClientConfiguration {
     final var apiClient = new ApiClient(builder.requestInterceptor(interceptor).build());
     apiClient.setBasePath(properties.baseUrl());
     return apiClient;
+  }
+
+  @Bean
+  CallbackApi callbackApi(final ApiClient apiClient) {
+    return new CallbackApi(apiClient);
   }
 
   @Bean
