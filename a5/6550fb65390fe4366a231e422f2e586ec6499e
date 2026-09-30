@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/ddd/domain/AggregateRoot.java
+  s_5c67868f43c704::t_362242709e8410 30-31,33-35,37
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a56550fb65390fe4366a231e422f2e586ec6499e",
+  "prompts": {},
+  "sessions": {
+    "s_5c67868f43c704": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0d408721ffeR1xg3iWdIyBIdh",
+        "model": "claude-opus-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
