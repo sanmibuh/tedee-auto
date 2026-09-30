@@ -2,6 +2,7 @@ package org.sanmibuh.tedee.lock.infrastructure.primary;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.jspecify.annotations.Nullable;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeWebhookEndpoint;
@@ -31,7 +32,7 @@ final class TedeeEventController {
   @ResponseStatus(HttpStatus.NO_CONTENT)
   void receive(
       @RequestHeader(value = TedeeWebhookEndpoint.CALLBACK_SECRET_HEADER, required = false)
-          final String callbackSecret,
+          final @Nullable String callbackSecret,
       @RequestBody final TedeeEvent event) {
     if (callbackSecret == null) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);

@@ -40,6 +40,19 @@ class TedeeEventControllerTest {
 
   @Test
   @SneakyThrows
+  void should_rejectEventWithoutDispatching_whenCallbackSecretIsIncorrect() {
+    sut.perform(
+            post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, "incorrect-secret")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{}"))
+        .andExpect(status().isUnauthorized());
+
+    verifyNoInteractions(commandBus);
+  }
+
+  @Test
+  @SneakyThrows
   void should_dispatchReportLockStatusCommand_whenLockStatusChanged() {
     sut.perform(
             post(EVENTS_PATH)
