@@ -47,6 +47,7 @@ class TedeeCallbackRegistrationTest {
   private static final String CALLBACK_ENDPOINT = BASE_URL + "/callback";
   private static final String PUBLIC_URL = "http://automation.local:8080";
   private static final String CALLBACK_URL = PUBLIC_URL + "/tedee/events";
+  private static final String CALLBACK_SECRET = "callback-secret";
   private static final String FOREIGN_CALLBACK_URL = "http://other-system.local/hook";
   private static final int FOREIGN_ID = 1;
   private static final int EXISTING_ID = 5;
@@ -201,6 +202,7 @@ class TedeeCallbackRegistrationTest {
         .andExpect(method(HttpMethod.POST))
         .andExpect(jsonPath("$.url").value(CALLBACK_URL))
         .andExpect(jsonPath("$.method").value("POST"))
+        .andExpect(jsonPath("$.headers.X-Tedee-Callback-Secret").value(CALLBACK_SECRET))
         .andRespond(withSuccess(REGISTERED_RESPONSE, MediaType.APPLICATION_JSON));
   }
 
