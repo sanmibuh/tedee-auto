@@ -3,6 +3,7 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
+import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;

@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.lock.infrastructure;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.AssertTrue;

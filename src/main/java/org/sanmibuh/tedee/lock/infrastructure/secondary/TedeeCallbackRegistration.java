@@ -10,6 +10,7 @@ import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
+import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeWebhookEndpoint;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;

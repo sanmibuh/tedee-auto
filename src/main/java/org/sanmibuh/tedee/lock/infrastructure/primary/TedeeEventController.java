@@ -1,10 +1,13 @@
 package org.sanmibuh.tedee.lock.infrastructure.primary;
 
+import java.nio.charset.StandardCharsets;
+import java.security.MessageDigest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
+import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeWebhookEndpoint;
 import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.http.HttpStatus;
@@ -27,6 +30,7 @@ final class TedeeEventController {
 
   private final CommandBus commandBus;
   private final JsonMapper jsonMapper;
+  private final TedeeProperties tedeeProperties;
 
   @PostMapping(TedeeWebhookEndpoint.EVENTS_PATH)
   @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -34,7 +38,7 @@ final class TedeeEventController {
       @RequestHeader(value = TedeeWebhookEndpoint.CALLBACK_SECRET_HEADER, required = false)
           final @Nullable String callbackSecret,
       @RequestBody final TedeeEvent event) {
-    if (callbackSecret == null) {
+    if (!isCallbackSecretValid(callbackSecret)) {
       throw new ResponseStatusException(HttpStatus.UNAUTHORIZED);
     }
     if (LOCK_STATUS_CHANGED.equals(event.event())) {
@@ -45,6 +49,13 @@ final class TedeeEventController {
     } else {
       log.warn("Ignoring unknown Tedee Bridge event {}", event.event());
     }
+  }
+
+  private boolean isCallbackSecretValid(final @Nullable String callbackSecret) {
+    return callbackSecret != null
+        && MessageDigest.isEqual(
+            tedeeProperties.callbackSecret().getBytes(StandardCharsets.UTF_8),
+            callbackSecret.getBytes(StandardCharsets.UTF_8));
   }
 
   record TedeeEvent(String event, JsonNode data) {}
