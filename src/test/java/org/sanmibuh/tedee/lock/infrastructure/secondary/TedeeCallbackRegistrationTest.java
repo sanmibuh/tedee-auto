@@ -36,6 +36,7 @@ class TedeeCallbackRegistrationTest {
   private static final String CALLBACK_ENDPOINT = BASE_URL + "/callback";
   private static final String PUBLIC_URL = "http://automation.local:8080";
   private static final String CALLBACK_URL = PUBLIC_URL + "/tedee/events";
+  private static final String FOREIGN_CALLBACK_URL = "http://other-system.local/hook";
   private static final String REGISTERED_RESPONSE = "{\"id\": 7}";
 
   @Autowired private CallbackApi callbackApi;
@@ -53,7 +54,8 @@ class TedeeCallbackRegistrationTest {
   }
 
   @Test
-  void should_postCallbackToBridge_whenStarted() {
+  void should_postCallbackToBridge_whenNoCallbackMatchesOurUrl() {
+    expectListedCallbacks("[" + callback(1, FOREIGN_CALLBACK_URL) + "]");
     server
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.POST))
@@ -64,5 +66,28 @@ class TedeeCallbackRegistrationTest {
     sut.start();
 
     server.verify();
+  }
+
+  @Test
+  void should_notPostCallback_whenCallbackAlreadyMatchesOurUrl() {
+    expectListedCallbacks(
+        "[" + callback(1, FOREIGN_CALLBACK_URL) + "," + callback(7, CALLBACK_URL) + "]");
+
+    sut.start();
+
+    server.verify();
+  }
+
+  private void expectListedCallbacks(final String callbacks) {
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withSuccess(callbacks, MediaType.APPLICATION_JSON));
+  }
+
+  private static String callback(final int id, final String url) {
+    return """
+        {"id": %d, "url": "%s", "method": "POST", "headers": []}"""
+        .formatted(id, url);
   }
 }
