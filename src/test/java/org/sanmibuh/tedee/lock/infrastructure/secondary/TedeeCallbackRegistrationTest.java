@@ -3,6 +3,7 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import com.tedee.bridge.client.api.CallbackApi;
@@ -72,6 +73,26 @@ class TedeeCallbackRegistrationTest {
   void should_notPostCallback_whenCallbackAlreadyMatchesOurUrl() {
     expectListedCallbacks(
         "[" + callback(1, FOREIGN_CALLBACK_URL) + "," + callback(7, CALLBACK_URL) + "]");
+
+    sut.start();
+
+    server.verify();
+  }
+
+  @Test
+  void should_deleteDuplicateCallbacks_whenSeveralMatchOurUrl() {
+    expectListedCallbacks(
+        "["
+            + callback(1, FOREIGN_CALLBACK_URL)
+            + ","
+            + callback(7, CALLBACK_URL)
+            + ","
+            + callback(9, CALLBACK_URL)
+            + "]");
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT + "/9"))
+        .andExpect(method(HttpMethod.DELETE))
+        .andRespond(withNoContent());
 
     sut.start();
 
