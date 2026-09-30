@@ -144,6 +144,17 @@ class TedeeCallbackRegistrationTest {
     then(sut.isRunning()).isTrue();
   }
 
+  @Test
+  void should_reportNotRunning_whenStopped() {
+    expectListedCallbacks("[" + callback(EXISTING_ID, CALLBACK_URL) + "]");
+    expectDeletedCallback(EXISTING_ID);
+    sut.start();
+
+    sut.stop();
+
+    then(sut.isRunning()).isFalse();
+  }
+
   private void expectDeletedCallback(final int id) {
     server
         .expect(requestTo(CALLBACK_ENDPOINT + "/" + id))
