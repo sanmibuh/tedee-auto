@@ -19,9 +19,7 @@ public final class Lock extends AggregateRoot<LockId> {
     recordEvent(new LockRequested(id().value()));
   }
 
-  public void reportStatus(final int state) {
-    if (state == 6) {
-      recordEvent(new LockStateChanged(id().value(), LockState.CLOSED));
-    }
+  public void reportStatus(final LockState state) {
+    recordEvent(new LockStateChanged(id().value(), state));
   }
 }

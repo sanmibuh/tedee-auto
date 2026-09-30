@@ -5,6 +5,7 @@ import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
+import org.sanmibuh.tedee.lock.domain.LockState;
 
 @RequiredArgsConstructor
 public final class ReportLockStatusHandler extends CommandHandler<ReportLockStatusCommand, Lock> {
@@ -14,7 +15,7 @@ public final class ReportLockStatusHandler extends CommandHandler<ReportLockStat
   @Override
   protected Lock execute(final ReportLockStatusCommand command) {
     final var lock = repository.get(new LockId(command.deviceId()));
-    lock.reportStatus(command.state());
+    lock.reportStatus(LockState.fromBridgeCode(command.state()));
     repository.save(lock);
 
     return lock;
