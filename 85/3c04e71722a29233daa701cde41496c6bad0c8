@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeEventRuntimeHints.java
+  h_97a91c9e567f87 1-11
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeEventRuntimeHintsTest.java
+  h_97a91c9e567f87 1-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "853c04e71722a29233daa701cde41496c6bad0c8",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
