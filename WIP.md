@@ -12,7 +12,7 @@
 
 ## Steps
 1. ~~RED/GREEN: `start()` posts `{url, method: POST}` to `/callback`.~~
-2. RED/GREEN: `start()` lists callbacks first and posts only when none matches our URL (adjust step 1 test; add "already registered → no POST").
+2. ~~RED/GREEN: `start()` lists callbacks first and posts only when none matches our URL (adjust step 1 test; add "already registered → no POST").~~
 3. RED/GREEN: `start()` deletes duplicate entries matching our URL.
 4. RED/GREEN: `stop()` deletes `/callback/{id}` with the kept id (posted or reused).
 5. RED/GREEN: `stop()` does nothing when not registered; `isRunning()` reflects state.

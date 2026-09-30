@@ -17,10 +17,14 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   @Override
   public void start() {
-    callbackApi.postSingleCallback(
-        new CallbackDetailsNoId()
-            .url(serverProperties.publicUrl() + CALLBACK_PATH)
-            .method(HttpMethod.POST.name()));
+    final var callbackUrl = serverProperties.publicUrl() + CALLBACK_PATH;
+    final var alreadyRegistered =
+        callbackApi.getCallback().stream()
+            .anyMatch(callback -> callbackUrl.equals(callback.getUrl()));
+    if (!alreadyRegistered) {
+      callbackApi.postSingleCallback(
+          new CallbackDetailsNoId().url(callbackUrl).method(HttpMethod.POST.name()));
+    }
   }
 
   @Override
