@@ -33,19 +33,19 @@ class TedeeEventControllerTest {
                     """
                     {
                       "event": "lock-status-changed",
-                      "timestamp": "2026-09-30T10:15:30.123Z",
+                      "timestamp": "2023-07-25T14:41:48.825Z",
                       "data": {
                         "deviceType": 2,
                         "deviceId": 33819,
                         "serialNumber": "19420103-000006",
                         "state": 6,
-                        "jammed": 1,
+                        "jammed": 0,
                         "doorState": 2
                       }
                     }
                     """))
         .andExpect(status().isNoContent());
 
-    verify(commandBus).dispatch(new ReportLockStatusCommand(33819, 6, true, 2));
+    verify(commandBus).dispatch(new ReportLockStatusCommand(33819, 6, 0, 2));
   }
 }

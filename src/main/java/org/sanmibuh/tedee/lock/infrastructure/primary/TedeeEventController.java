@@ -13,8 +13,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 final class TedeeEventController {
 
-  private static final int JAMMED = 1;
-
   private final CommandBus commandBus;
 
   @PostMapping("/tedee/events")
@@ -23,7 +21,7 @@ final class TedeeEventController {
     final var data = event.data();
     commandBus.dispatch(
         new ReportLockStatusCommand(
-            data.deviceId(), data.state(), data.jammed() == JAMMED, data.doorState()));
+            data.deviceId(), data.state(), data.jammed(), data.doorState()));
   }
 
   record TedeeEvent(String event, Data data) {
