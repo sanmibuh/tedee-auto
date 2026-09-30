@@ -1,0 +1,17 @@
+WIP.md
+  h_97a91c9e567f87 1,5-6,8,14-15,17-23
+  h_97a91c9e567f87 11,16
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistration.java
+  h_97a91c9e567f87 4,8,13-14,19-24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2a73e131d6eca61d26f297104d82c2ea68966aa5",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
