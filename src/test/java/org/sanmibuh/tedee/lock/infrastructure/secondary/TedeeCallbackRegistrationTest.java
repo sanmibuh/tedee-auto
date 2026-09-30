@@ -79,6 +79,17 @@ class TedeeCallbackRegistrationTest {
   }
 
   @Test
+  void should_registerCallbackWithoutDoubleSlash_whenPublicUrlEndsWithSlash() {
+    sut = new TedeeCallbackRegistration(callbackApi, new ServerProperties(PUBLIC_URL + "/"));
+    expectListedCallbacks(callbacks());
+    expectRegisteredCallback();
+
+    sut.start();
+
+    server.verify();
+  }
+
+  @Test
   void should_notPostCallback_whenCallbackAlreadyMatchesOurUrl() {
     expectListedCallbacks(
         callbacks(callback(FOREIGN_ID, FOREIGN_CALLBACK_URL), callback(EXISTING_ID, CALLBACK_URL)));
