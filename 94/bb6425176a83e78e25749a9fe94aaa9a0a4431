@@ -1,0 +1,18 @@
+src/main/java/org/sanmibuh/tedee/lock/application/ReportLockStatusHandler.java
+  h_97a91c9e567f87 8,18
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  h_97a91c9e567f87 22-23
+src/main/java/org/sanmibuh/tedee/lock/domain/LockState.java
+  h_97a91c9e567f87 14-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "94bb6425176a83e78e25749a9fe94aaa9a0a4431",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
