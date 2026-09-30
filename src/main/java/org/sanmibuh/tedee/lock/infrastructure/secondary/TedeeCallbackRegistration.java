@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
@@ -18,17 +19,21 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   private final CallbackApi callbackApi;
   private final ServerProperties serverProperties;
+  private int registeredId;
 
   @Override
   public void start() {
-    if (keepSingleExistingCallback().isEmpty()) {
-      register();
-    }
+    registeredId =
+        keepSingleExistingCallback()
+            .map(callback -> toId(callback.getId()))
+            .orElseGet(this::register);
   }
 
   private Optional<CallbackDetails> keepSingleExistingCallback() {
     final var ourCallbacks = callbacksMatching(callbackUrl());
-    ourCallbacks.stream().skip(1).forEach(duplicate -> callbackApi.deleteCallback(idOf(duplicate)));
+    ourCallbacks.stream()
+        .skip(1)
+        .forEach(duplicate -> callbackApi.deleteCallback(toId(duplicate.getId())));
     return ourCallbacks.stream().findFirst();
   }
 
@@ -42,17 +47,21 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
         .toList();
   }
 
-  private void register() {
-    callbackApi.postSingleCallback(
-        new CallbackDetailsNoId().url(callbackUrl()).method(HttpMethod.POST.name()));
+  private int register() {
+    final var registered =
+        callbackApi.postSingleCallback(
+            new CallbackDetailsNoId().url(callbackUrl()).method(HttpMethod.POST.name()));
+    return toId(registered.getId());
   }
 
-  private int idOf(final CallbackDetails callback) {
-    return Math.toIntExact(Objects.requireNonNull(callback.getId()));
+  private static int toId(final @Nullable Long id) {
+    return Math.toIntExact(Objects.requireNonNull(id));
   }
 
   @Override
-  public void stop() {}
+  public void stop() {
+    callbackApi.deleteCallback(registeredId);
+  }
 
   @Override
   public boolean isRunning() {

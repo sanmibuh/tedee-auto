@@ -15,7 +15,7 @@
 2. ~~RED/GREEN: `start()` lists callbacks first and posts only when none matches our URL (adjust step 1 test; add "already registered → no POST").~~
 3. ~~RED/GREEN: `start()` deletes duplicate entries matching our URL.~~
 3b. ~~REFACTOR: extract `ourCallbacks(...)` lookup (and callback URL) into private methods.~~
-4. RED/GREEN: `stop()` deletes `/callback/{id}` with the kept id (posted or reused).
+4. ~~RED/GREEN: `stop()` deletes `/callback/{id}` with the kept id (posted or reused).~~
 5. RED/GREEN: `stop()` does nothing when not registered; `isRunning()` reflects state.
 6. RED/GREEN: `start()` logs WARN and does not throw when the bridge fails.
 7. RED/GREEN: `ServerProperties` validation (blank/missing `public-url` fails startup) + wiring as `@Component` + `application.yml`.
