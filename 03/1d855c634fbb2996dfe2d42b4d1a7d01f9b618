@@ -1,0 +1,16 @@
+WIP.md
+  h_97a91c9e567f87 21-22
+src/main/java/org/sanmibuh/tedee/ServerProperties.java
+  h_97a91c9e567f87 3,5,7,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "031d855c634fbb2996dfe2d42b4d1a7d01f9b618",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
