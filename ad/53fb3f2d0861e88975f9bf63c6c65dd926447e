@@ -1,0 +1,21 @@
+pom.xml
+  s_5c67868f43c704::t_319d3f390c829c 28,100-109,244-246
+src/test/java/org/sanmibuh/framework/rest/GlobalExceptionHandlerTest.java
+  s_5c67868f43c704::t_15a26b171f1233 6,17,30,36-37,43-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ad53fb3f2d0861e88975f9bf63c6c65dd926447e",
+  "prompts": {},
+  "sessions": {
+    "s_5c67868f43c704": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0d408721ffeR1xg3iWdIyBIdh",
+        "model": "claude-opus-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
