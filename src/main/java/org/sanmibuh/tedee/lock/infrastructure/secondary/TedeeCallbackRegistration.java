@@ -13,6 +13,7 @@ import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.util.UriComponentsBuilder;
 
 @Slf4j
 @Component
@@ -27,7 +28,10 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   TedeeCallbackRegistration(
       final CallbackApi callbackApi, final ServerProperties serverProperties) {
     this.callbackApi = callbackApi;
-    callbackUrl = serverProperties.publicUrl() + CALLBACK_PATH;
+    callbackUrl =
+        UriComponentsBuilder.fromUriString(serverProperties.publicUrl())
+            .path(CALLBACK_PATH)
+            .toUriString();
   }
 
   @Override
