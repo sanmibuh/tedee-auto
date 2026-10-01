@@ -9,6 +9,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.domain.IntegrationException;
+import org.sanmibuh.ddd.domain.TransientIntegrationException;
 import org.sanmibuh.framework.notifier.Notifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
@@ -58,6 +59,18 @@ class TelegramNotifierTest {
         .andRespond(withStatus(HttpStatus.BAD_REQUEST));
 
     thenThrownBy(() -> sut.notify(MESSAGE)).isInstanceOf(IntegrationException.class);
+
+    server.verify();
+  }
+
+  @Test
+  void should_translateToTransientIntegrationException_whenTelegramIsUnavailable() {
+    server
+        .expect(requestTo(SEND_MESSAGE_URL))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+    thenThrownBy(() -> sut.notify(MESSAGE)).isInstanceOf(TransientIntegrationException.class);
 
     server.verify();
   }
