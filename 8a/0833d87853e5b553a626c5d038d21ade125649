@@ -1,0 +1,14 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/LockJamStatus.java
+  h_97a91c9e567f87 19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8a0833d87853e5b553a626c5d038d21ade125649",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
