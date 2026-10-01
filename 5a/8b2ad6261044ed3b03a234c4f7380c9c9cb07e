@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockStatusHandlerTest.java
+  s_c50288899c5db9::t_902a63f9ce084d 3,12,23,89-97
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5a8b2ad6261044ed3b03a234c4f7380c9c9cb07e",
+  "prompts": {},
+  "sessions": {
+    "s_c50288899c5db9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0bb2f70affeUG3gyU0Ic1MY9E",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
