@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramNotifier.java
+  h_97a91c9e567f87 16
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramProperties.java
+  h_97a91c9e567f87 9-10
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "942e80ee64826ed2b067a791e8b918c1e997ba0b",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
