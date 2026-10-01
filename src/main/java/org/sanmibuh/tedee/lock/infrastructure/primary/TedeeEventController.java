@@ -9,6 +9,7 @@ import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.springframework.context.annotation.ImportRuntimeHints;
+import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -32,17 +33,18 @@ final class TedeeEventController {
   void receive(@RequestBody final TedeeEvent event) {
     if (LOCK_STATUS_CHANGED.equals(event.event())) {
       final var data = jsonMapper.treeToValue(event.data(), LockStatusChangedData.class);
-      try {
-        commandBus.dispatch(
-            new ReportLockStatusCommand(
-                data.deviceId(), data.state(), data.jammed(), data.doorState()));
-      } catch (final DomainException exception) {
-        log.warn(
-            "Ignoring rejected Tedee Bridge event {}: {}", event.event(), exception.getMessage());
-      }
+      commandBus.dispatch(
+          new ReportLockStatusCommand(
+              data.deviceId(), data.state(), data.jammed(), data.doorState()));
     } else {
       log.warn("Ignoring unknown Tedee Bridge event {}", event.event());
     }
+  }
+
+  @ExceptionHandler(DomainException.class)
+  @ResponseStatus(NO_CONTENT)
+  void handleDomainException(final DomainException exception) {
+    log.warn("Ignoring rejected Tedee Bridge event: {}", exception.getMessage());
   }
 
   record TedeeEvent(String event, JsonNode data) {}
