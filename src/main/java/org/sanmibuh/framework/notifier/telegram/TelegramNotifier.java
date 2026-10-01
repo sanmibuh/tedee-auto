@@ -1,14 +1,13 @@
 package org.sanmibuh.framework.notifier.telegram;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
-import org.sanmibuh.framework.notifier.Notifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
 @Component
-final class TelegramNotifier implements Notifier {
+final class TelegramNotifier implements TelegramGateway {
 
   private final TelegramProperties properties;
   private final RestClient client;

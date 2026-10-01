@@ -1,6 +1,7 @@
 package org.sanmibuh.framework.notifier.telegram;
 
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
+import static org.springframework.test.web.client.ExpectedCount.times;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -22,7 +23,6 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
-import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 @RestClientTest(TelegramNotifier.class)
@@ -70,21 +70,9 @@ class TelegramNotifierTest {
   }
 
   @Test
-  void should_translateToTransientIntegrationException_whenTelegramIsUnavailable() {
-    server
-        .expect(requestTo(SEND_MESSAGE_URL))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
-
-    thenThrownBy(() -> sut.notify(MESSAGE)).isInstanceOf(TransientIntegrationException.class);
-
-    server.verify();
-  }
-
-  @Test
   void should_retryTransientFailure_whenTelegramIsUnavailable() {
     server
-        .expect(ExpectedCount.times(RETRY_ATTEMPTS), requestTo(SEND_MESSAGE_URL))
+        .expect(times(RETRY_ATTEMPTS), requestTo(SEND_MESSAGE_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
 
@@ -94,11 +82,11 @@ class TelegramNotifierTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {500, 502, 504})
+  @ValueSource(ints = {500, 502, 503, 504})
   void should_translateToTransientIntegrationException_whenTelegramRespondsWithServerError(
       final int statusCode) {
     server
-        .expect(requestTo(SEND_MESSAGE_URL))
+        .expect(times(RETRY_ATTEMPTS), requestTo(SEND_MESSAGE_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(HttpStatus.valueOf(statusCode)));
 
@@ -110,7 +98,7 @@ class TelegramNotifierTest {
   @Test
   void should_translateToTransientIntegrationException_whenTelegramIsUnreachable() {
     server
-        .expect(requestTo(SEND_MESSAGE_URL))
+        .expect(times(RETRY_ATTEMPTS), requestTo(SEND_MESSAGE_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withException(new IOException("Telegram unreachable")));
 
