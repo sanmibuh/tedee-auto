@@ -25,14 +25,16 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.client.MockRestServiceServer;
 
-@RestClientTest(TelegramNotifier.class)
-@Import({TelegramNotificationConfiguration.class, TelegramNotifier.class})
+@RestClientTest
+@Import(TelegramNotificationConfiguration.class)
 @ContextConfiguration(classes = TelegramNotificationConfiguration.class)
 @TestPropertySource(
     properties = {
       "sanmibuh.notification.telegram.base-url=http://telegram.local",
       "sanmibuh.notification.telegram.bot-token=bot-token",
-      "sanmibuh.notification.telegram.chat-id=chat-id"
+      "sanmibuh.notification.telegram.chat-id=chat-id",
+      "sanmibuh.notification.telegram.retry.max-retries=2",
+      "sanmibuh.notification.telegram.retry.delay=1"
     })
 class TelegramNotifierTest {
 
@@ -64,7 +66,10 @@ class TelegramNotifierTest {
         .andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(HttpStatus.BAD_REQUEST));
 
-    thenThrownBy(() -> sut.notify(MESSAGE)).isInstanceOf(IntegrationException.class);
+    thenThrownBy(() -> sut.notify(MESSAGE))
+        .isInstanceOf(IntegrationException.class)
+        .hasCauseInstanceOf(IllegalStateException.class)
+        .hasRootCauseMessage("Telegram request failed");
 
     server.verify();
   }
@@ -82,7 +87,7 @@ class TelegramNotifierTest {
   }
 
   @ParameterizedTest
-  @ValueSource(ints = {500, 502, 503, 504})
+  @ValueSource(ints = {429, 500, 502, 503, 504})
   void should_translateToTransientIntegrationException_whenTelegramRespondsWithServerError(
       final int statusCode) {
     server

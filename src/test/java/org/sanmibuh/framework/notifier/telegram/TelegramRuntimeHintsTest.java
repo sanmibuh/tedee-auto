@@ -19,7 +19,22 @@ class TelegramRuntimeHintsTest {
 
     then(RuntimeHintsPredicates.reflection()
             .onType(TelegramMessageRequest.class)
-            .withMemberCategories(MemberCategory.INVOKE_DECLARED_CONSTRUCTORS)
+            .withMemberCategories(
+                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS, MemberCategory.INVOKE_PUBLIC_METHODS)
+            .test(hints))
+        .isTrue();
+  }
+
+  @Test
+  void should_registerTelegramPropertiesForValidation_whenCalled() {
+    final var hints = new RuntimeHints();
+
+    sut.registerHints(hints, getClass().getClassLoader());
+
+    then(RuntimeHintsPredicates.reflection()
+            .onType(TelegramProperties.class)
+            .withMemberCategories(
+                MemberCategory.ACCESS_DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_METHODS)
             .test(hints))
         .isTrue();
   }

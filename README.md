@@ -131,9 +131,9 @@ sanmibuh:
       bot-token: <telegram-bot-token>
       chat-id: <telegram-chat-id>
       retry:
-        # Two retries after the initial attempt, with a one-millisecond test-friendly delay.
+        # Two retries after the initial attempt, each delayed by 500 milliseconds.
         max-retries: 2
-        delay: 1
+        delay: 500
   rest:
     tedee:
       base-url: http://<tedee-bridge-ip>/v1.0
