@@ -16,6 +16,6 @@ public enum LockJamStatus {
         return status;
       }
     }
-    throw new IllegalArgumentException("Unknown lock jam status: " + bridgeCode);
+    throw new InvalidLockJamStatusException(bridgeCode);
   }
 }
