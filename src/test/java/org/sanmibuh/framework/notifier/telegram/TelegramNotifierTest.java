@@ -22,6 +22,7 @@ import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
+import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 
 @RestClientTest(TelegramNotifier.class)
@@ -36,6 +37,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
 class TelegramNotifierTest {
 
   private static final String MESSAGE = "Lock closed";
+  private static final int RETRY_ATTEMPTS = 3;
   private static final String SEND_MESSAGE_URL = "http://telegram.local/botbot-token/sendMessage";
 
   @Autowired private Notifier sut;
@@ -71,6 +73,18 @@ class TelegramNotifierTest {
   void should_translateToTransientIntegrationException_whenTelegramIsUnavailable() {
     server
         .expect(requestTo(SEND_MESSAGE_URL))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+    thenThrownBy(() -> sut.notify(MESSAGE)).isInstanceOf(TransientIntegrationException.class);
+
+    server.verify();
+  }
+
+  @Test
+  void should_retryTransientFailure_whenTelegramIsUnavailable() {
+    server
+        .expect(ExpectedCount.times(RETRY_ATTEMPTS), requestTo(SEND_MESSAGE_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
 
