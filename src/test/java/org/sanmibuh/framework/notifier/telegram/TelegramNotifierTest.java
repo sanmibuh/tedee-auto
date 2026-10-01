@@ -34,7 +34,9 @@ import org.springframework.test.web.client.MockRestServiceServer;
       "sanmibuh.notification.telegram.bot-token=bot-token",
       "sanmibuh.notification.telegram.chat-id=chat-id",
       "sanmibuh.notification.telegram.retry.max-retries=2",
-      "sanmibuh.notification.telegram.retry.delay=1"
+      "sanmibuh.notification.telegram.retry.initial-interval=1",
+      "sanmibuh.notification.telegram.retry.multiplier=1",
+      "sanmibuh.notification.telegram.retry.max-interval=1"
     })
 class TelegramNotifierTest {
 

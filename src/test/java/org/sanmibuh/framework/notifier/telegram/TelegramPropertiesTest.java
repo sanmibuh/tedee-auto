@@ -44,12 +44,26 @@ class TelegramPropertiesTest {
                 })),
         Arguments.of(
             Named.of(
-                "max-retries is not positive",
-                properties("sanmibuh.notification.telegram.retry.max-retries=0"))),
+                "max-retries is negative",
+                properties("sanmibuh.notification.telegram.retry.max-retries=-1"))),
         Arguments.of(
             Named.of(
-                "delay is not positive",
-                properties("sanmibuh.notification.telegram.retry.delay=0"))),
+                "initial-interval is not positive",
+                properties("sanmibuh.notification.telegram.retry.initial-interval=0"))),
+        Arguments.of(
+            Named.of(
+                "multiplier is below one",
+                properties("sanmibuh.notification.telegram.retry.multiplier=0.5"))),
+        Arguments.of(
+            Named.of(
+                "max-interval is not positive",
+                properties("sanmibuh.notification.telegram.retry.max-interval=0"))),
+        Arguments.of(
+            Named.of(
+                "initial-interval exceeds max-interval",
+                properties(
+                    "sanmibuh.notification.telegram.retry.initial-interval=5001",
+                    "sanmibuh.notification.telegram.retry.max-interval=5000"))),
         Arguments.of(
             Named.of(
                 "base-url is missing",
@@ -109,7 +123,9 @@ class TelegramPropertiesTest {
                     "sanmibuh.notification.telegram.bot-token=bot-token",
                     "sanmibuh.notification.telegram.chat-id=chat-id",
                     "sanmibuh.notification.telegram.retry.max-retries=2",
-                    "sanmibuh.notification.telegram.retry.delay=500"),
+                    "sanmibuh.notification.telegram.retry.initial-interval=500",
+                    "sanmibuh.notification.telegram.retry.multiplier=2.0",
+                    "sanmibuh.notification.telegram.retry.max-interval=5000"),
                 Stream.of(overrides))
             .toList();
     return properties.toArray(String[]::new);

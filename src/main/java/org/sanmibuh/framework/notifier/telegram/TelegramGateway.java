@@ -10,6 +10,8 @@ interface TelegramGateway extends Notifier {
   @Retryable(
       includes = TransientIntegrationException.class,
       maxRetriesString = "${sanmibuh.notification.telegram.retry.max-retries}",
-      delayString = "${sanmibuh.notification.telegram.retry.delay}")
+      delayString = "${sanmibuh.notification.telegram.retry.initial-interval}",
+      multiplierString = "${sanmibuh.notification.telegram.retry.multiplier}",
+      maxDelayString = "${sanmibuh.notification.telegram.retry.max-interval}")
   void notify(String message);
 }
