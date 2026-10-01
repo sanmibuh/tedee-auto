@@ -1,6 +1,5 @@
 package org.sanmibuh.framework.notifier.telegram;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
@@ -23,7 +22,7 @@ final class TelegramNotifier implements TelegramGateway {
       client
           .post()
           .uri("/sendMessage")
-          .body(new TelegramMessage(properties.chatId(), message))
+          .body(new TelegramMessageRequest(properties.chatId(), message))
           .retrieve()
           .toBodilessEntity();
     } catch (final RestClientResponseException exception) {
@@ -35,6 +34,4 @@ final class TelegramNotifier implements TelegramGateway {
       throw new TelegramTemporarilyUnavailableException(exception);
     }
   }
-
-  private record TelegramMessage(@JsonProperty("chat_id") String chatId, String text) {}
 }
