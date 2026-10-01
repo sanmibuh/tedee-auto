@@ -5,6 +5,7 @@ import org.sanmibuh.framework.notifier.Notifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
 
 @Component
 final class TelegramNotifier implements Notifier {
@@ -26,8 +27,13 @@ final class TelegramNotifier implements Notifier {
           .body(new TelegramMessage(properties.chatId(), message))
           .retrieve()
           .toBodilessEntity();
-    } catch (final RestClientException exception) {
+    } catch (final RestClientResponseException exception) {
+      if (exception.getStatusCode().is5xxServerError()) {
+        throw new TelegramTemporarilyUnavailableException(exception);
+      }
       throw new TelegramNotificationFailedException(exception);
+    } catch (final RestClientException exception) {
+      throw new TelegramTemporarilyUnavailableException(exception);
     }
   }
 
