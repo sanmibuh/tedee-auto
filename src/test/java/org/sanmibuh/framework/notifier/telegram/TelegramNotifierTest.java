@@ -66,10 +66,7 @@ class TelegramNotifierTest {
         .andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(HttpStatus.BAD_REQUEST));
 
-    thenThrownBy(() -> sut.notify(MESSAGE))
-        .isInstanceOf(IntegrationException.class)
-        .hasCauseInstanceOf(IllegalStateException.class)
-        .hasRootCauseMessage("Telegram request failed");
+    thenThrownBy(() -> sut.notify(MESSAGE)).isInstanceOf(IntegrationException.class).hasNoCause();
 
     server.verify();
   }

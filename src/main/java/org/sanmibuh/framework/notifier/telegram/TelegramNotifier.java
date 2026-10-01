@@ -1,5 +1,6 @@
 package org.sanmibuh.framework.notifier.telegram;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
@@ -25,16 +26,12 @@ final class TelegramNotifier implements TelegramGateway {
           .toBodilessEntity();
     } catch (final RestClientResponseException exception) {
       if (exception.getStatusCode().is5xxServerError()
-          || exception.getStatusCode().value() == 429) {
-        throw new TelegramTemporarilyUnavailableException(sanitizedException());
+          || exception.getStatusCode() == HttpStatus.TOO_MANY_REQUESTS) {
+        throw new TelegramTemporarilyUnavailableException();
       }
-      throw new TelegramNotificationFailedException(sanitizedException());
+      throw new TelegramNotificationFailedException();
     } catch (final RestClientException _) {
-      throw new TelegramTemporarilyUnavailableException(sanitizedException());
+      throw new TelegramTemporarilyUnavailableException();
     }
-  }
-
-  private RuntimeException sanitizedException() {
-    return new IllegalStateException("Telegram request failed");
   }
 }
