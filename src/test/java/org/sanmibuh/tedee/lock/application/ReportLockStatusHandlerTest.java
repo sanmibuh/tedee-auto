@@ -20,11 +20,11 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
-import org.sanmibuh.tedee.lock.domain.LockJammed;
+import org.sanmibuh.tedee.lock.domain.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.LockState;
-import org.sanmibuh.tedee.lock.domain.LockStateChanged;
 import org.sanmibuh.tedee.lock.domain.LockStatus;
+import org.sanmibuh.tedee.lock.domain.LockStatusReported;
 
 @ExtendWith({MockitoExtension.class, SoftAssertionsExtension.class})
 class ReportLockStatusHandlerTest {
@@ -55,7 +55,7 @@ class ReportLockStatusHandlerTest {
 
   @ParameterizedTest
   @MethodSource("reportedStates")
-  void should_recordLockStateChangedAndReturnEvents_whenReportingState(
+  void should_recordLockStatusReportedAndReturnEvents_whenReportingState(
       final int bridgeState, final LockState state) {
     given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
 
@@ -64,13 +64,13 @@ class ReportLockStatusHandlerTest {
     verify(repository).save(savedLock.capture());
     softly
         .then(savedLock.getValue().domainEvents())
-        .containsExactly(new LockStateChanged(1, state));
-    softly.then(actual).containsExactly(new LockStateChanged(1, state));
+        .containsExactly(new LockStatusReported(1, state, LockJamStatus.NOT_JAMMED));
+    softly.then(actual).containsExactly(new LockStatusReported(1, state, LockJamStatus.NOT_JAMMED));
   }
 
   @ParameterizedTest
   @ValueSource(ints = {0, 1})
-  void should_recordLockJammed_whenReportingJammedState(final int jammed) {
+  void should_recordLockStatusReported_whenReportingJammedState(final int jammed) {
     given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
 
     sut.handle(new ReportLockStatusCommand(1, 6, jammed, 2));
@@ -78,7 +78,10 @@ class ReportLockStatusHandlerTest {
     verify(repository).save(savedLock.capture());
     softly
         .then(savedLock.getValue().domainEvents())
-        .filteredOn(LockJammed.class::isInstance)
-        .hasSize(jammed);
+        .containsExactly(
+            new LockStatusReported(
+                1,
+                LockState.CLOSED,
+                jammed == 1 ? LockJamStatus.JAMMED : LockJamStatus.NOT_JAMMED));
   }
 }
