@@ -3,8 +3,8 @@ package org.sanmibuh.tedee.lock.application;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.tedee.lock.domain.Lock;
-import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
 
 @RequiredArgsConstructor
 public final class CloseLockHandler extends CommandHandler<CloseLockCommand, Lock> {

@@ -41,6 +41,8 @@ infrastructure/  — Spring beans, split into driving and driven adapters:
   secondary/     — driven adapters (outgoing channels: repositories, external clients, …)
 ```
 
+Within a context's `domain`, aggregates and ports remain at the root; value objects and domain enums live in `vo`, domain events in `event`, and domain or integration exceptions in `exception`.
+
 The slice is decided by **who initiates the interaction**, not by whether a class implements a domain port: anything that calls *into* the application (a cron trigger, an HTTP endpoint) is `primary`; anything the application calls *out to* (the Tedee Bridge) is `secondary`. Outgoing integration plumbing that implements no port — such as the Bridge webhook registration — therefore lives in `secondary` too, next to the client it uses, rather than in an unclassified `infrastructure` root or a `config` package. Global, context-agnostic wiring (`ClockConfiguration`, `ServerConfiguration`) sits at the composition root `org.sanmibuh.tedee`.
 
 Rules enforced at build time by ArchUnit (`HexagonalArchitectureTest`):

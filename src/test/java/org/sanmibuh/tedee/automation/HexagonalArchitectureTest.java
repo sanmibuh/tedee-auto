@@ -13,6 +13,7 @@ import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
 import java.util.Set;
 import org.sanmibuh.ddd.domain.AggregateRoot;
+import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainEvent;
 import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.Query;
@@ -102,6 +103,46 @@ class HexagonalArchitectureTest {
           .doNotHaveModifier(JavaModifier.ABSTRACT)
           .should()
           .haveModifier(JavaModifier.FINAL);
+
+  @ArchTest
+  static final ArchRule should_resideInEventPackage_whenLockDomainEvent =
+      classes()
+          .that()
+          .resideInAPackage("org.sanmibuh.tedee.lock.domain..")
+          .and()
+          .implement(DomainEvent.class)
+          .should()
+          .resideInAPackage("..domain.event..");
+
+  @ArchTest
+  static final ArchRule should_resideInExceptionPackage_whenLockDomainException =
+      classes()
+          .that()
+          .resideInAPackage("org.sanmibuh.tedee.lock.domain..")
+          .and()
+          .areAssignableTo(RuntimeException.class)
+          .should()
+          .resideInAPackage("..domain.exception..");
+
+  @ArchTest
+  static final ArchRule should_resideInValueObjectPackage_whenLockDomainEnum =
+      classes()
+          .that()
+          .resideInAPackage("org.sanmibuh.tedee.lock.domain..")
+          .and()
+          .areEnums()
+          .should()
+          .resideInAPackage("..domain.vo..");
+
+  @ArchTest
+  static final ArchRule should_resideInValueObjectPackage_whenLockAggregateRootId =
+      classes()
+          .that()
+          .resideInAPackage("org.sanmibuh.tedee.lock.domain..")
+          .and()
+          .implement(AggregateRootId.class)
+          .should()
+          .resideInAPackage("..domain.vo..");
 
   @ArchTest
   static final ArchRule should_forbidDomainDependencies_whenCommandOrQuery =

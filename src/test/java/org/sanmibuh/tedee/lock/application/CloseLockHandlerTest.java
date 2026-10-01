@@ -14,10 +14,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.lock.domain.Lock;
-import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
-import org.sanmibuh.tedee.lock.domain.LockRequested;
-import org.sanmibuh.tedee.lock.domain.LockStatus;
+import org.sanmibuh.tedee.lock.domain.event.LockRequested;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
+import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
 @ExtendWith({MockitoExtension.class, SoftAssertionsExtension.class})
 class CloseLockHandlerTest {

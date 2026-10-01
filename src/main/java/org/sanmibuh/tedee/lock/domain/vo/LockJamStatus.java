@@ -1,4 +1,6 @@
-package org.sanmibuh.tedee.lock.domain;
+package org.sanmibuh.tedee.lock.domain.vo;
+
+import org.sanmibuh.tedee.lock.domain.exception.InvalidLockJamStatusException;
 
 public enum LockJamStatus {
   NOT_JAMMED(0),

@@ -2,10 +2,10 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import com.tedee.bridge.client.api.LockApi;
 import lombok.RequiredArgsConstructor;
-import org.sanmibuh.tedee.lock.domain.InvalidLockRequestException;
-import org.sanmibuh.tedee.lock.domain.LockId;
-import org.sanmibuh.tedee.lock.domain.LockOperationFailedException;
-import org.sanmibuh.tedee.lock.domain.LockTemporarilyUnavailableException;
+import org.sanmibuh.tedee.lock.domain.exception.InvalidLockRequestException;
+import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
+import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;

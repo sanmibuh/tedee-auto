@@ -5,8 +5,8 @@ import static org.assertj.core.api.BDDAssertions.thenCode;
 
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.tedee.lock.domain.Lock;
-import org.sanmibuh.tedee.lock.domain.LockId;
-import org.sanmibuh.tedee.lock.domain.LockStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
+import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
 class TedeeLockRepositoryTest {
 

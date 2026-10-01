@@ -20,15 +20,15 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.sanmibuh.tedee.lock.domain.InvalidLockJamStatusException;
-import org.sanmibuh.tedee.lock.domain.InvalidLockStateException;
 import org.sanmibuh.tedee.lock.domain.Lock;
-import org.sanmibuh.tedee.lock.domain.LockId;
-import org.sanmibuh.tedee.lock.domain.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
-import org.sanmibuh.tedee.lock.domain.LockState;
-import org.sanmibuh.tedee.lock.domain.LockStatus;
-import org.sanmibuh.tedee.lock.domain.LockStatusReported;
+import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
+import org.sanmibuh.tedee.lock.domain.exception.InvalidLockJamStatusException;
+import org.sanmibuh.tedee.lock.domain.exception.InvalidLockStateException;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
+import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
+import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
 @ExtendWith({MockitoExtension.class, SoftAssertionsExtension.class})
 class ReportLockStatusHandlerTest {

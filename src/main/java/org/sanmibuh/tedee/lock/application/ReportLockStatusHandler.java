@@ -3,10 +3,10 @@ package org.sanmibuh.tedee.lock.application;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.tedee.lock.domain.Lock;
-import org.sanmibuh.tedee.lock.domain.LockId;
-import org.sanmibuh.tedee.lock.domain.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
-import org.sanmibuh.tedee.lock.domain.LockState;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
+import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
 
 @RequiredArgsConstructor
 public final class ReportLockStatusHandler extends CommandHandler<ReportLockStatusCommand, Lock> {
