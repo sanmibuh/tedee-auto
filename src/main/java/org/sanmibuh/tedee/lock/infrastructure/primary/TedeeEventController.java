@@ -5,6 +5,7 @@ import static org.springframework.http.HttpStatus.*;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.springframework.context.annotation.ImportRuntimeHints;
@@ -31,9 +32,14 @@ final class TedeeEventController {
   void receive(@RequestBody final TedeeEvent event) {
     if (LOCK_STATUS_CHANGED.equals(event.event())) {
       final var data = jsonMapper.treeToValue(event.data(), LockStatusChangedData.class);
-      commandBus.dispatch(
-          new ReportLockStatusCommand(
-              data.deviceId(), data.state(), data.jammed(), data.doorState()));
+      try {
+        commandBus.dispatch(
+            new ReportLockStatusCommand(
+                data.deviceId(), data.state(), data.jammed(), data.doorState()));
+      } catch (final DomainException exception) {
+        log.warn(
+            "Ignoring rejected Tedee Bridge event {}: {}", event.event(), exception.getMessage());
+      }
     } else {
       log.warn("Ignoring unknown Tedee Bridge event {}", event.event());
     }

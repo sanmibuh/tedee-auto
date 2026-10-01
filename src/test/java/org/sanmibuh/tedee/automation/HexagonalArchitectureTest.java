@@ -60,7 +60,7 @@ class HexagonalArchitectureTest {
           .resideInAPackage("..infrastructure.primary..")
           .should()
           .dependOnClassesThat()
-          .resideInAnyPackage("..domain..", "..infrastructure.secondary..");
+          .resideInAnyPackage("org.sanmibuh.tedee..domain..", "..infrastructure.secondary..");
 
   @ArchTest
   static final ArchRule should_forbidPrimaryAndApplicationDependencies_whenInSecondarySlice =
