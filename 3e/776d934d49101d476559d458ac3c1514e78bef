@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramNotificationFailedException.java
+  h_97a91c9e567f87 1-10
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramNotifier.java
+  h_97a91c9e567f87 7,22-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3e776d934d49101d476559d458ac3c1514e78bef",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
