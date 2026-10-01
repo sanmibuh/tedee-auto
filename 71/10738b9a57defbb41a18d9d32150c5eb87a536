@@ -1,0 +1,22 @@
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramNotifier.java
+  h_97a91c9e567f87 3,12-17,21-26,28-29
+src/main/resources/application.yml
+  h_97a91c9e567f87 9-13
+src/test/java/org/sanmibuh/framework/notifier/telegram/TelegramNotifierTest.java
+  h_97a91c9e567f87 23,30
+src/test/java/org/sanmibuh/framework/rest/GlobalExceptionHandlerTest.java
+  h_97a91c9e567f87 39-41
+src/test/java/org/sanmibuh/tedee/TedeeAutomationApplicationTest.java
+  h_97a91c9e567f87 30-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7110738b9a57defbb41a18d9d32150c5eb87a536",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
