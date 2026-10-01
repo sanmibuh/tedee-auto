@@ -25,6 +25,6 @@ public enum LockState {
         return state;
       }
     }
-    return UNKNOWN;
+    throw new InvalidLockStateException(bridgeCode);
   }
 }
