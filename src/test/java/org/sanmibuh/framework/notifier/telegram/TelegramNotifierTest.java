@@ -4,10 +4,14 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.content;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withException;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 
+import java.io.IOException;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.sanmibuh.ddd.domain.IntegrationException;
 import org.sanmibuh.ddd.domain.TransientIntegrationException;
 import org.sanmibuh.framework.notifier.Notifier;
@@ -69,6 +73,32 @@ class TelegramNotifierTest {
         .expect(requestTo(SEND_MESSAGE_URL))
         .andExpect(method(HttpMethod.POST))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+    thenThrownBy(() -> sut.notify(MESSAGE)).isInstanceOf(TransientIntegrationException.class);
+
+    server.verify();
+  }
+
+  @ParameterizedTest
+  @ValueSource(ints = {500, 502, 504})
+  void should_translateToTransientIntegrationException_whenTelegramRespondsWithServerError(
+      final int statusCode) {
+    server
+        .expect(requestTo(SEND_MESSAGE_URL))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withStatus(HttpStatus.valueOf(statusCode)));
+
+    thenThrownBy(() -> sut.notify(MESSAGE)).isInstanceOf(TransientIntegrationException.class);
+
+    server.verify();
+  }
+
+  @Test
+  void should_translateToTransientIntegrationException_whenTelegramIsUnreachable() {
+    server
+        .expect(requestTo(SEND_MESSAGE_URL))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withException(new IOException("Telegram unreachable")));
 
     thenThrownBy(() -> sut.notify(MESSAGE)).isInstanceOf(TransientIntegrationException.class);
 
