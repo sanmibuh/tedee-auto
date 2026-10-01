@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/framework/notifier/telegram/TelegramNotifierTest.java
+  s_a55660f8de65c2::t_381e0dd0973da9 69
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "081c870d25328063727d01cf66bc907c4837e86b",
+  "prompts": {},
+  "sessions": {
+    "s_a55660f8de65c2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f09d41d37ffeuaui4wk20kZpJb",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
