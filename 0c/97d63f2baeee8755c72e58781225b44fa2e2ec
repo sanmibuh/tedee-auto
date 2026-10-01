@@ -1,0 +1,38 @@
+README.md
+  h_97a91c9e567f87 134,136-138
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramGateway.java
+  h_97a91c9e567f87 13-15
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramProperties.java
+  h_97a91c9e567f87 6,16
+src/main/java/org/sanmibuh/framework/resilience/RetryProperties.java
+  h_97a91c9e567f87 1-22
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/TedeeProperties.java
+  h_97a91c9e567f87 6,16
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeReflectionHints.java
+  h_97a91c9e567f87 6,46
+src/main/resources/application.yml
+  h_97a91c9e567f87 17-19
+src/test/java/org/sanmibuh/framework/notifier/telegram/TelegramNotificationConfigurationTest.java
+  h_97a91c9e567f87 6,22
+src/test/java/org/sanmibuh/framework/notifier/telegram/TelegramNotifierTest.java
+  h_97a91c9e567f87 37-39
+src/test/java/org/sanmibuh/framework/notifier/telegram/TelegramPropertiesTest.java
+  h_97a91c9e567f87 47-48,51-66,126-128
+src/test/java/org/sanmibuh/framework/resilience/RetryPropertiesTest.java
+  h_97a91c9e567f87 1-25
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfigurationTest.java
+  h_97a91c9e567f87 8,23
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeReflectionHintsTest.java
+  h_97a91c9e567f87 12,46,50,55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "0c97d63f2baeee8755c72e58781225b44fa2e2ec",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
