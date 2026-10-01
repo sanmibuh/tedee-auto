@@ -17,8 +17,9 @@ class TelegramPropertiesTest {
 
   private final ApplicationContextRunner runner =
       new ApplicationContextRunner()
-          .withConfiguration(AutoConfigurations.of(ValidationAutoConfiguration.class))
-          .withConfiguration(AutoConfigurations.of(RestClientAutoConfiguration.class))
+          .withConfiguration(
+              AutoConfigurations.of(
+                  ValidationAutoConfiguration.class, RestClientAutoConfiguration.class))
           .withUserConfiguration(TelegramNotificationConfiguration.class);
 
   @Test
