@@ -1,0 +1,14 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/LockState.java
+  h_97a91c9e567f87 28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "453a2700da17648a86fca3d4df138167747c74b6",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
