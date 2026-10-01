@@ -1,0 +1,35 @@
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramProperties.java
+  h_97a91c9e567f87 1-9
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramNotificationConfiguration.java
+  h_97a91c9e567f87 1-2,4-8
+  s_a55660f8de65c2::t_ceb8dd83e63106 3
+src/main/java/org/sanmibuh/framework/notifier/Notifier.java
+  h_97a91c9e567f87 1-6
+src/test/java/org/sanmibuh/framework/notifier/telegram/TelegramNotifierTest.java
+  h_97a91c9e567f87 1-48
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramNotifier.java
+  h_97a91c9e567f87 1-19
+src/main/resources/META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+  h_97a91c9e567f87 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a8385d6d5bc0cc6490e3bf664873b393149a13ee",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_a55660f8de65c2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f09d41d37ffeuaui4wk20kZpJb",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
