@@ -13,7 +13,7 @@ final class TelegramNotifier implements Notifier {
 
   TelegramNotifier(final RestClient.Builder builder, final TelegramProperties properties) {
     this.properties = properties;
-    client = builder.baseUrl("https://api.telegram.org/bot" + properties.botToken()).build();
+    client = builder.baseUrl(properties.baseUrl() + "/bot" + properties.botToken()).build();
   }
 
   @Override
