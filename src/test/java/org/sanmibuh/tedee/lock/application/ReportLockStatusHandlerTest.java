@@ -1,5 +1,6 @@
 package org.sanmibuh.tedee.lock.application;
 
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
@@ -8,6 +9,7 @@ import java.util.stream.Stream;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -18,6 +20,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.sanmibuh.tedee.lock.domain.InvalidLockStateException;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockJamStatus;
@@ -49,7 +52,6 @@ class ReportLockStatusHandlerTest {
         argumentSet("pull spring", 7, LockState.PULL_SPRING),
         argumentSet("pulling", 8, LockState.PULLING),
         argumentSet("unknown", 9, LockState.UNKNOWN),
-        argumentSet("undocumented state", 10, LockState.UNKNOWN),
         argumentSet("unpulling", 255, LockState.UNPULLING));
   }
 
@@ -83,5 +85,14 @@ class ReportLockStatusHandlerTest {
                 1,
                 LockState.CLOSED,
                 jammed == 1 ? LockJamStatus.JAMMED : LockJamStatus.NOT_JAMMED));
+  }
+
+  @Test
+  void should_throwException_whenReportingUndocumentedState() {
+    given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
+
+    thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(1, 10, 0, 2)))
+        .isInstanceOf(InvalidLockStateException.class)
+        .hasMessage("Unknown lock state: 10");
   }
 }
