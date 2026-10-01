@@ -1,0 +1,18 @@
+src/main/java/org/sanmibuh/framework/notifier/telegram/TelegramRuntimeHints.java
+  h_97a91c9e567f87 4,22-25
+src/test/java/org/sanmibuh/framework/notifier/telegram/TelegramPropertiesTest.java
+  h_97a91c9e567f87 20-22
+src/test/java/org/sanmibuh/framework/notifier/telegram/TelegramRuntimeHintsTest.java
+  h_97a91c9e567f87 6,42-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "14a1f94d9ef6136a8636489d4ea0e249d1cbac1a",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
