@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeEventController.java
+  s_c50288899c5db9::t_62f3d268e125c2 12,36-38,44-49
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "96ad667e17aa3da28b8e46cb3fa09dad42ea400e",
+  "prompts": {},
+  "sessions": {
+    "s_c50288899c5db9": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_f0bb2f70affeUG3gyU0Ic1MY9E",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
