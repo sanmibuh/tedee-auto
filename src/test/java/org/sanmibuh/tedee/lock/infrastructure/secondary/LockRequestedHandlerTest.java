@@ -7,8 +7,8 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.sanmibuh.tedee.lock.domain.LockId;
-import org.sanmibuh.tedee.lock.domain.LockRequested;
+import org.sanmibuh.tedee.lock.domain.event.LockRequested;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
 
 @ExtendWith(MockitoExtension.class)
 class LockRequestedHandlerTest {

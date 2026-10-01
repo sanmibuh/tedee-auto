@@ -2,7 +2,9 @@ package org.sanmibuh.tedee.lock.infrastructure.primary;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.BDDMockito.willThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -12,6 +14,7 @@ import lombok.SneakyThrows;
 import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
@@ -123,6 +126,41 @@ class TedeeEventControllerTest {
 
       verifyNoInteractions(commandBus);
       then(logCaptor.getWarnLogs()).singleElement(STRING).contains("unknown-event");
+    }
+  }
+
+  @Test
+  @SneakyThrows
+  void should_acknowledgeAndWarn_whenLockStatusReportIsRejected() {
+    willThrow(new StubDomainException("rejected status report")).given(commandBus).dispatch(any());
+
+    try (final var logCaptor = LogCaptor.forClass(TedeeEventController.class)) {
+      sut.perform(
+              post(EVENTS_PATH)
+                  .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
+                  .contentType(MediaType.APPLICATION_JSON)
+                  .content(
+                      """
+                      {
+                        "event": "lock-status-changed",
+                        "data": {
+                          "deviceId": 33819,
+                          "state": 10,
+                          "jammed": 0,
+                          "doorState": 2
+                        }
+                      }
+                      """))
+          .andExpect(status().isNoContent());
+
+      then(logCaptor.getWarnLogs()).singleElement(STRING).contains("rejected status report");
+    }
+  }
+
+  private static final class StubDomainException extends DomainException {
+
+    private StubDomainException(final String message) {
+      super(message);
     }
   }
 }

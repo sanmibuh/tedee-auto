@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.domain;
+package org.sanmibuh.tedee.lock.domain.exception;
 
 import org.sanmibuh.ddd.domain.TransientIntegrationException;
 

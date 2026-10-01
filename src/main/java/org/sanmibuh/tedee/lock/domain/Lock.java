@@ -1,6 +1,12 @@
 package org.sanmibuh.tedee.lock.domain;
 
 import org.sanmibuh.ddd.domain.AggregateRoot;
+import org.sanmibuh.tedee.lock.domain.event.LockRequested;
+import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
+import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
+import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
 public final class Lock extends AggregateRoot<LockId> {
 
@@ -17,5 +23,9 @@ public final class Lock extends AggregateRoot<LockId> {
     }
     status = LockStatus.LOCKED;
     recordEvent(new LockRequested(id().value()));
+  }
+
+  public void reportStatus(final LockState state, final LockJamStatus jamStatus) {
+    recordEvent(new LockStatusReported(id().value(), state, jamStatus));
   }
 }

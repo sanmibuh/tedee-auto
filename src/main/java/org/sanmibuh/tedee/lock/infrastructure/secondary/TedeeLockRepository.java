@@ -2,9 +2,9 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import java.util.Optional;
 import org.sanmibuh.tedee.lock.domain.Lock;
-import org.sanmibuh.tedee.lock.domain.LockId;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
-import org.sanmibuh.tedee.lock.domain.LockStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
+import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 import org.springframework.stereotype.Repository;
 
 @Repository
