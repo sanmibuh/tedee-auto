@@ -20,6 +20,7 @@ import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.sanmibuh.tedee.lock.domain.InvalidLockJamStatusException;
 import org.sanmibuh.tedee.lock.domain.InvalidLockStateException;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockId;
@@ -94,5 +95,14 @@ class ReportLockStatusHandlerTest {
     thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(1, 10, 0, 2)))
         .isInstanceOf(InvalidLockStateException.class)
         .hasMessage("Unknown lock state: 10");
+  }
+
+  @Test
+  void should_throwException_whenReportingUndocumentedJamStatus() {
+    given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
+
+    thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(1, 6, 2, 2)))
+        .isInstanceOf(InvalidLockJamStatusException.class)
+        .hasMessage("Unknown lock jam status: 2");
   }
 }
