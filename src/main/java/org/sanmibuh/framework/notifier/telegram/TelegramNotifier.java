@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import org.sanmibuh.framework.notifier.Notifier;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClient;
+import org.springframework.web.client.RestClientException;
 
 @Component
 final class TelegramNotifier implements Notifier {
@@ -18,12 +19,16 @@ final class TelegramNotifier implements Notifier {
 
   @Override
   public void notify(final String message) {
-    client
-        .post()
-        .uri("/sendMessage")
-        .body(new TelegramMessage(properties.chatId(), message))
-        .retrieve()
-        .toBodilessEntity();
+    try {
+      client
+          .post()
+          .uri("/sendMessage")
+          .body(new TelegramMessage(properties.chatId(), message))
+          .retrieve()
+          .toBodilessEntity();
+    } catch (final RestClientException exception) {
+      throw new TelegramNotificationFailedException(exception);
+    }
   }
 
   private record TelegramMessage(@JsonProperty("chat_id") String chatId, String text) {}
