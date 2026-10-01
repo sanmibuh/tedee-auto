@@ -121,10 +121,30 @@ sanmibuh:
   # Human-friendly timezone for scheduler cron expressions and log timestamps.
   # The JVM stays in UTC internally; use a region id so DST is handled automatically.
   timezone: Europe/Madrid
+  server:
+    # Public address at which the Tedee Bridge can reach this service.
+    public-url: http://<host-lan-ip>:8080
+  notification:
+    telegram:
+      # Optional override for a compatible Telegram Bot API endpoint.
+      base-url: https://api.telegram.org
+      bot-token: <telegram-bot-token>
+      chat-id: <telegram-chat-id>
+      retry:
+        # Two retries after the initial attempt, with a one-millisecond test-friendly delay.
+        max-retries: 2
+        delay: 1
   rest:
     tedee:
       base-url: http://<tedee-bridge-ip>/v1.0
       api-key: <your-api-key>
+      callback-secret: <tedee-callback-secret>
+      retry:
+        # Exponential backoff for transient Tedee Bridge failures.
+        max-retries: 3
+        initial-interval: 500
+        multiplier: 2.0
+        max-interval: 5000
   scheduler:
     lock:
       schedules:
