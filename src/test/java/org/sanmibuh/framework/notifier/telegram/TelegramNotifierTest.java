@@ -20,14 +20,14 @@ import org.springframework.test.web.client.MockRestServiceServer;
 @ContextConfiguration(classes = TelegramNotificationConfiguration.class)
 @TestPropertySource(
     properties = {
+      "sanmibuh.notification.telegram.base-url=http://telegram.local",
       "sanmibuh.notification.telegram.bot-token=bot-token",
       "sanmibuh.notification.telegram.chat-id=chat-id"
     })
 class TelegramNotifierTest {
 
   private static final String MESSAGE = "Lock closed";
-  private static final String SEND_MESSAGE_URL =
-      "https://api.telegram.org/botbot-token/sendMessage";
+  private static final String SEND_MESSAGE_URL = "http://telegram.local/botbot-token/sendMessage";
 
   @Autowired private Notifier sut;
 

@@ -36,7 +36,9 @@ import org.springframework.web.bind.annotation.RestController;
     classes = {TedeeAutomationApplication.class, GlobalExceptionHandlerTest.StubController.class},
     properties = {
       "sanmibuh.server.public-url=http://automation.local:8080",
-      "sanmibuh.rest.tedee.callback-secret=callback-secret"
+      "sanmibuh.rest.tedee.callback-secret=callback-secret",
+      "sanmibuh.notification.telegram.bot-token=bot-token",
+      "sanmibuh.notification.telegram.chat-id=chat-id"
     })
 @ExtendWith(SoftAssertionsExtension.class)
 class GlobalExceptionHandlerTest {
