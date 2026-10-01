@@ -5,6 +5,7 @@ import static org.assertj.core.api.BDDAssertions.then;
 import com.tedee.bridge.client.ApiClient;
 import java.time.Clock;
 import org.junit.jupiter.api.Test;
+import org.sanmibuh.framework.resilience.RetryProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.web.client.RestClient;
 
@@ -19,7 +20,7 @@ class TedeeClientConfigurationTest {
             "http://bridge.local/v1.0",
             "secret-token",
             "callback-secret",
-            new TedeeProperties.Retry(2, 500L, 2.0, 5000L));
+            new RetryProperties(2, 500L, 2.0, 5000L));
 
     final var apiClient = sut.tedeeApiClient(RestClient.builder(), properties, Clock.systemUTC());
 

@@ -1,2 +1,3 @@
 org.sanmibuh.ddd.infrastructure.DddAutoConfiguration
 org.sanmibuh.framework.rest.RestAutoConfiguration
+org.sanmibuh.framework.notifier.telegram.TelegramNotificationConfiguration

@@ -27,6 +27,16 @@ Key decisions:
 
 Failures are modelled with four exception categories that `GlobalExceptionHandler` maps to HTTP status by outcome — see [Architectural style](#architectural-style-hexagonal-ports--adapters) below.
 
+### `org.sanmibuh.framework.notifier`
+
+`Notifier` is a reusable framework output contract for user-facing messages, intentionally separate from `ddd`: notification is not a DDD building block, nor does it belong to a particular business context. Its Telegram implementation lives in `framework.notifier.telegram` and uses Spring's `RestClient` directly for the small, stable `POST /bot{token}/sendMessage` Bot API contract; adding a Telegram SDK would introduce dependency and native-image complexity without a needed abstraction.
+
+`TelegramNotificationConfiguration` is a Spring Boot auto-configuration. The mandatory `TELEGRAM_BOT_TOKEN` and `TELEGRAM_CHAT_ID` bind with empty defaults and `@NotBlank`, so missing credentials fail fast at startup and the token is never logged. `TELEGRAM_BASE_URL` defaults to `https://api.telegram.org`, while still permitting a compatible endpoint to be configured. The deployment `config/application.yml` declares the equivalent values and placeholders.
+
+Telegram failures never expose `RestClientException` through the framework contract: client errors are `TelegramNotificationFailedException` (`IntegrationException`), while 429 rate limits, 5xx responses and connectivity errors are `TelegramTemporarilyUnavailableException` (`TransientIntegrationException`). The original client exception is deliberately not retained as a cause because its message can include the bot-token-bearing request URL; the exposed cause is sanitized before global exception logging. `TelegramGateway`, an internal Telegram-specific extension of `Notifier`, owns the `@Retryable` policy and its validated positive `sanmibuh.notification.telegram.retry.max-retries` / `delay` settings. Keeping this annotation out of the generic port avoids Telegram configuration leaking into consumers, and keeps the final `TelegramNotifier` behind a GraalVM-friendly JDK proxy rather than a CGLIB subclass.
+
+`TelegramRuntimeHints`, imported from the auto-configuration, registers `TelegramMessageRequest` for reflective constructor invocation by Jackson in a native image. The hint is guarded by a `RuntimeHintsPredicates` test.
+
 ---
 
 ## Architectural style: Hexagonal (Ports & Adapters)

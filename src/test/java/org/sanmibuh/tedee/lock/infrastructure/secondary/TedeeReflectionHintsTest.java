@@ -9,7 +9,7 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
+import org.sanmibuh.framework.resilience.RetryProperties;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
@@ -43,16 +43,16 @@ class TedeeReflectionHintsTest {
     softly
         .then(
             RuntimeHintsPredicates.reflection()
-                .onType(TedeeProperties.Retry.class)
+                .onType(RetryProperties.class)
                 .withMemberCategories(
                     MemberCategory.ACCESS_DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_METHODS)
                 .test(hints))
-        .as("config properties nested record fields and @AssertTrue methods for JSR-303 validation")
+        .as("shared retry properties fields and @AssertTrue methods for JSR-303 validation")
         .isTrue();
     softly
         .then(
             RuntimeHintsPredicates.reflection()
-                .onType(TedeeProperties.class)
+                .onType(org.sanmibuh.tedee.lock.infrastructure.TedeeProperties.class)
                 .withMemberCategories(
                     MemberCategory.ACCESS_DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_METHODS)
                 .test(hints))

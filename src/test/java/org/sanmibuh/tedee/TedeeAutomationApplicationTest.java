@@ -18,16 +18,20 @@ import org.mockito.Answers;
 import org.mockito.BDDMockito;
 import org.sanmibuh.ddd.infrastructure.InMemoryCommandBus;
 import org.sanmibuh.ddd.port.CommandBus;
+import org.sanmibuh.framework.notifier.Notifier;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
+import org.springframework.test.context.bean.override.mockito.MockReset;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 
 @SpringBootTest(
     webEnvironment = RANDOM_PORT,
     properties = {
       "sanmibuh.server.public-url=http://automation.local:8080",
-      "sanmibuh.rest.tedee.callback-secret=callback-secret"
+      "sanmibuh.rest.tedee.callback-secret=callback-secret",
+      "sanmibuh.notification.telegram.bot-token=bot-token",
+      "sanmibuh.notification.telegram.chat-id=chat-id"
     })
 @ExtendWith(SoftAssertionsExtension.class)
 class TedeeAutomationApplicationTest {
@@ -36,7 +40,9 @@ class TedeeAutomationApplicationTest {
 
   @Autowired private CommandBus commandBus;
 
-  @MockitoBean(answers = Answers.RETURNS_MOCKS)
+  @Autowired private Notifier notifier;
+
+  @MockitoBean(answers = Answers.RETURNS_MOCKS, reset = MockReset.NONE)
   private CallbackApi callbackApi;
 
   @InjectSoftAssertions private BDDSoftAssertions softly;
@@ -44,6 +50,11 @@ class TedeeAutomationApplicationTest {
   @Test
   void should_wireTheInMemoryCommandBus_whenApplicationStarts() {
     then(commandBus).isInstanceOf(InMemoryCommandBus.class);
+  }
+
+  @Test
+  void should_wireTelegramNotifier_whenApplicationStarts() {
+    then(notifier).isNotNull();
   }
 
   @Test

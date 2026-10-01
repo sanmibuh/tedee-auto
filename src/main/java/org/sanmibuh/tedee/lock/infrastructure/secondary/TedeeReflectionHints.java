@@ -3,6 +3,7 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
+import org.sanmibuh.framework.resilience.RetryProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
@@ -42,7 +43,7 @@ final class TedeeReflectionHints implements RuntimeHintsRegistrar {
     hints
         .reflection()
         .registerType(TedeeProperties.class, VALIDATION_CATEGORIES)
-        .registerType(TedeeProperties.Retry.class, VALIDATION_CATEGORIES);
+        .registerType(RetryProperties.class, VALIDATION_CATEGORIES);
   }
 
   private ClassPathScanningCandidateComponentProvider setResourceLoaderPITEquivalent(

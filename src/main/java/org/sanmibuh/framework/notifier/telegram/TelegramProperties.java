@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure;
+package org.sanmibuh.framework.notifier.telegram;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
@@ -8,9 +8,9 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.validation.annotation.Validated;
 
 @Validated
-@ConfigurationProperties(prefix = "sanmibuh.rest.tedee")
-public record TedeeProperties(
+@ConfigurationProperties(prefix = "sanmibuh.notification.telegram")
+public record TelegramProperties(
     @NotBlank String baseUrl,
-    @NotBlank String apiKey,
-    @NotBlank String callbackSecret,
+    @NotBlank String botToken,
+    @NotBlank String chatId,
     @Valid @NotNull RetryProperties retry) {}
