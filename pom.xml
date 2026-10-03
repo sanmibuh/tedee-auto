@@ -24,7 +24,7 @@
     <jacoco.version>0.8.15</jacoco.version>
     <logcaptor.version>2.12.7</logcaptor.version>
     <java.version>25</java.version>
-    <nullaway.version>0.14.1</nullaway.version>
+    <nullaway.version>0.14.2</nullaway.version>
     <test.spring.config.location>classpath:/</test.spring.config.location>
     <openapi-generator.version>7.25.0</openapi-generator.version>
     <pitest-history-plugin.version>0.0.1</pitest-history-plugin.version>
