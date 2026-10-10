@@ -1,0 +1,24 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/TedeeProperties.java
+  h_97a91c9e567f87 6,17
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistration.java
+  h_97a91c9e567f87 40,44,60,64-68
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/TedeeInfrastructureConfigurationTest.java
+  h_97a91c9e567f87 17
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/TedeePropertiesTest.java
+  h_97a91c9e567f87 89
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistrationTest.java
+  h_97a91c9e567f87 45,53-54,80-89,94,111
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfigurationTest.java
+  h_97a91c9e567f87 7,24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b423a27f984c9758fd0293389c4c9ff331269966",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
