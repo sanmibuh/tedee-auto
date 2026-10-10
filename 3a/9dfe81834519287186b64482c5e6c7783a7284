@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockStatusReportedNotificationHandlerTest.java
+  s_d058888a533665::t_a06f7d028011b9 3,7,11-12,38-134,136-141,145
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3a9dfe81834519287186b64482c5e6c7783a7284",
+  "prompts": {},
+  "sessions": {
+    "s_d058888a533665": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed9893f8cffexK9OTKd1JVWeSY",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
