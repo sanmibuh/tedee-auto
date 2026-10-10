@@ -6,8 +6,8 @@ import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.model.CallbackDetails;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
 import com.tedee.bridge.client.model.CallbackHeader;
+import java.time.Clock;
 import java.time.Duration;
-import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -29,17 +29,21 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   private final CallbackApi callbackApi;
   private final String callbackUrl;
   private final String callbackSecret;
+  private final Clock clock;
   private final TaskScheduler taskScheduler;
   private final Duration registrationRetryInterval;
+  private volatile boolean stopped;
   private @Nullable Long registeredId;
 
   TedeeCallbackRegistration(
       final CallbackApi callbackApi,
       final ServerProperties serverProperties,
       final TedeeProperties tedeeProperties,
+      final Clock clock,
       final TaskScheduler taskScheduler) {
     this.callbackApi = callbackApi;
     callbackSecret = tedeeProperties.callbackSecret();
+    this.clock = clock;
     this.taskScheduler = taskScheduler;
     registrationRetryInterval = tedeeProperties.callbackRegistrationInterval();
     callbackUrl =
@@ -50,6 +54,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   @Override
   public void start() {
+    stopped = false;
     try {
       registeredId =
           keepSingleExistingCallback()
@@ -63,11 +68,13 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   @SuppressWarnings("FutureReturnValueIgnored")
   private void scheduleRetry() {
-    taskScheduler.schedule(this::reregister, Instant.now().plus(registrationRetryInterval));
+    taskScheduler.schedule(this::reregister, clock.instant().plus(registrationRetryInterval));
   }
 
   void reregister() {
-    start();
+    if (!stopped) {
+      start();
+    }
   }
 
   private Optional<CallbackDetails> keepSingleExistingCallback() {
@@ -102,6 +109,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   @Override
   public void stop() {
+    stopped = true;
     if (registeredId != null) {
       try {
         delete(registeredId);
