@@ -47,14 +47,16 @@ jobs:
             const title = 'Native image smoke test is failing';
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
             const body = `The native image smoke test failed.\n\nFailed workflow run: ${runUrl}`;
-            const { data: issues } = await github.rest.issues.listForRepo({
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
               owner: context.repo.owner,
               repo: context.repo.repo,
               state: 'open',
               labels: 'bug',
               per_page: 100,
             });
-            const issue = issues.find(({ title: issueTitle }) => issueTitle === title);
+            const issue = issues.find(({ title: issueTitle, pull_request }) =>
+              issueTitle === title && pull_request === undefined,
+            );
 
             if (issue) {
               await github.rest.issues.createComment({
