@@ -2,15 +2,14 @@ name: Native image smoke test
 
 on:
   schedule:
-    - cron: '0 3 * * *'
+    - cron: '17 2 * * *'
   workflow_dispatch:
-
-concurrency:
-  group: native-smoke
-  cancel-in-progress: true
 
 jobs:
   native-smoke:
+    concurrency:
+      group: native-smoke
+      cancel-in-progress: true
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -31,3 +30,55 @@ jobs:
 
       - name: Run native smoke test
         run: .github/scripts/native-smoke-test.sh tedee-automation:native-smoke
+
+  report-failure:
+    if: failure()
+    needs: native-smoke
+    concurrency:
+      group: native-smoke-failure-reporting
+      cancel-in-progress: false
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+
+    steps:
+      - name: Create or update failure issue
+        uses: actions/github-script@v9
+        with:
+          script: |
+            const title = 'Native image smoke test is failing';
+            const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
+            const body = `The native image smoke test failed.\n\nFailed workflow run: ${runUrl}`;
+            const issues = await github.paginate(github.rest.issues.listForRepo, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              state: 'open',
+              per_page: 100,
+            });
+            const issue = issues.find(({ title: issueTitle, pull_request }) =>
+              issueTitle === title && pull_request === undefined,
+            );
+
+            if (issue) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                labels: ['bug'],
+              });
+              await github.rest.issues.createComment({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: issue.number,
+                body,
+              });
+              return;
+            }
+
+            await github.rest.issues.create({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              title,
+              body,
+              labels: ['bug'],
+            });
