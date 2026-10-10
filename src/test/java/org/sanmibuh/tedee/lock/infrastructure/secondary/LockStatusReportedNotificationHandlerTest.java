@@ -147,4 +147,25 @@ class LockStatusReportedNotificationHandlerTest {
 
     then(notifier).should().notify("Lock 42 is jammed");
   }
+
+  static Stream<Arguments> localizedJamAlerts() {
+    return Stream.of(
+        argumentSet("English", Locale.ENGLISH, "🚨 The lock 42 is jammed!"),
+        argumentSet("Spanish", Locale.forLanguageTag("es"), "🚨 ¡La cerradura 42 está atascada!"));
+  }
+
+  @ParameterizedTest
+  @MethodSource("localizedJamAlerts")
+  void should_notifyLocalizedJamAlert_whenHandlingJammedStatus(
+      final Locale locale, final String message) {
+    final var messages = new ResourceBundleMessageSource();
+    messages.setBasename("messages");
+    messages.setDefaultEncoding("UTF-8");
+    messages.setFallbackToSystemLocale(false);
+    final var sut = new LockStatusReportedNotificationHandler(notifier, messages, locale);
+
+    sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.JAMMED));
+
+    then(notifier).should().notify(message);
+  }
 }
