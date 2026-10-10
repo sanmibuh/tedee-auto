@@ -254,6 +254,10 @@ class TedeeCallbackRegistrationTest {
 
     server.verify();
     then(sut.isRunning()).isTrue();
+    verify(taskScheduler, times(2))
+        .schedule(
+            org.mockito.ArgumentMatchers.any(Runnable.class),
+            org.mockito.ArgumentMatchers.any(Instant.class));
   }
 
   @Test
