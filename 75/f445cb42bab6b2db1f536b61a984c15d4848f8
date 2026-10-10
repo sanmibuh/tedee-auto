@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockGateway.java
+  s_b86118298e9c4e::t_01fb798e1c9d25 36-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "75f445cb42bab6b2db1f536b61a984c15d4848f8",
+  "prompts": {},
+  "sessions": {
+    "s_b86118298e9c4e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed9caa9deffev5Z7Wf20LStR1u",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
