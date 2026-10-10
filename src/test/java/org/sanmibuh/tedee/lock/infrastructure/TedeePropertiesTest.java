@@ -2,6 +2,7 @@ package org.sanmibuh.tedee.lock.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+import java.time.Duration;
 import java.util.stream.Stream;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
@@ -34,6 +35,7 @@ class TedeePropertiesTest {
             "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
             "sanmibuh.rest.tedee.api-key=secret-token",
             "sanmibuh.rest.tedee.callback-secret=callback-secret",
+            "sanmibuh.rest.tedee.callback-registration-interval=30s",
             "sanmibuh.rest.tedee.retry.max-retries=2",
             "sanmibuh.rest.tedee.retry.initial-interval=500",
             "sanmibuh.rest.tedee.retry.multiplier=2.0",
@@ -44,6 +46,7 @@ class TedeePropertiesTest {
               softly.then(sut.baseUrl()).isEqualTo("http://bridge.local/v1.0");
               softly.then(sut.apiKey()).isEqualTo("secret-token");
               softly.then(sut.callbackSecret()).isEqualTo("callback-secret");
+              softly.then(sut.callbackRegistrationInterval()).isEqualTo(Duration.ofSeconds(30));
               softly.then(sut.retry().maxRetries()).isEqualTo(2);
               softly.then(sut.retry().initialInterval()).isEqualTo(500L);
               softly.then(sut.retry().multiplier()).isEqualTo(2.0);
