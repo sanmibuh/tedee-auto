@@ -1,17 +1,23 @@
 package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import java.util.Locale;
+import lombok.RequiredArgsConstructor;
 import org.sanmibuh.ddd.port.DomainEventHandler;
 import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
 import org.springframework.context.MessageSource;
 
+@RequiredArgsConstructor
 public final class LockStatusReportedNotificationHandler
     implements DomainEventHandler<LockStatusReported> {
 
-  public LockStatusReportedNotificationHandler(
-      final Notifier notifier, final MessageSource messages, final Locale locale) {}
+  private final Notifier notifier;
+  private final MessageSource messages;
+  private final Locale locale;
 
   @Override
-  public void handle(final LockStatusReported event) {}
+  public void handle(final LockStatusReported event) {
+    notifier.notify(
+        messages.getMessage("lock.state.closed", new Object[] {event.deviceId()}, locale));
+  }
 }
