@@ -6,6 +6,7 @@ import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.model.CallbackDetails;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
 import com.tedee.bridge.client.model.CallbackHeader;
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,6 +16,7 @@ import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -26,14 +28,20 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   private final CallbackApi callbackApi;
   private final String callbackUrl;
   private final String callbackSecret;
+  private final TaskScheduler taskScheduler;
+  private final Duration registrationRetryInterval;
   private @Nullable Long registeredId;
 
   TedeeCallbackRegistration(
       final CallbackApi callbackApi,
       final ServerProperties serverProperties,
-      final TedeeProperties tedeeProperties) {
+      final TedeeProperties tedeeProperties,
+      final TaskScheduler taskScheduler,
+      final Duration registrationRetryInterval) {
     this.callbackApi = callbackApi;
     callbackSecret = tedeeProperties.callbackSecret();
+    this.taskScheduler = taskScheduler;
+    this.registrationRetryInterval = registrationRetryInterval;
     callbackUrl =
         UriComponentsBuilder.fromUriString(serverProperties.publicUrl())
             .path(EVENTS_PATH)

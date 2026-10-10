@@ -2,6 +2,8 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -11,6 +13,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import com.tedee.bridge.client.api.CallbackApi;
 import java.time.Clock;
+import java.time.Duration;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
@@ -27,6 +30,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -51,6 +55,7 @@ class TedeeCallbackRegistrationTest {
   private static final String PUBLIC_URL = "http://automation.local:8080";
   private static final String CALLBACK_URL = PUBLIC_URL + "/tedee/events";
   static final String CALLBACK_SECRET = "callback-secret";
+  private static final Duration REGISTRATION_RETRY_INTERVAL = Duration.ofSeconds(1);
   private static final String FOREIGN_CALLBACK_URL = "http://other-system.local/hook";
   private static final int FOREIGN_ID = 1;
   private static final int EXISTING_ID = 5;
@@ -64,6 +69,8 @@ class TedeeCallbackRegistrationTest {
 
   @MockitoBean private Clock clock;
 
+  @MockitoBean private TaskScheduler taskScheduler;
+
   @Autowired private TedeeProperties tedeeProperties;
 
   @InjectSoftAssertions private BDDSoftAssertions softly;
@@ -75,7 +82,11 @@ class TedeeCallbackRegistrationTest {
   void setUp() {
     sut =
         new TedeeCallbackRegistration(
-            callbackApi, new ServerProperties(PUBLIC_URL), tedeeProperties);
+            callbackApi,
+            new ServerProperties(PUBLIC_URL),
+            tedeeProperties,
+            taskScheduler,
+            REGISTRATION_RETRY_INTERVAL);
   }
 
   @Test
@@ -92,7 +103,11 @@ class TedeeCallbackRegistrationTest {
   void should_registerCallbackWithoutDoubleSlash_whenPublicUrlEndsWithSlash() {
     sut =
         new TedeeCallbackRegistration(
-            callbackApi, new ServerProperties(PUBLIC_URL + "/"), tedeeProperties);
+            callbackApi,
+            new ServerProperties(PUBLIC_URL + "/"),
+            tedeeProperties,
+            taskScheduler,
+            REGISTRATION_RETRY_INTERVAL);
     expectListedCallbacks(callbacks());
     expectRegisteredCallback();
 
@@ -203,6 +218,24 @@ class TedeeCallbackRegistrationTest {
 
     server.verify();
     then(sut.isRunning()).isTrue();
+  }
+
+  @Test
+  void should_notScheduleAnotherRetry_whenBridgeRecovers() {
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+    expectListedCallbacks(callbacks());
+    expectRegisteredCallback();
+
+    sut.start();
+    sut.reregister();
+
+    verify(taskScheduler, times(1))
+        .schedule(
+            org.mockito.ArgumentMatchers.any(Runnable.class),
+            org.mockito.ArgumentMatchers.any(java.time.Instant.class));
   }
 
   @Test
