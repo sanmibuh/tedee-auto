@@ -1,0 +1,21 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistration.java
+  s_b86118298e9c4e::t_80f93af0e6b324 9,19,31-32,38-40,43-44
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistrationTest.java
+  s_b86118298e9c4e::t_d023c5b213e291 5-6,16,33,58,72-73,85-89,106-110,223-240
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "5d36b3abdb35a9535d7686fb1847da1599fca92d",
+  "prompts": {},
+  "sessions": {
+    "s_b86118298e9c4e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed9caa9deffev5Z7Wf20LStR1u",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
