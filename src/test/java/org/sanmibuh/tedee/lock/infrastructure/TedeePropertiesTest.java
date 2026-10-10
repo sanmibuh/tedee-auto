@@ -40,14 +40,14 @@ class TedeePropertiesTest {
             "sanmibuh.rest.tedee.retry.max-interval=5000")
         .run(
             context -> {
-              final var properties = context.getBean(TedeeProperties.class);
-              softly.then(properties.baseUrl()).isEqualTo("http://bridge.local/v1.0");
-              softly.then(properties.apiKey()).isEqualTo("secret-token");
-              softly.then(properties.callbackSecret()).isEqualTo("callback-secret");
-              softly.then(properties.retry().maxRetries()).isEqualTo(2);
-              softly.then(properties.retry().initialInterval()).isEqualTo(500L);
-              softly.then(properties.retry().multiplier()).isEqualTo(2.0);
-              softly.then(properties.retry().maxInterval()).isEqualTo(5000L);
+              final var sut = context.getBean(TedeeProperties.class);
+              softly.then(sut.baseUrl()).isEqualTo("http://bridge.local/v1.0");
+              softly.then(sut.apiKey()).isEqualTo("secret-token");
+              softly.then(sut.callbackSecret()).isEqualTo("callback-secret");
+              softly.then(sut.retry().maxRetries()).isEqualTo(2);
+              softly.then(sut.retry().initialInterval()).isEqualTo(500L);
+              softly.then(sut.retry().multiplier()).isEqualTo(2.0);
+              softly.then(sut.retry().maxInterval()).isEqualTo(5000L);
             });
   }
 

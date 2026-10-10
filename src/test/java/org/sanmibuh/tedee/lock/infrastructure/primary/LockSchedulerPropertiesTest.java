@@ -15,8 +15,8 @@ class LockSchedulerPropertiesTest {
   void should_bindZoneToUtc_whenZoneIsNotProvided() {
     runner.run(
         context -> {
-          final var properties = context.getBean(LockSchedulerProperties.class);
-          then(properties.zone()).isEqualTo(LockSchedulerProperties.DEFAULT_ZONE);
+          final var sut = context.getBean(LockSchedulerProperties.class);
+          then(sut.zone()).isEqualTo(LockSchedulerProperties.DEFAULT_ZONE);
         });
   }
 
