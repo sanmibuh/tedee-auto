@@ -2,6 +2,9 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
+import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
@@ -11,6 +14,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import com.tedee.bridge.client.api.CallbackApi;
 import java.time.Clock;
+import java.time.Instant;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
@@ -18,6 +22,7 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
@@ -27,6 +32,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
@@ -39,6 +45,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
       "sanmibuh.rest.tedee.base-url=" + TedeeCallbackRegistrationTest.BASE_URL,
       "sanmibuh.rest.tedee.api-key=secret",
       "sanmibuh.rest.tedee.callback-secret=" + TedeeCallbackRegistrationTest.CALLBACK_SECRET,
+      "sanmibuh.rest.tedee.callback-registration-interval=1s",
       "sanmibuh.rest.tedee.retry.max-retries=0",
       "sanmibuh.rest.tedee.retry.initial-interval=1",
       "sanmibuh.rest.tedee.retry.multiplier=1",
@@ -47,22 +54,25 @@ import org.springframework.test.web.client.MockRestServiceServer;
 class TedeeCallbackRegistrationTest {
 
   static final String BASE_URL = "http://localhost/v1.0";
+  static final String CALLBACK_SECRET = "callback-secret";
   private static final String CALLBACK_ENDPOINT = BASE_URL + "/callback";
   private static final String PUBLIC_URL = "http://automation.local:8080";
   private static final String CALLBACK_URL = PUBLIC_URL + "/tedee/events";
-  static final String CALLBACK_SECRET = "callback-secret";
   private static final String FOREIGN_CALLBACK_URL = "http://other-system.local/hook";
   private static final int FOREIGN_ID = 1;
   private static final int EXISTING_ID = 5;
   private static final int REGISTERED_ID = 7;
   private static final int DUPLICATE_ID = 9;
   private static final String REGISTERED_RESPONSE = "{\"id\": " + REGISTERED_ID + "}";
+  private static final Instant NOW = Instant.parse("2026-10-10T14:00:00Z");
 
   @Autowired private CallbackApi callbackApi;
 
   @Autowired private MockRestServiceServer server;
 
   @MockitoBean private Clock clock;
+
+  @MockitoBean private TaskScheduler taskScheduler;
 
   @Autowired private TedeeProperties tedeeProperties;
 
@@ -71,11 +81,22 @@ class TedeeCallbackRegistrationTest {
   @SuppressWarnings("NullAway.Init")
   private TedeeCallbackRegistration sut;
 
+  private static String callbacks(final String... callbacks) {
+    return "[" + String.join(",", callbacks) + "]";
+  }
+
+  private static String callback(final int id, final String url) {
+    return """
+        {"id": %d, "url": "%s", "method": "POST", "headers": []}"""
+        .formatted(id, url);
+  }
+
   @BeforeEach
   void setUp() {
+    given(clock.instant()).willReturn(NOW);
     sut =
         new TedeeCallbackRegistration(
-            callbackApi, new ServerProperties(PUBLIC_URL), tedeeProperties);
+            callbackApi, new ServerProperties(PUBLIC_URL), tedeeProperties, clock, taskScheduler);
   }
 
   @Test
@@ -92,7 +113,11 @@ class TedeeCallbackRegistrationTest {
   void should_registerCallbackWithoutDoubleSlash_whenPublicUrlEndsWithSlash() {
     sut =
         new TedeeCallbackRegistration(
-            callbackApi, new ServerProperties(PUBLIC_URL + "/"), tedeeProperties);
+            callbackApi,
+            new ServerProperties(PUBLIC_URL + "/"),
+            tedeeProperties,
+            clock,
+            taskScheduler);
     expectListedCallbacks(callbacks());
     expectRegisteredCallback();
 
@@ -176,7 +201,7 @@ class TedeeCallbackRegistrationTest {
   }
 
   @Test
-  void should_startWithoutRegistration_whenBridgeFails() {
+  void should_remainRunningWithoutCallback_whenBridgeFails() {
     server
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
@@ -184,9 +209,85 @@ class TedeeCallbackRegistrationTest {
 
     try (final var logCaptor = LogCaptor.forClass(TedeeCallbackRegistration.class)) {
       softly.thenCode(sut::start).doesNotThrowAnyException();
-      softly.then(sut.isRunning()).isFalse();
+      softly.then(sut.isRunning()).isTrue();
       softly.then(logCaptor.getWarnLogs()).singleElement(STRING).contains(CALLBACK_URL);
     }
+  }
+
+  @Test
+  void should_registerCallback_whenBridgeRecoversAfterStartupFailure() {
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+    expectListedCallbacks(callbacks());
+    expectRegisteredCallback();
+
+    sut.start();
+    sut.reregister();
+
+    server.verify();
+    then(sut.isRunning()).isTrue();
+  }
+
+  @Test
+  void should_retryUntilBridgeRecovers_whenRegistrationKeepsFailing() {
+    final var retries = ArgumentCaptor.forClass(Runnable.class);
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+    expectListedCallbacks(callbacks());
+    expectRegisteredCallback();
+
+    sut.start();
+    verify(taskScheduler)
+        .schedule(retries.capture(), org.mockito.ArgumentMatchers.any(Instant.class));
+    retries.getValue().run();
+    verify(taskScheduler, times(2))
+        .schedule(retries.capture(), org.mockito.ArgumentMatchers.any(Instant.class));
+    retries.getAllValues().getLast().run();
+
+    server.verify();
+    then(sut.isRunning()).isTrue();
+    verify(taskScheduler, times(2))
+        .schedule(
+            org.mockito.ArgumentMatchers.any(Runnable.class),
+            org.mockito.ArgumentMatchers.any(Instant.class));
+  }
+
+  @Test
+  void should_scheduleRetryAtConfiguredInterval_whenBridgeFails() {
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+    sut.start();
+
+    verify(taskScheduler)
+        .schedule(
+            org.mockito.ArgumentMatchers.any(Runnable.class),
+            org.mockito.ArgumentMatchers.eq(NOW.plusSeconds(1)));
+  }
+
+  @Test
+  void should_notRegisterCallback_whenReregisteringAfterStopped() {
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+    sut.start();
+    sut.stop();
+    sut.reregister();
+
+    server.verify();
+    then(sut.isRunning()).isFalse();
   }
 
   @Test
@@ -229,15 +330,5 @@ class TedeeCallbackRegistrationTest {
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
         .andRespond(withSuccess(callbacks, MediaType.APPLICATION_JSON));
-  }
-
-  private static String callbacks(final String... callbacks) {
-    return "[" + String.join(",", callbacks) + "]";
-  }
-
-  private static String callback(final int id, final String url) {
-    return """
-        {"id": %d, "url": "%s", "method": "POST", "headers": []}"""
-        .formatted(id, url);
   }
 }

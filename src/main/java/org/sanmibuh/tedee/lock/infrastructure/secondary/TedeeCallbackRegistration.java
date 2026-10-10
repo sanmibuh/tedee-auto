@@ -6,6 +6,8 @@ import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.model.CallbackDetails;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
 import com.tedee.bridge.client.model.CallbackHeader;
+import java.time.Clock;
+import java.time.Duration;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -15,6 +17,7 @@ import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
+import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.util.UriComponentsBuilder;
@@ -26,14 +29,23 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   private final CallbackApi callbackApi;
   private final String callbackUrl;
   private final String callbackSecret;
+  private final Clock clock;
+  private final TaskScheduler taskScheduler;
+  private final Duration registrationRetryInterval;
+  private boolean running;
   private @Nullable Long registeredId;
 
   TedeeCallbackRegistration(
       final CallbackApi callbackApi,
       final ServerProperties serverProperties,
-      final TedeeProperties tedeeProperties) {
+      final TedeeProperties tedeeProperties,
+      final Clock clock,
+      final TaskScheduler taskScheduler) {
     this.callbackApi = callbackApi;
     callbackSecret = tedeeProperties.callbackSecret();
+    this.clock = clock;
+    this.taskScheduler = taskScheduler;
+    registrationRetryInterval = tedeeProperties.callbackRegistrationInterval();
     callbackUrl =
         UriComponentsBuilder.fromUriString(serverProperties.publicUrl())
             .path(EVENTS_PATH)
@@ -41,7 +53,12 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   @Override
-  public void start() {
+  public synchronized void start() {
+    running = true;
+    registerCallback();
+  }
+
+  private void registerCallback() {
     try {
       registeredId =
           keepSingleExistingCallback()
@@ -49,6 +66,18 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
               .orElseGet(this::register);
     } catch (final RestClientException exception) {
       log.warn("Could not register callback {} on the Tedee Bridge", callbackUrl, exception);
+      scheduleRetry();
+    }
+  }
+
+  @SuppressWarnings("FutureReturnValueIgnored")
+  private void scheduleRetry() {
+    taskScheduler.schedule(this::reregister, clock.instant().plus(registrationRetryInterval));
+  }
+
+  synchronized void reregister() {
+    if (running) {
+      registerCallback();
     }
   }
 
@@ -83,7 +112,8 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   @Override
-  public void stop() {
+  public synchronized void stop() {
+    running = false;
     if (registeredId != null) {
       try {
         delete(registeredId);
@@ -96,7 +126,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   @Override
-  public boolean isRunning() {
-    return registeredId != null;
+  public synchronized boolean isRunning() {
+    return running;
   }
 }
