@@ -13,6 +13,7 @@ import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
 import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.vo.LockState;
+import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.context.support.StaticMessageSource;
 
 @ExtendWith(MockitoExtension.class)
@@ -54,5 +55,17 @@ class LockStatusReportedNotificationHandlerTest {
     sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.JAMMED));
 
     then(notifier).should().notify("Lock 42 is jammed");
+  }
+
+  @Test
+  void should_notifySpanishState_whenHandlingReportedStatus() {
+    final var messages = new ResourceBundleMessageSource();
+    messages.setBasename("messages");
+    final var sut =
+        new LockStatusReportedNotificationHandler(notifier, messages, Locale.forLanguageTag("es"));
+
+    sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.NOT_JAMMED));
+
+    then(notifier).should().notify("La cerradura 42 esta bloqueada");
   }
 }
