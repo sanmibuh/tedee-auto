@@ -34,6 +34,9 @@ jobs:
   report-failure:
     if: failure()
     needs: native-smoke
+    concurrency:
+      group: native-smoke-failure-reporting
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     permissions:
       issues: write
