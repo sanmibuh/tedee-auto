@@ -201,7 +201,7 @@ class TedeeCallbackRegistrationTest {
   }
 
   @Test
-  void should_startWithoutRegistration_whenBridgeFails() {
+  void should_remainRunningWithoutCallback_whenBridgeFails() {
     server
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
@@ -209,7 +209,7 @@ class TedeeCallbackRegistrationTest {
 
     try (final var logCaptor = LogCaptor.forClass(TedeeCallbackRegistration.class)) {
       softly.thenCode(sut::start).doesNotThrowAnyException();
-      softly.then(sut.isRunning()).isFalse();
+      softly.then(sut.isRunning()).isTrue();
       softly.then(logCaptor.getWarnLogs()).singleElement(STRING).contains(CALLBACK_URL);
     }
   }
@@ -245,7 +245,8 @@ class TedeeCallbackRegistrationTest {
     expectRegisteredCallback();
 
     sut.start();
-    verify(taskScheduler).schedule(retries.capture(), org.mockito.ArgumentMatchers.any(Instant.class));
+    verify(taskScheduler)
+        .schedule(retries.capture(), org.mockito.ArgumentMatchers.any(Instant.class));
     retries.getValue().run();
     verify(taskScheduler, times(2))
         .schedule(retries.capture(), org.mockito.ArgumentMatchers.any(Instant.class));
