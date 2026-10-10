@@ -33,7 +33,12 @@ final class TedeeLockGateway implements LockGateway {
       final RestClientResponseException exception, final int deviceId) {
     return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
       case NOT_FOUND -> new InvalidLockRequestException(deviceId, exception);
-      case METHOD_NOT_ALLOWED, NOT_ACCEPTABLE, BAD_GATEWAY, SERVICE_UNAVAILABLE, GATEWAY_TIMEOUT ->
+      case METHOD_NOT_ALLOWED,
+          NOT_ACCEPTABLE,
+          CONFLICT,
+          BAD_GATEWAY,
+          SERVICE_UNAVAILABLE,
+          GATEWAY_TIMEOUT ->
           new LockTemporarilyUnavailableException(deviceId, exception);
       case null, default -> new LockOperationFailedException(deviceId, exception);
     };
