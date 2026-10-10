@@ -190,6 +190,22 @@ class TedeeCallbackRegistrationTest {
   }
 
   @Test
+  void should_registerCallback_whenBridgeRecoversAfterStartupFailure() {
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+    expectListedCallbacks(callbacks());
+    expectRegisteredCallback();
+
+    sut.start();
+    sut.reregister();
+
+    server.verify();
+    then(sut.isRunning()).isTrue();
+  }
+
+  @Test
   void should_stopWithoutFailing_whenBridgeFailsToDeleteCallback() {
     expectListedCallbacks(callbacks(callback(EXISTING_ID, CALLBACK_URL)));
     server

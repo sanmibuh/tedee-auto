@@ -52,6 +52,10 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
     }
   }
 
+  void reregister() {
+    throw new UnsupportedOperationException();
+  }
+
   private Optional<CallbackDetails> keepSingleExistingCallback() {
     final var ourCallbacks = ourCallbacks();
     ourCallbacks.stream()
