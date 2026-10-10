@@ -1,0 +1,31 @@
+package org.sanmibuh.tedee.lock.infrastructure.secondary;
+
+import static org.mockito.BDDMockito.then;
+
+import java.util.Locale;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.sanmibuh.framework.notifier.Notifier;
+import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
+import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
+import org.springframework.context.support.StaticMessageSource;
+
+@ExtendWith(MockitoExtension.class)
+class LockStatusReportedNotificationHandlerTest {
+
+  @Mock Notifier notifier;
+
+  @Test
+  void should_notifyLocalizedState_whenHandlingReportedStatus() {
+    final var messages = new StaticMessageSource();
+    messages.addMessage("lock.state.closed", Locale.ENGLISH, "Lock {0} is locked");
+    final var sut = new LockStatusReportedNotificationHandler(notifier, messages, Locale.ENGLISH);
+
+    sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.NOT_JAMMED));
+
+    then(notifier).should().notify("Lock 42 is locked");
+  }
+}
