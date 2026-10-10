@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import org.sanmibuh.ddd.port.DomainEventHandler;
 import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
+import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
 import org.springframework.context.MessageSource;
 
 @RequiredArgsConstructor
@@ -22,5 +23,9 @@ public final class LockStatusReportedNotificationHandler
             "lock.state." + event.state().name().toLowerCase(Locale.ROOT),
             new Object[] {event.deviceId()},
             locale));
+
+    if (event.jamStatus() == LockJamStatus.JAMMED) {
+      notifier.notify(messages.getMessage("lock.jammed", new Object[] {event.deviceId()}, locale));
+    }
   }
 }
