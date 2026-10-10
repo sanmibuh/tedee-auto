@@ -7,6 +7,7 @@ import com.tedee.bridge.client.model.CallbackDetails;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
 import com.tedee.bridge.client.model.CallbackHeader;
 import java.time.Duration;
+import java.time.Instant;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -14,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.TaskScheduler;
@@ -37,7 +39,8 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
       final ServerProperties serverProperties,
       final TedeeProperties tedeeProperties,
       final TaskScheduler taskScheduler,
-      final Duration registrationRetryInterval) {
+      @Value("${sanmibuh.rest.tedee.callback-registration-interval}")
+          final Duration registrationRetryInterval) {
     this.callbackApi = callbackApi;
     callbackSecret = tedeeProperties.callbackSecret();
     this.taskScheduler = taskScheduler;
@@ -57,6 +60,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
               .orElseGet(this::register);
     } catch (final RestClientException exception) {
       log.warn("Could not register callback {} on the Tedee Bridge", callbackUrl, exception);
+      taskScheduler.schedule(this::reregister, Instant.now().plus(registrationRetryInterval));
     }
   }
 

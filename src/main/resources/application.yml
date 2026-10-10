@@ -27,6 +27,8 @@ sanmibuh:
       base-url: http://${TEDEE_HOST}/v1.0
       api-key: ${TEDEE_API_KEY}
       callback-secret: ${TEDEE_CALLBACK_SECRET:}
+      # Retry callback registration after a Bridge outage until the callback is registered.
+      callback-registration-interval: 30s
       retry:
         # Retry policy for transient Tedee bridge errors (device disconnected / BLE recovery).
         max-retries: 3
