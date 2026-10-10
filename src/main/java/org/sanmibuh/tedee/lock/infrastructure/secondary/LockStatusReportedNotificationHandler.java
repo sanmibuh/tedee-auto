@@ -18,6 +18,9 @@ public final class LockStatusReportedNotificationHandler
   @Override
   public void handle(final LockStatusReported event) {
     notifier.notify(
-        messages.getMessage("lock.state.closed", new Object[] {event.deviceId()}, locale));
+        messages.getMessage(
+            "lock.state." + event.state().name().toLowerCase(Locale.ROOT),
+            new Object[] {event.deviceId()},
+            locale));
   }
 }
