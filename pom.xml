@@ -26,7 +26,7 @@
     <java.version>25</java.version>
     <nullaway.version>0.14.2</nullaway.version>
     <test.spring.config.location>classpath:/</test.spring.config.location>
-    <openapi-generator.version>7.25.0</openapi-generator.version>
+    <openapi-generator.version>7.26.0</openapi-generator.version>
     <pitest-history-plugin.version>0.0.1</pitest-history-plugin.version>
     <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
     <pitest.version>1.30.0</pitest.version>
