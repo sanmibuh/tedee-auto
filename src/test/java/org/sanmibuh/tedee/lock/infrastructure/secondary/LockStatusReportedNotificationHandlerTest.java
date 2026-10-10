@@ -43,4 +43,16 @@ class LockStatusReportedNotificationHandlerTest {
 
     then(notifier).should().notify("Lock 42 state");
   }
+
+  @Test
+  void should_notifyLocalizedJamAlert_whenHandlingJammedStatus() {
+    final var messages = new StaticMessageSource();
+    messages.addMessage("lock.state.closed", Locale.ENGLISH, "Lock {0} is locked");
+    messages.addMessage("lock.jammed", Locale.ENGLISH, "Lock {0} is jammed");
+    final var sut = new LockStatusReportedNotificationHandler(notifier, messages, Locale.ENGLISH);
+
+    sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.JAMMED));
+
+    then(notifier).should().notify("Lock 42 is jammed");
+  }
 }
