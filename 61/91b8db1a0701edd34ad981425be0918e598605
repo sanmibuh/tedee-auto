@@ -1,0 +1,14 @@
+.github/workflows/native.yml
+  h_97a91c9e567f87 50,57-59
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6191b8db1a0701edd34ad981425be0918e598605",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
