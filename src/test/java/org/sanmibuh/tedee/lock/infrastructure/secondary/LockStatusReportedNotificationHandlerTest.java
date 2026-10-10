@@ -24,17 +24,6 @@ class LockStatusReportedNotificationHandlerTest {
 
   @Mock Notifier notifier;
 
-  @Test
-  void should_notifyLocalizedState_whenHandlingReportedStatus() {
-    final var messages = new StaticMessageSource();
-    messages.addMessage("lock.state.closed", Locale.ENGLISH, "Lock {0} is locked");
-    final var sut = new LockStatusReportedNotificationHandler(notifier, messages, Locale.ENGLISH);
-
-    sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.NOT_JAMMED));
-
-    then(notifier).should().notify("Lock 42 is locked");
-  }
-
   static Stream<Arguments> localizedStates() {
     return Stream.of(
         argumentSet(
@@ -138,6 +127,8 @@ class LockStatusReportedNotificationHandlerTest {
       final Locale locale, final LockState state, final String message) {
     final var messages = new ResourceBundleMessageSource();
     messages.setBasename("messages");
+    messages.setDefaultEncoding("UTF-8");
+    messages.setFallbackToSystemLocale(false);
     final var sut = new LockStatusReportedNotificationHandler(notifier, messages, locale);
 
     sut.handle(new LockStatusReported(42, state, LockJamStatus.NOT_JAMMED));
@@ -155,17 +146,5 @@ class LockStatusReportedNotificationHandlerTest {
     sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.JAMMED));
 
     then(notifier).should().notify("Lock 42 is jammed");
-  }
-
-  @Test
-  void should_notifySpanishState_whenHandlingReportedStatus() {
-    final var messages = new ResourceBundleMessageSource();
-    messages.setBasename("messages");
-    final var sut =
-        new LockStatusReportedNotificationHandler(notifier, messages, Locale.forLanguageTag("es"));
-
-    sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.NOT_JAMMED));
-
-    then(notifier).should().notify("La cerradura 42 esta bloqueada");
   }
 }
