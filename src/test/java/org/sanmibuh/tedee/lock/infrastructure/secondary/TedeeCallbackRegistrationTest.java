@@ -13,7 +13,6 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import com.tedee.bridge.client.api.CallbackApi;
 import java.time.Clock;
-import java.time.Duration;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
@@ -43,6 +42,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
       "sanmibuh.rest.tedee.base-url=" + TedeeCallbackRegistrationTest.BASE_URL,
       "sanmibuh.rest.tedee.api-key=secret",
       "sanmibuh.rest.tedee.callback-secret=" + TedeeCallbackRegistrationTest.CALLBACK_SECRET,
+      "sanmibuh.rest.tedee.callback-registration-interval=1s",
       "sanmibuh.rest.tedee.retry.max-retries=0",
       "sanmibuh.rest.tedee.retry.initial-interval=1",
       "sanmibuh.rest.tedee.retry.multiplier=1",
@@ -50,12 +50,11 @@ import org.springframework.test.web.client.MockRestServiceServer;
     })
 class TedeeCallbackRegistrationTest {
 
-  static final String BASE_URL = "http://localhost/v1.0";
+  static final String BASE_URL = "http=//localhost/v1.0";
+  static final String CALLBACK_SECRET = "callback-secret=";
   private static final String CALLBACK_ENDPOINT = BASE_URL + "/callback";
   private static final String PUBLIC_URL = "http://automation.local:8080";
   private static final String CALLBACK_URL = PUBLIC_URL + "/tedee/events";
-  static final String CALLBACK_SECRET = "callback-secret";
-  private static final Duration REGISTRATION_RETRY_INTERVAL = Duration.ofSeconds(1);
   private static final String FOREIGN_CALLBACK_URL = "http://other-system.local/hook";
   private static final int FOREIGN_ID = 1;
   private static final int EXISTING_ID = 5;
@@ -78,15 +77,21 @@ class TedeeCallbackRegistrationTest {
   @SuppressWarnings("NullAway.Init")
   private TedeeCallbackRegistration sut;
 
+  private static String callbacks(final String... callbacks) {
+    return "[" + String.join(",", callbacks) + "]";
+  }
+
+  private static String callback(final int id, final String url) {
+    return """
+        {"id": %d, "url": "%s", "method": "POST", "headers": []}"""
+        .formatted(id, url);
+  }
+
   @BeforeEach
   void setUp() {
     sut =
         new TedeeCallbackRegistration(
-            callbackApi,
-            new ServerProperties(PUBLIC_URL),
-            tedeeProperties,
-            taskScheduler,
-            REGISTRATION_RETRY_INTERVAL);
+            callbackApi, new ServerProperties(PUBLIC_URL), tedeeProperties, taskScheduler);
   }
 
   @Test
@@ -103,11 +108,7 @@ class TedeeCallbackRegistrationTest {
   void should_registerCallbackWithoutDoubleSlash_whenPublicUrlEndsWithSlash() {
     sut =
         new TedeeCallbackRegistration(
-            callbackApi,
-            new ServerProperties(PUBLIC_URL + "/"),
-            tedeeProperties,
-            taskScheduler,
-            REGISTRATION_RETRY_INTERVAL);
+            callbackApi, new ServerProperties(PUBLIC_URL + "/"), tedeeProperties, taskScheduler);
     expectListedCallbacks(callbacks());
     expectRegisteredCallback();
 
@@ -278,15 +279,5 @@ class TedeeCallbackRegistrationTest {
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
         .andRespond(withSuccess(callbacks, MediaType.APPLICATION_JSON));
-  }
-
-  private static String callbacks(final String... callbacks) {
-    return "[" + String.join(",", callbacks) + "]";
-  }
-
-  private static String callback(final int id, final String url) {
-    return """
-        {"id": %d, "url": "%s", "method": "POST", "headers": []}"""
-        .formatted(id, url);
   }
 }
