@@ -140,11 +140,22 @@ class TedeePropertiesTest {
                   "sanmibuh.rest.tedee.api-key=secret-token"
                 })),
         Arguments.of(Named.of("max-retries is negative", retry("-1", "500", "2.0", "5000"))),
+        Arguments.of(
+            Named.of("callback registration interval is zero", callbackRegistrationInterval("0s"))),
+        Arguments.of(
+            Named.of(
+                "callback registration interval is negative", callbackRegistrationInterval("-1s"))),
         Arguments.of(Named.of("initial-interval is not positive", retry("2", "0", "2.0", "5000"))),
         Arguments.of(Named.of("multiplier is below one", retry("2", "500", "0.5", "5000"))),
         Arguments.of(Named.of("max-interval is not positive", retry("2", "500", "2.0", "0"))),
         Arguments.of(
             Named.of("initial-interval exceeds max-interval", retry("2", "6000", "2.0", "5000"))));
+  }
+
+  private static String[] callbackRegistrationInterval(final String interval) {
+    final var properties = retry("2", "500", "2.0", "5000");
+    properties[3] = "sanmibuh.rest.tedee.callback-registration-interval=" + interval;
+    return properties;
   }
 
   @EnableConfigurationProperties(TedeeProperties.class)

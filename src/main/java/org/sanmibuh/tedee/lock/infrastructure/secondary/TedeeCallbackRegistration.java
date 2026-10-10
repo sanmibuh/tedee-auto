@@ -32,7 +32,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   private final Clock clock;
   private final TaskScheduler taskScheduler;
   private final Duration registrationRetryInterval;
-  private volatile boolean stopped;
+  private boolean running;
   private @Nullable Long registeredId;
 
   TedeeCallbackRegistration(
@@ -53,8 +53,12 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   @Override
-  public void start() {
-    stopped = false;
+  public synchronized void start() {
+    running = true;
+    registerCallback();
+  }
+
+  private void registerCallback() {
     try {
       registeredId =
           keepSingleExistingCallback()
@@ -71,9 +75,9 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
     taskScheduler.schedule(this::reregister, clock.instant().plus(registrationRetryInterval));
   }
 
-  void reregister() {
-    if (!stopped) {
-      start();
+  synchronized void reregister() {
+    if (running) {
+      registerCallback();
     }
   }
 
@@ -108,8 +112,8 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   @Override
-  public void stop() {
-    stopped = true;
+  public synchronized void stop() {
+    running = false;
     if (registeredId != null) {
       try {
         delete(registeredId);
@@ -122,7 +126,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   @Override
-  public boolean isRunning() {
-    return registeredId != null;
+  public synchronized boolean isRunning() {
+    return running;
   }
 }

@@ -1,6 +1,7 @@
 package org.sanmibuh.tedee.lock.infrastructure;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.AssertTrue;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import java.time.Duration;
@@ -15,4 +16,10 @@ public record TedeeProperties(
     @NotBlank String apiKey,
     @NotBlank String callbackSecret,
     @NotNull Duration callbackRegistrationInterval,
-    @Valid @NotNull RetryProperties retry) {}
+    @Valid @NotNull RetryProperties retry) {
+
+  @AssertTrue(message = "callbackRegistrationInterval must be positive")
+  boolean isCallbackRegistrationIntervalPositive() {
+    return !callbackRegistrationInterval.isNegative() && !callbackRegistrationInterval.isZero();
+  }
+}

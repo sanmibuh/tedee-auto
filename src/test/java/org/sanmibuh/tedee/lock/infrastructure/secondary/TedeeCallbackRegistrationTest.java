@@ -3,6 +3,7 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.jsonPath;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
@@ -21,6 +22,7 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
@@ -223,6 +225,31 @@ class TedeeCallbackRegistrationTest {
 
     sut.start();
     sut.reregister();
+
+    server.verify();
+    then(sut.isRunning()).isTrue();
+  }
+
+  @Test
+  void should_retryUntilBridgeRecovers_whenRegistrationKeepsFailing() {
+    final var retries = ArgumentCaptor.forClass(Runnable.class);
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+    expectListedCallbacks(callbacks());
+    expectRegisteredCallback();
+
+    sut.start();
+    verify(taskScheduler).schedule(retries.capture(), org.mockito.ArgumentMatchers.any(Instant.class));
+    retries.getValue().run();
+    verify(taskScheduler, times(2))
+        .schedule(retries.capture(), org.mockito.ArgumentMatchers.any(Instant.class));
+    retries.getAllValues().getLast().run();
 
     server.verify();
     then(sut.isRunning()).isTrue();
