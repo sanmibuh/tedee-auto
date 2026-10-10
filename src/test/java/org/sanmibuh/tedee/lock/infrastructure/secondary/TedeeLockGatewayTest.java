@@ -73,6 +73,7 @@ class TedeeLockGatewayTest {
     return Stream.of(
         Arguments.of(HttpStatus.METHOD_NOT_ALLOWED),
         Arguments.of(HttpStatus.NOT_ACCEPTABLE),
+        Arguments.of(HttpStatus.CONFLICT),
         Arguments.of(HttpStatus.BAD_GATEWAY),
         Arguments.of(HttpStatus.SERVICE_UNAVAILABLE),
         Arguments.of(HttpStatus.GATEWAY_TIMEOUT));
