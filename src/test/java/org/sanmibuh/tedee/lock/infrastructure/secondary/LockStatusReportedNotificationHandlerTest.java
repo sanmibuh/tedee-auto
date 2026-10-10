@@ -5,6 +5,8 @@ import static org.mockito.BDDMockito.then;
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.framework.notifier.Notifier;
@@ -27,5 +29,18 @@ class LockStatusReportedNotificationHandlerTest {
     sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.NOT_JAMMED));
 
     then(notifier).should().notify("Lock 42 is locked");
+  }
+
+  @ParameterizedTest
+  @EnumSource(LockState.class)
+  void should_notifyLocalizedState_whenHandlingEachReportedState(final LockState state) {
+    final var messages = new StaticMessageSource();
+    messages.addMessage(
+        "lock.state." + state.name().toLowerCase(Locale.ROOT), Locale.ENGLISH, "Lock {0} state");
+    final var sut = new LockStatusReportedNotificationHandler(notifier, messages, Locale.ENGLISH);
+
+    sut.handle(new LockStatusReported(42, state, LockJamStatus.NOT_JAMMED));
+
+    then(notifier).should().notify("Lock 42 state");
   }
 }
