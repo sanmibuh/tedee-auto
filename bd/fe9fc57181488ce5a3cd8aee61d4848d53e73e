@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  s_159fb4cb17a6a8::t_90aeef0e8c8abd 8,35,38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bdfe9fc57181488ce5a3cd8aee61d4848d53e73e",
+  "prompts": {},
+  "sessions": {
+    "s_159fb4cb17a6a8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed4a86d82ffe2FLYL27GcyEPR0",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
