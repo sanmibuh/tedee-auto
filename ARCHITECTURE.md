@@ -8,7 +8,7 @@ The project uses hexagonal architecture. Each bounded context has `domain`, `app
 
 - Domain code has no Spring, application, or infrastructure dependency.
 - Application code has no infrastructure dependency.
-- Domain events use scalar payloads only, except domain enums that represent closed vocabularies, and need a `DomainEventHandler` unless explicitly annotated with `@NoSubscribersRequired`.
+- Domain events use scalar payloads or event-owned payload records whose fields are scalar or domain enums that represent closed vocabularies; they need a `DomainEventHandler` unless explicitly annotated with `@NoSubscribersRequired`.
 - Concrete aggregates, handlers, adapters, and other leaf collaborators are `final`; Spring configuration classes remain non-final for proxying.
 
 These boundaries and event rules are enforced by ArchUnit.

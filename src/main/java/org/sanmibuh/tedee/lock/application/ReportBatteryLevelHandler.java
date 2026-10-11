@@ -4,7 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
-import org.sanmibuh.tedee.lock.domain.vo.BatteryLevel;
+import org.sanmibuh.tedee.lock.domain.vo.BatteryIndicator;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
 
 @RequiredArgsConstructor
@@ -16,7 +16,7 @@ public final class ReportBatteryLevelHandler
   @Override
   protected Lock execute(final ReportBatteryLevelCommand command) {
     final var lock = repository.get(new LockId(command.deviceId()));
-    lock.reportBatteryLevel(new BatteryLevel(command.level()));
+    lock.reportBatteryLevel(new BatteryIndicator(command.level()));
     repository.save(lock);
 
     return lock;
