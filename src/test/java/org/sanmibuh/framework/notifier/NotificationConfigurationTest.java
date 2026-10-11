@@ -12,9 +12,9 @@ class NotificationConfigurationTest {
       new ApplicationContextRunner().withUserConfiguration(NotificationConfiguration.class);
 
   @Test
-  void should_createConfiguredLocale_whenNotificationLocaleIsSpanish() {
+  void should_createConfiguredLocale_whenWebLocaleIsSpanish() {
     contextRunner
-        .withPropertyValues("sanmibuh.notification.locale=es")
+        .withPropertyValues("spring.web.locale=es")
         .run(context -> then(context.getBean(Locale.class)).isEqualTo(Locale.forLanguageTag("es")));
   }
 }
