@@ -2,7 +2,10 @@ package org.sanmibuh.tedee.lock.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+import java.util.Locale;
 import org.junit.jupiter.api.Test;
+import org.sanmibuh.tedee.ApplicationLocale;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 
 class TedeeInfrastructureConfigurationTest {
@@ -23,5 +26,21 @@ class TedeeInfrastructureConfigurationTest {
   @Test
   void should_registerTedeeProperties_whenConfigurationIsLoaded() {
     runner.run(context -> then(context).hasSingleBean(TedeeProperties.class));
+  }
+
+  @Test
+  void should_registerApplicationLocale_whenConfigurationIsLoaded() {
+    runner.run(context -> then(context).hasSingleBean(ApplicationLocale.class));
+  }
+
+  @Test
+  void should_createApplicationLocale_whenRequested() {
+    final var properties = new WebProperties();
+    properties.setLocale(Locale.forLanguageTag("es"));
+
+    final var applicationLocale =
+        new TedeeInfrastructureConfiguration().applicationLocale(properties);
+
+    then(applicationLocale.current()).isEqualTo(Locale.forLanguageTag("es"));
   }
 }
