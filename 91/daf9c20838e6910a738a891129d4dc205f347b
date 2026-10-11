@@ -1,0 +1,18 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/vo/BatteryIndicator.java
+  h_97a91c9e567f87 13
+src/main/java/org/sanmibuh/tedee/lock/domain/vo/BatteryLevelCategory.java
+  h_97a91c9e567f87 3-4,6-26,28-29
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/BatteryLevelReportedNotificationHandlerTest.java
+  h_97a91c9e567f87 27-32,38,44
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "91daf9c20838e6910a738a891129d4dc205f347b",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
