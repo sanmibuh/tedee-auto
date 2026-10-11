@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/TedeeInfrastructureConfigurationTest.java
+  s_159fb4cb17a6a8::t_99b3f3b6f64ddd 5,7-8,30-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "dbd25b17a45486d43094174e64bf0884917a6cbc",
+  "prompts": {},
+  "sessions": {
+    "s_159fb4cb17a6a8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed4a86d82ffe2FLYL27GcyEPR0",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
