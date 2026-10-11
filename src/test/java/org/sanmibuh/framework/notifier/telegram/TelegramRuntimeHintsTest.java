@@ -49,7 +49,9 @@ class TelegramRuntimeHintsTest {
     then(RuntimeHintsPredicates.reflection()
             .onType(RetryProperties.class)
             .withMemberCategories(
-                MemberCategory.ACCESS_DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_METHODS)
+                MemberCategory.ACCESS_DECLARED_FIELDS,
+                MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                MemberCategory.INVOKE_DECLARED_METHODS)
             .test(hints))
         .isTrue();
   }

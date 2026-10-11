@@ -24,6 +24,11 @@ final class TedeeReflectionHints implements RuntimeHintsRegistrar {
   private static final MemberCategory[] VALIDATION_CATEGORIES = {
     MemberCategory.ACCESS_DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_METHODS
   };
+  private static final MemberCategory[] RETRY_PROPERTIES_CATEGORIES = {
+    MemberCategory.ACCESS_DECLARED_FIELDS,
+    MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+    MemberCategory.INVOKE_DECLARED_METHODS
+  };
 
   @Override
   public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
@@ -43,7 +48,7 @@ final class TedeeReflectionHints implements RuntimeHintsRegistrar {
     hints
         .reflection()
         .registerType(TedeeProperties.class, VALIDATION_CATEGORIES)
-        .registerType(RetryProperties.class, VALIDATION_CATEGORIES);
+        .registerType(RetryProperties.class, RETRY_PROPERTIES_CATEGORIES);
   }
 
   private ClassPathScanningCandidateComponentProvider setResourceLoaderPITEquivalent(

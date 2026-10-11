@@ -45,9 +45,11 @@ class TedeeReflectionHintsTest {
             RuntimeHintsPredicates.reflection()
                 .onType(RetryProperties.class)
                 .withMemberCategories(
-                    MemberCategory.ACCESS_DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_METHODS)
+                    MemberCategory.ACCESS_DECLARED_FIELDS,
+                    MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
+                    MemberCategory.INVOKE_DECLARED_METHODS)
                 .test(hints))
-        .as("shared retry properties fields and @AssertTrue methods for JSR-303 validation")
+        .as("shared retry properties constructor, fields, and @AssertTrue methods")
         .isTrue();
     softly
         .then(

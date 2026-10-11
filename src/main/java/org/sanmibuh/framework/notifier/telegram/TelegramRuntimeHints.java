@@ -23,6 +23,7 @@ final class TelegramRuntimeHints implements RuntimeHintsRegistrar {
         .registerType(
             RetryProperties.class,
             MemberCategory.ACCESS_DECLARED_FIELDS,
+            MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
             MemberCategory.INVOKE_DECLARED_METHODS);
   }
 }
