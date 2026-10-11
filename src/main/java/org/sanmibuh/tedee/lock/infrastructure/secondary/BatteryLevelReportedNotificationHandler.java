@@ -6,7 +6,6 @@ import org.sanmibuh.ddd.port.DomainEventHandler;
 import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.ApplicationLocale;
 import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported;
-import org.sanmibuh.tedee.lock.domain.vo.BatteryLevelCategory;
 import org.springframework.context.MessageSource;
 
 @RequiredArgsConstructor
@@ -21,8 +20,7 @@ public final class BatteryLevelReportedNotificationHandler
   public void handle(final BatteryLevelReported event) {
     notifier.notify(
         messages.getMessage(
-            "battery.level."
-                + BatteryLevelCategory.from(event.level()).name().toLowerCase(Locale.ROOT),
+            "battery.level." + event.category().name().toLowerCase(Locale.ROOT),
             new Object[] {event.level(), event.deviceId()},
             applicationLocale.current()));
   }
