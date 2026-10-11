@@ -40,8 +40,7 @@ class BatteryLevelReportedNotificationHandlerTest {
         new BatteryLevelReportedNotificationHandler(
             notifier, messages(), applicationLocale(Locale.ENGLISH));
 
-    sut.handle(
-        new BatteryLevelReported(42, new BatteryStatus(level, category)));
+    sut.handle(new BatteryLevelReported(42, new BatteryStatus(level, category)));
 
     then(notifier).should().notify(message);
   }
