@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
 
 @RequiredArgsConstructor
 public final class ReportLockDisconnectedHandler
@@ -13,6 +14,10 @@ public final class ReportLockDisconnectedHandler
 
   @Override
   protected Lock execute(final ReportLockDisconnectedCommand command) {
-    throw new UnsupportedOperationException();
+    final var lock = repository.get(new LockId(command.deviceId()));
+    lock.reportDisconnected();
+    repository.save(lock);
+
+    return lock;
   }
 }

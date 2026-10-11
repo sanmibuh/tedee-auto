@@ -3,6 +3,8 @@ package org.sanmibuh.tedee.lock.domain;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported;
 import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported.BatteryStatus;
+import org.sanmibuh.tedee.lock.domain.event.LockConnected;
+import org.sanmibuh.tedee.lock.domain.event.LockDisconnected;
 import org.sanmibuh.tedee.lock.domain.event.LockRequested;
 import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
 import org.sanmibuh.tedee.lock.domain.vo.BatteryIndicator;
@@ -33,11 +35,11 @@ public final class Lock extends AggregateRoot<LockId> {
   }
 
   public void reportConnected() {
-    throw new UnsupportedOperationException();
+    recordEvent(new LockConnected(id().value()));
   }
 
   public void reportDisconnected() {
-    throw new UnsupportedOperationException();
+    recordEvent(new LockDisconnected(id().value()));
   }
 
   public void reportBatteryLevel(final BatteryIndicator indicator) {
