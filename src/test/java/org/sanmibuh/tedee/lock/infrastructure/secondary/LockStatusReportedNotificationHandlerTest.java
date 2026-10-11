@@ -14,6 +14,7 @@ import org.mockito.BDDMockito;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.framework.notifier.Notifier;
+import org.sanmibuh.tedee.ApplicationLocale;
 import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
 import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.vo.LockState;
@@ -44,7 +45,7 @@ class LockStatusReportedNotificationHandlerTest {
   void should_notifyLocalizedState_whenHandlingReportedClosedState(
       final Locale locale, final String stateMessage, final String jamMessage) {
     final var sut =
-        new LockStatusReportedNotificationHandler(notifier, messages(), webProperties(locale));
+        new LockStatusReportedNotificationHandler(notifier, messages(), applicationLocale(locale));
 
     sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.NOT_JAMMED));
 
@@ -56,7 +57,7 @@ class LockStatusReportedNotificationHandlerTest {
   void should_notifyLocalizedJamAlert_whenHandlingJammedStatus(
       final Locale locale, final String stateMessage, final String jamMessage) {
     final var sut =
-        new LockStatusReportedNotificationHandler(notifier, messages(), webProperties(locale));
+        new LockStatusReportedNotificationHandler(notifier, messages(), applicationLocale(locale));
 
     sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.JAMMED));
 
@@ -83,9 +84,9 @@ class LockStatusReportedNotificationHandlerTest {
     return messages;
   }
 
-  private WebProperties webProperties(final Locale locale) {
+  private ApplicationLocale applicationLocale(final Locale locale) {
     final var webProperties = new WebProperties();
     webProperties.setLocale(locale);
-    return webProperties;
+    return new ApplicationLocale(webProperties);
   }
 }
