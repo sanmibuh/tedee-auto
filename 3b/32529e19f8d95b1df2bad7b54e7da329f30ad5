@@ -1,0 +1,18 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/BatteryLevelReportedNotificationHandler.java
+  h_97a91c9e567f87 22,26-44
+src/main/resources/messages.properties
+  h_97a91c9e567f87 13-14,16-18
+src/main/resources/messages_es.properties
+  h_97a91c9e567f87 13-14,16-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3b32529e19f8d95b1df2bad7b54e7da329f30ad5",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
