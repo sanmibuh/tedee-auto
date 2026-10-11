@@ -1,0 +1,21 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  s_159fb4cb17a6a8::t_f5a2b311279d86 38-39
+src/main/java/org/sanmibuh/tedee/lock/domain/vo/BatteryIndicator.java
+  s_159fb4cb17a6a8::t_690997b4bf894f 3-5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4de0cb829886b2787f09c6f40b36718b0948ae26",
+  "prompts": {},
+  "sessions": {
+    "s_159fb4cb17a6a8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed4a86d82ffe2FLYL27GcyEPR0",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
