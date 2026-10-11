@@ -1,0 +1,24 @@
+src/test/java/org/sanmibuh/tedee/lock/application/ReportBatteryLevelHandlerTest.java
+  s_159fb4cb17a6a8::t_02da09558facdb 4,8,11-12,35-50,52-54,61
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "72b7cf718602de372bfdeefebb70553cf37fdb38",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_159fb4cb17a6a8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed4a86d82ffe2FLYL27GcyEPR0",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
