@@ -1,5 +1,6 @@
 package org.sanmibuh.framework.notifier.telegram;
 
+import org.sanmibuh.framework.resilience.ResilienceRuntimeHints;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -10,7 +11,7 @@ import org.springframework.web.client.RestClient;
 @AutoConfiguration
 @EnableResilientMethods
 @EnableConfigurationProperties(TelegramProperties.class)
-@ImportRuntimeHints(TelegramRuntimeHints.class)
+@ImportRuntimeHints({TelegramRuntimeHints.class, ResilienceRuntimeHints.class})
 public class TelegramNotificationConfiguration {
 
   @Bean
