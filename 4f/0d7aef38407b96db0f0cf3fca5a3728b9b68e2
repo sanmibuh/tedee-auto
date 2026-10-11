@@ -1,0 +1,18 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 11,24,26,34
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  h_97a91c9e567f87 37-38
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/BatteryLevelReportedNotificationHandler.java
+  h_97a91c9e567f87 23
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4f0d7aef38407b96db0f0cf3fca5a3728b9b68e2",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
