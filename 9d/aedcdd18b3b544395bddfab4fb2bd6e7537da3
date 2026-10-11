@@ -1,0 +1,18 @@
+src/main/resources/messages.properties
+  h_97a91c9e567f87 12
+src/main/resources/messages_en.properties
+  h_97a91c9e567f87 12
+src/main/resources/messages_es.properties
+  h_97a91c9e567f87 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9daedcdd18b3b544395bddfab4fb2bd6e7537da3",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

@@ -1,0 +1,15 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockStatusReportedNotificationHandler.java
+  h_97a91c9e567f87 8,27-29
+  h_97a91c9e567f87 26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "c57630217efb1255479ec42c1c3e5b58ba34aa97",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

@@ -1,0 +1,22 @@
+src/main/java/org/sanmibuh/tedee/ApplicationLocale.java
+  h_97a91c9e567f87 1,4,6,8-10,12,15-16
+src/main/java/org/sanmibuh/tedee/TedeeAutomationApplication.java
+  h_97a91c9e567f87 5,10
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockStatusReportedNotificationHandler.java
+  h_97a91c9e567f87 7,18,26,31
+src/test/java/org/sanmibuh/tedee/ApplicationLocaleTest.java
+  h_97a91c9e567f87 1,9,15,19-25
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockStatusReportedNotificationHandlerTest.java
+  h_97a91c9e567f87 17,48,60,87,90
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bc176a0e44b29a45f2c26bf32d569946ae753581",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

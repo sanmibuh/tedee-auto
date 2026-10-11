@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/framework/notifier/NotificationConfiguration.java
+  h_97a91c9e567f87 1-14
+src/test/java/org/sanmibuh/framework/notifier/NotificationConfigurationTest.java
+  h_97a91c9e567f87 1-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e3d064bdbf9dcf07a935b22a13c3b76a13cbb8f3",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
