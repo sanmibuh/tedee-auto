@@ -14,6 +14,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported;
+import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported.BatteryStatus;
 import org.sanmibuh.tedee.lock.domain.vo.BatteryLevelCategory;
 
 @ExtendWith(MockitoExtension.class)
@@ -39,7 +40,8 @@ class BatteryLevelReportedNotificationHandlerTest {
         new BatteryLevelReportedNotificationHandler(
             notifier, messages(), applicationLocale(Locale.ENGLISH));
 
-    sut.handle(new BatteryLevelReported(42, level, BatteryLevelCategory.from(level)));
+    sut.handle(
+        new BatteryLevelReported(42, new BatteryStatus(level, BatteryLevelCategory.from(level))));
 
     then(notifier).should().notify(message);
   }

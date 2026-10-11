@@ -18,10 +18,11 @@ public final class BatteryLevelReportedNotificationHandler
 
   @Override
   public void handle(final BatteryLevelReported event) {
+    final var battery = event.battery();
     notifier.notify(
         messages.getMessage(
-            "battery.level." + event.category().name().toLowerCase(Locale.ROOT),
-            new Object[] {event.level(), event.deviceId()},
+            "battery.level." + battery.category().name().toLowerCase(Locale.ROOT),
+            new Object[] {battery.level(), event.deviceId()},
             applicationLocale.current()));
   }
 }
