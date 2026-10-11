@@ -16,6 +16,7 @@ import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
 import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.vo.LockState;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.context.support.ResourceBundleMessageSource;
 import org.springframework.context.support.StaticMessageSource;
 
@@ -129,7 +130,8 @@ class LockStatusReportedNotificationHandlerTest {
     messages.setBasename("messages");
     messages.setDefaultEncoding("UTF-8");
     messages.setFallbackToSystemLocale(false);
-    final var sut = new LockStatusReportedNotificationHandler(notifier, messages, locale);
+    final var sut =
+        new LockStatusReportedNotificationHandler(notifier, messages, webProperties(locale));
 
     sut.handle(new LockStatusReported(42, state, LockJamStatus.NOT_JAMMED));
 
@@ -141,7 +143,9 @@ class LockStatusReportedNotificationHandlerTest {
     final var messages = new StaticMessageSource();
     messages.addMessage("lock.state.closed", Locale.ENGLISH, "Lock {0} is locked");
     messages.addMessage("lock.jammed", Locale.ENGLISH, "Lock {0} is jammed");
-    final var sut = new LockStatusReportedNotificationHandler(notifier, messages, Locale.ENGLISH);
+    final var sut =
+        new LockStatusReportedNotificationHandler(
+            notifier, messages, webProperties(Locale.ENGLISH));
 
     sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.JAMMED));
 
@@ -162,10 +166,17 @@ class LockStatusReportedNotificationHandlerTest {
     messages.setBasename("messages");
     messages.setDefaultEncoding("UTF-8");
     messages.setFallbackToSystemLocale(false);
-    final var sut = new LockStatusReportedNotificationHandler(notifier, messages, locale);
+    final var sut =
+        new LockStatusReportedNotificationHandler(notifier, messages, webProperties(locale));
 
     sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.JAMMED));
 
     then(notifier).should().notify(message);
+  }
+
+  private WebProperties webProperties(final Locale locale) {
+    final var webProperties = new WebProperties();
+    webProperties.setLocale(locale);
+    return webProperties;
   }
 }

@@ -6,6 +6,7 @@ import org.sanmibuh.ddd.port.DomainEventHandler;
 import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
 import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
+import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.context.MessageSource;
 
 @RequiredArgsConstructor
@@ -14,7 +15,7 @@ public final class LockStatusReportedNotificationHandler
 
   private final Notifier notifier;
   private final MessageSource messages;
-  private final Locale locale;
+  private final WebProperties webProperties;
 
   @Override
   public void handle(final LockStatusReported event) {
@@ -22,10 +23,12 @@ public final class LockStatusReportedNotificationHandler
         messages.getMessage(
             "lock.state." + event.state().name().toLowerCase(Locale.ROOT),
             new Object[] {event.deviceId()},
-            locale));
+            webProperties.getLocale()));
 
     if (event.jamStatus() == LockJamStatus.JAMMED) {
-      notifier.notify(messages.getMessage("lock.jammed", new Object[] {event.deviceId()}, locale));
+      notifier.notify(
+          messages.getMessage(
+              "lock.jammed", new Object[] {event.deviceId()}, webProperties.getLocale()));
     }
   }
 }
