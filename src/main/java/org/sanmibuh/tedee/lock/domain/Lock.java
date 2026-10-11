@@ -32,6 +32,14 @@ public final class Lock extends AggregateRoot<LockId> {
     recordEvent(new LockStatusReported(id().value(), state, jamStatus));
   }
 
+  public void reportConnected() {
+    throw new UnsupportedOperationException();
+  }
+
+  public void reportDisconnected() {
+    throw new UnsupportedOperationException();
+  }
+
   public void reportBatteryLevel(final BatteryIndicator indicator) {
     recordEvent(
         new BatteryLevelReported(
