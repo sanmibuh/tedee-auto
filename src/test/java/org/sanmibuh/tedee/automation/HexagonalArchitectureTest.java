@@ -91,8 +91,8 @@ class HexagonalArchitectureTest {
           .resideInAPackage("..infrastructure..");
 
   @ArchTest
-  static final ArchRule should_carryOnlyScalarPayloads_whenDomainEvent =
-      classes().that().implement(DomainEvent.class).should(haveOnlyScalarFields());
+  static final ArchRule should_carryOnlyScalarOrEventPayloadRecords_whenDomainEvent =
+      classes().that().implement(DomainEvent.class).should(haveOnlyAllowedPayloadFields());
 
   @ArchTest
   static final ArchRule should_beFinal_whenConcreteAggregate =
@@ -155,19 +155,19 @@ class HexagonalArchitectureTest {
           .dependOnClassesThat()
           .resideInAPackage("..domain..");
 
-  private static ArchCondition<JavaClass> haveOnlyScalarFields() {
-    return new ArchCondition<>("carry only primitive or standard scalar payloads") {
+  private static ArchCondition<JavaClass> haveOnlyAllowedPayloadFields() {
+    return new ArchCondition<>("carry only scalar or event-owned record payloads") {
       @Override
       public void check(final JavaClass event, final ConditionEvents events) {
         event.getFields().stream()
             .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))
-            .filter(field -> !isScalar(field.getRawType()))
+            .filter(field -> !isAllowedPayload(field.getRawType(), event))
             .forEach(
                 field ->
                     events.add(
                         SimpleConditionEvent.violated(
                             field,
-                            "%s has non-scalar payload field %s of type %s"
+                            "%s has unsupported payload field %s of type %s"
                                 .formatted(
                                     event.getName(),
                                     field.getName(),
@@ -181,5 +181,14 @@ class HexagonalArchitectureTest {
         || type.isEnum()
         || ALLOWED_SCALAR_TYPES.contains(type.getName())
         || ALLOWED_SCALAR_PACKAGES.contains(type.getPackageName());
+  }
+
+  private static boolean isAllowedPayload(final JavaClass type, final JavaClass event) {
+    return isScalar(type)
+        || (type.isRecord()
+            && type.getName().startsWith(event.getName() + "$")
+            && type.getFields().stream()
+                .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))
+                .allMatch(field -> isScalar(field.getRawType())));
   }
 }
