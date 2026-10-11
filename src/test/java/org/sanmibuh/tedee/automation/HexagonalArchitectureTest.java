@@ -185,7 +185,8 @@ class HexagonalArchitectureTest {
 
   private static boolean isAllowedPayload(final JavaClass type, final JavaClass event) {
     return isScalar(type)
-        || (type.getName().startsWith(event.getName() + "$")
+        || (type.isRecord()
+            && type.getName().startsWith(event.getName() + "$")
             && type.getFields().stream()
                 .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))
                 .allMatch(field -> isScalar(field.getRawType())));
