@@ -10,6 +10,6 @@ public final class BatteryIndicator {
 
   public BatteryIndicator(final int level) {
     this.level = new BatteryLevel(level);
-    category = BatteryLevelCategory.from(level);
+    category = BatteryLevelCategory.from(this.level);
   }
 }

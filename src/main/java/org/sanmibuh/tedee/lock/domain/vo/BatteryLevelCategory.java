@@ -1,29 +1,31 @@
 package org.sanmibuh.tedee.lock.domain.vo;
 
-public enum BatteryLevelCategory {
-  DEPLETED,
-  CRITICAL,
-  LOW,
-  MEDIUM,
-  GOOD,
-  HIGH;
+import java.util.Arrays;
 
-  public static BatteryLevelCategory from(final int level) {
-    if (level <= 10) {
-      return DEPLETED;
-    }
-    if (level <= 20) {
-      return CRITICAL;
-    }
-    if (level <= 40) {
-      return LOW;
-    }
-    if (level <= 60) {
-      return MEDIUM;
-    }
-    if (level <= 80) {
-      return GOOD;
-    }
-    return HIGH;
+public enum BatteryLevelCategory {
+  DEPLETED(0, 10),
+  CRITICAL(11, 20),
+  LOW(21, 40),
+  MEDIUM(41, 60),
+  GOOD(61, 80),
+  HIGH(81, 100);
+
+  private final int minimum;
+  private final int maximum;
+
+  BatteryLevelCategory(final int minimum, final int maximum) {
+    this.minimum = minimum;
+    this.maximum = maximum;
+  }
+
+  public static BatteryLevelCategory from(final BatteryLevel level) {
+    return Arrays.stream(values())
+        .filter(category -> category.includes(level.value()))
+        .findFirst()
+        .orElseThrow();
+  }
+
+  private boolean includes(final int level) {
+    return level >= minimum && level <= maximum;
   }
 }

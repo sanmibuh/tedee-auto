@@ -24,24 +24,24 @@ class BatteryLevelReportedNotificationHandlerTest {
 
   static Stream<Arguments> batteryLevels() {
     return Stream.of(
-        Arguments.of(10, "Battery depleted: 10% (lock 42)"),
-        Arguments.of(20, "Battery critical: 20% (lock 42)"),
-        Arguments.of(40, "Battery low: 40% (lock 42)"),
-        Arguments.of(60, "Battery medium: 60% (lock 42)"),
-        Arguments.of(80, "Battery good: 80% (lock 42)"),
-        Arguments.of(81, "Battery high: 81% (lock 42)"));
+        Arguments.of(10, BatteryLevelCategory.DEPLETED, "Battery depleted: 10% (lock 42)"),
+        Arguments.of(20, BatteryLevelCategory.CRITICAL, "Battery critical: 20% (lock 42)"),
+        Arguments.of(40, BatteryLevelCategory.LOW, "Battery low: 40% (lock 42)"),
+        Arguments.of(60, BatteryLevelCategory.MEDIUM, "Battery medium: 60% (lock 42)"),
+        Arguments.of(80, BatteryLevelCategory.GOOD, "Battery good: 80% (lock 42)"),
+        Arguments.of(81, BatteryLevelCategory.HIGH, "Battery high: 81% (lock 42)"));
   }
 
   @ParameterizedTest
   @MethodSource("batteryLevels")
   void should_notifyLocalizedBatteryLevel_whenHandlingReportedLevel(
-      final int level, final String message) {
+      final int level, final BatteryLevelCategory category, final String message) {
     final var sut =
         new BatteryLevelReportedNotificationHandler(
             notifier, messages(), applicationLocale(Locale.ENGLISH));
 
     sut.handle(
-        new BatteryLevelReported(42, new BatteryStatus(level, BatteryLevelCategory.from(level))));
+        new BatteryLevelReported(42, new BatteryStatus(level, category)));
 
     then(notifier).should().notify(message);
   }
