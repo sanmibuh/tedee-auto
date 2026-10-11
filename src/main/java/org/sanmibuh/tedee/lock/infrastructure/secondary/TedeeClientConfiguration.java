@@ -4,6 +4,7 @@ import com.tedee.bridge.client.ApiClient;
 import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.api.LockApi;
 import java.time.Clock;
+import org.sanmibuh.framework.resilience.ResilienceRuntimeHints;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -13,7 +14,7 @@ import org.springframework.web.client.RestClient;
 
 @Configuration
 @EnableResilientMethods
-@ImportRuntimeHints(TedeeReflectionHints.class)
+@ImportRuntimeHints({TedeeReflectionHints.class, ResilienceRuntimeHints.class})
 public class TedeeClientConfiguration {
 
   @Bean

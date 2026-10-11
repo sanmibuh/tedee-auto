@@ -3,7 +3,6 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
-import org.sanmibuh.framework.resilience.RetryProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
@@ -24,11 +23,6 @@ final class TedeeReflectionHints implements RuntimeHintsRegistrar {
   private static final MemberCategory[] VALIDATION_CATEGORIES = {
     MemberCategory.ACCESS_DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_METHODS
   };
-  private static final MemberCategory[] RETRY_PROPERTIES_CATEGORIES = {
-    MemberCategory.ACCESS_DECLARED_FIELDS,
-    MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-    MemberCategory.INVOKE_DECLARED_METHODS
-  };
 
   @Override
   public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
@@ -45,10 +39,7 @@ final class TedeeReflectionHints implements RuntimeHintsRegistrar {
                   : Stream.empty();
             })
         .forEach(type -> hints.reflection().registerType(type, JACKSON_CATEGORIES));
-    hints
-        .reflection()
-        .registerType(TedeeProperties.class, VALIDATION_CATEGORIES)
-        .registerType(RetryProperties.class, RETRY_PROPERTIES_CATEGORIES);
+    hints.reflection().registerType(TedeeProperties.class, VALIDATION_CATEGORIES);
   }
 
   private ClassPathScanningCandidateComponentProvider setResourceLoaderPITEquivalent(

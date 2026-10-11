@@ -9,7 +9,6 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.sanmibuh.framework.resilience.RetryProperties;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
@@ -39,17 +38,6 @@ class TedeeReflectionHintsTest {
     softly
         .then(RuntimeHintsPredicates.reflection().onType(LockDetails.StateEnum.class).test(hints))
         .as("inner enum of a model class")
-        .isTrue();
-    softly
-        .then(
-            RuntimeHintsPredicates.reflection()
-                .onType(RetryProperties.class)
-                .withMemberCategories(
-                    MemberCategory.ACCESS_DECLARED_FIELDS,
-                    MemberCategory.INVOKE_DECLARED_CONSTRUCTORS,
-                    MemberCategory.INVOKE_DECLARED_METHODS)
-                .test(hints))
-        .as("shared retry properties constructor, fields, and @AssertTrue methods")
         .isTrue();
     softly
         .then(
