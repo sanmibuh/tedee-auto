@@ -15,7 +15,7 @@ class BatteryIndicatorTest {
   void should_deriveLevelAndCategory_whenConstructedWithPercentage() {
     final var sut = new BatteryIndicator(42);
 
-    softly.then(sut.level()).isEqualTo(new BatteryLevel(42));
-    softly.then(sut.category()).isEqualTo(BatteryLevelCategory.MEDIUM);
+    softly.then(sut.getLevel()).isEqualTo(new BatteryLevel(42));
+    softly.then(sut.getCategory()).isEqualTo(BatteryLevelCategory.MEDIUM);
   }
 }

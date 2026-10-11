@@ -35,6 +35,7 @@ public final class Lock extends AggregateRoot<LockId> {
   public void reportBatteryLevel(final BatteryIndicator indicator) {
     recordEvent(
         new BatteryLevelReported(
-            id().value(), new BatteryStatus(indicator.level().value(), indicator.category())));
+            id().value(),
+            new BatteryStatus(indicator.getLevel().value(), indicator.getCategory())));
   }
 }

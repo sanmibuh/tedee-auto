@@ -1,5 +1,8 @@
 package org.sanmibuh.tedee.lock.domain.vo;
 
+import lombok.Getter;
+
+@Getter
 public final class BatteryIndicator {
 
   private final BatteryLevel level;
@@ -8,13 +11,5 @@ public final class BatteryIndicator {
   public BatteryIndicator(final int level) {
     this.level = new BatteryLevel(level);
     category = BatteryLevelCategory.from(level);
-  }
-
-  public BatteryLevel level() {
-    return level;
-  }
-
-  public BatteryLevelCategory category() {
-    return category;
   }
 }
