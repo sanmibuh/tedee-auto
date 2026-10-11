@@ -1,16 +1,24 @@
 package org.sanmibuh.tedee.lock.application;
 
+import lombok.RequiredArgsConstructor;
 import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
+import org.sanmibuh.tedee.lock.domain.vo.BatteryLevel;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
 
+@RequiredArgsConstructor
 public final class ReportBatteryLevelHandler
     extends CommandHandler<ReportBatteryLevelCommand, Lock> {
 
-  public ReportBatteryLevelHandler(final LockRepository repository) {}
+  private final LockRepository repository;
 
   @Override
   protected Lock execute(final ReportBatteryLevelCommand command) {
-    throw new UnsupportedOperationException();
+    final var lock = repository.get(new LockId(command.deviceId()));
+    lock.reportBatteryLevel(new BatteryLevel(command.level()));
+    repository.save(lock);
+
+    return lock;
   }
 }

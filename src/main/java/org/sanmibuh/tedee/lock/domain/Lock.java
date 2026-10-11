@@ -1,6 +1,7 @@
 package org.sanmibuh.tedee.lock.domain;
 
 import org.sanmibuh.ddd.domain.AggregateRoot;
+import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported;
 import org.sanmibuh.tedee.lock.domain.event.LockRequested;
 import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
 import org.sanmibuh.tedee.lock.domain.vo.BatteryLevel;
@@ -31,6 +32,6 @@ public final class Lock extends AggregateRoot<LockId> {
   }
 
   public void reportBatteryLevel(final BatteryLevel level) {
-    throw new UnsupportedOperationException();
+    recordEvent(new BatteryLevelReported(id().value(), level.value()));
   }
 }
