@@ -17,6 +17,10 @@ public final class BatteryLevelReportedNotificationHandler
 
   @Override
   public void handle(final BatteryLevelReported event) {
-    throw new UnsupportedOperationException();
+    notifier.notify(
+        messages.getMessage(
+            "battery.level.low",
+            new Object[] {event.level(), event.deviceId()},
+            applicationLocale.current()));
   }
 }
