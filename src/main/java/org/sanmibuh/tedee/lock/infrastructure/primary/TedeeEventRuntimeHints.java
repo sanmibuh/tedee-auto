@@ -1,6 +1,7 @@
 package org.sanmibuh.tedee.lock.infrastructure.primary;
 
 import org.jspecify.annotations.Nullable;
+import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventController.BatteryLevelChangedData;
 import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventController.LockStatusChangedData;
 import org.springframework.aot.hint.BindingReflectionHintsRegistrar;
 import org.springframework.aot.hint.RuntimeHints;
@@ -14,5 +15,6 @@ final class TedeeEventRuntimeHints implements RuntimeHintsRegistrar {
   @Override
   public void registerHints(final RuntimeHints hints, final @Nullable ClassLoader classLoader) {
     bindingRegistrar.registerReflectionHints(hints.reflection(), LockStatusChangedData.class);
+    bindingRegistrar.registerReflectionHints(hints.reflection(), BatteryLevelChangedData.class);
   }
 }
