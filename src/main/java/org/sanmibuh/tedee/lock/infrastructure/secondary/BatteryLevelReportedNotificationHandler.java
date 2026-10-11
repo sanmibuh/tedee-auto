@@ -19,8 +19,27 @@ public final class BatteryLevelReportedNotificationHandler
   public void handle(final BatteryLevelReported event) {
     notifier.notify(
         messages.getMessage(
-            "battery.level.low",
+            "battery.level." + levelName(event.level()),
             new Object[] {event.level(), event.deviceId()},
             applicationLocale.current()));
+  }
+
+  private String levelName(final int level) {
+    if (level <= 10) {
+      return "depleted";
+    }
+    if (level <= 20) {
+      return "critical";
+    }
+    if (level <= 40) {
+      return "low";
+    }
+    if (level <= 60) {
+      return "medium";
+    }
+    if (level <= 80) {
+      return "good";
+    }
+    return "high";
   }
 }
