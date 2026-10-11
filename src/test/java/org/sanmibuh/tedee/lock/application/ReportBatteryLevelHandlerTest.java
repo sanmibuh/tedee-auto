@@ -15,6 +15,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported;
+import org.sanmibuh.tedee.lock.domain.vo.BatteryLevelCategory;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
 import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
@@ -35,7 +36,9 @@ class ReportBatteryLevelHandlerTest {
     final var events = sut.handle(new ReportBatteryLevelCommand(1, level));
 
     verify(repository).save(savedLock.capture());
-    then(savedLock.getValue().domainEvents()).containsExactly(new BatteryLevelReported(1, level));
-    then(events).containsExactly(new BatteryLevelReported(1, level));
+    then(savedLock.getValue().domainEvents())
+        .containsExactly(new BatteryLevelReported(1, level, BatteryLevelCategory.from(level)));
+    then(events)
+        .containsExactly(new BatteryLevelReported(1, level, BatteryLevelCategory.from(level)));
   }
 }

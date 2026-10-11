@@ -5,6 +5,7 @@ import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported;
 import org.sanmibuh.tedee.lock.domain.event.LockRequested;
 import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
 import org.sanmibuh.tedee.lock.domain.vo.BatteryLevel;
+import org.sanmibuh.tedee.lock.domain.vo.BatteryLevelCategory;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
 import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.vo.LockState;
@@ -32,6 +33,7 @@ public final class Lock extends AggregateRoot<LockId> {
   }
 
   public void reportBatteryLevel(final BatteryLevel level) {
-    recordEvent(new BatteryLevelReported(id().value(), level.value()));
+    recordEvent(
+        new BatteryLevelReported(id().value(), level.value(), BatteryLevelCategory.DEPLETED));
   }
 }
