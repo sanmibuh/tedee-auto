@@ -34,14 +34,10 @@ class ReportBatteryLevelHandlerTest {
   void should_recordBatteryLevelReported_whenReportingLevel(final int level) {
     given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
 
-    final var events = sut.handle(new ReportBatteryLevelCommand(1, level));
+    sut.handle(new ReportBatteryLevelCommand(1, level));
 
     verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents())
-        .containsExactly(
-            new BatteryLevelReported(
-                1, new BatteryStatus(level, BatteryLevelCategory.from(level))));
-    then(events)
         .containsExactly(
             new BatteryLevelReported(
                 1, new BatteryStatus(level, BatteryLevelCategory.from(level))));
