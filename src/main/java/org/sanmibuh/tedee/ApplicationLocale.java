@@ -3,9 +3,7 @@ package org.sanmibuh.tedee;
 import java.util.Locale;
 import lombok.RequiredArgsConstructor;
 import org.springframework.boot.autoconfigure.web.WebProperties;
-import org.springframework.stereotype.Component;
 
-@Component
 @RequiredArgsConstructor
 public final class ApplicationLocale {
 

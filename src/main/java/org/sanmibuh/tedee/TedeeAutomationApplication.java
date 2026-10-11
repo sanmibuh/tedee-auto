@@ -2,12 +2,10 @@ package org.sanmibuh.tedee;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.Import;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 @SpringBootApplication
 @EnableScheduling
-@Import(ApplicationLocale.class)
 public class TedeeAutomationApplication {
 
   static void main(final String[] args) {
