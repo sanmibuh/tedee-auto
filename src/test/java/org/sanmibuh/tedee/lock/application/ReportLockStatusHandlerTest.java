@@ -1,14 +1,12 @@
 package org.sanmibuh.tedee.lock.application;
 
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.util.stream.Stream;
-import org.assertj.core.api.BDDSoftAssertions;
-import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
-import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -30,7 +28,7 @@ import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.vo.LockState;
 import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
-@ExtendWith({MockitoExtension.class, SoftAssertionsExtension.class})
+@ExtendWith(MockitoExtension.class)
 class ReportLockStatusHandlerTest {
 
   @Mock LockRepository repository;
@@ -38,8 +36,6 @@ class ReportLockStatusHandlerTest {
   @InjectMocks ReportLockStatusHandler sut;
 
   @Captor ArgumentCaptor<Lock> savedLock;
-
-  @InjectSoftAssertions BDDSoftAssertions softly;
 
   static Stream<Arguments> reportedStates() {
     return Stream.of(
@@ -58,17 +54,15 @@ class ReportLockStatusHandlerTest {
 
   @ParameterizedTest
   @MethodSource("reportedStates")
-  void should_recordLockStatusReportedAndReturnEvents_whenReportingState(
+  void should_recordLockStatusReported_whenReportingState(
       final int bridgeState, final LockState state) {
     given(repository.get(new LockId(1))).willReturn(new Lock(new LockId(1), LockStatus.UNLOCKED));
 
-    final var actual = sut.handle(new ReportLockStatusCommand(1, bridgeState, 0, 2));
+    sut.handle(new ReportLockStatusCommand(1, bridgeState, 0, 2));
 
     verify(repository).save(savedLock.capture());
-    softly
-        .then(savedLock.getValue().domainEvents())
+    then(savedLock.getValue().domainEvents())
         .containsExactly(new LockStatusReported(1, state, LockJamStatus.NOT_JAMMED));
-    softly.then(actual).containsExactly(new LockStatusReported(1, state, LockJamStatus.NOT_JAMMED));
   }
 
   @ParameterizedTest
@@ -79,8 +73,7 @@ class ReportLockStatusHandlerTest {
     sut.handle(new ReportLockStatusCommand(1, 6, jammed, 2));
 
     verify(repository).save(savedLock.capture());
-    softly
-        .then(savedLock.getValue().domainEvents())
+    then(savedLock.getValue().domainEvents())
         .containsExactly(
             new LockStatusReported(
                 1,

@@ -16,6 +16,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.port.CommandBus;
+import org.sanmibuh.tedee.lock.application.ReportBatteryLevelCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -100,6 +101,28 @@ class TedeeEventControllerTest {
         .andExpect(status().isNoContent());
 
     verify(commandBus).dispatch(new ReportLockStatusCommand(33819, 6, 0, 2));
+  }
+
+  @Test
+  @SneakyThrows
+  void should_dispatchReportBatteryLevelCommand_whenBatteryLevelChanged() {
+    sut.perform(
+            post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "event": "device-battery-level-changed",
+                      "data": {
+                        "deviceId": 33819,
+                        "batteryLevel": 90
+                      }
+                    }
+                    """))
+        .andExpect(status().isNoContent());
+
+    verify(commandBus).dispatch(new ReportBatteryLevelCommand(33819, 90));
   }
 
   @Test

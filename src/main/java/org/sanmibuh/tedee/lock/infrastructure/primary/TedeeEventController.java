@@ -7,6 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.port.CommandBus;
+import org.sanmibuh.tedee.lock.application.ReportBatteryLevelCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -24,6 +25,7 @@ import tools.jackson.databind.json.JsonMapper;
 final class TedeeEventController {
 
   private static final String LOCK_STATUS_CHANGED = "lock-status-changed";
+  private static final String BATTERY_LEVEL_CHANGED = "device-battery-level-changed";
 
   private final CommandBus commandBus;
   private final JsonMapper jsonMapper;
@@ -31,13 +33,18 @@ final class TedeeEventController {
   @PostMapping(EVENTS_PATH)
   @ResponseStatus(NO_CONTENT)
   void receive(@RequestBody final TedeeEvent event) {
-    if (LOCK_STATUS_CHANGED.equals(event.event())) {
-      final var data = jsonMapper.treeToValue(event.data(), LockStatusChangedData.class);
-      commandBus.dispatch(
-          new ReportLockStatusCommand(
-              data.deviceId(), data.state(), data.jammed(), data.doorState()));
-    } else {
-      log.warn("Ignoring unknown Tedee Bridge event {}", event.event());
+    switch (event.event()) {
+      case LOCK_STATUS_CHANGED -> {
+        final var data = jsonMapper.treeToValue(event.data(), LockStatusChangedData.class);
+        commandBus.dispatch(
+            new ReportLockStatusCommand(
+                data.deviceId(), data.state(), data.jammed(), data.doorState()));
+      }
+      case BATTERY_LEVEL_CHANGED -> {
+        final var data = jsonMapper.treeToValue(event.data(), BatteryLevelChangedData.class);
+        commandBus.dispatch(new ReportBatteryLevelCommand(data.deviceId(), data.batteryLevel()));
+      }
+      default -> log.warn("Ignoring unknown Tedee Bridge event {}", event.event());
     }
   }
 
@@ -50,4 +57,6 @@ final class TedeeEventController {
   record TedeeEvent(String event, JsonNode data) {}
 
   record LockStatusChangedData(int deviceId, int state, int jammed, int doorState) {}
+
+  record BatteryLevelChangedData(int deviceId, int batteryLevel) {}
 }
