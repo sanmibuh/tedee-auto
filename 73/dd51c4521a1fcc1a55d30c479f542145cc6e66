@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/BatteryLevelReportedNotificationHandlerTest.java
+  s_159fb4cb17a6a8::t_400b2e561aac1b 1-45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "73dd51c4521a1fcc1a55d30c479f542145cc6e66",
+  "prompts": {},
+  "sessions": {
+    "s_159fb4cb17a6a8": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed4a86d82ffe2FLYL27GcyEPR0",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
