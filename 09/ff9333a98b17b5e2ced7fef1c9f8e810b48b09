@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/lock/application/ReportBatteryLevelHandler.java
+  h_97a91c9e567f87 3,7-8,10,14,18-22
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  h_97a91c9e567f87 4,35
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "09ff9333a98b17b5e2ced7fef1c9f8e810b48b09",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
