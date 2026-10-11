@@ -1,6 +1,9 @@
 spring:
   application:
     name: tedee-automation
+  web:
+    # Locale for user-facing messages; use an IETF language tag such as es.
+    locale: en
   aop:
     # Use JDK dynamic proxies so retry advice targets the LockGateway interface and TedeeLockGateway stays final.
     proxy-target-class: false
