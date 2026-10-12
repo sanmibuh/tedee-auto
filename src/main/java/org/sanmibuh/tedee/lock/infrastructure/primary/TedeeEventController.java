@@ -31,9 +31,11 @@ final class TedeeEventController {
   private static final String BATTERY_LEVEL_CHANGED = "device-battery-level-changed";
   private static final String DEVICE_CONNECTION_CHANGED = "device-connection-changed";
   private static final String DEVICE_SETTINGS_CHANGED = "device-settings-changed";
+  private static final String BACKEND_CONNECTION_CHANGED = "backend-connection-changed";
 
   private final CommandBus commandBus;
   private final JsonMapper jsonMapper;
+  private final BridgeConnectionNotifier bridgeConnectionNotifier;
 
   @PostMapping(EVENTS_PATH)
   @ResponseStatus(NO_CONTENT)
@@ -60,6 +62,12 @@ final class TedeeEventController {
         final var data = jsonMapper.treeToValue(event.data(), DeviceSettingsChangedData.class);
         commandBus.dispatch(new ReportLockSettingsChangedCommand(data.deviceId()));
       }
+      case BACKEND_CONNECTION_CHANGED -> {
+        final var data = jsonMapper.treeToValue(event.data(), BackendConnectionChangedData.class);
+        if (data.isConnected()) {
+          bridgeConnectionNotifier.notifyConnected();
+        }
+      }
       default -> log.warn("Ignoring unknown Tedee Bridge event {}", event.event());
     }
   }
@@ -79,4 +87,6 @@ final class TedeeEventController {
   record DeviceConnectionChangedData(int deviceId, boolean isConnected) {}
 
   record DeviceSettingsChangedData(int deviceId) {}
+
+  record BackendConnectionChangedData(boolean isConnected) {}
 }
