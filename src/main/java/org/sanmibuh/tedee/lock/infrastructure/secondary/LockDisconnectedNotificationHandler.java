@@ -17,6 +17,8 @@ public final class LockDisconnectedNotificationHandler
 
   @Override
   public void handle(final LockDisconnected event) {
-    throw new UnsupportedOperationException();
+    notifier.notify(
+        messages.getMessage(
+            "lock.disconnected", new Object[] {event.deviceId()}, applicationLocale.current()));
   }
 }
