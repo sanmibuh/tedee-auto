@@ -16,7 +16,6 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.lock.domain.exception.InvalidLockRequestException;
 import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
@@ -61,8 +60,6 @@ class TedeeLockGatewayTest {
   @Autowired private MockRestServiceServer server;
 
   @MockitoBean private Clock clock;
-
-  @MockitoBean private Notifier notifier;
 
   static Stream<Arguments> nonTransientBridgeErrors() {
     return Stream.of(

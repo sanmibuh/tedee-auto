@@ -23,7 +23,6 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
-import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
@@ -72,8 +71,6 @@ class TedeeCallbackRegistrationTest {
   @Autowired private MockRestServiceServer server;
 
   @MockitoBean private Clock clock;
-
-  @MockitoBean private Notifier notifier;
 
   @MockitoBean private TaskScheduler taskScheduler;
 
