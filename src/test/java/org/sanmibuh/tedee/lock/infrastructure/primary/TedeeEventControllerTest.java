@@ -143,7 +143,7 @@ class TedeeEventControllerTest {
                       "event": "device-connection-changed",
                       "data": {
                         "deviceId": 33819,
-                        "isConnected": true
+                        "isConnected": 1
                       }
                     }
                     """))
@@ -165,7 +165,7 @@ class TedeeEventControllerTest {
                       "event": "device-connection-changed",
                       "data": {
                         "deviceId": 33819,
-                        "isConnected": false
+                        "isConnected": 0
                       }
                     }
                     """))
@@ -207,7 +207,7 @@ class TedeeEventControllerTest {
                     {
                       "event": "backend-connection-changed",
                       "data": {
-                        "isConnected": true
+                        "isConnected": 1
                       }
                     }
                     """))
@@ -228,7 +228,7 @@ class TedeeEventControllerTest {
                     {
                       "event": "backend-connection-changed",
                       "data": {
-                        "isConnected": false
+                        "isConnected": 0
                       }
                     }
                     """))

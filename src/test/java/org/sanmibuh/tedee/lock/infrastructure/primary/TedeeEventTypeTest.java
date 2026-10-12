@@ -30,12 +30,12 @@ class TedeeEventTypeTest {
         argumentSet(
             "connected lock",
             "device-connection-changed",
-            "{\"deviceId\": 42, \"isConnected\": true}",
+            "{\"deviceId\": 42, \"isConnected\": 1}",
             new ReportLockConnectedCommand(42)),
         argumentSet(
             "disconnected lock",
             "device-connection-changed",
-            "{\"deviceId\": 42, \"isConnected\": false}",
+            "{\"deviceId\": 42, \"isConnected\": 0}",
             new ReportLockDisconnectedCommand(42)),
         argumentSet(
             "settings change",
@@ -45,12 +45,12 @@ class TedeeEventTypeTest {
         argumentSet(
             "connected bridge",
             "backend-connection-changed",
-            "{\"isConnected\": true}",
+            "{\"isConnected\": 1}",
             new ReportBridgeConnectedCommand()),
         argumentSet(
             "disconnected bridge",
             "backend-connection-changed",
-            "{\"isConnected\": false}",
+            "{\"isConnected\": 0}",
             new ReportBridgeDisconnectedCommand()));
   }
 

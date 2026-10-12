@@ -32,7 +32,7 @@ enum TedeeEventType {
     @Override
     Command toCommand(final JsonNode data, final JsonMapper jsonMapper) {
       final var eventData = jsonMapper.treeToValue(data, DeviceConnectionChangedData.class);
-      return eventData.isConnected()
+      return eventData.isConnected() == 1
           ? new ReportLockConnectedCommand(eventData.deviceId())
           : new ReportLockDisconnectedCommand(eventData.deviceId());
     }
@@ -48,7 +48,7 @@ enum TedeeEventType {
     @Override
     Command toCommand(final JsonNode data, final JsonMapper jsonMapper) {
       final var eventData = jsonMapper.treeToValue(data, BackendConnectionChangedData.class);
-      return eventData.isConnected()
+      return eventData.isConnected() == 1
           ? new ReportBridgeConnectedCommand()
           : new ReportBridgeDisconnectedCommand();
     }
@@ -75,9 +75,9 @@ enum TedeeEventType {
 
   record BatteryLevelChangedData(int deviceId, int batteryLevel) {}
 
-  record DeviceConnectionChangedData(int deviceId, boolean isConnected) {}
+  record DeviceConnectionChangedData(int deviceId, int isConnected) {}
 
   record DeviceSettingsChangedData(int deviceId) {}
 
-  record BackendConnectionChangedData(boolean isConnected) {}
+  record BackendConnectionChangedData(int isConnected) {}
 }
