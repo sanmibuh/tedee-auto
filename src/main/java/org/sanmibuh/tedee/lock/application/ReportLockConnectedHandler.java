@@ -1,23 +1,23 @@
 package org.sanmibuh.tedee.lock.application;
 
-import lombok.RequiredArgsConstructor;
-import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
 
-@RequiredArgsConstructor
 public final class ReportLockConnectedHandler
-    extends CommandHandler<ReportLockConnectedCommand, Lock> {
+    extends ReportLockHandler<ReportLockConnectedCommand> {
 
-  private final LockRepository repository;
+  public ReportLockConnectedHandler(final LockRepository repository) {
+    super(repository);
+  }
 
   @Override
-  protected Lock execute(final ReportLockConnectedCommand command) {
-    final var lock = repository.get(new LockId(command.deviceId()));
-    lock.reportConnected();
-    repository.save(lock);
+  protected LockId lockId(final ReportLockConnectedCommand command) {
+    return new LockId(command.deviceId());
+  }
 
-    return lock;
+  @Override
+  protected void report(final Lock lock) {
+    lock.reportConnected();
   }
 }
