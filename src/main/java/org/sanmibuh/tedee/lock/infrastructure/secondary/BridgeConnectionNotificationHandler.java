@@ -20,6 +20,6 @@ public final class BridgeConnectionNotificationHandler implements BridgeConnecti
 
   @Override
   public void notifyDisconnected() {
-    throw new UnsupportedOperationException();
+    notifier.notify(messages.getMessage("bridge.disconnected", null, applicationLocale.current()));
   }
 }
