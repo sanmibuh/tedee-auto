@@ -41,6 +41,8 @@ class TedeeEventControllerTest {
 
   @MockitoBean CommandBus commandBus;
 
+  @MockitoBean BridgeConnectionNotifier bridgeConnectionNotifier;
+
   @MockitoBean TedeeProperties tedeeProperties;
 
   @BeforeEach
@@ -191,6 +193,27 @@ class TedeeEventControllerTest {
         .andExpect(status().isNoContent());
 
     verify(commandBus).dispatch(new ReportLockSettingsChangedCommand(33819));
+  }
+
+  @Test
+  @SneakyThrows
+  void should_notifyBridgeConnected_whenBackendConnects() {
+    sut.perform(
+            post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "event": "backend-connection-changed",
+                      "data": {
+                        "isConnected": true
+                      }
+                    }
+                    """))
+        .andExpect(status().isNoContent());
+
+    verify(bridgeConnectionNotifier).notifyConnected();
   }
 
   @Test
