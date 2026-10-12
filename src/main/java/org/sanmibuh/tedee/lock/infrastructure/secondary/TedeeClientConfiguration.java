@@ -23,7 +23,7 @@ public class TedeeClientConfiguration {
     final var interceptor =
         new TedeeApiTokenInterceptor(new TedeeApiTokenGenerator(properties.apiKey()), clock);
     final var apiClient = new ApiClient(builder.requestInterceptor(interceptor).build());
-    apiClient.setBasePath(properties.baseUrl());
+    apiClient.setBasePath(properties.baseUrl().toString());
     return apiClient;
   }
 

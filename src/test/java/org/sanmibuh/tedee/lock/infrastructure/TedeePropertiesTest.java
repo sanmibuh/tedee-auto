@@ -2,6 +2,7 @@ package org.sanmibuh.tedee.lock.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+import java.net.URI;
 import java.time.Duration;
 import java.util.stream.Stream;
 import org.assertj.core.api.BDDSoftAssertions;
@@ -15,6 +16,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.boot.validation.autoconfigure.ValidationAutoConfiguration;
 
@@ -26,13 +28,19 @@ class TedeePropertiesTest {
           .withConfiguration(AutoConfigurations.of(ValidationAutoConfiguration.class))
           .withUserConfiguration(EnableTedeeProperties.class);
 
+  private final ApplicationContextRunner applicationConfigurationRunner =
+      new ApplicationContextRunner()
+          .withInitializer(new ConfigDataApplicationContextInitializer())
+          .withConfiguration(AutoConfigurations.of(ValidationAutoConfiguration.class))
+          .withUserConfiguration(EnableTedeeProperties.class);
+
   @InjectSoftAssertions private BDDSoftAssertions softly;
 
   @Test
   void should_bindProperties_whenBaseUrlAndApiKeyAreProvided() {
     runner
         .withPropertyValues(
-            "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+            "sanmibuh.rest.tedee.base-url=https://gateway.local/tedee/api/v1.0",
             "sanmibuh.rest.tedee.api-key=secret-token",
             "sanmibuh.rest.tedee.callback-secret=callback-secret",
             "sanmibuh.rest.tedee.callback-registration-interval=30s",
@@ -43,7 +51,9 @@ class TedeePropertiesTest {
         .run(
             context -> {
               final var sut = context.getBean(TedeeProperties.class);
-              softly.then(sut.baseUrl()).isEqualTo("http://bridge.local/v1.0");
+              softly
+                  .then(sut.baseUrl())
+                  .isEqualTo(URI.create("https://gateway.local/tedee/api/v1.0"));
               softly.then(sut.apiKey()).isEqualTo("secret-token");
               softly.then(sut.callbackSecret()).isEqualTo("callback-secret");
               softly.then(sut.callbackRegistrationInterval()).isEqualTo(Duration.ofSeconds(30));
@@ -52,6 +62,56 @@ class TedeePropertiesTest {
               softly.then(sut.retry().multiplier()).isEqualTo(2.0);
               softly.then(sut.retry().maxInterval()).isEqualTo(5000L);
             });
+  }
+
+  @Test
+  void should_bindBaseUrl_whenEnvironmentContainsBaseUrlWithoutHost() {
+    applicationConfigurationRunner
+        .withSystemProperties(
+            "TEDEE_BASE_URL=https://gateway.local/tedee/api/v1.0",
+            "TEDEE_HOST=",
+            "TEDEE_API_KEY=secret-token",
+            "TEDEE_CALLBACK_SECRET=callback-secret")
+        .run(
+            context ->
+                then(context.getBean(TedeeProperties.class).baseUrl())
+                    .isEqualTo(URI.create("https://gateway.local/tedee/api/v1.0")));
+  }
+
+  @Test
+  void should_bindLocalBaseUrl_whenEnvironmentContainsHostWithoutBaseUrl() {
+    applicationConfigurationRunner
+        .withSystemProperties(
+            "TEDEE_BASE_URL=",
+            "TEDEE_HOST=bridge.local",
+            "TEDEE_API_KEY=secret-token",
+            "TEDEE_CALLBACK_SECRET=callback-secret")
+        .run(
+            context ->
+                then(context.getBean(TedeeProperties.class).baseUrl())
+                    .isEqualTo(URI.create("http://bridge.local/v1.0")));
+  }
+
+  @Test
+  void should_failStartup_whenBaseUrlAndHostAreBlank() {
+    applicationConfigurationRunner
+        .withSystemProperties(
+            "TEDEE_BASE_URL=",
+            "TEDEE_HOST=",
+            "TEDEE_API_KEY=secret-token",
+            "TEDEE_CALLBACK_SECRET=callback-secret")
+        .run(context -> then(context).hasFailed());
+  }
+
+  @Test
+  void should_failStartup_whenApiKeyIsBlank() {
+    applicationConfigurationRunner
+        .withSystemProperties(
+            "TEDEE_BASE_URL=https://gateway.local/tedee/api/v1.0",
+            "TEDEE_HOST=",
+            "TEDEE_API_KEY=",
+            "TEDEE_CALLBACK_SECRET=callback-secret")
+        .run(context -> then(context).hasFailed());
   }
 
   @ParameterizedTest
@@ -128,6 +188,7 @@ class TedeePropertiesTest {
                 new String[] {
                   "sanmibuh.rest.tedee.base-url=  ", "sanmibuh.rest.tedee.api-key=secret-token"
                 })),
+        Arguments.of(Named.of("base-url has no host", baseUrl("http:///v1.0"))),
         Arguments.of(
             Named.of(
                 "api-key is blank",
@@ -167,6 +228,12 @@ class TedeePropertiesTest {
   private static String[] callbackRegistrationInterval(final String interval) {
     final var properties = retry("2", "500", "2.0", "5000");
     properties[3] = "sanmibuh.rest.tedee.callback-registration-interval=" + interval;
+    return properties;
+  }
+
+  private static String[] baseUrl(final String baseUrl) {
+    final var properties = retry("2", "500", "2.0", "5000");
+    properties[0] = "sanmibuh.rest.tedee.base-url=" + baseUrl;
     return properties;
   }
 

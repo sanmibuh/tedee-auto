@@ -29,6 +29,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
     webEnvironment = RANDOM_PORT,
     properties = {
       "sanmibuh.server.public-url=http://automation.local:8080",
+      "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+      "sanmibuh.rest.tedee.api-key=secret-token",
       "sanmibuh.rest.tedee.callback-secret=callback-secret",
       "sanmibuh.notification.telegram.bot-token=bot-token",
       "sanmibuh.notification.telegram.chat-id=chat-id"

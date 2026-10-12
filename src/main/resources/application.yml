@@ -27,8 +27,9 @@ sanmibuh:
     public-url: ${PUBLIC_URL:}
   rest:
     tedee:
-      base-url: http://${TEDEE_HOST}/v1.0
-      api-key: ${TEDEE_API_KEY}
+      # TEDEE_BASE_URL permits HTTPS and reverse-proxy paths; the legacy host value targets the local API.
+      base-url: ${TEDEE_BASE_URL:http://${TEDEE_HOST:}/v1.0}
+      api-key: ${TEDEE_API_KEY:}
       callback-secret: ${TEDEE_CALLBACK_SECRET:}
       # Retry callback registration after a Bridge outage until the callback is registered.
       callback-registration-interval: 30s
