@@ -19,6 +19,7 @@ import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportBatteryLevelCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockConnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockDisconnectedCommand;
+import org.sanmibuh.tedee.lock.application.ReportLockSettingsChangedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -169,6 +170,27 @@ class TedeeEventControllerTest {
         .andExpect(status().isNoContent());
 
     verify(commandBus).dispatch(new ReportLockDisconnectedCommand(33819));
+  }
+
+  @Test
+  @SneakyThrows
+  void should_dispatchReportLockSettingsChangedCommand_whenDeviceSettingsChange() {
+    sut.perform(
+            post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "event": "device-settings-changed",
+                      "data": {
+                        "deviceId": 33819
+                      }
+                    }
+                    """))
+        .andExpect(status().isNoContent());
+
+    verify(commandBus).dispatch(new ReportLockSettingsChangedCommand(33819));
   }
 
   @Test
