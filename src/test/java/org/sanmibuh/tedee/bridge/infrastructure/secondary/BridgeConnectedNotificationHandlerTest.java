@@ -1,8 +1,8 @@
 package org.sanmibuh.tedee.bridge.infrastructure.secondary;
 
 import static org.mockito.BDDMockito.then;
-import static org.sanmibuh.tedee.bridge.infrastructure.secondary.BridgeNotificationTestSupport.applicationLocale;
-import static org.sanmibuh.tedee.bridge.infrastructure.secondary.BridgeNotificationTestSupport.messages;
+import static org.sanmibuh.tedee.NotificationTestSupport.applicationLocale;
+import static org.sanmibuh.tedee.NotificationTestSupport.messages;
 
 import java.util.Locale;
 import org.junit.jupiter.api.Test;
