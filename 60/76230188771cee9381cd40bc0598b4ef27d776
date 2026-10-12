@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeEventRuntimeHints.java
+  s_8baf1b38c03bd0::t_74d7295775d960 4,6-7,22-25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6076230188771cee9381cd40bc0598b4ef27d776",
+  "prompts": {},
+  "sessions": {
+    "s_8baf1b38c03bd0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed31f7d46ffe6rlibOnRPlxYaU",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
