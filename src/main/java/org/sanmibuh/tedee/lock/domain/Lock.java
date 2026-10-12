@@ -6,6 +6,7 @@ import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported.BatteryStatus;
 import org.sanmibuh.tedee.lock.domain.event.LockConnected;
 import org.sanmibuh.tedee.lock.domain.event.LockDisconnected;
 import org.sanmibuh.tedee.lock.domain.event.LockRequested;
+import org.sanmibuh.tedee.lock.domain.event.LockSettingsChanged;
 import org.sanmibuh.tedee.lock.domain.event.LockStatusReported;
 import org.sanmibuh.tedee.lock.domain.vo.BatteryIndicator;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
@@ -43,7 +44,7 @@ public final class Lock extends AggregateRoot<LockId> {
   }
 
   public void reportSettingsChanged() {
-    throw new UnsupportedOperationException();
+    recordEvent(new LockSettingsChanged(id().value()));
   }
 
   public void reportBatteryLevel(final BatteryIndicator indicator) {
