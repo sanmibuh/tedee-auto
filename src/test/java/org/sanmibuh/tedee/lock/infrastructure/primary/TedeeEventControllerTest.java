@@ -21,6 +21,7 @@ import org.sanmibuh.tedee.lock.application.ReportLockConnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockSettingsChangedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
+import org.sanmibuh.tedee.lock.infrastructure.BridgeConnectionNotifier;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;

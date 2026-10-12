@@ -12,6 +12,7 @@ import org.sanmibuh.tedee.lock.application.ReportLockConnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockSettingsChangedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
+import org.sanmibuh.tedee.lock.infrastructure.BridgeConnectionNotifier;
 import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;

@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.primary;
+package org.sanmibuh.tedee.lock.infrastructure;
 
 public interface BridgeConnectionNotifier {
 

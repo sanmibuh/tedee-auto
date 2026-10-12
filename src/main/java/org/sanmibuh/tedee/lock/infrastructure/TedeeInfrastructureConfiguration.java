@@ -2,7 +2,6 @@ package org.sanmibuh.tedee.lock.infrastructure;
 
 import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.ApplicationLocale;
-import org.sanmibuh.tedee.lock.infrastructure.primary.BridgeConnectionNotifier;
 import org.sanmibuh.tedee.lock.infrastructure.secondary.BridgeConnectionNotificationHandler;
 import org.springframework.boot.autoconfigure.web.WebProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;

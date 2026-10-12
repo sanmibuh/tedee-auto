@@ -3,7 +3,7 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.ApplicationLocale;
-import org.sanmibuh.tedee.lock.infrastructure.primary.BridgeConnectionNotifier;
+import org.sanmibuh.tedee.lock.infrastructure.BridgeConnectionNotifier;
 import org.springframework.context.MessageSource;
 
 @RequiredArgsConstructor
