@@ -6,6 +6,7 @@ import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import java.util.List;
 import nl.altindag.log.LogCaptor;
 import org.assertj.core.api.BDDSoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -15,6 +16,8 @@ import org.sanmibuh.ddd.port.DomainEventHandler;
 
 @ExtendWith(SoftAssertionsExtension.class)
 class InMemoryEventBusTest {
+
+  @InjectSoftAssertions private BDDSoftAssertions softly;
 
   @Test
   void should_deliverEvent_whenSingleHandlerIsRegistered() {
@@ -27,8 +30,7 @@ class InMemoryEventBusTest {
   }
 
   @Test
-  void should_deliverEvent_whenMultipleHandlersAreRegisteredForSameEventType(
-      final BDDSoftAssertions softly) {
+  void should_deliverEvent_whenMultipleHandlersAreRegisteredForSameEventType() {
     final var handler1 = new StubEventHandler();
     final var handler2 = new StubEventHandler();
     final var sut = new InMemoryEventBus(List.of(handler1, handler2));
