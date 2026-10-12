@@ -8,7 +8,11 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
 enum TedeeEventType {
-  LOCK_STATUS_CHANGED("lock-status-changed");
+  LOCK_STATUS_CHANGED("lock-status-changed"),
+  BATTERY_LEVEL_CHANGED("device-battery-level-changed"),
+  DEVICE_CONNECTION_CHANGED("device-connection-changed"),
+  DEVICE_SETTINGS_CHANGED("device-settings-changed"),
+  BACKEND_CONNECTION_CHANGED("backend-connection-changed");
 
   private final String event;
 
