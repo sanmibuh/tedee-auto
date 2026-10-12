@@ -1,0 +1,20 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/BridgeConnectionNotificationHandler.java
+  h_97a91c9e567f87 1-25
+src/main/resources/messages.properties
+  h_97a91c9e567f87 16
+src/main/resources/messages_es.properties
+  h_97a91c9e567f87 16
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/BridgeConnectionNotificationHandlerTest.java
+  h_97a91c9e567f87 1-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f9f9c58b1be2bfdd270be0e243e9dc0b737a4b14",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
