@@ -6,6 +6,7 @@ import static org.mockito.BDDMockito.given;
 import java.time.Clock;
 import java.time.Instant;
 import java.time.ZoneOffset;
+import java.util.concurrent.CompletableFuture;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -53,5 +54,26 @@ class TedeeApiTokenInterceptorTest {
     sut.intercept(nextRequest, new byte[0], execution);
 
     then(nextHeaders.getFirst("api_token")).isNotEqualTo(headers.getFirst("api_token"));
+  }
+
+  @Test
+  @SneakyThrows
+  void should_generateDistinctApiTokens_whenRequestsRunConcurrently() {
+    final var headers = new HttpHeaders();
+    final var nextHeaders = new HttpHeaders();
+    given(request.getHeaders()).willReturn(headers);
+    given(nextRequest.getHeaders()).willReturn(nextHeaders);
+
+    CompletableFuture.allOf(
+            CompletableFuture.runAsync(() -> intercept(request)),
+            CompletableFuture.runAsync(() -> intercept(nextRequest)))
+        .join();
+
+    then(nextHeaders.getFirst("api_token")).isNotEqualTo(headers.getFirst("api_token"));
+  }
+
+  @SneakyThrows
+  private void intercept(final HttpRequest request) {
+    sut.intercept(request, new byte[0], execution);
   }
 }
