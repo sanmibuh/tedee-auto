@@ -1,0 +1,20 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockSettingsChangedNotificationHandler.java
+  h_97a91c9e567f87 1-22
+src/main/resources/messages.properties
+  h_97a91c9e567f87 15
+src/main/resources/messages_es.properties
+  h_97a91c9e567f87 15
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockSettingsChangedNotificationHandlerTest.java
+  h_97a91c9e567f87 1-30
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4187ae66279bcc75275886877870f6fae685247d",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
