@@ -26,4 +26,15 @@ class BridgeConnectionNotificationHandlerTest {
 
     then(notifier).should().notify("Bridge is connected");
   }
+
+  @Test
+  void should_notifyDisconnectedMessage_whenBridgeDisconnects() {
+    final var sut =
+        new BridgeConnectionNotificationHandler(
+            notifier, messages(), applicationLocale(Locale.ENGLISH));
+
+    sut.notifyDisconnected();
+
+    then(notifier).should().notify("Bridge is disconnected");
+  }
 }
