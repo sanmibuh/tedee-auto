@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeApiTokenInterceptor.java
+  s_8aefe5db85c7c2::t_9283e715a881c5 6,25
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bcb4f267db05eb21ccc1a10d3499644696f8cccc",
+  "prompts": {},
+  "sessions": {
+    "s_8aefe5db85c7c2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ece3e20e7ffe5tXHOUwf3xVc8c",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
