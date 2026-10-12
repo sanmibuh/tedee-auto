@@ -7,12 +7,13 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.port.CommandBus;
+import org.sanmibuh.tedee.bridge.application.ReportBridgeConnectedCommand;
+import org.sanmibuh.tedee.bridge.application.ReportBridgeDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportBatteryLevelCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockConnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockSettingsChangedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
-import org.sanmibuh.tedee.lock.infrastructure.BridgeConnectionNotifier;
 import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -36,7 +37,6 @@ final class TedeeEventController {
 
   private final CommandBus commandBus;
   private final JsonMapper jsonMapper;
-  private final BridgeConnectionNotifier bridgeConnectionNotifier;
 
   @PostMapping(EVENTS_PATH)
   @ResponseStatus(NO_CONTENT)
@@ -65,11 +65,10 @@ final class TedeeEventController {
       }
       case BACKEND_CONNECTION_CHANGED -> {
         final var data = jsonMapper.treeToValue(event.data(), BackendConnectionChangedData.class);
-        if (data.isConnected()) {
-          bridgeConnectionNotifier.notifyConnected();
-        } else {
-          bridgeConnectionNotifier.notifyDisconnected();
-        }
+        commandBus.dispatch(
+            data.isConnected()
+                ? new ReportBridgeConnectedCommand()
+                : new ReportBridgeDisconnectedCommand());
       }
       default -> log.warn("Ignoring unknown Tedee Bridge event {}", event.event());
     }

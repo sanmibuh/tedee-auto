@@ -16,12 +16,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.port.CommandBus;
+import org.sanmibuh.tedee.bridge.application.ReportBridgeConnectedCommand;
+import org.sanmibuh.tedee.bridge.application.ReportBridgeDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportBatteryLevelCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockConnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockSettingsChangedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
-import org.sanmibuh.tedee.lock.infrastructure.BridgeConnectionNotifier;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -41,8 +42,6 @@ class TedeeEventControllerTest {
   @Autowired MockMvc sut;
 
   @MockitoBean CommandBus commandBus;
-
-  @MockitoBean BridgeConnectionNotifier bridgeConnectionNotifier;
 
   @MockitoBean TedeeProperties tedeeProperties;
 
@@ -198,7 +197,7 @@ class TedeeEventControllerTest {
 
   @Test
   @SneakyThrows
-  void should_notifyBridgeConnected_whenBackendConnects() {
+  void should_dispatchReportBridgeConnectedCommand_whenBackendConnects() {
     sut.perform(
             post(EVENTS_PATH)
                 .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
@@ -214,12 +213,12 @@ class TedeeEventControllerTest {
                     """))
         .andExpect(status().isNoContent());
 
-    verify(bridgeConnectionNotifier).notifyConnected();
+    verify(commandBus).dispatch(new ReportBridgeConnectedCommand());
   }
 
   @Test
   @SneakyThrows
-  void should_notifyBridgeDisconnected_whenBackendDisconnects() {
+  void should_dispatchReportBridgeDisconnectedCommand_whenBackendDisconnects() {
     sut.perform(
             post(EVENTS_PATH)
                 .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
@@ -235,7 +234,7 @@ class TedeeEventControllerTest {
                     """))
         .andExpect(status().isNoContent());
 
-    verify(bridgeConnectionNotifier).notifyDisconnected();
+    verify(commandBus).dispatch(new ReportBridgeDisconnectedCommand());
   }
 
   @Test
