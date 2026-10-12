@@ -33,6 +33,18 @@ class ModelStrategyTest(unittest.TestCase):
 
     self.assertEqual(models, order_models(models, []))
 
+  def test_should_ignoreExpiredRecords_whenOrderingModels(self):
+    models = ["pro", "flash"]
+    records = [
+        {"date": "2026-07-13", "model": "pro", "outcome": "ok"},
+        {"date": "2026-10-12", "model": "pro", "outcome": "nok"},
+        {"date": "2026-10-12", "model": "flash", "outcome": "ok"},
+    ]
+
+    self.assertEqual(
+        ["flash", "pro"],
+        order_models(models, retain_recent_records(records, "2026-10-12")))
+
   def test_should_discardRecordsOlderThan90Days_whenRetentionIsApplied(self):
     records = [
         {"date": "2026-07-13", "model": "flash", "outcome": "ok"},

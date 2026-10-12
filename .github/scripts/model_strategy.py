@@ -1,6 +1,6 @@
 import json
 import sys
-from datetime import date, timedelta
+from datetime import date, datetime, timedelta, timezone
 
 RETENTION_DAYS = 90
 
@@ -34,7 +34,9 @@ if __name__ == "__main__":
     sys.exit(1)
 
   with open(sys.argv[1]) as stats_file:
-    records = json.load(stats_file)
+    records = retain_recent_records(
+        json.load(stats_file),
+        datetime.now(timezone.utc).date().isoformat())
 
   for model in order_models(sys.argv[2:], records):
     print(model)
