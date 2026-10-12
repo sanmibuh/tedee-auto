@@ -2,6 +2,8 @@ package org.sanmibuh.tedee.lock.infrastructure.primary;
 
 import java.util.Optional;
 import org.sanmibuh.ddd.port.Command;
+import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
+import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventController.LockStatusChangedData;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -24,6 +26,8 @@ enum TedeeEventType {
   }
 
   Command toCommand(final JsonNode data, final JsonMapper jsonMapper) {
-    throw new UnsupportedOperationException();
+    final var eventData = jsonMapper.treeToValue(data, LockStatusChangedData.class);
+    return new ReportLockStatusCommand(
+        eventData.deviceId(), eventData.state(), eventData.jammed(), eventData.doorState());
   }
 }
