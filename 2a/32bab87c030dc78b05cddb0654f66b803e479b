@@ -1,0 +1,24 @@
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockDisconnectedNotificationHandler.java
+  s_8baf1b38c03bd0::t_ee8657df5cac03 1-22
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2a32bab87c030dc78b05cddb0654f66b803e479b",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_8baf1b38c03bd0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed31f7d46ffe6rlibOnRPlxYaU",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
