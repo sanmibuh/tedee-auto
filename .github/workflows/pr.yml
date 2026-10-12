@@ -38,6 +38,9 @@ jobs:
       - name: Check formatting (Spotless)
         run: ./mvnw spotless:check -B
 
+      - name: Test GitHub automation scripts
+        run: make automation-test
+
   test:
     runs-on: ubuntu-latest
     if: github.event.pull_request.draft == false

@@ -1,4 +1,4 @@
-.PHONY: help build clean format test pitest image
+.PHONY: help build clean format test automation-test pitest image
 
 help:
 	@echo "Usage: make <target>"
@@ -7,6 +7,7 @@ help:
 	@echo "  clean   Remove build artifacts"
 	@echo "  format  Apply Spotless code formatter"
 	@echo "  test    Run tests and generate JaCoCo coverage report"
+	@echo "  automation-test  Run GitHub automation script tests"
 	@echo "  pitest  Run incremental mutation testing"
 	@echo "  image   Build GraalVM native Docker image"
 
@@ -21,6 +22,9 @@ format:
 
 test:
 	./mvnw verify -B
+
+automation-test:
+	PYTHONPATH=.github/scripts python3 .github/tests/test_model_strategy.py
 
 pitest:
 	@mkdir -p .pit

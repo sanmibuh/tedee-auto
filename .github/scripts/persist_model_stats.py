@@ -1,5 +1,8 @@
 import json
 import sys
+from datetime import datetime, timezone
+
+from model_strategy import retain_recent_records
 
 if len(sys.argv) < 2:
   print("Usage: persist_model_stats.py <run-results.json>", file=sys.stderr)
@@ -15,6 +18,8 @@ except FileNotFoundError:
   all_records = []
 
 all_records.extend(new_records)
+today = datetime.now(timezone.utc).date().isoformat()
+all_records = retain_recent_records(all_records, today)
 with open("model-stats.json", "w") as f:
   json.dump(all_records, f, indent=2)
 

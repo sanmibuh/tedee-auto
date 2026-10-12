@@ -2,7 +2,8 @@ name: Nightly AI Review
 
 on:
   schedule:
-    - cron: '0 2 * * *'
+    # 04:00 UTC avoids European peak hours without assuming a regional night lowers global demand.
+    - cron: '0 4 * * *'
   workflow_dispatch:
 
 concurrency:
@@ -59,6 +60,14 @@ jobs:
           echo "Closed ai-review issues:"
           cat closed_issues.json
 
+      - name: Fetch model statistics
+        if: env.GEMINI_API_KEY != ''
+        run: |
+          gh api "repos/${{ github.repository }}/contents/model-stats.json?ref=nightly-stats" --jq .content \
+            | tr -d '\n' \
+            | base64 --decode > model-stats.json \
+            || echo "[]" > model-stats.json
+
       - name: Run Gemini review
         if: env.GEMINI_API_KEY != ''
         run: |
@@ -68,6 +77,8 @@ jobs:
             echo "Error: .github/gemini-models.txt is empty or missing." >&2
             exit 1
           fi
+          mapfile -t MODELS < <(python3 .github/scripts/model_strategy.py model-stats.json "${MODELS[@]}")
+          echo "Model fallback order: ${MODELS[*]}"
           SUCCESS=0
           for MODEL in "${MODELS[@]}"; do
             echo "Trying model: $MODEL"
