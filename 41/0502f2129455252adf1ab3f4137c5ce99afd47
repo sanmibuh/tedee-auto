@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/bridge/domain/vo/BridgeId.java
+  h_97a91c9e567f87 1-15
+src/test/java/org/sanmibuh/tedee/bridge/domain/vo/BridgeIdTest.java
+  h_97a91c9e567f87 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "410502f2129455252adf1ab3f4137c5ce99afd47",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
