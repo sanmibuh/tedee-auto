@@ -12,6 +12,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
+import com.tedee.bridge.client.ApiClient;
 import com.tedee.bridge.client.api.CallbackApi;
 import java.time.Clock;
 import java.time.Instant;
@@ -27,6 +28,7 @@ import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.restclient.test.autoconfigure.AutoConfigureMockRestServiceServer;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
@@ -36,10 +38,12 @@ import org.springframework.scheduling.TaskScheduler;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.MockRestServiceServer;
+import org.springframework.web.client.RestClient;
 
 @RestClientTest
+@AutoConfigureMockRestServiceServer(enabled = false)
 @ExtendWith(SoftAssertionsExtension.class)
-@Import({TedeeClientConfiguration.class, TedeeInfrastructureConfiguration.class})
+@Import(TedeeInfrastructureConfiguration.class)
 @TestPropertySource(
     properties = {
       "sanmibuh.rest.tedee.base-url=" + TedeeCallbackRegistrationTest.BASE_URL,
@@ -66,9 +70,15 @@ class TedeeCallbackRegistrationTest {
   private static final String REGISTERED_RESPONSE = "{\"id\": " + REGISTERED_ID + "}";
   private static final Instant NOW = Instant.parse("2026-10-10T14:00:00Z");
 
-  @Autowired private CallbackApi callbackApi;
+  @Autowired private RestClient.Builder restClientBuilder;
 
-  @Autowired private MockRestServiceServer server;
+  private CallbackApi callbackQueryApi;
+
+  private CallbackApi callbackCommandApi;
+
+  private MockRestServiceServer queryServer;
+
+  private MockRestServiceServer commandServer;
 
   @MockitoBean private Clock clock;
 
@@ -94,9 +104,20 @@ class TedeeCallbackRegistrationTest {
   @BeforeEach
   void setUp() {
     given(clock.instant()).willReturn(NOW);
+    final var queryBuilder = restClientBuilder.clone();
+    queryServer = MockRestServiceServer.bindTo(queryBuilder).build();
+    callbackQueryApi = callbackApi(queryBuilder);
+    final var commandBuilder = restClientBuilder.clone();
+    commandServer = MockRestServiceServer.bindTo(commandBuilder).build();
+    callbackCommandApi = callbackApi(commandBuilder);
     sut =
         new TedeeCallbackRegistration(
-            callbackApi, new ServerProperties(PUBLIC_URL), tedeeProperties, clock, taskScheduler);
+            callbackQueryApi,
+            callbackCommandApi,
+            new ServerProperties(PUBLIC_URL),
+            tedeeProperties,
+            clock,
+            taskScheduler);
   }
 
   @Test
@@ -106,14 +127,15 @@ class TedeeCallbackRegistrationTest {
 
     sut.start();
 
-    server.verify();
+    verifyServers();
   }
 
   @Test
   void should_registerCallbackWithoutDoubleSlash_whenPublicUrlEndsWithSlash() {
     sut =
         new TedeeCallbackRegistration(
-            callbackApi,
+            callbackQueryApi,
+            callbackCommandApi,
             new ServerProperties(PUBLIC_URL + "/"),
             tedeeProperties,
             clock,
@@ -123,7 +145,7 @@ class TedeeCallbackRegistrationTest {
 
     sut.start();
 
-    server.verify();
+    verifyServers();
   }
 
   @Test
@@ -133,7 +155,7 @@ class TedeeCallbackRegistrationTest {
 
     sut.start();
 
-    server.verify();
+    verifyServers();
   }
 
   @Test
@@ -147,7 +169,7 @@ class TedeeCallbackRegistrationTest {
 
     sut.start();
 
-    server.verify();
+    verifyServers();
   }
 
   @Test
@@ -159,7 +181,7 @@ class TedeeCallbackRegistrationTest {
 
     sut.stop();
 
-    server.verify();
+    verifyServers();
   }
 
   @Test
@@ -170,14 +192,14 @@ class TedeeCallbackRegistrationTest {
 
     sut.stop();
 
-    server.verify();
+    verifyServers();
   }
 
   @Test
   void should_notCallBridge_whenStoppedWhileNotRunning() {
     sut.stop();
 
-    server.verify();
+    verifyServers();
   }
 
   @Test
@@ -202,7 +224,7 @@ class TedeeCallbackRegistrationTest {
 
   @Test
   void should_remainRunningWithoutCallback_whenBridgeFails() {
-    server
+    queryServer
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
@@ -216,7 +238,7 @@ class TedeeCallbackRegistrationTest {
 
   @Test
   void should_registerCallback_whenBridgeRecoversAfterStartupFailure() {
-    server
+    queryServer
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
@@ -226,18 +248,18 @@ class TedeeCallbackRegistrationTest {
     sut.start();
     sut.reregister();
 
-    server.verify();
+    verifyServers();
     then(sut.isRunning()).isTrue();
   }
 
   @Test
   void should_retryUntilBridgeRecovers_whenRegistrationKeepsFailing() {
     final var retries = ArgumentCaptor.forClass(Runnable.class);
-    server
+    queryServer
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
-    server
+    queryServer
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
@@ -252,7 +274,7 @@ class TedeeCallbackRegistrationTest {
         .schedule(retries.capture(), org.mockito.ArgumentMatchers.any(Instant.class));
     retries.getAllValues().getLast().run();
 
-    server.verify();
+    verifyServers();
     then(sut.isRunning()).isTrue();
     verify(taskScheduler, times(2))
         .schedule(
@@ -262,7 +284,7 @@ class TedeeCallbackRegistrationTest {
 
   @Test
   void should_scheduleRetryAtConfiguredInterval_whenBridgeFails() {
-    server
+    queryServer
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
@@ -277,7 +299,7 @@ class TedeeCallbackRegistrationTest {
 
   @Test
   void should_notRegisterCallback_whenReregisteringAfterStopped() {
-    server
+    queryServer
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
@@ -286,14 +308,14 @@ class TedeeCallbackRegistrationTest {
     sut.stop();
     sut.reregister();
 
-    server.verify();
+    verifyServers();
     then(sut.isRunning()).isFalse();
   }
 
   @Test
   void should_stopWithoutFailing_whenBridgeFailsToDeleteCallback() {
     expectListedCallbacks(callbacks(callback(EXISTING_ID, CALLBACK_URL)));
-    server
+    commandServer
         .expect(requestTo(CALLBACK_ENDPOINT + "/" + EXISTING_ID))
         .andExpect(method(HttpMethod.DELETE))
         .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
@@ -307,7 +329,7 @@ class TedeeCallbackRegistrationTest {
   }
 
   private void expectRegisteredCallback() {
-    server
+    commandServer
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.POST))
         .andExpect(jsonPath("$.url").value(CALLBACK_URL))
@@ -319,16 +341,32 @@ class TedeeCallbackRegistrationTest {
   }
 
   private void expectDeletedCallback(final int id) {
-    server
+    commandServer
         .expect(requestTo(CALLBACK_ENDPOINT + "/" + id))
         .andExpect(method(HttpMethod.DELETE))
         .andRespond(withNoContent());
   }
 
   private void expectListedCallbacks(final String callbacks) {
-    server
+    queryServer
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.GET))
         .andRespond(withSuccess(callbacks, MediaType.APPLICATION_JSON));
+  }
+
+  private CallbackApi callbackApi(final RestClient.Builder builder) {
+    final var apiClient =
+        new ApiClient(
+            builder
+                .requestInterceptor(
+                    new TedeeApiTokenInterceptor(new TedeeApiTokenGenerator("secret"), clock))
+                .build());
+    apiClient.setBasePath(BASE_URL);
+    return new CallbackApi(apiClient);
+  }
+
+  private void verifyServers() {
+    queryServer.verify();
+    commandServer.verify();
   }
 }

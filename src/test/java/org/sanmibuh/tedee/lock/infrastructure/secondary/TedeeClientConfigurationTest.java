@@ -17,15 +17,12 @@ class TedeeClientConfigurationTest {
 
   @Test
   void should_configureApiClientBasePath_whenPropertiesAreProvided() {
-    final var properties =
-        new TedeeProperties(
-            URI.create("https://gateway.local/tedee/api/v1.0"),
-            "secret-token",
-            "callback-secret",
-            Duration.ofSeconds(30),
-            new RetryProperties(2, 500L, 2.0, 5000L));
-
-    final var apiClient = sut.tedeeApiClient(RestClient.builder(), properties, Clock.systemUTC());
+    final var properties = properties();
+    final var apiClient =
+        sut.tedeeApiClient(
+            RestClient.builder(),
+            properties,
+            sut.tedeeApiTokenInterceptor(properties, Clock.systemUTC()));
 
     then(apiClient.getBasePath()).isEqualTo("https://gateway.local/tedee/api/v1.0");
   }
@@ -40,11 +37,24 @@ class TedeeClientConfigurationTest {
   }
 
   @Test
-  void should_createCallbackApi_whenApiClientIsProvided() {
-    final var apiClient = new ApiClient();
+  void should_createIsolatedCallbackApiClients_whenBridgeApisAreConfigured() {
+    final var properties = properties();
+    final var interceptor = sut.tedeeApiTokenInterceptor(properties, Clock.systemUTC());
 
-    final var callbackApi = sut.callbackApi(apiClient);
+    final var callbackQueryApi =
+        sut.callbackQueryApi(RestClient.builder(), properties, interceptor);
+    final var callbackCommandApi =
+        sut.callbackCommandApi(RestClient.builder(), properties, interceptor);
 
-    then(callbackApi.getApiClient()).isSameAs(apiClient);
+    then(callbackQueryApi.getApiClient()).isNotSameAs(callbackCommandApi.getApiClient());
+  }
+
+  private static TedeeProperties properties() {
+    return new TedeeProperties(
+        URI.create("https://gateway.local/tedee/api/v1.0"),
+        "secret-token",
+        "callback-secret",
+        Duration.ofSeconds(30),
+        new RetryProperties(2, 500L, 2.0, 5000L));
   }
 }

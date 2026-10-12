@@ -18,18 +18,42 @@ import org.springframework.web.client.RestClient;
 public class TedeeClientConfiguration {
 
   @Bean
-  ApiClient tedeeApiClient(
-      final RestClient.Builder builder, final TedeeProperties properties, final Clock clock) {
-    final var interceptor =
-        new TedeeApiTokenInterceptor(new TedeeApiTokenGenerator(properties.apiKey()), clock);
-    final var apiClient = new ApiClient(builder.requestInterceptor(interceptor).build());
-    apiClient.setBasePath(properties.baseUrl().toString());
-    return apiClient;
+  TedeeApiTokenInterceptor tedeeApiTokenInterceptor(
+      final TedeeProperties properties, final Clock clock) {
+    return new TedeeApiTokenInterceptor(new TedeeApiTokenGenerator(properties.apiKey()), clock);
   }
 
   @Bean
-  CallbackApi callbackApi(final ApiClient apiClient) {
-    return new CallbackApi(apiClient);
+  ApiClient tedeeApiClient(
+      final RestClient.Builder builder,
+      final TedeeProperties properties,
+      final TedeeApiTokenInterceptor interceptor) {
+    return apiClient(builder, properties, interceptor);
+  }
+
+  @Bean
+  CallbackApi callbackQueryApi(
+      final RestClient.Builder builder,
+      final TedeeProperties properties,
+      final TedeeApiTokenInterceptor interceptor) {
+    return new CallbackApi(apiClient(builder, properties, interceptor));
+  }
+
+  @Bean
+  CallbackApi callbackCommandApi(
+      final RestClient.Builder builder,
+      final TedeeProperties properties,
+      final TedeeApiTokenInterceptor interceptor) {
+    return new CallbackApi(apiClient(builder, properties, interceptor));
+  }
+
+  private ApiClient apiClient(
+      final RestClient.Builder builder,
+      final TedeeProperties properties,
+      final TedeeApiTokenInterceptor interceptor) {
+    final var apiClient = new ApiClient(builder.requestInterceptor(interceptor).build());
+    apiClient.setBasePath(properties.baseUrl().toString());
+    return apiClient;
   }
 
   @Bean

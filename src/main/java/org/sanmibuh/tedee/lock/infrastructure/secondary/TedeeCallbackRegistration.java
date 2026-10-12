@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.TaskScheduler;
@@ -26,7 +27,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 final class TedeeCallbackRegistration implements SmartLifecycle {
 
-  private final CallbackApi callbackApi;
+  private final CallbackApi callbackQueryApi;
+  private final CallbackApi callbackCommandApi;
   private final String callbackUrl;
   private final String callbackSecret;
   private final Clock clock;
@@ -36,12 +38,14 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   private @Nullable Long registeredId;
 
   TedeeCallbackRegistration(
-      final CallbackApi callbackApi,
+      final @Qualifier("callbackQueryApi") CallbackApi callbackQueryApi,
+      final @Qualifier("callbackCommandApi") CallbackApi callbackCommandApi,
       final ServerProperties serverProperties,
       final TedeeProperties tedeeProperties,
       final Clock clock,
       final TaskScheduler taskScheduler) {
-    this.callbackApi = callbackApi;
+    this.callbackQueryApi = callbackQueryApi;
+    this.callbackCommandApi = callbackCommandApi;
     callbackSecret = tedeeProperties.callbackSecret();
     this.clock = clock;
     this.taskScheduler = taskScheduler;
@@ -90,14 +94,14 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   private List<CallbackDetails> ourCallbacks() {
-    return callbackApi.getCallback().stream()
+    return callbackQueryApi.getCallback().stream()
         .filter(callback -> callbackUrl.equals(callback.getUrl()))
         .toList();
   }
 
   private long register() {
     final var registered =
-        callbackApi.postSingleCallback(
+        callbackCommandApi.postSingleCallback(
             new CallbackDetailsNoId()
                 .url(callbackUrl)
                 .method(HttpMethod.POST.name())
@@ -108,7 +112,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   private void delete(final long callbackId) {
-    callbackApi.deleteCallback(Math.toIntExact(callbackId));
+    callbackCommandApi.deleteCallback(Math.toIntExact(callbackId));
   }
 
   @Override
