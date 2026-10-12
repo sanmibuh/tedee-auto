@@ -1,0 +1,40 @@
+src/main/java/org/sanmibuh/tedee/bridge/domain/vo/BridgeId.java
+  h_97a91c9e567f87 1-15
+src/test/java/org/sanmibuh/tedee/bridge/domain/vo/BridgeIdTest.java
+  h_97a91c9e567f87 1-13
+src/main/java/org/sanmibuh/tedee/bridge/domain/Bridge.java
+  h_97a91c9e567f87 1-21
+src/main/java/org/sanmibuh/tedee/bridge/application/ReportBridgeConnectedHandler.java
+  s_8baf1b38c03bd0::t_21bd9963b4750e 1-16
+src/main/java/org/sanmibuh/tedee/bridge/application/ReportBridgeConnectedCommand.java
+  h_97a91c9e567f87 1-5
+src/main/java/org/sanmibuh/tedee/bridge/application/ReportBridgeDisconnectedCommand.java
+  h_97a91c9e567f87 1-5
+src/main/java/org/sanmibuh/tedee/bridge/application/ReportBridgeDisconnectedHandler.java
+  h_97a91c9e567f87 1-16
+src/test/java/org/sanmibuh/tedee/bridge/application/ReportBridgeConnectedHandlerTest.java
+  h_97a91c9e567f87 1-18
+src/test/java/org/sanmibuh/tedee/bridge/application/ReportBridgeDisconnectedHandlerTest.java
+  h_97a91c9e567f87 1-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f3cf008fe23d313cc92242ef44d5b40ae0d1e262",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_8baf1b38c03bd0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed31f7d46ffe6rlibOnRPlxYaU",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
