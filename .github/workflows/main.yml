@@ -41,7 +41,9 @@ jobs:
           git show origin/coverage-data:pitest-history.bin > .pit/history-input.bin 2>/dev/null || true
 
       - name: Build and test
-        run: ./mvnw verify -B
+        run: |
+          make automation-test
+          ./mvnw verify -B
 
       - name: Run mutation tests (incremental)
         run: ./mvnw pitest:mutationCoverage -B
