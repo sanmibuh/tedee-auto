@@ -15,7 +15,7 @@ public final class BridgeConnectionNotificationHandler implements BridgeConnecti
 
   @Override
   public void notifyConnected() {
-    throw new UnsupportedOperationException();
+    notifier.notify(messages.getMessage("bridge.connected", null, applicationLocale.current()));
   }
 
   @Override
