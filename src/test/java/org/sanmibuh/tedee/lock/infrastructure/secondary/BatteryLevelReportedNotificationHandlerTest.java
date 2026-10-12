@@ -1,8 +1,8 @@
 package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import static org.mockito.BDDMockito.then;
-import static org.sanmibuh.tedee.lock.infrastructure.secondary.NotificationTestSupport.applicationLocale;
-import static org.sanmibuh.tedee.lock.infrastructure.secondary.NotificationTestSupport.messages;
+import static org.sanmibuh.tedee.NotificationTestSupport.applicationLocale;
+import static org.sanmibuh.tedee.NotificationTestSupport.messages;
 
 import java.util.Locale;
 import java.util.stream.Stream;

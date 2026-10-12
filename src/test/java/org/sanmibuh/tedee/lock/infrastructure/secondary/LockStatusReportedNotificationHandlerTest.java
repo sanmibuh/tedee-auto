@@ -3,9 +3,9 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 import static org.mockito.BDDMockito.then;
-import static org.sanmibuh.tedee.lock.infrastructure.secondary.NotificationTestSupport.SPANISH;
-import static org.sanmibuh.tedee.lock.infrastructure.secondary.NotificationTestSupport.applicationLocale;
-import static org.sanmibuh.tedee.lock.infrastructure.secondary.NotificationTestSupport.messages;
+import static org.sanmibuh.tedee.NotificationTestSupport.SPANISH;
+import static org.sanmibuh.tedee.NotificationTestSupport.applicationLocale;
+import static org.sanmibuh.tedee.NotificationTestSupport.messages;
 
 import java.util.Locale;
 import java.util.stream.Stream;

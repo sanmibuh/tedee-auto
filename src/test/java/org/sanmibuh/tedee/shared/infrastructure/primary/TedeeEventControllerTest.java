@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.primary;
+package org.sanmibuh.tedee.shared.infrastructure.primary;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
@@ -16,9 +16,15 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.port.CommandBus;
+import org.sanmibuh.tedee.bridge.application.ReportBridgeConnectedCommand;
+import org.sanmibuh.tedee.bridge.application.ReportBridgeDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportBatteryLevelCommand;
+import org.sanmibuh.tedee.lock.application.ReportLockConnectedCommand;
+import org.sanmibuh.tedee.lock.application.ReportLockDisconnectedCommand;
+import org.sanmibuh.tedee.lock.application.ReportLockSettingsChangedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
+import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeWebhookConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -123,6 +129,113 @@ class TedeeEventControllerTest {
         .andExpect(status().isNoContent());
 
     verify(commandBus).dispatch(new ReportBatteryLevelCommand(33819, 90));
+  }
+
+  @Test
+  @SneakyThrows
+  void should_dispatchReportLockConnectedCommand_whenDeviceConnects() {
+    sut.perform(
+            post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "event": "device-connection-changed",
+                      "data": {
+                        "deviceId": 33819,
+                        "isConnected": 1
+                      }
+                    }
+                    """))
+        .andExpect(status().isNoContent());
+
+    verify(commandBus).dispatch(new ReportLockConnectedCommand(33819));
+  }
+
+  @Test
+  @SneakyThrows
+  void should_dispatchReportLockDisconnectedCommand_whenDeviceDisconnects() {
+    sut.perform(
+            post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "event": "device-connection-changed",
+                      "data": {
+                        "deviceId": 33819,
+                        "isConnected": 0
+                      }
+                    }
+                    """))
+        .andExpect(status().isNoContent());
+
+    verify(commandBus).dispatch(new ReportLockDisconnectedCommand(33819));
+  }
+
+  @Test
+  @SneakyThrows
+  void should_dispatchReportLockSettingsChangedCommand_whenDeviceSettingsChange() {
+    sut.perform(
+            post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "event": "device-settings-changed",
+                      "data": {
+                        "deviceId": 33819
+                      }
+                    }
+                    """))
+        .andExpect(status().isNoContent());
+
+    verify(commandBus).dispatch(new ReportLockSettingsChangedCommand(33819));
+  }
+
+  @Test
+  @SneakyThrows
+  void should_dispatchReportBridgeConnectedCommand_whenBackendConnects() {
+    sut.perform(
+            post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "event": "backend-connection-changed",
+                      "data": {
+                        "isConnected": 1
+                      }
+                    }
+                    """))
+        .andExpect(status().isNoContent());
+
+    verify(commandBus).dispatch(new ReportBridgeConnectedCommand());
+  }
+
+  @Test
+  @SneakyThrows
+  void should_dispatchReportBridgeDisconnectedCommand_whenBackendDisconnects() {
+    sut.perform(
+            post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "event": "backend-connection-changed",
+                      "data": {
+                        "isConnected": 0
+                      }
+                    }
+                    """))
+        .andExpect(status().isNoContent());
+
+    verify(commandBus).dispatch(new ReportBridgeDisconnectedCommand());
   }
 
   @Test

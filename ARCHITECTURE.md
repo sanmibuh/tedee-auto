@@ -19,11 +19,11 @@ Aggregates record events; the command bus publishes them after handling; reposit
 
 Failures are classified by outcome: domain violations map to 400, missing aggregates to 404, permanent integrations to 500, and transient integrations to 503.
 
-## Lock Context
+## Lock And Bridge Contexts
 
-`Lock` represents an authoritative physical device. Closing is idempotent and produces a `LockRequested` intent. Bridge callbacks produce `LockStatusReported` and `BatteryLevelReported` facts; their handlers translate Bridge codes and battery percentages into domain value objects before invoking the aggregate. Battery percentages are constrained to 0-100.
+`Lock` represents an authoritative physical device. Closing is idempotent and produces a `LockRequested` intent. Bridge callbacks produce lock status, battery, connection, and settings facts; their handlers translate Bridge codes and battery percentages into domain value objects before invoking the aggregate. Battery percentages are constrained to 0-100.
 
-The scheduler issues close commands from the configured device-id-to-cron map. The webhook adapter receives Bridge callbacks, authenticates them, and dispatches status reports and battery-level reports. Charging lifecycle callbacks are not supported because the managed Tedee device cannot be recharged directly. The Bridge adapter executes `LockRequested` events and retries transient failures. Callback registration is lifecycle-managed and idempotent by callback URL.
+`Bridge` represents the single configured physical Bridge and has a singleton identity. Its connection callbacks produce connection facts, consumed independently from the `Lock` context. The shared authenticated webhook adapter maps its closed callback vocabulary to commands through `TedeeEventType`; connection values use the documented `0` (disconnected) and `1` (connected) codes. The scheduler issues close commands from the configured device-id-to-cron map. Charging lifecycle callbacks are not supported because the managed Tedee device cannot be recharged directly. The Bridge adapter executes `LockRequested` events and retries transient failures. Callback registration is lifecycle-managed and idempotent by callback URL.
 
 The Bridge uses encrypted `api_token` authentication. A request interceptor creates a fresh token from the API key and current UTC time.
 
@@ -31,7 +31,7 @@ The Bridge uses encrypted `api_token` authentication. A request interceptor crea
 
 `Notifier` is a framework-level output port with a Telegram adapter. Credentials are required at startup, Telegram failures are mapped to integration categories, and transient failures are retried.
 
-`LockStatusReportedNotificationHandler` renders state messages and jam alerts, while `BatteryLevelReportedNotificationHandler` renders battery notifications through `MessageSource`. Battery levels are categorized as depleted (<=10), critical (<=20), low (<=40), medium (<=60), good (<=80), or high. Catalogs are in `messages.properties` and `messages_es.properties`; `spring.web.locale` selects the application locale for event-driven notifications.
+Notifications consume `Lock` and `Bridge` domain events and are rendered through `MessageSource`. Battery levels are categorized as depleted (<=10), critical (<=20), low (<=40), medium (<=60), good (<=80), or high. Catalogs are in `messages.properties` and `messages_es.properties`; `spring.web.locale` selects the application locale for event-driven notifications.
 
 ## Runtime And Quality
 
