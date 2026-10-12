@@ -1,0 +1,18 @@
+src/main/resources/messages.properties
+  h_97a91c9e567f87 17
+src/main/resources/messages_es.properties
+  h_97a91c9e567f87 17
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/BridgeConnectionNotificationHandlerTest.java
+  h_97a91c9e567f87 29-39
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b7106b06e9aee57dcba571369f70518cce79767b",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
