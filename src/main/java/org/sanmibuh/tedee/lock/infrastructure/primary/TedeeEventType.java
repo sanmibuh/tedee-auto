@@ -9,11 +9,6 @@ import org.sanmibuh.tedee.lock.application.ReportLockConnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockSettingsChangedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
-import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventController.BackendConnectionChangedData;
-import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventController.BatteryLevelChangedData;
-import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventController.DeviceConnectionChangedData;
-import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventController.DeviceSettingsChangedData;
-import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventController.LockStatusChangedData;
 import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
@@ -68,4 +63,14 @@ enum TedeeEventType {
       }
     };
   }
+
+  record LockStatusChangedData(int deviceId, int state, int jammed, int doorState) {}
+
+  record BatteryLevelChangedData(int deviceId, int batteryLevel) {}
+
+  record DeviceConnectionChangedData(int deviceId, boolean isConnected) {}
+
+  record DeviceSettingsChangedData(int deviceId) {}
+
+  record BackendConnectionChangedData(boolean isConnected) {}
 }
