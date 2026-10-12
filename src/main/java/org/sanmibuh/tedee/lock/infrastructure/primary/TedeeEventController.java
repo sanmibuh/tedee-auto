@@ -66,6 +66,8 @@ final class TedeeEventController {
         final var data = jsonMapper.treeToValue(event.data(), BackendConnectionChangedData.class);
         if (data.isConnected()) {
           bridgeConnectionNotifier.notifyConnected();
+        } else {
+          bridgeConnectionNotifier.notifyDisconnected();
         }
       }
       default -> log.warn("Ignoring unknown Tedee Bridge event {}", event.event());
