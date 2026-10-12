@@ -320,6 +320,8 @@ class TedeeCallbackRegistrationTest {
   }
 
   private void expectRegisteredCallbackWithClosedConnection() {
+    // Guard the workaround for
+    // https://community.tedee.com/t/tedee-bridge-closes-persistent-http-connection-before-responding-to-callback-post/793.
     server
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.POST))
