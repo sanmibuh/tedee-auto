@@ -16,6 +16,8 @@ public final class LockConnectedNotificationHandler implements DomainEventHandle
 
   @Override
   public void handle(final LockConnected event) {
-    throw new UnsupportedOperationException();
+    notifier.notify(
+        messages.getMessage(
+            "lock.connected", new Object[] {event.deviceId()}, applicationLocale.current()));
   }
 }
