@@ -3,6 +3,7 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import java.io.IOException;
 import java.time.Clock;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpRequest;
 import org.springframework.http.client.ClientHttpRequestExecution;
 import org.springframework.http.client.ClientHttpRequestInterceptor;
@@ -21,6 +22,7 @@ final class TedeeApiTokenInterceptor implements ClientHttpRequestInterceptor {
       final HttpRequest request, final byte[] body, final ClientHttpRequestExecution execution)
       throws IOException {
     request.getHeaders().set(API_TOKEN_HEADER, generator.generate(clock.millis()));
+    request.getHeaders().set(HttpHeaders.CONNECTION, "close");
     return execution.execute(request, body);
   }
 }
