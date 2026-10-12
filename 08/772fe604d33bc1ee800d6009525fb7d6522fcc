@@ -1,0 +1,22 @@
+src/main/java/org/sanmibuh/tedee/lock/application/LockCommand.java
+  h_97a91c9e567f87 1-8
+src/main/java/org/sanmibuh/tedee/lock/application/ReportLockConnectedCommand.java
+  h_97a91c9e567f87 3
+src/main/java/org/sanmibuh/tedee/lock/application/ReportLockDisconnectedCommand.java
+  h_97a91c9e567f87 3
+src/main/java/org/sanmibuh/tedee/lock/application/ReportLockHandler.java
+  h_97a91c9e567f87 8,18
+src/main/java/org/sanmibuh/tedee/lock/application/ReportLockSettingsChangedCommand.java
+  h_97a91c9e567f87 3
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "08772fe604d33bc1ee800d6009525fb7d6522fcc",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
