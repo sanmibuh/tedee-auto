@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistrationTest.java
+  s_8aefe5db85c7c2::t_ca679bb65a6f00 32,106,322-336
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6c1c41e1e42ed50f97df5174350e17b0726f83f2",
+  "prompts": {},
+  "sessions": {
+    "s_8aefe5db85c7c2": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ece3e20e7ffe5tXHOUwf3xVc8c",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
