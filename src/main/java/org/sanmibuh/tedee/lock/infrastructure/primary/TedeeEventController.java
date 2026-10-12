@@ -8,6 +8,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.sanmibuh.ddd.domain.DomainException;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.lock.application.ReportBatteryLevelCommand;
+import org.sanmibuh.tedee.lock.application.ReportLockConnectedCommand;
+import org.sanmibuh.tedee.lock.application.ReportLockDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.springframework.context.annotation.ImportRuntimeHints;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -26,6 +28,7 @@ final class TedeeEventController {
 
   private static final String LOCK_STATUS_CHANGED = "lock-status-changed";
   private static final String BATTERY_LEVEL_CHANGED = "device-battery-level-changed";
+  private static final String DEVICE_CONNECTION_CHANGED = "device-connection-changed";
 
   private final CommandBus commandBus;
   private final JsonMapper jsonMapper;
@@ -44,6 +47,13 @@ final class TedeeEventController {
         final var data = jsonMapper.treeToValue(event.data(), BatteryLevelChangedData.class);
         commandBus.dispatch(new ReportBatteryLevelCommand(data.deviceId(), data.batteryLevel()));
       }
+      case DEVICE_CONNECTION_CHANGED -> {
+        final var data = jsonMapper.treeToValue(event.data(), DeviceConnectionChangedData.class);
+        commandBus.dispatch(
+            data.isConnected()
+                ? new ReportLockConnectedCommand(data.deviceId())
+                : new ReportLockDisconnectedCommand(data.deviceId()));
+      }
       default -> log.warn("Ignoring unknown Tedee Bridge event {}", event.event());
     }
   }
@@ -59,4 +69,6 @@ final class TedeeEventController {
   record LockStatusChangedData(int deviceId, int state, int jammed, int doorState) {}
 
   record BatteryLevelChangedData(int deviceId, int batteryLevel) {}
+
+  record DeviceConnectionChangedData(int deviceId, boolean isConnected) {}
 }
