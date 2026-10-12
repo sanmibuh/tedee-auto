@@ -1,5 +1,47 @@
 # Changelog
 
+## [0.3.0] - 2026-10-12
+
+### Features
+- feat: notify device and bridge connection/settings events ([#278](https://github.com/sanmibuh/tedee-auto/pull/278))
+- feat(lock): notify battery level and charging events ([#275](https://github.com/sanmibuh/tedee-auto/pull/275))
+- feat(notification): notify lock state and jam events via Telegram with i18n messages ([#274](https://github.com/sanmibuh/tedee-auto/pull/274))
+- feat(lock): handle Bridge callback registration edge cases ([#271](https://github.com/sanmibuh/tedee-auto/pull/271))
+- feat(notification): Notifier port with Telegram adapter ([#257](https://github.com/sanmibuh/tedee-auto/pull/257))
+- feat(lock): Lock.reportStatus records confirmed state facts ([#256](https://github.com/sanmibuh/tedee-auto/pull/256))
+- feat(lock): authenticate Bridge webhook calls with a shared secret header ([#255](https://github.com/sanmibuh/tedee-auto/pull/255))
+- feat(lock): expose webhook endpoint receiving Bridge events ([#254](https://github.com/sanmibuh/tedee-auto/pull/254))
+- feat(lock): register Bridge callback idempotently on startup and unregister on shutdown ([#253](https://github.com/sanmibuh/tedee-auto/pull/253))
+
+### Bug Fixes
+- fix(config): fail fast when TEDEE_HOST or TEDEE_API_KEY is unset ([#279](https://github.com/sanmibuh/tedee-auto/pull/279))
+- Fix native startup reflection for retry properties ([#276](https://github.com/sanmibuh/tedee-auto/pull/276))
+
+### Code Quality
+- [TDD] Non-compliant BDDSoftAssertions injection in InMemoryEventBusTest ([#281](https://github.com/sanmibuh/tedee-auto/pull/281))
+- [TDD] Subject under test (SUT) not named 'sut' in configuration properties tests ([#270](https://github.com/sanmibuh/tedee-auto/pull/270))
+- refactor(lock): rename LockLocked to distinguish intent from confirmed fact ([#251](https://github.com/sanmibuh/tedee-auto/pull/251))
+- [Clean Code] Use of var with explicit unchecked cast in InMemoryCommandBus and InMemoryQueryBus ([#235](https://github.com/sanmibuh/tedee-auto/pull/235))
+
+### Dependencies
+- build(deps-dev): bump org.openapitools:openapi-generator-maven-plugin from 7.25.0 to 7.26.0 ([#272](https://github.com/sanmibuh/tedee-auto/pull/272))
+- build(deps): bump org.apache.maven:apache-maven from 3.9.16 to 3.10.0 ([#266](https://github.com/sanmibuh/tedee-auto/pull/266))
+- build(deps-dev): bump com.tngtech.archunit:archunit-junit5 from 1.5.0 to 1.5.1 ([#267](https://github.com/sanmibuh/tedee-auto/pull/267))
+- build(deps-dev): bump com.diffplug.spotless:spotless-maven-plugin from 3.10.2 to 3.10.3 ([#268](https://github.com/sanmibuh/tedee-auto/pull/268))
+- build(deps): bump org.openapitools:jackson-databind-nullable from 0.2.11 to 0.2.12 ([#265](https://github.com/sanmibuh/tedee-auto/pull/265))
+- build(deps): bump com.uber.nullaway:nullaway from 0.14.1 to 0.14.2 ([#264](https://github.com/sanmibuh/tedee-auto/pull/264))
+
+### Build & CI
+- chore(deps): migrate generated Tedee client to Jackson 3 ([#259](https://github.com/sanmibuh/tedee-auto/pull/259))
+- CI: single-workflow full-auto release that never leaves main in a broken state ([#233](https://github.com/sanmibuh/tedee-auto/pull/233))
+
+### Other
+- Native image smoke test is failing ([#280](https://github.com/sanmibuh/tedee-auto/pull/280))
+- Improve native smoke workflow scheduling and failure reporting ([#263](https://github.com/sanmibuh/tedee-auto/pull/263))
+- Use `var` for `deviceId` local in `TedeeLockGateway.lock` ([#240](https://github.com/sanmibuh/tedee-auto/pull/240))
+- Nightly AI review fails when all Gemini models are exhausted / on request timeout ([#237](https://github.com/sanmibuh/tedee-auto/pull/237))
+- Qodana: resolve 5 nullability warnings in JVM scan ([#234](https://github.com/sanmibuh/tedee-auto/pull/234))
+
 ## [0.2.2] - 2026-09-21
 
 ### Other
