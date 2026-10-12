@@ -3,6 +3,7 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import com.tedee.bridge.client.ApiClient;
+import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
 import org.junit.jupiter.api.Test;
@@ -18,7 +19,7 @@ class TedeeClientConfigurationTest {
   void should_configureApiClientBasePath_whenPropertiesAreProvided() {
     final var properties =
         new TedeeProperties(
-            "http://bridge.local/v1.0",
+            URI.create("https://gateway.local/tedee/api/v1.0"),
             "secret-token",
             "callback-secret",
             Duration.ofSeconds(30),
@@ -26,7 +27,7 @@ class TedeeClientConfigurationTest {
 
     final var apiClient = sut.tedeeApiClient(RestClient.builder(), properties, Clock.systemUTC());
 
-    then(apiClient.getBasePath()).isEqualTo("http://bridge.local/v1.0");
+    then(apiClient.getBasePath()).isEqualTo("https://gateway.local/tedee/api/v1.0");
   }
 
   @Test

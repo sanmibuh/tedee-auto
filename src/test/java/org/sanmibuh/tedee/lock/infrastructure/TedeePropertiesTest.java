@@ -2,6 +2,7 @@ package org.sanmibuh.tedee.lock.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
+import java.net.URI;
 import java.time.Duration;
 import java.util.stream.Stream;
 import org.assertj.core.api.BDDSoftAssertions;
@@ -32,7 +33,7 @@ class TedeePropertiesTest {
   void should_bindProperties_whenBaseUrlAndApiKeyAreProvided() {
     runner
         .withPropertyValues(
-            "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+            "sanmibuh.rest.tedee.base-url=https://gateway.local/tedee/api/v1.0",
             "sanmibuh.rest.tedee.api-key=secret-token",
             "sanmibuh.rest.tedee.callback-secret=callback-secret",
             "sanmibuh.rest.tedee.callback-registration-interval=30s",
@@ -43,7 +44,9 @@ class TedeePropertiesTest {
         .run(
             context -> {
               final var sut = context.getBean(TedeeProperties.class);
-              softly.then(sut.baseUrl()).isEqualTo("http://bridge.local/v1.0");
+              softly
+                  .then(sut.baseUrl())
+                  .isEqualTo(URI.create("https://gateway.local/tedee/api/v1.0"));
               softly.then(sut.apiKey()).isEqualTo("secret-token");
               softly.then(sut.callbackSecret()).isEqualTo("callback-secret");
               softly.then(sut.callbackRegistrationInterval()).isEqualTo(Duration.ofSeconds(30));
@@ -128,6 +131,7 @@ class TedeePropertiesTest {
                 new String[] {
                   "sanmibuh.rest.tedee.base-url=  ", "sanmibuh.rest.tedee.api-key=secret-token"
                 })),
+        Arguments.of(Named.of("base-url has no host", baseUrl("http:///v1.0"))),
         Arguments.of(
             Named.of(
                 "api-key is blank",
@@ -167,6 +171,12 @@ class TedeePropertiesTest {
   private static String[] callbackRegistrationInterval(final String interval) {
     final var properties = retry("2", "500", "2.0", "5000");
     properties[3] = "sanmibuh.rest.tedee.callback-registration-interval=" + interval;
+    return properties;
+  }
+
+  private static String[] baseUrl(final String baseUrl) {
+    final var properties = retry("2", "500", "2.0", "5000");
+    properties[0] = "sanmibuh.rest.tedee.base-url=" + baseUrl;
     return properties;
   }
 
