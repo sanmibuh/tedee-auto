@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.3.1] - 2026-10-12
+
+### Features
+- feat(nightly): leverage model stats for smarter fallback strategy ([#282](https://github.com/sanmibuh/tedee-auto/pull/282))
+
+### Bug Fixes
+- fix: avoid reused HTTP connections when registering Bridge callbacks ([#284](https://github.com/sanmibuh/tedee-auto/pull/284))
+
 ## [0.3.0] - 2026-10-12
 
 ### Features
