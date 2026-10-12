@@ -18,8 +18,8 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.framework.resilience.RetryProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
-import org.springframework.web.client.RestClient;
 import org.springframework.http.MediaType;
+import org.springframework.web.client.RestClient;
 
 class TedeeClientConfigurationTest {
 
