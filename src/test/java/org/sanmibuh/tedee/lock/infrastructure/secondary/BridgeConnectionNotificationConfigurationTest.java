@@ -21,7 +21,10 @@ class BridgeConnectionNotificationConfigurationTest {
 
   @Test
   void should_registerBridgeConnectionNotifier_whenConfigurationIsLoaded() {
-    runner.run(context -> then(context).hasSingleBean(BridgeConnectionNotifier.class));
+    runner.run(
+        context ->
+            then(context.getBean(BridgeConnectionNotifier.class))
+                .isInstanceOf(BridgeConnectionNotificationHandler.class));
   }
 
   @Configuration
