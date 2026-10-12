@@ -65,8 +65,8 @@ jobs:
         run: |
           gh api "repos/${{ github.repository }}/contents/model-stats.json?ref=nightly-stats" --jq .content \
             | tr -d '\n' \
-            | base64 --decode > model-stats.json \
-            || echo "[]" > model-stats.json
+            | base64 --decode > "$RUNNER_TEMP/model-stats.json" \
+            || echo "[]" > "$RUNNER_TEMP/model-stats.json"
 
       - name: Run Gemini review
         if: env.GEMINI_API_KEY != ''
@@ -77,7 +77,7 @@ jobs:
             echo "Error: .github/gemini-models.txt is empty or missing." >&2
             exit 1
           fi
-          mapfile -t MODELS < <(python3 .github/scripts/model_strategy.py model-stats.json "${MODELS[@]}")
+          mapfile -t MODELS < <(python3 .github/scripts/model_strategy.py "$RUNNER_TEMP/model-stats.json" "${MODELS[@]}")
           echo "Model fallback order: ${MODELS[*]}"
           SUCCESS=0
           for MODEL in "${MODELS[@]}"; do
@@ -167,6 +167,7 @@ jobs:
           WORK_DIR="$(mktemp -d)"
           cp run-results.json "$WORK_DIR/run-results.json"
           cp .github/scripts/persist_model_stats.py "$WORK_DIR/persist_model_stats.py"
+          cp .github/scripts/model_strategy.py "$WORK_DIR/model_strategy.py"
 
           git config user.name  "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"

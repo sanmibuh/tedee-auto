@@ -24,7 +24,7 @@ test:
 	./mvnw verify -B
 
 automation-test:
-	PYTHONPATH=.github/scripts python3 .github/tests/test_model_strategy.py
+	PYTHONDONTWRITEBYTECODE=1 python3 .github/tests/test_model_strategy.py
 
 pitest:
 	@mkdir -p .pit

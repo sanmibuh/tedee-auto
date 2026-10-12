@@ -1,14 +1,12 @@
 import json
 import sys
-from collections import defaultdict
 from datetime import date, timedelta
 
-RELIABILITY_THRESHOLD = 0.2
 RETENTION_DAYS = 90
 
 
 def order_models(models, records):
-  outcomes = defaultdict(lambda: {"ok": 0, "total": 0})
+  outcomes = {model: {"ok": 0, "total": 0} for model in models}
   for record in records:
     if record["model"] not in models:
       continue
@@ -16,14 +14,13 @@ def order_models(models, records):
     if record["outcome"] == "ok":
       outcomes[record["model"]]["ok"] += 1
 
-  reliable_models = []
-  unreliable_models = []
-  for model in models:
+  def success_rate(model):
     model_outcomes = outcomes[model]
-    is_reliable = (model_outcomes["total"] == 0 or
-                   model_outcomes["ok"] / model_outcomes["total"] >= RELIABILITY_THRESHOLD)
-    (reliable_models if is_reliable else unreliable_models).append(model)
-  return reliable_models + unreliable_models
+    if model_outcomes["total"] == 0:
+      return 0
+    return model_outcomes["ok"] / model_outcomes["total"]
+
+  return sorted(models, key=success_rate, reverse=True)
 
 
 def retain_recent_records(records, today):
