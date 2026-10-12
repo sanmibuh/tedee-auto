@@ -17,6 +17,8 @@ public final class LockSettingsChangedNotificationHandler
 
   @Override
   public void handle(final LockSettingsChanged event) {
-    throw new UnsupportedOperationException();
+    notifier.notify(
+        messages.getMessage(
+            "lock.settings_changed", new Object[] {event.deviceId()}, applicationLocale.current()));
   }
 }
