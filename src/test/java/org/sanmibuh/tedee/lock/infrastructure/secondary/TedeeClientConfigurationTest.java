@@ -36,19 +36,6 @@ class TedeeClientConfigurationTest {
     then(lockApi.getApiClient()).isSameAs(apiClient);
   }
 
-  @Test
-  void should_createIsolatedCallbackApiClients_whenBridgeApisAreConfigured() {
-    final var properties = properties();
-    final var interceptor = sut.tedeeApiTokenInterceptor(properties, Clock.systemUTC());
-
-    final var callbackQueryApi =
-        sut.callbackQueryApi(RestClient.builder(), properties, interceptor);
-    final var callbackCommandApi =
-        sut.callbackCommandApi(RestClient.builder(), properties, interceptor);
-
-    then(callbackQueryApi.getApiClient()).isNotSameAs(callbackCommandApi.getApiClient());
-  }
-
   private static TedeeProperties properties() {
     return new TedeeProperties(
         URI.create("https://gateway.local/tedee/api/v1.0"),

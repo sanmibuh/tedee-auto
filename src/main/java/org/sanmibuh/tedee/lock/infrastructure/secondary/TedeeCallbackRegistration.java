@@ -2,7 +2,6 @@ package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration.*;
 
-import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.model.CallbackDetails;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
 import com.tedee.bridge.client.model.CallbackHeader;
@@ -15,7 +14,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.SmartLifecycle;
 import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.TaskScheduler;
@@ -27,8 +25,8 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 final class TedeeCallbackRegistration implements SmartLifecycle {
 
-  private final CallbackApi callbackQueryApi;
-  private final CallbackApi callbackCommandApi;
+  private final CallbackQueryApi callbackQueryApi;
+  private final CallbackCommandApi callbackCommandApi;
   private final String callbackUrl;
   private final String callbackSecret;
   private final Clock clock;
@@ -38,8 +36,8 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   private @Nullable Long registeredId;
 
   TedeeCallbackRegistration(
-      final @Qualifier("callbackQueryApi") CallbackApi callbackQueryApi,
-      final @Qualifier("callbackCommandApi") CallbackApi callbackCommandApi,
+      final CallbackQueryApi callbackQueryApi,
+      final CallbackCommandApi callbackCommandApi,
       final ServerProperties serverProperties,
       final TedeeProperties tedeeProperties,
       final Clock clock,
@@ -94,14 +92,14 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   }
 
   private List<CallbackDetails> ourCallbacks() {
-    return callbackQueryApi.getCallback().stream()
+    return callbackQueryApi.getCallbacks().stream()
         .filter(callback -> callbackUrl.equals(callback.getUrl()))
         .toList();
   }
 
   private long register() {
     final var registered =
-        callbackCommandApi.postSingleCallback(
+        callbackCommandApi.createCallback(
             new CallbackDetailsNoId()
                 .url(callbackUrl)
                 .method(HttpMethod.POST.name())

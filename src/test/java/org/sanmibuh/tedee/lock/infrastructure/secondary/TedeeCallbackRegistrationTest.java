@@ -72,9 +72,9 @@ class TedeeCallbackRegistrationTest {
 
   @Autowired private RestClient.Builder restClientBuilder;
 
-  private CallbackApi callbackQueryApi;
+  private CallbackQueryApi callbackQueryApi;
 
-  private CallbackApi callbackCommandApi;
+  private CallbackCommandApi callbackCommandApi;
 
   private MockRestServiceServer queryServer;
 
@@ -106,10 +106,10 @@ class TedeeCallbackRegistrationTest {
     given(clock.instant()).willReturn(NOW);
     final var queryBuilder = restClientBuilder.clone();
     queryServer = MockRestServiceServer.bindTo(queryBuilder).build();
-    callbackQueryApi = callbackApi(queryBuilder);
+    callbackQueryApi = new TedeeCallbackQueryApi(callbackApi(queryBuilder));
     final var commandBuilder = restClientBuilder.clone();
     commandServer = MockRestServiceServer.bindTo(commandBuilder).build();
-    callbackCommandApi = callbackApi(commandBuilder);
+    callbackCommandApi = new TedeeCallbackCommandApi(callbackApi(commandBuilder));
     sut =
         new TedeeCallbackRegistration(
             callbackQueryApi,
@@ -355,12 +355,7 @@ class TedeeCallbackRegistrationTest {
   }
 
   private CallbackApi callbackApi(final RestClient.Builder builder) {
-    final var apiClient =
-        new ApiClient(
-            builder
-                .requestInterceptor(
-                    new TedeeApiTokenInterceptor(new TedeeApiTokenGenerator("secret"), clock))
-                .build());
+    final var apiClient = new ApiClient(builder.build());
     apiClient.setBasePath(BASE_URL);
     return new CallbackApi(apiClient);
   }

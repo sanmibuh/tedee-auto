@@ -32,19 +32,15 @@ public class TedeeClientConfiguration {
   }
 
   @Bean
-  CallbackApi callbackQueryApi(
-      final RestClient.Builder builder,
-      final TedeeProperties properties,
-      final TedeeApiTokenInterceptor interceptor) {
-    return new CallbackApi(apiClient(builder, properties, interceptor));
+  CallbackQueryApi callbackQueryApi(
+      final TedeeProperties properties, final TedeeApiTokenInterceptor interceptor) {
+    return new TedeeCallbackQueryApi(new CallbackApi(callbackApiClient(properties, interceptor)));
   }
 
   @Bean
-  CallbackApi callbackCommandApi(
-      final RestClient.Builder builder,
-      final TedeeProperties properties,
-      final TedeeApiTokenInterceptor interceptor) {
-    return new CallbackApi(apiClient(builder, properties, interceptor));
+  CallbackCommandApi callbackCommandApi(
+      final TedeeProperties properties, final TedeeApiTokenInterceptor interceptor) {
+    return new TedeeCallbackCommandApi(new CallbackApi(callbackApiClient(properties, interceptor)));
   }
 
   private ApiClient apiClient(
@@ -54,6 +50,11 @@ public class TedeeClientConfiguration {
     final var apiClient = new ApiClient(builder.requestInterceptor(interceptor).build());
     apiClient.setBasePath(properties.baseUrl().toString());
     return apiClient;
+  }
+
+  private ApiClient callbackApiClient(
+      final TedeeProperties properties, final TedeeApiTokenInterceptor interceptor) {
+    return apiClient(RestClient.builder(), properties, interceptor);
   }
 
   @Bean
