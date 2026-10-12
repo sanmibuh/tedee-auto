@@ -1,6 +1,9 @@
 package org.sanmibuh.tedee.lock.infrastructure.primary;
 
 import java.util.Optional;
+import org.sanmibuh.ddd.port.Command;
+import tools.jackson.databind.JsonNode;
+import tools.jackson.databind.json.JsonMapper;
 
 enum TedeeEventType {
   LOCK_STATUS_CHANGED("lock-status-changed");
@@ -18,5 +21,9 @@ enum TedeeEventType {
       }
     }
     return Optional.empty();
+  }
+
+  Command toCommand(final JsonNode data, final JsonMapper jsonMapper) {
+    throw new UnsupportedOperationException();
   }
 }
