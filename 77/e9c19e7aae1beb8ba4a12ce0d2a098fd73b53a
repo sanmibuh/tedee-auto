@@ -1,0 +1,28 @@
+src/test/java/org/sanmibuh/tedee/NotificationTestSupport.java
+  h_97a91c9e567f87 1,7,9,13,21
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/BridgeConnectedNotificationHandlerTest.java
+  h_97a91c9e567f87 4-5
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/BridgeDisconnectedNotificationHandlerTest.java
+  h_97a91c9e567f87 4-5
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/BatteryLevelReportedNotificationHandlerTest.java
+  h_97a91c9e567f87 4-5
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockConnectedNotificationHandlerTest.java
+  h_97a91c9e567f87 4-5
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockDisconnectedNotificationHandlerTest.java
+  h_97a91c9e567f87 4-5
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockSettingsChangedNotificationHandlerTest.java
+  h_97a91c9e567f87 4-5
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/LockStatusReportedNotificationHandlerTest.java
+  h_97a91c9e567f87 6-8
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "77e9c19e7aae1beb8ba4a12ce0d2a098fd73b53a",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
