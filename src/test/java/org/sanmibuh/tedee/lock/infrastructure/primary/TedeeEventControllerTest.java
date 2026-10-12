@@ -218,6 +218,27 @@ class TedeeEventControllerTest {
 
   @Test
   @SneakyThrows
+  void should_notifyBridgeDisconnected_whenBackendDisconnects() {
+    sut.perform(
+            post(EVENTS_PATH)
+                .header(CALLBACK_SECRET_HEADER, CALLBACK_SECRET)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(
+                    """
+                    {
+                      "event": "backend-connection-changed",
+                      "data": {
+                        "isConnected": false
+                      }
+                    }
+                    """))
+        .andExpect(status().isNoContent());
+
+    verify(bridgeConnectionNotifier).notifyDisconnected();
+  }
+
+  @Test
+  @SneakyThrows
   void should_acknowledgeWithoutDispatching_whenEventIsUnknown() {
     try (final var logCaptor = LogCaptor.forClass(TedeeEventController.class)) {
       sut.perform(
