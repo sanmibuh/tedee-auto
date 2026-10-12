@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.primary;
+package org.sanmibuh.tedee.shared.infrastructure.primary;
 
 import java.util.Optional;
 import org.sanmibuh.ddd.port.Command;

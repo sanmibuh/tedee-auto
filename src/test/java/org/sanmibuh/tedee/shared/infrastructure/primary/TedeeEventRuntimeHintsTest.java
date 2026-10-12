@@ -1,13 +1,13 @@
-package org.sanmibuh.tedee.lock.infrastructure.primary;
+package org.sanmibuh.tedee.shared.infrastructure.primary;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
 import org.junit.jupiter.api.Test;
-import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventType.BackendConnectionChangedData;
-import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventType.BatteryLevelChangedData;
-import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventType.DeviceConnectionChangedData;
-import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventType.DeviceSettingsChangedData;
-import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeEventType.LockStatusChangedData;
+import org.sanmibuh.tedee.shared.infrastructure.primary.TedeeEventType.BackendConnectionChangedData;
+import org.sanmibuh.tedee.shared.infrastructure.primary.TedeeEventType.BatteryLevelChangedData;
+import org.sanmibuh.tedee.shared.infrastructure.primary.TedeeEventType.DeviceConnectionChangedData;
+import org.sanmibuh.tedee.shared.infrastructure.primary.TedeeEventType.DeviceSettingsChangedData;
+import org.sanmibuh.tedee.shared.infrastructure.primary.TedeeEventType.LockStatusChangedData;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.predicate.RuntimeHintsPredicates;
 

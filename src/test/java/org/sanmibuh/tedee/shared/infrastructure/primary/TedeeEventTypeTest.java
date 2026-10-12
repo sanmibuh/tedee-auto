@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.primary;
+package org.sanmibuh.tedee.shared.infrastructure.primary;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;

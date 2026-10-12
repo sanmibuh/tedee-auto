@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.primary;
+package org.sanmibuh.tedee.shared.infrastructure.primary;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
@@ -24,6 +24,7 @@ import org.sanmibuh.tedee.lock.application.ReportLockDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockSettingsChangedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
+import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeWebhookConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;

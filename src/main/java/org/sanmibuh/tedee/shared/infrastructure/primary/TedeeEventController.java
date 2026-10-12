@@ -1,7 +1,7 @@
-package org.sanmibuh.tedee.lock.infrastructure.primary;
+package org.sanmibuh.tedee.shared.infrastructure.primary;
 
-import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration.*;
-import static org.springframework.http.HttpStatus.*;
+import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration.EVENTS_PATH;
+import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
