@@ -1,0 +1,23 @@
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/BridgeConnectionNotificationConfigurationTest.java
+  s_8baf1b38c03bd0::t_6f11c74589ba53 1-45
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeCallbackRegistrationTest.java
+  s_8baf1b38c03bd0::t_faaf71bd8b44f8 26,76-77
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockGatewayTest.java
+  s_8baf1b38c03bd0::t_a3336a0429d5f6 19,65-66
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3b74cd821d26087c2a5b08f4093ca2c59f2ad355",
+  "prompts": {},
+  "sessions": {
+    "s_8baf1b38c03bd0": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ed31f7d46ffe6rlibOnRPlxYaU",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
