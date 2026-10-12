@@ -21,10 +21,11 @@ final class TedeeApiTokenInterceptor implements ClientHttpRequestInterceptor {
   public ClientHttpResponse intercept(
       final HttpRequest request, final byte[] body, final ClientHttpRequestExecution execution)
       throws IOException {
-    request.getHeaders().set(API_TOKEN_HEADER, generator.generate(clock.millis()));
+    final var headers = request.getHeaders();
+    headers.set(API_TOKEN_HEADER, generator.generate(clock.millis()));
     // Tedee Bridge closes reused HTTP/1.1 connections without responding:
     // https://community.tedee.com/t/tedee-bridge-closes-persistent-http-connection-before-responding-to-callback-post/793
-    request.getHeaders().set(HttpHeaders.CONNECTION, "close");
+    headers.set(HttpHeaders.CONNECTION, "close");
     return execution.execute(request, body);
   }
 }
