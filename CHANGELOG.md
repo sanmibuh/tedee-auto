@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.2] - 2026-10-12
+
+### Bug Fixes
+- fix(bridge): force fresh connections for callback registration requests ([#293](https://github.com/sanmibuh/tedee-auto/pull/293))
+
 ## [0.3.1] - 2026-10-12
 
 ### Features
