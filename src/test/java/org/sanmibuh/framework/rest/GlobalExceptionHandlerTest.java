@@ -3,7 +3,6 @@ package org.sanmibuh.framework.rest;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import com.tedee.bridge.client.api.CallbackApi;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -22,6 +21,8 @@ import org.sanmibuh.ddd.domain.IntegrationException;
 import org.sanmibuh.ddd.domain.TransientIntegrationException;
 import org.sanmibuh.ddd.infrastructure.HandlerNotFoundException;
 import org.sanmibuh.tedee.TedeeAutomationApplication;
+import org.sanmibuh.tedee.lock.infrastructure.secondary.CallbackCommandApi;
+import org.sanmibuh.tedee.lock.infrastructure.secondary.CallbackQueryApi;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
 import org.springframework.http.HttpHeaders;
@@ -48,7 +49,10 @@ class GlobalExceptionHandlerTest {
   @LocalServerPort private int port;
 
   @MockitoBean(answers = Answers.RETURNS_MOCKS)
-  private CallbackApi callbackApi;
+  private CallbackQueryApi callbackQueryApi;
+
+  @MockitoBean(answers = Answers.RETURNS_MOCKS)
+  private CallbackCommandApi callbackCommandApi;
 
   @InjectSoftAssertions private BDDSoftAssertions softly;
 
