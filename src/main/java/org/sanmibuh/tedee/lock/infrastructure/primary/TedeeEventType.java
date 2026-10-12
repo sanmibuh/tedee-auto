@@ -13,11 +13,46 @@ import tools.jackson.databind.JsonNode;
 import tools.jackson.databind.json.JsonMapper;
 
 enum TedeeEventType {
-  LOCK_STATUS_CHANGED("lock-status-changed"),
-  BATTERY_LEVEL_CHANGED("device-battery-level-changed"),
-  DEVICE_CONNECTION_CHANGED("device-connection-changed"),
-  DEVICE_SETTINGS_CHANGED("device-settings-changed"),
-  BACKEND_CONNECTION_CHANGED("backend-connection-changed");
+  LOCK_STATUS_CHANGED("lock-status-changed") {
+    @Override
+    Command toCommand(final JsonNode data, final JsonMapper jsonMapper) {
+      final var eventData = jsonMapper.treeToValue(data, LockStatusChangedData.class);
+      return new ReportLockStatusCommand(
+          eventData.deviceId(), eventData.state(), eventData.jammed(), eventData.doorState());
+    }
+  },
+  BATTERY_LEVEL_CHANGED("device-battery-level-changed") {
+    @Override
+    Command toCommand(final JsonNode data, final JsonMapper jsonMapper) {
+      final var eventData = jsonMapper.treeToValue(data, BatteryLevelChangedData.class);
+      return new ReportBatteryLevelCommand(eventData.deviceId(), eventData.batteryLevel());
+    }
+  },
+  DEVICE_CONNECTION_CHANGED("device-connection-changed") {
+    @Override
+    Command toCommand(final JsonNode data, final JsonMapper jsonMapper) {
+      final var eventData = jsonMapper.treeToValue(data, DeviceConnectionChangedData.class);
+      return eventData.isConnected()
+          ? new ReportLockConnectedCommand(eventData.deviceId())
+          : new ReportLockDisconnectedCommand(eventData.deviceId());
+    }
+  },
+  DEVICE_SETTINGS_CHANGED("device-settings-changed") {
+    @Override
+    Command toCommand(final JsonNode data, final JsonMapper jsonMapper) {
+      final var eventData = jsonMapper.treeToValue(data, DeviceSettingsChangedData.class);
+      return new ReportLockSettingsChangedCommand(eventData.deviceId());
+    }
+  },
+  BACKEND_CONNECTION_CHANGED("backend-connection-changed") {
+    @Override
+    Command toCommand(final JsonNode data, final JsonMapper jsonMapper) {
+      final var eventData = jsonMapper.treeToValue(data, BackendConnectionChangedData.class);
+      return eventData.isConnected()
+          ? new ReportBridgeConnectedCommand()
+          : new ReportBridgeDisconnectedCommand();
+    }
+  };
 
   private final String event;
 
@@ -34,35 +69,7 @@ enum TedeeEventType {
     return Optional.empty();
   }
 
-  Command toCommand(final JsonNode data, final JsonMapper jsonMapper) {
-    return switch (this) {
-      case LOCK_STATUS_CHANGED -> {
-        final var eventData = jsonMapper.treeToValue(data, LockStatusChangedData.class);
-        yield new ReportLockStatusCommand(
-            eventData.deviceId(), eventData.state(), eventData.jammed(), eventData.doorState());
-      }
-      case BATTERY_LEVEL_CHANGED -> {
-        final var eventData = jsonMapper.treeToValue(data, BatteryLevelChangedData.class);
-        yield new ReportBatteryLevelCommand(eventData.deviceId(), eventData.batteryLevel());
-      }
-      case DEVICE_CONNECTION_CHANGED -> {
-        final var eventData = jsonMapper.treeToValue(data, DeviceConnectionChangedData.class);
-        yield eventData.isConnected()
-            ? new ReportLockConnectedCommand(eventData.deviceId())
-            : new ReportLockDisconnectedCommand(eventData.deviceId());
-      }
-      case DEVICE_SETTINGS_CHANGED -> {
-        final var eventData = jsonMapper.treeToValue(data, DeviceSettingsChangedData.class);
-        yield new ReportLockSettingsChangedCommand(eventData.deviceId());
-      }
-      case BACKEND_CONNECTION_CHANGED -> {
-        final var eventData = jsonMapper.treeToValue(data, BackendConnectionChangedData.class);
-        yield eventData.isConnected()
-            ? new ReportBridgeConnectedCommand()
-            : new ReportBridgeDisconnectedCommand();
-      }
-    };
-  }
+  abstract Command toCommand(JsonNode data, JsonMapper jsonMapper);
 
   record LockStatusChangedData(int deviceId, int state, int jammed, int doorState) {}
 
