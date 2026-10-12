@@ -29,6 +29,7 @@ import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -102,7 +103,7 @@ class TedeeCallbackRegistrationTest {
   @Test
   void should_postCallbackToBridge_whenNoCallbackMatchesOurUrl() {
     expectListedCallbacks(callbacks(callback(FOREIGN_ID, FOREIGN_CALLBACK_URL)));
-    expectRegisteredCallback();
+    expectRegisteredCallbackWithClosedConnection();
 
     sut.start();
 
@@ -310,6 +311,21 @@ class TedeeCallbackRegistrationTest {
     server
         .expect(requestTo(CALLBACK_ENDPOINT))
         .andExpect(method(HttpMethod.POST))
+        .andExpect(jsonPath("$.url").value(CALLBACK_URL))
+        .andExpect(jsonPath("$.method").value("POST"))
+        .andExpect(
+            jsonPath("$.headers[0].header_name")
+                .value("X-Tedee-Callback-Secret: " + CALLBACK_SECRET))
+        .andRespond(withSuccess(REGISTERED_RESPONSE, MediaType.APPLICATION_JSON));
+  }
+
+  private void expectRegisteredCallbackWithClosedConnection() {
+    server
+        .expect(requestTo(CALLBACK_ENDPOINT))
+        .andExpect(method(HttpMethod.POST))
+        .andExpect(
+            request ->
+                then(request.getHeaders().getFirst(HttpHeaders.CONNECTION)).isEqualTo("close"))
         .andExpect(jsonPath("$.url").value(CALLBACK_URL))
         .andExpect(jsonPath("$.method").value("POST"))
         .andExpect(
