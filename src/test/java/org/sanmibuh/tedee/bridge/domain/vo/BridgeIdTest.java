@@ -8,6 +8,6 @@ class BridgeIdTest {
 
   @Test
   void should_exposeSingletonInstance_whenAccessed() {
-    then(BridgeId.SINGLETON).isSameAs(BridgeId.SINGLETON);
+    then(BridgeId.SINGLETON.value()).isEqualTo("bridge");
   }
 }
