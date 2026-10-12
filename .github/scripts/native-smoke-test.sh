@@ -36,6 +36,8 @@ docker run -d --name "${CONTAINER}" \
   -e TEDEE_API_KEY=smoke-test \
   -e TEDEE_CALLBACK_SECRET=smoke-test-callback-secret \
   -e PUBLIC_URL=http://localhost:8080 \
+  -e TELEGRAM_BOT_TOKEN=smoke-test-bot-token \
+  -e TELEGRAM_CHAT_ID=smoke-test-chat-id \
   -p 8080:8080 \
   "${IMAGE}" >/dev/null
 
