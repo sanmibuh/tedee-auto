@@ -1,0 +1,16 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 22,26,34
+src/test/java/org/sanmibuh/tedee/bridge/domain/vo/BridgeIdTest.java
+  h_97a91c9e567f87 11
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "8854ebd7b0f284dad30c7e1aa3863be5a09c647c",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
