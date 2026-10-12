@@ -1,0 +1,20 @@
+.github/scripts/model_strategy.py
+  h_97a91c9e567f87 9,17,19-23
+.github/tests/test_model_strategy.py
+  h_97a91c9e567f87 1,3,5,10,19,21,24,29-34
+.github/workflows/nightly.yml
+  h_97a91c9e567f87 68-69,80,170
+Makefile
+  h_97a91c9e567f87 27
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e2edb2da15665a06a1ed6f344d5433c9548eebe9",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
