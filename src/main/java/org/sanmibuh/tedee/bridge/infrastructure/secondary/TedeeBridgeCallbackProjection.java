@@ -13,6 +13,8 @@ final class TedeeBridgeCallbackProjection implements BridgeCallbackQueryPort {
 
   @Override
   public List<URI> getRegisteredCallbackUrls() {
-    return List.of();
+    return callbackQueryApi.getCallbacks().stream()
+        .map(callback -> URI.create(callback.getUrl()))
+        .toList();
   }
 }
