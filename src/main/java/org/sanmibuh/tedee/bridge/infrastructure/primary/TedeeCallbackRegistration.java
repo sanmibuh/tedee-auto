@@ -1,20 +1,16 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.bridge.infrastructure.primary;
 
-import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration.*;
+import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration.EVENTS_PATH;
 
-import com.tedee.bridge.client.model.CallbackDetails;
-import com.tedee.bridge.client.model.CallbackDetailsNoId;
+import java.net.URI;
 import java.time.Clock;
 import java.time.Duration;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
+import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.tedee.ServerProperties;
+import org.sanmibuh.tedee.bridge.application.AddBridgeCallbackCommand;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.context.SmartLifecycle;
-import org.springframework.http.HttpMethod;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
@@ -24,32 +20,28 @@ import org.springframework.web.util.UriComponentsBuilder;
 @Component
 final class TedeeCallbackRegistration implements SmartLifecycle {
 
-  private final CallbackQueryApi callbackQueryApi;
-  private final CallbackCommandApi callbackCommandApi;
-  private final String callbackUrl;
-  private final String callbackSecret;
+  private final CommandBus commandBus;
+  private final URI callbackUrl;
   private final Clock clock;
   private final TaskScheduler taskScheduler;
   private final Duration registrationRetryInterval;
   private boolean running;
 
   TedeeCallbackRegistration(
-      final CallbackQueryApi callbackQueryApi,
-      final CallbackCommandApi callbackCommandApi,
+      final CommandBus commandBus,
       final ServerProperties serverProperties,
       final TedeeProperties tedeeProperties,
       final Clock clock,
       final TaskScheduler taskScheduler) {
-    this.callbackQueryApi = callbackQueryApi;
-    this.callbackCommandApi = callbackCommandApi;
-    callbackSecret = tedeeProperties.callbackSecret();
+    this.commandBus = commandBus;
+    callbackUrl =
+        URI.create(
+            UriComponentsBuilder.fromUriString(serverProperties.publicUrl())
+                .path(EVENTS_PATH)
+                .toUriString());
     this.clock = clock;
     this.taskScheduler = taskScheduler;
     registrationRetryInterval = tedeeProperties.callbackRegistrationInterval();
-    callbackUrl =
-        UriComponentsBuilder.fromUriString(serverProperties.publicUrl())
-            .path(EVENTS_PATH)
-            .toUriString();
   }
 
   @Override
@@ -60,7 +52,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   private void registerCallback() {
     try {
-      keepSingleExistingCallback().ifPresentOrElse(this::reuse, this::register);
+      commandBus.dispatch(new AddBridgeCallbackCommand(callbackUrl));
     } catch (final RestClientException exception) {
       log.warn("Could not register callback {} on the Tedee Bridge", callbackUrl, exception);
       scheduleRetry();
@@ -82,45 +74,6 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
           "Skipping callback registration retry for {} because the service is stopped",
           callbackUrl);
     }
-  }
-
-  private Optional<CallbackDetails> keepSingleExistingCallback() {
-    final var ourCallbacks = ourCallbacks();
-    ourCallbacks.stream()
-        .skip(1)
-        .forEach(
-            duplicate -> {
-              final var duplicateId = Objects.requireNonNull(duplicate.getId());
-              delete(duplicateId);
-              log.info("Removed duplicate callback {} for {}", duplicateId, callbackUrl);
-            });
-    return ourCallbacks.stream().findFirst();
-  }
-
-  private void reuse(final CallbackDetails callback) {
-    final var callbackId = Objects.requireNonNull(callback.getId());
-    log.info("Reusing callback {} for {}", callbackId, callbackUrl);
-  }
-
-  private List<CallbackDetails> ourCallbacks() {
-    return callbackQueryApi.getCallbacks().stream()
-        .filter(callback -> callbackUrl.equals(callback.getUrl()))
-        .toList();
-  }
-
-  private void register() {
-    final var registered =
-        callbackCommandApi.createCallback(
-            new CallbackDetailsNoId()
-                .url(callbackUrl)
-                .method(HttpMethod.POST.name())
-                .addHeadersItem(Map.of(CALLBACK_SECRET_HEADER, callbackSecret)));
-    final var callbackId = Objects.requireNonNull(registered.getId());
-    log.info("Created callback {} for {}", callbackId, callbackUrl);
-  }
-
-  private void delete(final long callbackId) {
-    callbackCommandApi.deleteCallback(Math.toIntExact(callbackId));
   }
 
   @Override

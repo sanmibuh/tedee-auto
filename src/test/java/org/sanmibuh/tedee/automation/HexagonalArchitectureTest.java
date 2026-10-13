@@ -34,6 +34,7 @@ class HexagonalArchitectureTest {
           "java.lang.Float",
           "java.lang.Double",
           "java.lang.Character",
+          "java.net.URI",
           "java.util.UUID");
 
   @ArchTest

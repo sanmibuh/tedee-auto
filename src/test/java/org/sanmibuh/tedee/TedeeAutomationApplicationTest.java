@@ -1,6 +1,7 @@
 package org.sanmibuh.tedee;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.ArgumentMatchers.any;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
 import java.net.URI;
@@ -66,6 +67,7 @@ class TedeeAutomationApplicationTest {
   @Test
   void should_registerBridgeCallback_whenApplicationStarts() {
     BDDMockito.then(callbackQueryApi).should().getCallbacks();
+    BDDMockito.then(callbackCommandApi).should().createCallback(any());
   }
 
   @Test
