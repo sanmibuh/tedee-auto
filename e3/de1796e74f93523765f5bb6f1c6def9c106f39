@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/bridge/application/AddBridgeCallbackHandler.java
+  s_52cbbda4d37c31::t_85362f5820ff6d 1-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e3de1796e74f93523765f5bb6f1c6def9c106f39",
+  "prompts": {},
+  "sessions": {
+    "s_52cbbda4d37c31": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec9050ba0ffeRhWCuodvyM5kGk",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
