@@ -14,11 +14,11 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.lock.infrastructure.secondary.CallbackQueryApi;
 
 @ExtendWith(MockitoExtension.class)
-class TedeeBridgeCallbackProjectionTest {
+class TedeeBridgeCallbackAdapterTest {
 
   @Mock CallbackQueryApi callbackQueryApi;
 
-  @InjectMocks TedeeBridgeCallbackProjection sut;
+  @InjectMocks TedeeBridgeCallbackAdapter sut;
 
   @Test
   void should_returnCallbackUrls_whenRetrievingRegisteredCallbacks() {
@@ -29,5 +29,14 @@ class TedeeBridgeCallbackProjectionTest {
     final var callbackUrls = sut.getRegisteredCallbackUrls();
 
     then(callbackUrls).containsExactly(URI.create(callbackUrl));
+  }
+
+  @Test
+  void should_ignoreCallbackWithoutUrl_whenRetrievingRegisteredCallbacks() {
+    given(callbackQueryApi.getCallbacks()).willReturn(List.of(new CallbackDetails()));
+
+    final var callbackUrls = sut.getRegisteredCallbackUrls();
+
+    then(callbackUrls).isEmpty();
   }
 }

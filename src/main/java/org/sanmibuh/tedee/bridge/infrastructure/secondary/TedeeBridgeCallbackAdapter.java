@@ -7,7 +7,7 @@ import org.sanmibuh.tedee.bridge.projection.BridgeCallbackQueryPort;
 import org.sanmibuh.tedee.lock.infrastructure.secondary.CallbackQueryApi;
 
 @RequiredArgsConstructor
-final class TedeeBridgeCallbackProjection implements BridgeCallbackQueryPort {
+final class TedeeBridgeCallbackAdapter implements BridgeCallbackQueryPort {
 
   private final CallbackQueryApi callbackQueryApi;
 
