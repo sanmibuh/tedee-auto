@@ -5,6 +5,7 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.net.URI;
+import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -36,5 +37,16 @@ class AddBridgeCallbackHandlerTest {
     verify(repository).save(savedBridge.capture());
     then(savedBridge.getValue().domainEvents())
         .containsExactly(new BridgeCallbackAdded(callbackUrl));
+  }
+
+  @Test
+  void should_notRecordEvent_whenAddingExistingCallback() {
+    final var callbackUrl = URI.create("https://automation.local/tedee/events");
+    given(repository.get(BridgeId.SINGLETON)).willReturn(new Bridge(List.of(callbackUrl)));
+
+    sut.handle(new AddBridgeCallbackCommand(callbackUrl));
+
+    verify(repository).save(savedBridge.capture());
+    then(savedBridge.getValue().domainEvents()).isEmpty();
   }
 }
