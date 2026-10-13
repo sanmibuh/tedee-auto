@@ -316,9 +316,7 @@ class TedeeCallbackRegistrationTest {
         .andExpect(method(HttpMethod.POST))
         .andExpect(jsonPath("$.url").value(CALLBACK_URL))
         .andExpect(jsonPath("$.method").value("POST"))
-        .andExpect(
-            jsonPath("$.headers[0].header_name")
-                .value("X-Tedee-Callback-Secret: " + CALLBACK_SECRET))
+        .andExpect(jsonPath("$.headers[0].X-Tedee-Callback-Secret").value(CALLBACK_SECRET))
         .andRespond(withSuccess(REGISTERED_RESPONSE, MediaType.APPLICATION_JSON));
   }
 

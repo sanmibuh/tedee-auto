@@ -4,10 +4,10 @@ import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfigur
 
 import com.tedee.bridge.client.model.CallbackDetails;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
-import com.tedee.bridge.client.model.CallbackHeader;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.List;
+import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
@@ -114,9 +114,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
             new CallbackDetailsNoId()
                 .url(callbackUrl)
                 .method(HttpMethod.POST.name())
-                .addHeadersItem(
-                    new CallbackHeader()
-                        .headerName(CALLBACK_SECRET_HEADER + ": " + callbackSecret)));
+                .addHeadersItem(Map.of(CALLBACK_SECRET_HEADER, callbackSecret)));
     final var callbackId = Objects.requireNonNull(registered.getId());
     log.info("Created callback {} for {}", callbackId, callbackUrl);
   }
