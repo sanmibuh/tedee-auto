@@ -1,15 +1,31 @@
 package org.sanmibuh.tedee.bridge.infrastructure.secondary;
 
+import com.tedee.bridge.client.model.CallbackDetails;
+import java.net.URI;
+import java.util.Objects;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
 import org.sanmibuh.tedee.bridge.domain.Bridge;
 import org.sanmibuh.tedee.bridge.domain.BridgeRepository;
 import org.sanmibuh.tedee.bridge.domain.vo.BridgeId;
+import org.sanmibuh.tedee.lock.infrastructure.secondary.CallbackQueryApi;
+import org.springframework.stereotype.Repository;
 
+@Repository
+@RequiredArgsConstructor
 public final class TedeeBridgeRepository implements BridgeRepository {
+
+  private final CallbackQueryApi callbackQueryApi;
 
   @Override
   public Optional<Bridge> findById(final BridgeId bridgeId) {
-    return Optional.empty();
+    final var callbacks =
+        callbackQueryApi.getCallbacks().stream()
+            .map(CallbackDetails::getUrl)
+            .filter(Objects::nonNull)
+            .map(URI::create)
+            .toList();
+    return Optional.of(new Bridge(callbacks));
   }
 
   @Override
