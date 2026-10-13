@@ -14,9 +14,4 @@ final class TedeeCallbackCommandApi implements CallbackCommandApi {
   public CallbackIDsingle createCallback(final CallbackDetailsNoId callback) {
     return callbackApi.postSingleCallback(callback);
   }
-
-  @Override
-  public void deleteCallback(final int callbackId) {
-    callbackApi.deleteCallback(callbackId);
-  }
 }

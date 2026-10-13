@@ -6,6 +6,4 @@ import com.tedee.bridge.client.model.CallbackIDsingle;
 public interface CallbackCommandApi {
 
   CallbackIDsingle createCallback(CallbackDetailsNoId callback);
-
-  void deleteCallback(int callbackId);
 }
