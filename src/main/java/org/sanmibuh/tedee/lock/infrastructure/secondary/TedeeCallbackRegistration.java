@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import lombok.extern.slf4j.Slf4j;
-import org.jspecify.annotations.Nullable;
 import org.sanmibuh.tedee.ServerProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.springframework.context.SmartLifecycle;
@@ -33,7 +32,6 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   private final TaskScheduler taskScheduler;
   private final Duration registrationRetryInterval;
   private boolean running;
-  private @Nullable Long registeredId;
 
   TedeeCallbackRegistration(
       final CallbackQueryApi callbackQueryApi,
@@ -62,7 +60,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   private void registerCallback() {
     try {
-      registeredId = keepSingleExistingCallback().map(this::reuse).orElseGet(this::register);
+      keepSingleExistingCallback().ifPresentOrElse(this::reuse, this::register);
     } catch (final RestClientException exception) {
       log.warn("Could not register callback {} on the Tedee Bridge", callbackUrl, exception);
       scheduleRetry();
@@ -99,10 +97,9 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
     return ourCallbacks.stream().findFirst();
   }
 
-  private long reuse(final CallbackDetails callback) {
+  private void reuse(final CallbackDetails callback) {
     final var callbackId = Objects.requireNonNull(callback.getId());
     log.info("Reusing callback {} for {}", callbackId, callbackUrl);
-    return callbackId;
   }
 
   private List<CallbackDetails> ourCallbacks() {
@@ -111,7 +108,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
         .toList();
   }
 
-  private long register() {
+  private void register() {
     final var registered =
         callbackCommandApi.createCallback(
             new CallbackDetailsNoId()
@@ -122,7 +119,6 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
                         .headerName(CALLBACK_SECRET_HEADER + ": " + callbackSecret)));
     final var callbackId = Objects.requireNonNull(registered.getId());
     log.info("Created callback {} for {}", callbackId, callbackUrl);
-    return callbackId;
   }
 
   private void delete(final long callbackId) {
@@ -132,16 +128,6 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
   @Override
   public synchronized void stop() {
     running = false;
-    if (registeredId != null) {
-      try {
-        delete(registeredId);
-        log.info("Removed callback {} for {}", registeredId, callbackUrl);
-      } catch (final RestClientException exception) {
-        log.warn("Could not unregister callback {} from the Tedee Bridge", callbackUrl, exception);
-      } finally {
-        registeredId = null;
-      }
-    }
   }
 
   @Override
