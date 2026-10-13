@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.4] - 2026-10-13
+
+### Features
+- feat(bridge): log callback registration lifecycle outcomes ([#297](https://github.com/sanmibuh/tedee-auto/pull/297))
+
 ## [0.3.3] - 2026-10-13
 
 ### Bug Fixes
