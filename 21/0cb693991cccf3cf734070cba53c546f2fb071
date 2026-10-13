@@ -1,0 +1,14 @@
+src/main/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/TedeeBridgeRepository.java
+  h_97a91c9e567f87 3-5,7,11-12,14-15,18-19,22-28
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "210cb693991cccf3cf734070cba53c546f2fb071",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
