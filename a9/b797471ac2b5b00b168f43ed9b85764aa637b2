@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/bridge/infrastructure/primary/TedeeCallbackRegistration.java
+  h_97a91c9e567f87 6,12,15,39-43
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/primary/TedeeCallbackRegistrationTest.java
+  h_97a91c9e567f87 3-5,9-10,18,35-51
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a9b797471ac2b5b00b168f43ed9b85764aa637b2",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
