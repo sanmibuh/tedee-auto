@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/TedeeBridgeCallbackProjection.java
+  s_52cbbda4d37c31::t_b9fe1f5bb53b5f 16-18
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b640330359f3be684a98c64df66fc7a179e9a74c",
+  "prompts": {},
+  "sessions": {
+    "s_52cbbda4d37c31": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec9050ba0ffeRhWCuodvyM5kGk",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
