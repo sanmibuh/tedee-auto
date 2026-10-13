@@ -3,7 +3,6 @@ package org.sanmibuh.tedee.lock.infrastructure;
 import static org.assertj.core.api.BDDAssertions.then;
 
 import java.net.URI;
-import java.time.Duration;
 import java.util.stream.Stream;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
@@ -43,7 +42,6 @@ class TedeePropertiesTest {
             "sanmibuh.rest.tedee.base-url=https://gateway.local/tedee/api/v1.0",
             "sanmibuh.rest.tedee.api-key=secret-token",
             "sanmibuh.rest.tedee.callback-secret=callback-secret",
-            "sanmibuh.rest.tedee.callback-registration-interval=30s",
             "sanmibuh.rest.tedee.retry.max-retries=2",
             "sanmibuh.rest.tedee.retry.initial-interval=500",
             "sanmibuh.rest.tedee.retry.multiplier=2.0",
@@ -56,7 +54,6 @@ class TedeePropertiesTest {
                   .isEqualTo(URI.create("https://gateway.local/tedee/api/v1.0"));
               softly.then(sut.apiKey()).isEqualTo("secret-token");
               softly.then(sut.callbackSecret()).isEqualTo("callback-secret");
-              softly.then(sut.callbackRegistrationInterval()).isEqualTo(Duration.ofSeconds(30));
               softly.then(sut.retry().maxRetries()).isEqualTo(2);
               softly.then(sut.retry().initialInterval()).isEqualTo(500L);
               softly.then(sut.retry().multiplier()).isEqualTo(2.0);
@@ -146,7 +143,6 @@ class TedeePropertiesTest {
       "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
       "sanmibuh.rest.tedee.api-key=secret-token",
       "sanmibuh.rest.tedee.callback-secret=callback-secret",
-      "sanmibuh.rest.tedee.callback-registration-interval=30s",
       "sanmibuh.rest.tedee.retry.max-retries=" + maxRetries,
       "sanmibuh.rest.tedee.retry.initial-interval=" + initialInterval,
       "sanmibuh.rest.tedee.retry.multiplier=" + multiplier,
@@ -169,18 +165,6 @@ class TedeePropertiesTest {
                 new String[] {
                   "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
                   "sanmibuh.rest.tedee.api-key=secret-token"
-                })),
-        Arguments.of(
-            Named.of(
-                "callback registration interval is missing",
-                new String[] {
-                  "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
-                  "sanmibuh.rest.tedee.api-key=secret-token",
-                  "sanmibuh.rest.tedee.callback-secret=callback-secret",
-                  "sanmibuh.rest.tedee.retry.max-retries=2",
-                  "sanmibuh.rest.tedee.retry.initial-interval=500",
-                  "sanmibuh.rest.tedee.retry.multiplier=2.0",
-                  "sanmibuh.rest.tedee.retry.max-interval=5000"
                 })),
         Arguments.of(
             Named.of(
@@ -213,22 +197,11 @@ class TedeePropertiesTest {
                   "sanmibuh.rest.tedee.api-key=secret-token"
                 })),
         Arguments.of(Named.of("max-retries is negative", retry("-1", "500", "2.0", "5000"))),
-        Arguments.of(
-            Named.of("callback registration interval is zero", callbackRegistrationInterval("0s"))),
-        Arguments.of(
-            Named.of(
-                "callback registration interval is negative", callbackRegistrationInterval("-1s"))),
         Arguments.of(Named.of("initial-interval is not positive", retry("2", "0", "2.0", "5000"))),
         Arguments.of(Named.of("multiplier is below one", retry("2", "500", "0.5", "5000"))),
         Arguments.of(Named.of("max-interval is not positive", retry("2", "500", "2.0", "0"))),
         Arguments.of(
             Named.of("initial-interval exceeds max-interval", retry("2", "6000", "2.0", "5000"))));
-  }
-
-  private static String[] callbackRegistrationInterval(final String interval) {
-    final var properties = retry("2", "500", "2.0", "5000");
-    properties[3] = "sanmibuh.rest.tedee.callback-registration-interval=" + interval;
-    return properties;
   }
 
   private static String[] baseUrl(final String baseUrl) {

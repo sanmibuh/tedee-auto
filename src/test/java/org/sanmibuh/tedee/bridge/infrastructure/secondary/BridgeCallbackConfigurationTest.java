@@ -10,7 +10,6 @@ import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
-import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -55,7 +54,6 @@ class BridgeCallbackConfigurationTest {
             URI.create("http://localhost:" + server.getAddress().getPort() + "/v1.0"),
             "secret-token",
             "callback-secret",
-            Duration.ofSeconds(30),
             new RetryProperties(2, 500L, 2.0, 5000L));
     try {
       runner
@@ -63,7 +61,6 @@ class BridgeCallbackConfigurationTest {
               "sanmibuh.rest.tedee.base-url=" + properties.baseUrl(),
               "sanmibuh.rest.tedee.api-key=" + properties.apiKey(),
               "sanmibuh.rest.tedee.callback-secret=" + properties.callbackSecret(),
-              "sanmibuh.rest.tedee.callback-registration-interval=30s",
               "sanmibuh.rest.tedee.retry.max-retries=2",
               "sanmibuh.rest.tedee.retry.initial-interval=500",
               "sanmibuh.rest.tedee.retry.multiplier=2.0",
