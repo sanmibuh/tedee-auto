@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/BridgeCallbackAddedHandlerTest.java
+  s_52cbbda4d37c31::t_bdb1dcf2a66ee2 3,40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e4fe2b31c67f6139740de46d9b394326d2b29d20",
+  "prompts": {},
+  "sessions": {
+    "s_52cbbda4d37c31": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec9050ba0ffeRhWCuodvyM5kGk",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
