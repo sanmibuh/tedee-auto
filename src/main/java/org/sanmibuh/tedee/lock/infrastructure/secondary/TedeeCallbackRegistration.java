@@ -62,10 +62,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   private void registerCallback() {
     try {
-      registeredId =
-          keepSingleExistingCallback()
-              .map(callback -> Objects.requireNonNull(callback.getId()))
-              .orElseGet(this::register);
+      registeredId = keepSingleExistingCallback().map(this::reuse).orElseGet(this::register);
     } catch (final RestClientException exception) {
       log.warn("Could not register callback {} on the Tedee Bridge", callbackUrl, exception);
       scheduleRetry();
@@ -74,12 +71,18 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
 
   @SuppressWarnings("FutureReturnValueIgnored")
   private void scheduleRetry() {
-    taskScheduler.schedule(this::reregister, clock.instant().plus(registrationRetryInterval));
+    final var retryAt = clock.instant().plus(registrationRetryInterval);
+    log.info("Scheduling callback registration retry for {} at {}", callbackUrl, retryAt);
+    taskScheduler.schedule(this::reregister, retryAt);
   }
 
   synchronized void reregister() {
     if (running) {
       registerCallback();
+    } else {
+      log.info(
+          "Skipping callback registration retry for {} because the service is stopped",
+          callbackUrl);
     }
   }
 
@@ -87,8 +90,19 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
     final var ourCallbacks = ourCallbacks();
     ourCallbacks.stream()
         .skip(1)
-        .forEach(duplicate -> delete(Objects.requireNonNull(duplicate.getId())));
+        .forEach(
+            duplicate -> {
+              final var duplicateId = Objects.requireNonNull(duplicate.getId());
+              delete(duplicateId);
+              log.info("Removed duplicate callback {} for {}", duplicateId, callbackUrl);
+            });
     return ourCallbacks.stream().findFirst();
+  }
+
+  private long reuse(final CallbackDetails callback) {
+    final var callbackId = Objects.requireNonNull(callback.getId());
+    log.info("Reusing callback {} for {}", callbackId, callbackUrl);
+    return callbackId;
   }
 
   private List<CallbackDetails> ourCallbacks() {
@@ -106,7 +120,9 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
                 .addHeadersItem(
                     new CallbackHeader()
                         .headerName(CALLBACK_SECRET_HEADER + ": " + callbackSecret)));
-    return Objects.requireNonNull(registered.getId());
+    final var callbackId = Objects.requireNonNull(registered.getId());
+    log.info("Created callback {} for {}", callbackId, callbackUrl);
+    return callbackId;
   }
 
   private void delete(final long callbackId) {
@@ -119,6 +135,7 @@ final class TedeeCallbackRegistration implements SmartLifecycle {
     if (registeredId != null) {
       try {
         delete(registeredId);
+        log.info("Removed callback {} for {}", registeredId, callbackUrl);
       } catch (final RestClientException exception) {
         log.warn("Could not unregister callback {} from the Tedee Bridge", callbackUrl, exception);
       } finally {
