@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.bridge.infrastructure.secondary;
 
 import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;

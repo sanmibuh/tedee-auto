@@ -1,7 +1,6 @@
 package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
 import com.tedee.bridge.client.ApiClient;
-import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.api.LockApi;
 import java.time.Clock;
 import org.sanmibuh.framework.resilience.ResilienceRuntimeHints;
@@ -31,18 +30,6 @@ public class TedeeClientConfiguration {
     return apiClient(builder, properties, interceptor);
   }
 
-  @Bean
-  CallbackQueryApi callbackQueryApi(
-      final TedeeProperties properties, final TedeeApiTokenInterceptor interceptor) {
-    return new TedeeCallbackQueryApi(new CallbackApi(callbackApiClient(properties, interceptor)));
-  }
-
-  @Bean
-  CallbackCommandApi callbackCommandApi(
-      final TedeeProperties properties, final TedeeApiTokenInterceptor interceptor) {
-    return new TedeeCallbackCommandApi(new CallbackApi(callbackApiClient(properties, interceptor)));
-  }
-
   private ApiClient apiClient(
       final RestClient.Builder builder,
       final TedeeProperties properties,
@@ -50,11 +37,6 @@ public class TedeeClientConfiguration {
     final var apiClient = new ApiClient(builder.requestInterceptor(interceptor).build());
     apiClient.setBasePath(properties.baseUrl().toString());
     return apiClient;
-  }
-
-  private ApiClient callbackApiClient(
-      final TedeeProperties properties, final TedeeApiTokenInterceptor interceptor) {
-    return apiClient(RestClient.builder(), properties, interceptor);
   }
 
   @Bean

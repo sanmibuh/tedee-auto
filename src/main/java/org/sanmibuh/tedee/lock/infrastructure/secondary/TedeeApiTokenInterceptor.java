@@ -10,7 +10,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
 @RequiredArgsConstructor
-final class TedeeApiTokenInterceptor implements ClientHttpRequestInterceptor {
+public final class TedeeApiTokenInterceptor implements ClientHttpRequestInterceptor {
 
   private static final String API_TOKEN_HEADER = "api_token";
 

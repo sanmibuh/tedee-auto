@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 @RequiredArgsConstructor
-final class TedeeApiTokenGenerator {
+public final class TedeeApiTokenGenerator {
 
   private static final String HASH_ALGORITHM = "SHA-256";
 

@@ -9,7 +9,6 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.bridge.domain.vo.BridgeId;
-import org.sanmibuh.tedee.lock.infrastructure.secondary.CallbackQueryApi;
 
 @ExtendWith(MockitoExtension.class)
 class TedeeBridgeRepositoryTest {

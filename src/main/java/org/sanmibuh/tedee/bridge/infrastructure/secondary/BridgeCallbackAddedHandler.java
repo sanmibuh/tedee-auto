@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.sanmibuh.ddd.port.DomainEventHandler;
 import org.sanmibuh.tedee.bridge.domain.event.BridgeCallbackAdded;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
-import org.sanmibuh.tedee.lock.infrastructure.secondary.CallbackCommandApi;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 

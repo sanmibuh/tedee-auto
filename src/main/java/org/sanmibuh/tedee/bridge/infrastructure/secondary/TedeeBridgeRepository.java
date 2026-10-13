@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.sanmibuh.tedee.bridge.domain.Bridge;
 import org.sanmibuh.tedee.bridge.domain.BridgeRepository;
 import org.sanmibuh.tedee.bridge.domain.vo.BridgeId;
-import org.sanmibuh.tedee.lock.infrastructure.secondary.CallbackQueryApi;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -29,5 +28,7 @@ public final class TedeeBridgeRepository implements BridgeRepository {
   }
 
   @Override
-  public void save(final Bridge bridge) {}
+  public void save(final Bridge bridge) {
+    // No-op
+  }
 }
