@@ -173,10 +173,9 @@ class TedeeCallbackRegistrationTest {
   }
 
   @Test
-  void should_deleteRegisteredCallback_whenStoppedAfterRegistering() {
+  void should_notDeleteRegisteredCallback_whenStoppedAfterRegistering() {
     expectListedCallbacks(callbacks());
     expectRegisteredCallback();
-    expectDeletedCallback(REGISTERED_ID);
     sut.start();
 
     sut.stop();
@@ -185,9 +184,8 @@ class TedeeCallbackRegistrationTest {
   }
 
   @Test
-  void should_deleteReusedCallback_whenStoppedAfterReusingExistingOne() {
+  void should_notDeleteReusedCallback_whenStoppedAfterReusingExistingOne() {
     expectListedCallbacks(callbacks(callback(EXISTING_ID, CALLBACK_URL)));
-    expectDeletedCallback(EXISTING_ID);
     sut.start();
 
     sut.stop();
@@ -214,7 +212,6 @@ class TedeeCallbackRegistrationTest {
   @Test
   void should_reportNotRunning_whenStopped() {
     expectListedCallbacks(callbacks(callback(EXISTING_ID, CALLBACK_URL)));
-    expectDeletedCallback(EXISTING_ID);
     sut.start();
 
     sut.stop();
@@ -313,21 +310,6 @@ class TedeeCallbackRegistrationTest {
   }
 
   @Test
-  void should_stopWithoutFailing_whenBridgeFailsToDeleteCallback() {
-    expectListedCallbacks(callbacks(callback(EXISTING_ID, CALLBACK_URL)));
-    commandServer
-        .expect(requestTo(CALLBACK_ENDPOINT + "/" + EXISTING_ID))
-        .andExpect(method(HttpMethod.DELETE))
-        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
-    sut.start();
-
-    try (final var logCaptor = LogCaptor.forClass(TedeeCallbackRegistration.class)) {
-      softly.thenCode(sut::stop).doesNotThrowAnyException();
-      softly.then(sut.isRunning()).isFalse();
-      softly.then(logCaptor.getWarnLogs()).singleElement(STRING).contains(CALLBACK_URL);
-    }
-  }
-
   private void expectRegisteredCallback() {
     commandServer
         .expect(requestTo(CALLBACK_ENDPOINT))
