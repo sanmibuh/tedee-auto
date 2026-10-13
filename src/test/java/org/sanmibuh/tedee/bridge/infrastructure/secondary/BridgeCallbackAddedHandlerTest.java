@@ -1,5 +1,6 @@
 package org.sanmibuh.tedee.bridge.infrastructure.secondary;
 
+import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
 
 import java.net.URI;
@@ -36,6 +37,7 @@ class BridgeCallbackAddedHandlerTest {
   @Test
   void should_createCallbackWithSecret_whenHandlingCallbackAdded() {
     final var callbackUrl = URI.create("https://automation.local/tedee/events");
+    given(tedeeProperties.callbackSecret()).willReturn(CALLBACK_SECRET);
 
     sut.handle(new BridgeCallbackAdded(callbackUrl));
 
