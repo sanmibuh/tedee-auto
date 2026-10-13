@@ -1,0 +1,18 @@
+ARCHITECTURE.md
+  h_97a91c9e567f87 26
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  h_97a91c9e567f87 37
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/primary/TedeeCallbackRegistrationTest.java
+  h_97a91c9e567f87 3-8,46,60,63,72,79-101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d7f4936d085d937461b6f88bbd0137414f41144d",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
