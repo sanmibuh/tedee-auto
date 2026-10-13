@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/TedeeBridgeCallbackAdapter.java
+  h_97a91c9e567f87 10
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/TedeeBridgeCallbackAdapterTest.java
+  h_97a91c9e567f87 17,21,33-41
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f32b321616f7944e3477ab2cd2c5297412a5d1f7",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
