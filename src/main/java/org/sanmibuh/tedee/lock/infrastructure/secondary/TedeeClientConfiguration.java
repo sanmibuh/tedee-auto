@@ -18,22 +18,47 @@ import org.springframework.web.client.RestClient;
 public class TedeeClientConfiguration {
 
   @Bean
+  TedeeApiTokenInterceptor tedeeApiTokenInterceptor(
+      final TedeeProperties properties, final Clock clock) {
+    return new TedeeApiTokenInterceptor(new TedeeApiTokenGenerator(properties.apiKey()), clock);
+  }
+
+  @Bean
   ApiClient tedeeApiClient(
-      final RestClient.Builder builder, final TedeeProperties properties, final Clock clock) {
-    final var interceptor =
-        new TedeeApiTokenInterceptor(new TedeeApiTokenGenerator(properties.apiKey()), clock);
+      final RestClient.Builder builder,
+      final TedeeProperties properties,
+      final TedeeApiTokenInterceptor interceptor) {
+    return apiClient(builder, properties, interceptor);
+  }
+
+  @Bean
+  CallbackQueryApi callbackQueryApi(
+      final TedeeProperties properties, final TedeeApiTokenInterceptor interceptor) {
+    return new TedeeCallbackQueryApi(new CallbackApi(callbackApiClient(properties, interceptor)));
+  }
+
+  @Bean
+  CallbackCommandApi callbackCommandApi(
+      final TedeeProperties properties, final TedeeApiTokenInterceptor interceptor) {
+    return new TedeeCallbackCommandApi(new CallbackApi(callbackApiClient(properties, interceptor)));
+  }
+
+  private ApiClient apiClient(
+      final RestClient.Builder builder,
+      final TedeeProperties properties,
+      final TedeeApiTokenInterceptor interceptor) {
     final var apiClient = new ApiClient(builder.requestInterceptor(interceptor).build());
     apiClient.setBasePath(properties.baseUrl().toString());
     return apiClient;
   }
 
-  @Bean
-  CallbackApi callbackApi(final ApiClient apiClient) {
-    return new CallbackApi(apiClient);
+  private ApiClient callbackApiClient(
+      final TedeeProperties properties, final TedeeApiTokenInterceptor interceptor) {
+    return apiClient(RestClient.builder(), properties, interceptor);
   }
 
   @Bean
-  LockApi lockApi(final ApiClient apiClient) {
-    return new LockApi(apiClient);
+  LockCommandApi lockCommandApi(final ApiClient apiClient) {
+    return new TedeeLockCommandApi(new LockApi(apiClient));
   }
 }

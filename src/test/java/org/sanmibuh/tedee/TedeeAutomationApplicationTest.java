@@ -3,7 +3,6 @@ package org.sanmibuh.tedee;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.springframework.boot.test.context.SpringBootTest.WebEnvironment.RANDOM_PORT;
 
-import com.tedee.bridge.client.api.CallbackApi;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
@@ -19,6 +18,8 @@ import org.mockito.BDDMockito;
 import org.sanmibuh.ddd.infrastructure.InMemoryCommandBus;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.framework.notifier.Notifier;
+import org.sanmibuh.tedee.lock.infrastructure.secondary.CallbackCommandApi;
+import org.sanmibuh.tedee.lock.infrastructure.secondary.CallbackQueryApi;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.server.LocalServerPort;
@@ -45,7 +46,10 @@ class TedeeAutomationApplicationTest {
   @Autowired private Notifier notifier;
 
   @MockitoBean(answers = Answers.RETURNS_MOCKS, reset = MockReset.NONE)
-  private CallbackApi callbackApi;
+  private CallbackQueryApi callbackQueryApi;
+
+  @MockitoBean(answers = Answers.RETURNS_MOCKS, reset = MockReset.NONE)
+  private CallbackCommandApi callbackCommandApi;
 
   @InjectSoftAssertions private BDDSoftAssertions softly;
 
@@ -61,7 +65,7 @@ class TedeeAutomationApplicationTest {
 
   @Test
   void should_registerBridgeCallback_whenApplicationStarts() {
-    BDDMockito.then(callbackApi).should().getCallback();
+    BDDMockito.then(callbackQueryApi).should().getCallbacks();
   }
 
   @Test
