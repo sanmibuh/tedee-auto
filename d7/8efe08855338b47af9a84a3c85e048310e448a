@@ -1,0 +1,23 @@
+src/main/java/org/sanmibuh/tedee/bridge/application/GetRegisteredCallbacksHandler.java
+  s_52cbbda4d37c31::t_accc540e951ca7 1-14
+src/main/java/org/sanmibuh/tedee/bridge/application/GetRegisteredCallbacksQuery.java
+  s_52cbbda4d37c31::t_a1be50979827c6 1-7
+src/main/java/org/sanmibuh/tedee/bridge/projection/BridgeCallbackQueryPort.java
+  s_52cbbda4d37c31::t_6fffe6dd9ad7c6 1-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d78efe08855338b47af9a84a3c85e048310e448a",
+  "prompts": {},
+  "sessions": {
+    "s_52cbbda4d37c31": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec9050ba0ffeRhWCuodvyM5kGk",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
