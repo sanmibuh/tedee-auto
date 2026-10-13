@@ -1,0 +1,18 @@
+src/test/java/org/sanmibuh/tedee/bridge/domain/vo/BridgeIdTest.java
+  h_97a91c9e567f87 1-13
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/TedeeCallbackCommandApiTest.java
+  h_97a91c9e567f87 1-32
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/TedeeCallbackQueryApiTest.java
+  h_97a91c9e567f87 1-31
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7db196acfb9eaaef8864ffecf459879e3add53e6",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
