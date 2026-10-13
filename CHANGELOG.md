@@ -1,5 +1,10 @@
 # Changelog
 
+## [0.3.3] - 2026-10-13
+
+### Bug Fixes
+- fix(bridge): isolate callback reads and writes in separate HTTP clients ([#295](https://github.com/sanmibuh/tedee-auto/pull/295))
+
 ## [0.3.2] - 2026-10-12
 
 ### Bug Fixes
