@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/BridgeCallbackConfiguration.java
+  s_52cbbda4d37c31::t_602e460dff7050 1-33
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "4f253d6459977f0a1b2598d02b4e71f2d3bd0ad0",
+  "prompts": {},
+  "sessions": {
+    "s_52cbbda4d37c31": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec9050ba0ffeRhWCuodvyM5kGk",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
