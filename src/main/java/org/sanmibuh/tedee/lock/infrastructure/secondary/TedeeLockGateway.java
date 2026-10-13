@@ -1,6 +1,5 @@
 package org.sanmibuh.tedee.lock.infrastructure.secondary;
 
-import com.tedee.bridge.client.api.LockApi;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.tedee.lock.domain.exception.InvalidLockRequestException;
 import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
@@ -15,13 +14,13 @@ import org.springframework.web.client.RestClientResponseException;
 @RequiredArgsConstructor
 final class TedeeLockGateway implements LockGateway {
 
-  private final LockApi lockApi;
+  private final LockCommandApi lockCommandApi;
 
   @Override
   public void lock(final LockId lockId) {
     final var deviceId = lockId.value();
     try {
-      lockApi.postLock(deviceId);
+      lockCommandApi.lock(deviceId);
     } catch (final RestClientResponseException exception) {
       throw translateException(exception, deviceId);
     } catch (final RestClientException exception) {

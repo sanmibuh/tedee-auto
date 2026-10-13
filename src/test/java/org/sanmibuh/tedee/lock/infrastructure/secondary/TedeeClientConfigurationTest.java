@@ -9,6 +9,7 @@ import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
+import java.nio.charset.StandardCharsets;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.Set;
@@ -18,12 +19,19 @@ import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.framework.resilience.RetryProperties;
 import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 
 class TedeeClientConfigurationTest {
 
   private final TedeeClientConfiguration sut = new TedeeClientConfiguration();
+  private final ApplicationContextRunner runner =
+      new ApplicationContextRunner()
+          .withUserConfiguration(TedeeClientConfiguration.class, TestConfiguration.class);
 
   @Test
   void should_configureApiClientBasePath_whenPropertiesAreProvided() {
@@ -38,12 +46,12 @@ class TedeeClientConfigurationTest {
   }
 
   @Test
-  void should_createLockApi_whenApiClientIsProvided() {
+  void should_createLockCommandApi_whenApiClientIsProvided() {
     final var apiClient = new ApiClient();
 
-    final var lockApi = sut.lockApi(apiClient);
+    final var lockCommandApi = sut.lockCommandApi(apiClient);
 
-    then(lockApi.getApiClient()).isSameAs(apiClient);
+    then(lockCommandApi).isInstanceOf(TedeeLockCommandApi.class);
   }
 
   @Test
@@ -70,13 +78,24 @@ class TedeeClientConfigurationTest {
             "callback-secret",
             Duration.ofSeconds(30),
             new RetryProperties(2, 500L, 2.0, 5000L));
-    final var interceptor = sut.tedeeApiTokenInterceptor(properties, Clock.systemUTC());
-    final var callbackQueryApi = sut.callbackQueryApi(properties, interceptor);
-    final var callbackCommandApi = sut.callbackCommandApi(properties, interceptor);
-
     try {
-      callbackQueryApi.getCallbacks();
-      callbackCommandApi.createCallback(new com.tedee.bridge.client.model.CallbackDetailsNoId());
+      runner
+          .withPropertyValues(
+              "sanmibuh.rest.tedee.base-url=" + properties.baseUrl(),
+              "sanmibuh.rest.tedee.api-key=" + properties.apiKey(),
+              "sanmibuh.rest.tedee.callback-secret=" + properties.callbackSecret(),
+              "sanmibuh.rest.tedee.callback-registration-interval=30s",
+              "sanmibuh.rest.tedee.retry.max-retries=2",
+              "sanmibuh.rest.tedee.retry.initial-interval=500",
+              "sanmibuh.rest.tedee.retry.multiplier=2.0",
+              "sanmibuh.rest.tedee.retry.max-interval=5000")
+          .run(
+              context -> {
+                context.getBean(CallbackQueryApi.class).getCallbacks();
+                context
+                    .getBean(CallbackCommandApi.class)
+                    .createCallback(new com.tedee.bridge.client.model.CallbackDetailsNoId());
+              });
 
       then(requests.get()).isEqualTo(2);
       then(sourcePorts).hasSize(2);
@@ -89,7 +108,7 @@ class TedeeClientConfigurationTest {
     final var response = request == 1 ? "[]" : "{\"id\": 1}";
     exchange.getResponseHeaders().set("Content-Type", MediaType.APPLICATION_JSON_VALUE);
     exchange.sendResponseHeaders(200, response.length());
-    exchange.getResponseBody().write(response.getBytes());
+    exchange.getResponseBody().write(response.getBytes(StandardCharsets.UTF_8));
     exchange.close();
   }
 
@@ -100,5 +119,20 @@ class TedeeClientConfigurationTest {
         "callback-secret",
         Duration.ofSeconds(30),
         new RetryProperties(2, 500L, 2.0, 5000L));
+  }
+
+  @Configuration
+  @EnableConfigurationProperties(TedeeProperties.class)
+  static class TestConfiguration {
+
+    @Bean
+    Clock clock() {
+      return Clock.systemUTC();
+    }
+
+    @Bean
+    RestClient.Builder restClientBuilder() {
+      return RestClient.builder();
+    }
   }
 }
