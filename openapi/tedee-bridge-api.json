@@ -453,7 +453,7 @@
             "content": {
               "application/json": {
                 "schema": {
-                    "$ref": "#/components/schemas/CallbackIDsingle"
+                  "$ref": "#/components/schemas/CallbackIDsingle"
                 }
               }
             }
@@ -1116,14 +1116,14 @@
       },
       "CallbackHeader": {
         "type": "object",
-        "properties": {
-          "header_name": {
-            "type": "string",
-            "examples": [
-              "header_value"
-            ]
+        "additionalProperties": {
+          "type": "string"
+        },
+        "examples": [
+          {
+            "X-Tedee-Callback-Secret": "secret"
           }
-        }
+        ]
       },
       "CallbackIDsingle": {
         "type": "object",
