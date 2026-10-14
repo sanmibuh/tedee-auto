@@ -1,0 +1,14 @@
+src/test/java/org/sanmibuh/ddd/infrastructure/InMemoryQueryBusTest.java
+  h_97a91c9e567f87 5,8,42-55
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "493078ee0eba1456667b3f27b191f986bac21c64",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
