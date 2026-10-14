@@ -1,0 +1,66 @@
+src/main/java/org/sanmibuh/ddd/domain/AggregateRoot.java
+  h_97a91c9e567f87 7,28-31,46
+src/main/java/org/sanmibuh/ddd/domain/Snapshot.java
+  h_97a91c9e567f87 1-3
+src/main/java/org/sanmibuh/ddd/port/CommandHandler.java
+  h_97a91c9e567f87 7
+src/main/java/org/sanmibuh/ddd/port/Repository.java
+  h_97a91c9e567f87 7,9-10,14-18
+src/main/java/org/sanmibuh/tedee/bridge/application/ReportBridgeConnectedHandler.java
+  h_97a91c9e567f87 11
+src/main/java/org/sanmibuh/tedee/bridge/application/ReportBridgeDisconnectedHandler.java
+  h_97a91c9e567f87 11
+src/main/java/org/sanmibuh/tedee/bridge/domain/Bridge.java
+  h_97a91c9e567f87 4,12,14,16-17,20-31
+src/main/java/org/sanmibuh/tedee/bridge/domain/BridgeRepository.java
+  h_97a91c9e567f87 6
+src/main/java/org/sanmibuh/tedee/bridge/domain/BridgeSnapshot.java
+  h_97a91c9e567f87 1-12
+src/main/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/TedeeBridgeRepository.java
+  h_97a91c9e567f87 10,28,32
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  h_97a91c9e567f87 17,21-32
+src/main/java/org/sanmibuh/tedee/lock/domain/LockRepository.java
+  h_97a91c9e567f87 6
+src/main/java/org/sanmibuh/tedee/lock/domain/LockSnapshot.java
+  h_97a91c9e567f87 1-6
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockRepository.java
+  h_97a91c9e567f87 6,16,20
+src/test/java/com/example/StubAggregate.java
+  h_97a91c9e567f87 5,7-8,14-18,20-21
+src/test/java/org/sanmibuh/ddd/domain/AggregateRootTest.java
+  h_97a91c9e567f87 63,71-75,78,82-86,89-92
+src/test/java/org/sanmibuh/ddd/domain/RepositoryTest.java
+  h_97a91c9e567f87 7,30-40,48,54,62,68,73-95
+src/test/java/org/sanmibuh/ddd/infrastructure/InMemoryCommandBusTest.java
+  h_97a91c9e567f87 15,60,66-70,73-74
+src/test/java/org/sanmibuh/ddd/port/CommandHandlerTest.java
+  h_97a91c9e567f87 9,28,34-38,41-42
+src/test/java/org/sanmibuh/tedee/bridge/application/AddBridgeCallbackHandlerTest.java
+  h_97a91c9e567f87 18,34,46-47
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  h_97a91c9e567f87 31,41
+src/test/java/org/sanmibuh/tedee/lock/application/ReportBatteryLevelHandlerTest.java
+  h_97a91c9e567f87 55
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockConnectedHandlerTest.java
+  h_97a91c9e567f87 31
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockDisconnectedHandlerTest.java
+  h_97a91c9e567f87 31
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockSettingsChangedHandlerTest.java
+  h_97a91c9e567f87 31
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockStatusHandlerTest.java
+  h_97a91c9e567f87 59,71,86,95
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockRepositoryTest.java
+  h_97a91c9e567f87 24
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "2241e5039164670ae342d106d6b52fba7a5595e2",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
