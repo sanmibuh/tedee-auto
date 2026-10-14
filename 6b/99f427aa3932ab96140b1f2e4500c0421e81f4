@@ -1,0 +1,14 @@
+src/test/java/org/sanmibuh/tedee/bridge/domain/BridgeSnapshotTest.java
+  h_97a91c9e567f87 1-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "6b99f427aa3932ab96140b1f2e4500c0421e81f4",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
