@@ -12,16 +12,6 @@ import org.sanmibuh.ddd.port.QueryHandler;
 
 class InMemoryQueryBusTest {
 
-  record StubQuery() implements Query<String> {}
-
-  static class StubQueryHandler implements QueryHandler<StubQuery, String> {
-
-    @Override
-    public String handle(final StubQuery query) {
-      return "result";
-    }
-  }
-
   @Test
   void should_returnQueryResult_whenHandlerIsRegistered() {
     final var sut = new InMemoryQueryBus(List.of(new StubQueryHandler()));
@@ -48,9 +38,18 @@ class InMemoryQueryBusTest {
     try (final var logCaptor = LogCaptor.forClass(InMemoryQueryBus.class)) {
       sut.dispatch(query);
 
-      then(logCaptor.getInfoLogs())
-          .hasSize(2)
-          .allSatisfy(log -> then(log).asInstanceOf(STRING).contains(query.toString()));
+      then(logCaptor.getInfoLogs()).hasSize(2).first(STRING).contains(query.toString());
+      then(logCaptor.getInfoLogs()).last(STRING).contains("result");
+    }
+  }
+
+  record StubQuery() implements Query<String> {}
+
+  static class StubQueryHandler implements QueryHandler<StubQuery, String> {
+
+    @Override
+    public String handle(final StubQuery query) {
+      return "result";
     }
   }
 }
