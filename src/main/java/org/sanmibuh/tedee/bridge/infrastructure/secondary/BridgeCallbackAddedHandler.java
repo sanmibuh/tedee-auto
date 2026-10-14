@@ -1,13 +1,13 @@
 package org.sanmibuh.tedee.bridge.infrastructure.secondary;
 
-import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration.CALLBACK_SECRET_HEADER;
+import static org.sanmibuh.tedee.shared.infrastructure.TedeeInfrastructureConfiguration.CALLBACK_SECRET_HEADER;
 
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.ddd.port.DomainEventHandler;
 import org.sanmibuh.tedee.bridge.domain.event.BridgeCallbackAdded;
-import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
+import org.sanmibuh.tedee.shared.infrastructure.TedeeProperties;
 import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Component;
 

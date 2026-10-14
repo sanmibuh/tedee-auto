@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.shared.infrastructure.secondary;
 
 import java.io.IOException;
 import java.time.Clock;

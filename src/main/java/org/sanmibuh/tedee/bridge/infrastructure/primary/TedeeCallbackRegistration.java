@@ -1,6 +1,6 @@
 package org.sanmibuh.tedee.bridge.infrastructure.primary;
 
-import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration.EVENTS_PATH;
+import static org.sanmibuh.tedee.shared.infrastructure.TedeeInfrastructureConfiguration.EVENTS_PATH;
 
 import java.net.URI;
 import lombok.extern.slf4j.Slf4j;

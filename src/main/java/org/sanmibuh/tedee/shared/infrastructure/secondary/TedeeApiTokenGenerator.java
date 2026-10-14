@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.shared.infrastructure.secondary;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;

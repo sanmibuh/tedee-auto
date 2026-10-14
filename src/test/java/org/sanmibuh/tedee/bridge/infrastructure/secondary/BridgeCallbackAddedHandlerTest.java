@@ -16,7 +16,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.bridge.domain.event.BridgeCallbackAdded;
-import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
+import org.sanmibuh.tedee.shared.infrastructure.TedeeProperties;
 
 @ExtendWith({MockitoExtension.class, SoftAssertionsExtension.class})
 class BridgeCallbackAddedHandlerTest {

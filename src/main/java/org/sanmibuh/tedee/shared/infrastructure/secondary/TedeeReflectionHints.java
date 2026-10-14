@@ -1,9 +1,9 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.shared.infrastructure.secondary;
 
 import java.util.Arrays;
 import java.util.stream.Stream;
 import org.jspecify.annotations.Nullable;
-import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
+import org.sanmibuh.tedee.shared.infrastructure.TedeeProperties;
 import org.springframework.aot.hint.MemberCategory;
 import org.springframework.aot.hint.RuntimeHints;
 import org.springframework.aot.hint.RuntimeHintsRegistrar;
@@ -12,7 +12,7 @@ import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.type.filter.AssignableTypeFilter;
 import org.springframework.util.ClassUtils;
 
-final class TedeeReflectionHints implements RuntimeHintsRegistrar {
+public final class TedeeReflectionHints implements RuntimeHintsRegistrar {
 
   private static final String MODEL_PACKAGE = "com.tedee.bridge.client.model";
   private static final MemberCategory[] JACKSON_CATEGORIES = {

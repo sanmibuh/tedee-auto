@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.shared.infrastructure.secondary;
 
 import com.tedee.bridge.client.model.InvalidToken;
 import com.tedee.bridge.client.model.LockDetails;
@@ -42,7 +42,7 @@ class TedeeReflectionHintsTest {
     softly
         .then(
             RuntimeHintsPredicates.reflection()
-                .onType(org.sanmibuh.tedee.lock.infrastructure.TedeeProperties.class)
+                .onType(org.sanmibuh.tedee.shared.infrastructure.TedeeProperties.class)
                 .withMemberCategories(
                     MemberCategory.ACCESS_DECLARED_FIELDS, MemberCategory.INVOKE_DECLARED_METHODS)
                 .test(hints))
