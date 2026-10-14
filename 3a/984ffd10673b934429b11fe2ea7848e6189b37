@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  s_52cbbda4d37c31::t_7502cc8b54115b 18,99-102,200-224
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3a984ffd10673b934429b11fe2ea7848e6189b37",
+  "prompts": {},
+  "sessions": {
+    "s_52cbbda4d37c31": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec9050ba0ffeRhWCuodvyM5kGk",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
