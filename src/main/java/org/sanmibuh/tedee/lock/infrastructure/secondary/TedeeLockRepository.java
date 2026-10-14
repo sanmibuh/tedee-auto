@@ -13,7 +13,7 @@ public final class TedeeLockRepository implements LockRepository {
 
   @Override
   public Optional<Lock> findById(final LockId lockId) {
-    return Optional.of(Lock.create(lockId, LockStatus.UNLOCKED));
+    return Optional.of(new Lock(new LockSnapshot(lockId.value(), LockStatus.UNLOCKED)));
   }
 
   @Override
