@@ -25,7 +25,7 @@ public final class TedeeBridgeRepository implements BridgeRepository {
             .filter(Objects::nonNull)
             .map(URI::create)
             .toList();
-    return Optional.of(new Bridge(new BridgeSnapshot(callbacks)));
+    return Optional.of(new Bridge(new BridgeSnapshot(bridgeId.value(), callbacks)));
   }
 
   @Override

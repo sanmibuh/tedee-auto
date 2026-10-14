@@ -1,6 +1,6 @@
 package org.sanmibuh.ddd.domain;
 
-public abstract class Entity<I extends EntityId<?>> {
+public abstract class Entity<I extends EntityId<T>, T, S extends EntitySnapshot<T>> {
 
   private final I id;
 
@@ -12,13 +12,15 @@ public abstract class Entity<I extends EntityId<?>> {
     return id;
   }
 
+  public abstract S snapshot();
+
   @Override
   @SuppressWarnings("EqualsGetClass")
   public final boolean equals(final Object o) {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    return id.equals(((Entity<?>) o).id);
+    return id.equals(((Entity<?, ?, ?>) o).id);
   }
 
   @Override

@@ -14,7 +14,7 @@ import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.vo.LockState;
 import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
-public final class Lock extends AggregateRoot<LockId, LockSnapshot> {
+public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
 
   private LockStatus status;
 

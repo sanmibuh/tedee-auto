@@ -4,10 +4,13 @@ import java.util.Optional;
 import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
-import org.sanmibuh.ddd.domain.Snapshot;
+import org.sanmibuh.ddd.domain.EntitySnapshot;
 
 public interface Repository<
-    A extends AggregateRoot<I, S>, I extends AggregateRootId<?>, S extends Snapshot> {
+    A extends AggregateRoot<I, T, S>,
+    I extends AggregateRootId<T>,
+    T,
+    S extends EntitySnapshot<T>> {
 
   Optional<A> findById(I id);
 

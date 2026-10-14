@@ -44,7 +44,8 @@ class AddBridgeCallbackHandlerTest {
   void should_notRecordEvent_whenAddingExistingCallback() {
     final var callbackUrl = URI.create("https://automation.local/tedee/events");
     given(repository.get(BridgeId.SINGLETON))
-        .willReturn(new Bridge(new BridgeSnapshot(List.of(callbackUrl))));
+        .willReturn(
+            new Bridge(new BridgeSnapshot(BridgeId.SINGLETON.value(), List.of(callbackUrl))));
 
     sut.handle(new AddBridgeCallbackCommand(callbackUrl));
 

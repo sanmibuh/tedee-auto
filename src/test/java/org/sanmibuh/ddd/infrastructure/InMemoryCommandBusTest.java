@@ -12,7 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainEvent;
-import org.sanmibuh.ddd.domain.Snapshot;
+import org.sanmibuh.ddd.domain.EntitySnapshot;
 import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.CommandHandler;
 import org.sanmibuh.ddd.port.EventBus;
@@ -57,7 +57,7 @@ class InMemoryCommandBusTest {
 
   record StubId(Integer value) implements AggregateRootId<Integer> {}
 
-  static final class StubAggregate extends AggregateRoot<StubId, StubSnapshot> {
+  static final class StubAggregate extends AggregateRoot<StubId, Integer, StubSnapshot> {
 
     StubAggregate() {
       super(new StubId(1));
@@ -66,11 +66,11 @@ class InMemoryCommandBusTest {
 
     @Override
     public StubSnapshot snapshot() {
-      return new StubSnapshot();
+      return new StubSnapshot(id().value());
     }
   }
 
-  record StubSnapshot() implements Snapshot {}
+  record StubSnapshot(Integer id) implements EntitySnapshot<Integer> {}
 
   static class StubCommandHandler extends CommandHandler<StubCommand, StubAggregate> {
 

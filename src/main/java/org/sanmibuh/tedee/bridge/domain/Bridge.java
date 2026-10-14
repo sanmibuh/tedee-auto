@@ -9,7 +9,7 @@ import org.sanmibuh.tedee.bridge.domain.event.BridgeConnected;
 import org.sanmibuh.tedee.bridge.domain.event.BridgeDisconnected;
 import org.sanmibuh.tedee.bridge.domain.vo.BridgeId;
 
-public final class Bridge extends AggregateRoot<BridgeId, BridgeSnapshot> {
+public final class Bridge extends AggregateRoot<BridgeId, String, BridgeSnapshot> {
 
   private final List<URI> callbacks = new ArrayList<>();
 
@@ -23,12 +23,12 @@ public final class Bridge extends AggregateRoot<BridgeId, BridgeSnapshot> {
   }
 
   public static Bridge create() {
-    return new Bridge();
+    return new Bridge(new BridgeSnapshot(BridgeId.SINGLETON.value(), List.of()));
   }
 
   @Override
   public BridgeSnapshot snapshot() {
-    return new BridgeSnapshot(callbacks);
+    return new BridgeSnapshot(id().value(), callbacks);
   }
 
   public void reportConnected() {

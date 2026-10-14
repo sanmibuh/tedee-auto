@@ -2,10 +2,10 @@ package com.example;
 
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
-import org.sanmibuh.ddd.domain.Snapshot;
+import org.sanmibuh.ddd.domain.EntitySnapshot;
 
 public final class StubAggregate
-    extends AggregateRoot<StubAggregate.StubId, StubAggregate.StubSnapshot> {
+    extends AggregateRoot<StubAggregate.StubId, Integer, StubAggregate.StubSnapshot> {
 
   public StubAggregate() {
     super(new StubId(1));
@@ -13,10 +13,10 @@ public final class StubAggregate
 
   @Override
   public StubSnapshot snapshot() {
-    return new StubSnapshot();
+    return new StubSnapshot(id().value());
   }
 
   public record StubId(Integer value) implements AggregateRootId<Integer> {}
 
-  public record StubSnapshot() implements Snapshot {}
+  public record StubSnapshot(Integer id) implements EntitySnapshot<Integer> {}
 }

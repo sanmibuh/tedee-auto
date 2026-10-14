@@ -36,7 +36,7 @@ class RepositoryTest {
     then(sut.snapshot).isEqualTo(new TestSnapshot(id.value()));
   }
 
-  private Repository<TestAggregate, TestId, TestSnapshot> repositoryWith(
+  private Repository<TestAggregate, TestId, Integer, TestSnapshot> repositoryWith(
       final TestAggregate stored) {
     return new Repository<>() {
       @Override
@@ -51,7 +51,7 @@ class RepositoryTest {
     };
   }
 
-  private Repository<TestAggregate, TestId, TestSnapshot> emptyRepository() {
+  private Repository<TestAggregate, TestId, Integer, TestSnapshot> emptyRepository() {
     return new Repository<>() {
       @Override
       public Optional<TestAggregate> findById(final TestId id) {
@@ -65,7 +65,7 @@ class RepositoryTest {
     };
   }
 
-  private static final class TestAggregate extends AggregateRoot<TestId, TestSnapshot> {
+  private static final class TestAggregate extends AggregateRoot<TestId, Integer, TestSnapshot> {
 
     TestAggregate(final TestId id) {
       super(id);
@@ -77,10 +77,10 @@ class RepositoryTest {
     }
   }
 
-  private record TestSnapshot(Integer id) implements Snapshot {}
+  private record TestSnapshot(Integer id) implements EntitySnapshot<Integer> {}
 
   private static final class SnapshotCapturingRepository
-      implements Repository<TestAggregate, TestId, TestSnapshot> {
+      implements Repository<TestAggregate, TestId, Integer, TestSnapshot> {
 
     private @Nullable TestSnapshot snapshot;
 
