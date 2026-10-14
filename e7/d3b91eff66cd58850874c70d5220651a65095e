@@ -1,0 +1,27 @@
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  s_52cbbda4d37c31::t_929f6353dc2cab 31-32
+src/test/java/org/sanmibuh/tedee/lock/application/ReportBatteryLevelHandlerTest.java
+  s_52cbbda4d37c31::t_a902d8dc87ca97 55-56
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockConnectedHandlerTest.java
+  s_52cbbda4d37c31::t_dbaa6cd7c29a32 31-32
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockDisconnectedHandlerTest.java
+  s_52cbbda4d37c31::t_4d4cdfb2875a99 31-32
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockSettingsChangedHandlerTest.java
+  s_52cbbda4d37c31::t_3661bbb5854d67 31-32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e7d3b91eff66cd58850874c70d5220651a65095e",
+  "prompts": {},
+  "sessions": {
+    "s_52cbbda4d37c31": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec9050ba0ffeRhWCuodvyM5kGk",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
