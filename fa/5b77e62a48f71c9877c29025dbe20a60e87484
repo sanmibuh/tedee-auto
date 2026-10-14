@@ -1,0 +1,16 @@
+.opencode/skills/tdd/SKILL.md
+  h_97a91c9e567f87 86
+AGENTS.md
+  h_97a91c9e567f87 47,49,85
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fa5b77e62a48f71c9877c29025dbe20a60e87484",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

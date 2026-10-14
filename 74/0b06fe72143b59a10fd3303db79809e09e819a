@@ -1,0 +1,179 @@
+src/main/java/org/sanmibuh/ddd/adapter/CQRSHandlerRegistrar.java
+  s_3ed1d00028c13a::t_6e085ccd4152bb 1
+src/main/java/org/sanmibuh/ddd/adapter/DddAutoConfiguration.java
+  s_3ed1d00028c13a::t_a3d83b9b5f62c2 1
+src/main/java/org/sanmibuh/ddd/adapter/DomainEventHandlerRegistrar.java
+  s_3ed1d00028c13a::t_74e1f9d3a6d86f 1
+src/main/java/org/sanmibuh/ddd/adapter/EventHandlerRegistry.java
+  s_3ed1d00028c13a::t_218843fa1a528b 1
+src/main/java/org/sanmibuh/ddd/adapter/HandlerLookup.java
+  s_3ed1d00028c13a::t_a051284b535afb 1
+src/main/java/org/sanmibuh/ddd/adapter/HandlerNotFoundException.java
+  s_3ed1d00028c13a::t_9d1cf01c41d100 1
+src/main/java/org/sanmibuh/ddd/adapter/InMemoryCommandBus.java
+  s_3ed1d00028c13a::t_41754feafc0460 1
+src/main/java/org/sanmibuh/ddd/adapter/InMemoryEventBus.java
+  s_3ed1d00028c13a::t_c816a9dfc83cb6 1
+src/main/java/org/sanmibuh/ddd/adapter/InMemoryQueryBus.java
+  s_3ed1d00028c13a::t_b55e11e5ba1f30 1
+src/main/java/org/sanmibuh/tedee/bridge/adapter/primary/TedeeCallbackRegistration.java
+  s_3ed1d00028c13a::t_467b082c3ce12c 1,3
+src/main/java/org/sanmibuh/tedee/bridge/adapter/secondary/BridgeCallbackAddedHandler.java
+  s_3ed1d00028c13a::t_144163a487054b 1,3,10
+src/main/java/org/sanmibuh/tedee/bridge/adapter/secondary/BridgeCallbackConfiguration.java
+  s_3ed1d00028c13a::t_d26c4c1ba148fd 1,5-6
+src/main/java/org/sanmibuh/tedee/bridge/adapter/secondary/BridgeConnectedNotificationHandler.java
+  s_3ed1d00028c13a::t_dedcdeb0c1c5b6 1
+src/main/java/org/sanmibuh/tedee/bridge/adapter/secondary/BridgeDisconnectedNotificationHandler.java
+  s_3ed1d00028c13a::t_2f9db028d49a08 1
+src/main/java/org/sanmibuh/tedee/bridge/adapter/secondary/CallbackCommandApi.java
+  s_3ed1d00028c13a::t_eeca10c39248fe 1
+src/main/java/org/sanmibuh/tedee/bridge/adapter/secondary/CallbackQueryApi.java
+  s_3ed1d00028c13a::t_5026ffcda7ea2f 1
+src/main/java/org/sanmibuh/tedee/bridge/adapter/secondary/TedeeBridgeRepository.java
+  s_3ed1d00028c13a::t_75cdcab9cd33e8 1
+src/main/java/org/sanmibuh/tedee/bridge/adapter/secondary/TedeeCallbackCommandApi.java
+  s_3ed1d00028c13a::t_2df1e99566081e 1
+src/main/java/org/sanmibuh/tedee/bridge/adapter/secondary/TedeeCallbackQueryApi.java
+  s_3ed1d00028c13a::t_ca4dac9cc763ec 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/primary/LockScheduler.java
+  s_3ed1d00028c13a::t_813a07369802cd 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/primary/LockSchedulerProperties.java
+  s_3ed1d00028c13a::t_55fb442167351b 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/primary/LockSchedulingConfiguration.java
+  s_3ed1d00028c13a::t_3f8d88344d72f8 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/primary/LockSchedulingConfigurer.java
+  s_3ed1d00028c13a::t_47c607a05ca908 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/primary/TedeeWebhookAuthenticationInterceptor.java
+  s_3ed1d00028c13a::t_c84e834ae0191e 1,4,11
+src/main/java/org/sanmibuh/tedee/lock/adapter/primary/TedeeWebhookConfiguration.java
+  s_3ed1d00028c13a::t_6ddb2a5eda34c4 1,3
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/BatteryLevelReportedNotificationHandler.java
+  s_3ed1d00028c13a::t_b807e8474ffd56 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockCommandApi.java
+  s_3ed1d00028c13a::t_9717c9e94a1343 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockConnectedNotificationHandler.java
+  s_3ed1d00028c13a::t_d3eefd1cad70a2 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockDisconnectedNotificationHandler.java
+  s_3ed1d00028c13a::t_f414436d2f397f 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockGateway.java
+  s_3ed1d00028c13a::t_ee7d92d995507a 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockRequestedHandler.java
+  s_3ed1d00028c13a::t_11cef223b2ac7b 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockSettingsChangedNotificationHandler.java
+  s_3ed1d00028c13a::t_6760582eb37c2e 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockStatusReportedNotificationHandler.java
+  s_3ed1d00028c13a::t_5316aa0e16678b 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeClientConfiguration.java
+  s_3ed1d00028c13a::t_12ce2d9bc2ac90 1,7-10
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockCommandApi.java
+  s_3ed1d00028c13a::t_720ba8a3477c43 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockGateway.java
+  s_3ed1d00028c13a::t_901559cc141dc6 1
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepository.java
+  s_3ed1d00028c13a::t_5f6ae37698856e 1
+src/main/java/org/sanmibuh/tedee/shared/adapter/TedeeInfrastructureConfiguration.java
+  s_3ed1d00028c13a::t_e19529c1579654 1
+src/main/java/org/sanmibuh/tedee/shared/adapter/TedeeProperties.java
+  s_3ed1d00028c13a::t_83dcf8fdfa272f 1
+src/main/java/org/sanmibuh/tedee/shared/adapter/primary/TedeeEventController.java
+  s_3ed1d00028c13a::t_694c30e9558105 1,3
+src/main/java/org/sanmibuh/tedee/shared/adapter/primary/TedeeEventRuntimeHints.java
+  s_3ed1d00028c13a::t_670a266a009a57 1,4-8
+src/main/java/org/sanmibuh/tedee/shared/adapter/primary/TedeeEventType.java
+  s_3ed1d00028c13a::t_eb26084180c951 1
+src/main/java/org/sanmibuh/tedee/shared/adapter/secondary/TedeeApiTokenGenerator.java
+  s_3ed1d00028c13a::t_af830a6c278ba8 1
+src/main/java/org/sanmibuh/tedee/shared/adapter/secondary/TedeeApiTokenInterceptor.java
+  s_3ed1d00028c13a::t_5759eb63bb8aa6 1
+src/main/java/org/sanmibuh/tedee/shared/adapter/secondary/TedeeReflectionHints.java
+  s_3ed1d00028c13a::t_e766780824054c 1,6
+src/test/java/org/sanmibuh/ddd/adapter/CQRSHandlerRegistrarTest.java
+  s_3ed1d00028c13a::t_eec41317afca3d 1
+src/test/java/org/sanmibuh/ddd/adapter/DddAutoConfigurationTest.java
+  s_3ed1d00028c13a::t_7d4a6ffe1a6751 1
+src/test/java/org/sanmibuh/ddd/adapter/DomainEventHandlerRegistrarTest.java
+  s_3ed1d00028c13a::t_fcd50244bfc62f 1
+src/test/java/org/sanmibuh/ddd/adapter/HandlerLookupTest.java
+  s_3ed1d00028c13a::t_fcff71a1f11494 1
+src/test/java/org/sanmibuh/ddd/adapter/InMemoryCommandBusTest.java
+  s_3ed1d00028c13a::t_63a155c5fa71bf 1
+src/test/java/org/sanmibuh/ddd/adapter/InMemoryEventBusTest.java
+  s_3ed1d00028c13a::t_7946f9e3bae183 1
+src/test/java/org/sanmibuh/ddd/adapter/InMemoryQueryBusTest.java
+  s_3ed1d00028c13a::t_72d556255e0c26 1
+src/test/java/org/sanmibuh/framework/rest/GlobalExceptionHandlerTest.java
+  s_3ed1d00028c13a::t_cb051e51588970 17,24-25
+src/test/java/org/sanmibuh/tedee/TedeeAutomationApplicationTest.java
+  s_3ed1d00028c13a::t_a28cb441470501 19,22-23
+src/test/java/org/sanmibuh/tedee/bridge/adapter/primary/TedeeCallbackRegistrationTest.java
+  s_3ed1d00028c13a::t_0ec48ac8290588 1
+src/test/java/org/sanmibuh/tedee/bridge/adapter/secondary/BridgeCallbackAddedHandlerTest.java
+  s_3ed1d00028c13a::t_f70b395ecb3848 1,19
+src/test/java/org/sanmibuh/tedee/bridge/adapter/secondary/BridgeCallbackConfigurationTest.java
+  s_3ed1d00028c13a::t_2981d679ba1b01 1,19-21
+src/test/java/org/sanmibuh/tedee/bridge/adapter/secondary/BridgeConnectedNotificationHandlerTest.java
+  s_3ed1d00028c13a::t_b30474a26434c0 1
+src/test/java/org/sanmibuh/tedee/bridge/adapter/secondary/BridgeDisconnectedNotificationHandlerTest.java
+  s_3ed1d00028c13a::t_752ccaf73821e0 1
+src/test/java/org/sanmibuh/tedee/bridge/adapter/secondary/TedeeBridgeRepositoryTest.java
+  s_3ed1d00028c13a::t_f57c7938b578f8 1
+src/test/java/org/sanmibuh/tedee/bridge/adapter/secondary/TedeeCallbackCommandApiTest.java
+  s_3ed1d00028c13a::t_c1b4070ab85f6a 1
+src/test/java/org/sanmibuh/tedee/bridge/adapter/secondary/TedeeCallbackQueryApiTest.java
+  s_3ed1d00028c13a::t_18174aef86b09a 1
+src/test/java/org/sanmibuh/tedee/lock/adapter/primary/LockSchedulerPropertiesTest.java
+  s_3ed1d00028c13a::t_3ffb9392385e5f 1
+src/test/java/org/sanmibuh/tedee/lock/adapter/primary/LockSchedulerTest.java
+  s_3ed1d00028c13a::t_d277564e2d8998 1
+src/test/java/org/sanmibuh/tedee/lock/adapter/primary/LockSchedulingConfigurerTest.java
+  s_3ed1d00028c13a::t_0129b344f917ac 1
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/BatteryLevelReportedNotificationHandlerTest.java
+  s_3ed1d00028c13a::t_589b888e660e44 1
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/LockConnectedNotificationHandlerTest.java
+  s_3ed1d00028c13a::t_7bf1a0c7d8e905 1
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/LockDisconnectedNotificationHandlerTest.java
+  s_3ed1d00028c13a::t_54d2c5a1880310 1
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/LockRequestedHandlerTest.java
+  s_3ed1d00028c13a::t_ac8f6581db305c 1
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/LockSettingsChangedNotificationHandlerTest.java
+  s_3ed1d00028c13a::t_794527b02d38d3 1
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/LockStatusReportedNotificationHandlerTest.java
+  s_3ed1d00028c13a::t_a862d0503e4a13 1
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockGatewayTest.java
+  s_3ed1d00028c13a::t_9b6776edab4633 1,23
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepositoryTest.java
+  s_3ed1d00028c13a::t_42e2e89a41d398 1
+src/test/java/org/sanmibuh/tedee/shared/adapter/TedeeInfrastructureConfigurationTest.java
+  s_3ed1d00028c13a::t_2ecbc0211be973 1
+src/test/java/org/sanmibuh/tedee/shared/adapter/TedeePropertiesTest.java
+  s_3ed1d00028c13a::t_4fc1fe69f2ec55 1
+src/test/java/org/sanmibuh/tedee/shared/adapter/primary/TedeeEventControllerTest.java
+  s_3ed1d00028c13a::t_baadef9b325673 1,21,27
+src/test/java/org/sanmibuh/tedee/shared/adapter/primary/TedeeEventRuntimeHintsTest.java
+  s_3ed1d00028c13a::t_6c91d7007d1fe5 1,6-10
+src/test/java/org/sanmibuh/tedee/shared/adapter/primary/TedeeEventTypeTest.java
+  s_3ed1d00028c13a::t_5380390786f25f 1
+src/test/java/org/sanmibuh/tedee/shared/adapter/secondary/TedeeApiTokenGeneratorTest.java
+  s_3ed1d00028c13a::t_cd493ada365a72 1
+src/test/java/org/sanmibuh/tedee/shared/adapter/secondary/TedeeApiTokenInterceptorTest.java
+  s_3ed1d00028c13a::t_5e8837b754e1d8 1
+src/test/java/org/sanmibuh/tedee/shared/adapter/secondary/TedeeReflectionHintsTest.java
+  s_3ed1d00028c13a::t_476402ee55ed6d 1,45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "740b06fe72143b59a10fd3303db79809e09e819a",
+  "prompts": {},
+  "sessions": {
+    "s_3ed1d00028c13a": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec41a47c3ffevRfHNteQE4OZFO",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
