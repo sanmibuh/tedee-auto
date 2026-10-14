@@ -19,6 +19,7 @@ class TelegramNotificationConfigurationTest {
                 "http://telegram.local",
                 "bot-token",
                 "chat-id",
+                null,
                 new RetryProperties(2, 500, 2.0, 5000)));
 
     then(notifier).isInstanceOf(TelegramNotifier.class);
