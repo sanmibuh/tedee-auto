@@ -129,7 +129,10 @@ sanmibuh:
       # Optional override for a compatible Telegram Bot API endpoint.
       base-url: https://api.telegram.org
       bot-token: <telegram-bot-token>
+      # Operational notifications are always sent to this chat.
       chat-id: <telegram-chat-id>
+      # Optional chat for future administrative features; defaults to chat-id.
+      admin-chat-id: <telegram-admin-chat-id>
       retry:
         # Two retries after the initial attempt, with exponential backoff.
         max-retries: 2
