@@ -19,6 +19,7 @@ public final class InMemoryEventBus implements EventBus {
   @Override
   @SuppressWarnings("unchecked")
   public void publish(final DomainEvent event) {
+    log.info("Dispatching domain event {}", event);
     final var handlers = registry.handlersFor(event.getClass());
     if (isDropped(event, handlers)) {
       log.warn(
