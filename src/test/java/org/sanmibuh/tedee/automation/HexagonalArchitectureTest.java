@@ -15,6 +15,7 @@ import java.util.Set;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainEvent;
+import org.sanmibuh.ddd.domain.Snapshot;
 import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.Query;
 
@@ -94,6 +95,10 @@ class HexagonalArchitectureTest {
   @ArchTest
   static final ArchRule should_carryOnlyScalarOrEventPayloadRecords_whenDomainEvent =
       classes().that().implement(DomainEvent.class).should(haveOnlyAllowedPayloadFields());
+
+  @ArchTest
+  static final ArchRule should_carryOnlyScalarOrImmutableListPayloads_whenSnapshot =
+      classes().that().implement(Snapshot.class).should(haveOnlyAllowedSnapshotFields());
 
   @ArchTest
   static final ArchRule should_beFinal_whenConcreteAggregate =
@@ -191,5 +196,30 @@ class HexagonalArchitectureTest {
             && type.getFields().stream()
                 .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))
                 .allMatch(field -> isScalar(field.getRawType())));
+  }
+
+  private static ArchCondition<JavaClass> haveOnlyAllowedSnapshotFields() {
+    return new ArchCondition<>("carry only scalar or immutable list payloads") {
+      @Override
+      public void check(final JavaClass snapshot, final ConditionEvents events) {
+        snapshot.getFields().stream()
+            .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))
+            .filter(field -> !isAllowedSnapshotField(field.getRawType()))
+            .forEach(
+                field ->
+                    events.add(
+                        SimpleConditionEvent.violated(
+                            field,
+                            "%s has unsupported snapshot field %s of type %s"
+                                .formatted(
+                                    snapshot.getName(),
+                                    field.getName(),
+                                    field.getRawType().getName()))));
+      }
+    };
+  }
+
+  private static boolean isAllowedSnapshotField(final JavaClass type) {
+    return isScalar(type) || type.isAssignableTo(java.util.List.class);
   }
 }
