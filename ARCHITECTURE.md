@@ -4,10 +4,10 @@
 
 ## Structure
 
-The project uses hexagonal architecture. Each bounded context has `domain`, `application`, and `infrastructure` packages; infrastructure is split into `primary` adapters that initiate work and `secondary` adapters that perform external work. Shared DDD/CQRS building blocks live in `org.sanmibuh.ddd`.
+The project uses hexagonal architecture. Each bounded context has `domain`, `application`, and `adapter` packages; adapters are split into `primary` adapters that initiate work and `secondary` adapters that perform external work. Shared DDD/CQRS building blocks live in `org.sanmibuh.ddd`.
 
-- Domain code has no Spring, application, or infrastructure dependency.
-- Application code has no infrastructure dependency.
+- Domain code has no Spring, application, or adapter dependency.
+- Application code has no adapter dependency.
 - Domain events use scalar payloads or event-owned payload records whose fields are scalar or domain enums that represent closed vocabularies; they need a `DomainEventHandler` unless explicitly annotated with `@NoSubscribersRequired`.
 - Concrete aggregates, handlers, adapters, and other leaf collaborators are `final`; Spring configuration classes remain non-final for proxying.
 
@@ -35,7 +35,7 @@ Notifications consume `Lock` and `Bridge` domain events and are rendered through
 
 ## Runtime And Quality
 
-Runtime hints cover reflection needed by Jackson and configuration binding in the native image. The generated Bridge client remains an infrastructure collaborator, not a port.
+Runtime hints cover reflection needed by Jackson and configuration binding in the native image. The generated Bridge client remains an adapter collaborator, not a port.
 
 Domain and application behavior is tested through use cases with real aggregates and mocked I/O ports. Adapter tests exercise their real collaborator boundary. Error Prone, NullAway, Spotless, ArchUnit, and JaCoCo run during `./mvnw verify`.
 

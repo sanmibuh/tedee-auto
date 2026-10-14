@@ -83,7 +83,7 @@ After each GREEN step, scan for repeated structural patterns (e.g., same boilerp
 - Multiple assertions → `BDDSoftAssertions` via `@InjectSoftAssertions`.
 - Test naming: `should_doSomething_whenCondition`.
 - Use `@SneakyThrows` instead of `throws` on test methods.
-- `domain` layer must have zero Spring or infrastructure imports.
+- `domain` layer must have zero Spring or adapter imports.
 - Run `make format` before every commit (RED, GREEN, and REFACTOR) to auto-format.
 - Run `./mvnw verify` to confirm all checks pass.
 - When moving files, always use `git mv` to preserve git history. Never delete and recreate.

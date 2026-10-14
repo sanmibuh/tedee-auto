@@ -44,9 +44,9 @@ These standards apply to all code in this project and are the basis for any code
 - Use Lombok to remove boilerplate: `@RequiredArgsConstructor` for constructor injection. Never write constructors or getters by hand when Lombok can generate them.
 
 ### Architecture
-- `domain` layer must not depend on Spring or `infrastructure` — enforced at build time by ArchUnit.
+- `domain` layer must not depend on Spring or `adapter` — enforced at build time by ArchUnit.
 - Domain rule violations must extend `DomainException`.
-- Cross-aggregate coupling at infrastructure level is forbidden.
+- Cross-aggregate coupling at adapter level is forbidden.
 - Commands and queries use only primitive or standard Java types (`String`, `UUID`, etc.). They must not reference domain value objects or aggregates. The handler is responsible for constructing domain objects from those primitives.
 
 ### Non-null by default (NullAway)
@@ -82,7 +82,7 @@ These standards apply to all code in this project and are the basis for any code
 
 Use the `tdd` skill for any implementation task: load it with the `skill` tool at the start of each coding session.
 
-Apply TDD for all implementation work: domain logic, use cases, services, and infrastructure adapters.
+Apply TDD for all implementation work: domain logic, use cases, services, and adapters.
 
 Skip TDD for pure configuration that contains no logic and no decision that can break silently: Spring `@Configuration` classes, `application.yml`, static GraalVM hint files (`reflect-config.json`), Dockerfile, and build descriptors.
 
@@ -102,4 +102,4 @@ Java LSP (`jdtls`) is enabled via `opencode.json`. OpenCode will automatically s
 
 ### Before finishing
 - Run `make format` to auto-format all code. This is mandatory for both AI-generated and human-authored changes.
-- Run `./mvnw verify` — all checks must pass.
+- When code changes, run `./mvnw verify` — all checks must pass.

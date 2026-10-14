@@ -51,31 +51,31 @@ class HexagonalArchitectureTest {
           .resideInAPackage("..application..");
 
   @ArchTest
-  static final ArchRule should_forbidInfrastructureDependencies_whenInApplicationLayer =
+  static final ArchRule should_forbidAdapterDependencies_whenInApplicationLayer =
       noClasses()
           .that()
           .resideInAPackage("..application..")
           .should()
           .dependOnClassesThat()
-          .resideInAPackage("..infrastructure..");
+          .resideInAPackage("..adapter..");
 
   @ArchTest
   static final ArchRule should_forbidDomainAndSecondaryDependencies_whenInPrimarySlice =
       noClasses()
           .that()
-          .resideInAPackage("..infrastructure.primary..")
+          .resideInAPackage("..adapter.primary..")
           .should()
           .dependOnClassesThat()
-          .resideInAnyPackage("org.sanmibuh.tedee..domain..", "..infrastructure.secondary..");
+          .resideInAnyPackage("org.sanmibuh.tedee..domain..", "..adapter.secondary..");
 
   @ArchTest
   static final ArchRule should_forbidPrimaryAndApplicationDependencies_whenInSecondarySlice =
       noClasses()
           .that()
-          .resideInAPackage("..infrastructure.secondary..")
+          .resideInAPackage("..adapter.secondary..")
           .should()
           .dependOnClassesThat()
-          .resideInAnyPackage("..infrastructure.primary..", "..application..");
+          .resideInAnyPackage("..adapter.primary..", "..application..");
 
   @ArchTest
   static final ArchRule should_forbidSpringDependencies_whenInDomainLayer =
@@ -87,13 +87,13 @@ class HexagonalArchitectureTest {
           .resideInAPackage("org.springframework..");
 
   @ArchTest
-  static final ArchRule should_forbidInfrastructureDependencies_whenInDomainLayer =
+  static final ArchRule should_forbidAdapterDependencies_whenInDomainLayer =
       noClasses()
           .that()
           .resideInAPackage("..domain..")
           .should()
           .dependOnClassesThat()
-          .resideInAPackage("..infrastructure..");
+          .resideInAPackage("..adapter..");
 
   @ArchTest
   static final ArchRule should_carryOnlyScalarOrEventPayloadRecords_whenDomainEvent =
