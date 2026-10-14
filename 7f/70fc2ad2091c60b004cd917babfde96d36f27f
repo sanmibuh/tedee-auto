@@ -1,0 +1,18 @@
+src/main/java/org/sanmibuh/tedee/bridge/domain/Bridge.java
+  h_97a91c9e567f87 44
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  h_97a91c9e567f87 7,9,106-109,224,239-245
+src/test/java/org/sanmibuh/tedee/bridge/application/AddBridgeCallbackHandlerTest.java
+  h_97a91c9e567f87 9-11,25,34-35,44-50
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "7f70fc2ad2091c60b004cd917babfde96d36f27f",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
