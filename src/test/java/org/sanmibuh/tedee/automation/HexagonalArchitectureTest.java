@@ -4,7 +4,9 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 import com.tngtech.archunit.core.domain.JavaClass;
+import com.tngtech.archunit.core.domain.JavaField;
 import com.tngtech.archunit.core.domain.JavaModifier;
+import com.tngtech.archunit.core.domain.JavaParameterizedType;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchCondition;
@@ -15,6 +17,8 @@ import java.util.Set;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainEvent;
+import org.sanmibuh.ddd.domain.EntityId;
+import org.sanmibuh.ddd.domain.Snapshot;
 import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.Query;
 
@@ -96,6 +100,14 @@ class HexagonalArchitectureTest {
       classes().that().implement(DomainEvent.class).should(haveOnlyAllowedPayloadFields());
 
   @ArchTest
+  static final ArchRule should_carryOnlyScalarOrImmutableListPayloads_whenSnapshot =
+      classes().that().implement(Snapshot.class).should(haveOnlyAllowedSnapshotFields());
+
+  @ArchTest
+  static final ArchRule should_beRecord_whenSnapshot =
+      classes().that().implement(Snapshot.class).should().beRecords();
+
+  @ArchTest
   static final ArchRule should_beFinal_whenConcreteAggregate =
       classes()
           .that()
@@ -146,6 +158,16 @@ class HexagonalArchitectureTest {
           .resideInAPackage("..domain.vo..");
 
   @ArchTest
+  static final ArchRule should_resideInValueObjectPackage_whenLockEntityId =
+      classes()
+          .that()
+          .resideInAPackage("org.sanmibuh.tedee.lock.domain..")
+          .and()
+          .implement(EntityId.class)
+          .should()
+          .resideInAPackage("..domain.vo..");
+
+  @ArchTest
   static final ArchRule should_forbidDomainDependencies_whenCommandOrQuery =
       noClasses()
           .that()
@@ -191,5 +213,35 @@ class HexagonalArchitectureTest {
             && type.getFields().stream()
                 .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))
                 .allMatch(field -> isScalar(field.getRawType())));
+  }
+
+  private static ArchCondition<JavaClass> haveOnlyAllowedSnapshotFields() {
+    return new ArchCondition<>("carry only scalar or immutable list payloads") {
+      @Override
+      public void check(final JavaClass snapshot, final ConditionEvents events) {
+        snapshot.getFields().stream()
+            .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))
+            .filter(field -> !isAllowedSnapshotField(field))
+            .forEach(
+                field ->
+                    events.add(
+                        SimpleConditionEvent.violated(
+                            field,
+                            "%s has unsupported snapshot field %s of type %s"
+                                .formatted(
+                                    snapshot.getName(),
+                                    field.getName(),
+                                    field.getRawType().getName()))));
+      }
+    };
+  }
+
+  private static boolean isAllowedSnapshotField(final JavaField field) {
+    final var type = field.getRawType();
+    return isScalar(type)
+        || (type.isAssignableTo(java.util.List.class)
+            && field.getType() instanceof JavaParameterizedType parameterizedType
+            && parameterizedType.getActualTypeArguments().size() == 1
+            && isScalar(parameterizedType.getActualTypeArguments().getFirst().toErasure()));
   }
 }

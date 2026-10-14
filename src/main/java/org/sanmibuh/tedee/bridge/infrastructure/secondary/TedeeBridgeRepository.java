@@ -7,6 +7,7 @@ import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.tedee.bridge.domain.Bridge;
 import org.sanmibuh.tedee.bridge.domain.BridgeRepository;
+import org.sanmibuh.tedee.bridge.domain.BridgeSnapshot;
 import org.sanmibuh.tedee.bridge.domain.vo.BridgeId;
 import org.springframework.stereotype.Repository;
 
@@ -24,11 +25,11 @@ public final class TedeeBridgeRepository implements BridgeRepository {
             .filter(Objects::nonNull)
             .map(URI::create)
             .toList();
-    return Optional.of(new Bridge(callbacks));
+    return Optional.of(new Bridge(new BridgeSnapshot(bridgeId.value(), callbacks)));
   }
 
   @Override
-  public void save(final Bridge bridge) {
+  public void save(final BridgeSnapshot snapshot) {
     // No-op
   }
 }

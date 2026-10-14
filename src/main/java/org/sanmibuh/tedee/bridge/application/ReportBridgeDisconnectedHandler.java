@@ -8,7 +8,7 @@ public final class ReportBridgeDisconnectedHandler
 
   @Override
   protected Bridge execute(final ReportBridgeDisconnectedCommand command) {
-    final var bridge = new Bridge();
+    final var bridge = Bridge.create();
     bridge.reportDisconnected();
 
     return bridge;
