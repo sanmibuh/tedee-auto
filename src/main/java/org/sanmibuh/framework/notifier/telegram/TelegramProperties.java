@@ -17,8 +17,7 @@ public record TelegramProperties(
     @Nullable String adminChatId,
     @Valid @NotNull RetryProperties retry) {
 
-  @Override
-  public String adminChatId() {
-    return adminChatId == null ? chatId : adminChatId;
+  public TelegramProperties {
+    adminChatId = adminChatId == null ? chatId : adminChatId;
   }
 }
