@@ -1,0 +1,21 @@
+src/main/java/org/sanmibuh/ddd/domain/AggregateRoot.java
+  s_52cbbda4d37c31::t_0aa0427e9b356f 7-8,13
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  s_52cbbda4d37c31::t_bb5931b98c6910 18,154-163
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "066a4e951c332d0a9cb6deb05a1b382dec26285b",
+  "prompts": {},
+  "sessions": {
+    "s_52cbbda4d37c31": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec9050ba0ffeRhWCuodvyM5kGk",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
