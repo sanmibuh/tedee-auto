@@ -1,3 +1,3 @@
 package org.sanmibuh.ddd.domain;
 
-public interface AggregateRootId<T> extends ValueObject<T> {}
+public interface AggregateRootId<T> extends EntityId<T> {}

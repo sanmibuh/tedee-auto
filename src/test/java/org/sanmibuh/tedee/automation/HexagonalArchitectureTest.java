@@ -15,6 +15,7 @@ import java.util.Set;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
 import org.sanmibuh.ddd.domain.DomainEvent;
+import org.sanmibuh.ddd.domain.EntityId;
 import org.sanmibuh.ddd.domain.Snapshot;
 import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.Query;
@@ -147,6 +148,16 @@ class HexagonalArchitectureTest {
           .resideInAPackage("org.sanmibuh.tedee.lock.domain..")
           .and()
           .implement(AggregateRootId.class)
+          .should()
+          .resideInAPackage("..domain.vo..");
+
+  @ArchTest
+  static final ArchRule should_resideInValueObjectPackage_whenLockEntityId =
+      classes()
+          .that()
+          .resideInAPackage("org.sanmibuh.tedee.lock.domain..")
+          .and()
+          .implement(EntityId.class)
           .should()
           .resideInAPackage("..domain.vo..");
 
