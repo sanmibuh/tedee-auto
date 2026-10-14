@@ -4,7 +4,9 @@ import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.classes;
 import static com.tngtech.archunit.lang.syntax.ArchRuleDefinition.noClasses;
 
 import com.tngtech.archunit.core.domain.JavaClass;
+import com.tngtech.archunit.core.domain.JavaField;
 import com.tngtech.archunit.core.domain.JavaModifier;
+import com.tngtech.archunit.core.domain.JavaParameterizedType;
 import com.tngtech.archunit.junit.AnalyzeClasses;
 import com.tngtech.archunit.junit.ArchTest;
 import com.tngtech.archunit.lang.ArchCondition;
@@ -100,6 +102,10 @@ class HexagonalArchitectureTest {
   @ArchTest
   static final ArchRule should_carryOnlyScalarOrImmutableListPayloads_whenSnapshot =
       classes().that().implement(Snapshot.class).should(haveOnlyAllowedSnapshotFields());
+
+  @ArchTest
+  static final ArchRule should_beRecord_whenSnapshot =
+      classes().that().implement(Snapshot.class).should().beRecords();
 
   @ArchTest
   static final ArchRule should_beFinal_whenConcreteAggregate =
@@ -215,7 +221,7 @@ class HexagonalArchitectureTest {
       public void check(final JavaClass snapshot, final ConditionEvents events) {
         snapshot.getFields().stream()
             .filter(field -> !field.getModifiers().contains(JavaModifier.STATIC))
-            .filter(field -> !isAllowedSnapshotField(field.getRawType()))
+            .filter(field -> !isAllowedSnapshotField(field))
             .forEach(
                 field ->
                     events.add(
@@ -230,7 +236,12 @@ class HexagonalArchitectureTest {
     };
   }
 
-  private static boolean isAllowedSnapshotField(final JavaClass type) {
-    return isScalar(type) || type.isAssignableTo(java.util.List.class);
+  private static boolean isAllowedSnapshotField(final JavaField field) {
+    final var type = field.getRawType();
+    return isScalar(type)
+        || (type.isAssignableTo(java.util.List.class)
+            && field.getType() instanceof JavaParameterizedType parameterizedType
+            && parameterizedType.getActualTypeArguments().size() == 1
+            && isScalar(parameterizedType.getActualTypeArguments().getFirst().toErasure()));
   }
 }

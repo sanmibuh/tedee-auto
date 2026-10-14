@@ -41,6 +41,7 @@ public final class Bridge extends AggregateRoot<BridgeId, String, BridgeSnapshot
 
   public void addCallback(final URI callbackUrl) {
     if (!callbacks.contains(callbackUrl)) {
+      callbacks.add(callbackUrl);
       recordEvent(new BridgeCallbackAdded(callbackUrl));
     }
   }
