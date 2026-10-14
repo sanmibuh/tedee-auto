@@ -28,7 +28,8 @@ class ReportLockConnectedHandlerTest {
 
   @Test
   void should_recordLockConnected_whenReportingConnectedLock() {
-    given(repository.get(new LockId(1))).willReturn(Lock.create(new LockId(1), LockStatus.UNLOCKED));
+    given(repository.get(new LockId(1)))
+        .willReturn(Lock.create(new LockId(1), LockStatus.UNLOCKED));
 
     sut.handle(new ReportLockConnectedCommand(1));
 
