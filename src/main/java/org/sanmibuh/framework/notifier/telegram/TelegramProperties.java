@@ -18,6 +18,6 @@ public record TelegramProperties(
     @Valid @NotNull RetryProperties retry) {
 
   public TelegramProperties {
-    adminChatId = adminChatId == null ? chatId : adminChatId;
+    adminChatId = adminChatId == null || adminChatId.isBlank() ? chatId : adminChatId;
   }
 }
