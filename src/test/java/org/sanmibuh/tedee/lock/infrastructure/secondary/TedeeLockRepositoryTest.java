@@ -21,7 +21,7 @@ class TedeeLockRepositoryTest {
 
   @Test
   void should_doNothing_whenSavingLockedLock() {
-    final var lock = new Lock(new LockId(DEVICE_ID), LockStatus.UNLOCKED);
+    final var lock = Lock.create(new LockId(DEVICE_ID), LockStatus.UNLOCKED);
 
     thenCode(() -> sut.save(lock)).doesNotThrowAnyException();
   }

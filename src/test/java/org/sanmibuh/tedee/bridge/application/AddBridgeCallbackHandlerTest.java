@@ -15,6 +15,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.bridge.domain.Bridge;
 import org.sanmibuh.tedee.bridge.domain.BridgeRepository;
+import org.sanmibuh.tedee.bridge.domain.BridgeSnapshot;
 import org.sanmibuh.tedee.bridge.domain.event.BridgeCallbackAdded;
 import org.sanmibuh.tedee.bridge.domain.vo.BridgeId;
 
@@ -30,7 +31,7 @@ class AddBridgeCallbackHandlerTest {
   @Test
   void should_recordCallbackAdded_whenAddingMissingCallback() {
     final var callbackUrl = URI.create("https://automation.local/tedee/events");
-    given(repository.get(BridgeId.SINGLETON)).willReturn(new Bridge());
+    given(repository.get(BridgeId.SINGLETON)).willReturn(Bridge.create());
 
     sut.handle(new AddBridgeCallbackCommand(callbackUrl));
 
@@ -42,7 +43,8 @@ class AddBridgeCallbackHandlerTest {
   @Test
   void should_notRecordEvent_whenAddingExistingCallback() {
     final var callbackUrl = URI.create("https://automation.local/tedee/events");
-    given(repository.get(BridgeId.SINGLETON)).willReturn(new Bridge(List.of(callbackUrl)));
+    given(repository.get(BridgeId.SINGLETON))
+        .willReturn(new Bridge(new BridgeSnapshot(List.of(callbackUrl))));
 
     sut.handle(new AddBridgeCallbackCommand(callbackUrl));
 

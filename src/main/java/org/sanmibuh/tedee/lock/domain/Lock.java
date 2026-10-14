@@ -14,13 +14,22 @@ import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.vo.LockState;
 import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
-public final class Lock extends AggregateRoot<LockId> {
+public final class Lock extends AggregateRoot<LockId, LockSnapshot> {
 
   private LockStatus status;
 
-  public Lock(final LockId id, final LockStatus status) {
-    super(id);
-    this.status = status;
+  public Lock(final LockSnapshot snapshot) {
+    super(new LockId(snapshot.id()));
+    status = snapshot.status();
+  }
+
+  public static Lock create(final LockId id, final LockStatus status) {
+    return new Lock(new LockSnapshot(id.value(), status));
+  }
+
+  @Override
+  public LockSnapshot snapshot() {
+    return new LockSnapshot(id().value(), status);
   }
 
   public void lock() {

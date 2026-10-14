@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-public abstract class AggregateRoot<I extends AggregateRootId<?>> {
+public abstract class AggregateRoot<I extends AggregateRootId<?>, S extends Snapshot> {
 
   private final I id;
   private final List<DomainEvent> domainEvents = new ArrayList<>();
@@ -25,6 +25,10 @@ public abstract class AggregateRoot<I extends AggregateRootId<?>> {
     return Collections.unmodifiableList(domainEvents);
   }
 
+  public S snapshot() {
+    throw new UnsupportedOperationException();
+  }
+
   // Entity identity: equal iff same concrete type and same id, ignoring state and recorded events.
   // Concrete aggregates are final (enforced by ArchUnit), so a distinct class is always a distinct
   // aggregate; getClass() captures that precisely, whereas instanceof AggregateRoot would make two
@@ -39,7 +43,7 @@ public abstract class AggregateRoot<I extends AggregateRootId<?>> {
     if (o == null || getClass() != o.getClass()) {
       return false;
     }
-    return id.equals(((AggregateRoot<?>) o).id);
+    return id.equals(((AggregateRoot<?, ?>) o).id);
   }
 
   @Override

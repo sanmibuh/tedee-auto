@@ -60,7 +60,7 @@ class AggregateRootTest {
     then(sut).isNotEqualTo(new OtherAggregate(new TestId(42)));
   }
 
-  private static final class TestAggregate extends AggregateRoot<TestId> {
+  private static final class TestAggregate extends AggregateRoot<TestId, TestSnapshot> {
     TestAggregate(final TestId id) {
       super(id);
     }
@@ -68,13 +68,27 @@ class AggregateRootTest {
     void emit(final DomainEvent event) {
       recordEvent(event);
     }
+
+    @Override
+    public TestSnapshot snapshot() {
+      return new TestSnapshot();
+    }
   }
 
-  private static final class OtherAggregate extends AggregateRoot<TestId> {
+  private static final class OtherAggregate extends AggregateRoot<TestId, OtherSnapshot> {
     OtherAggregate(final TestId id) {
       super(id);
     }
+
+    @Override
+    public OtherSnapshot snapshot() {
+      return new OtherSnapshot();
+    }
   }
+
+  private record TestSnapshot() implements Snapshot {}
+
+  private record OtherSnapshot() implements Snapshot {}
 
   private record TestId(Integer value) implements AggregateRootId<Integer> {}
 
