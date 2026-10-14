@@ -1,0 +1,14 @@
+AGENTS.md
+  h_97a91c9e567f87 105
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f3dbbc9d27f08af98ebc84d846d5b19771f734d0",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
