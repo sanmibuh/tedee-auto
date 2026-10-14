@@ -102,4 +102,4 @@ Java LSP (`jdtls`) is enabled via `opencode.json`. OpenCode will automatically s
 
 ### Before finishing
 - Run `make format` to auto-format all code. This is mandatory for both AI-generated and human-authored changes.
-- Run `./mvnw verify` — all checks must pass.
+- When code changes, run `./mvnw verify` — all checks must pass.
