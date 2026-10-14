@@ -1,6 +1,6 @@
 package org.sanmibuh.tedee.shared.infrastructure.primary;
 
-import static org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration.EVENTS_PATH;
+import static org.sanmibuh.tedee.shared.infrastructure.TedeeInfrastructureConfiguration.EVENTS_PATH;
 import static org.springframework.http.HttpStatus.NO_CONTENT;
 
 import lombok.RequiredArgsConstructor;

@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.shared.infrastructure.secondary;
 
 import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 
 @RequiredArgsConstructor
-final class TedeeApiTokenGenerator {
+public final class TedeeApiTokenGenerator {
 
   private static final String HASH_ALGORITHM = "SHA-256";
 

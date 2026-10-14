@@ -23,8 +23,8 @@ import org.sanmibuh.tedee.lock.application.ReportLockConnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockDisconnectedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockSettingsChangedCommand;
 import org.sanmibuh.tedee.lock.application.ReportLockStatusCommand;
-import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
 import org.sanmibuh.tedee.lock.infrastructure.primary.TedeeWebhookConfiguration;
+import org.sanmibuh.tedee.shared.infrastructure.TedeeProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
 import org.springframework.context.annotation.Import;
@@ -36,10 +36,9 @@ import org.springframework.test.web.servlet.MockMvc;
 @Import(TedeeWebhookConfiguration.class)
 class TedeeEventControllerTest {
 
+  static final String CALLBACK_SECRET = "callback-secret";
   private static final String EVENTS_PATH = "/tedee/events";
   private static final String CALLBACK_SECRET_HEADER = "X-Tedee-Callback-Secret";
-  static final String CALLBACK_SECRET = "callback-secret";
-
   @Autowired MockMvc sut;
 
   @MockitoBean CommandBus commandBus;

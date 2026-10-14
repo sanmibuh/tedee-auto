@@ -20,7 +20,7 @@ import org.sanmibuh.tedee.lock.domain.exception.InvalidLockRequestException;
 import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
-import org.sanmibuh.tedee.lock.infrastructure.TedeeInfrastructureConfiguration;
+import org.sanmibuh.tedee.shared.infrastructure.TedeeInfrastructureConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.context.annotation.Import;

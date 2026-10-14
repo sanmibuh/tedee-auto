@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.bridge.infrastructure.secondary;
 
 import com.tedee.bridge.client.api.CallbackApi;
 import com.tedee.bridge.client.model.CallbackDetailsNoId;
@@ -13,10 +13,5 @@ final class TedeeCallbackCommandApi implements CallbackCommandApi {
   @Override
   public CallbackIDsingle createCallback(final CallbackDetailsNoId callback) {
     return callbackApi.postSingleCallback(callback);
-  }
-
-  @Override
-  public void deleteCallback(final int callbackId) {
-    callbackApi.deleteCallback(callbackId);
   }
 }

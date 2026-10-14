@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure;
+package org.sanmibuh.tedee.shared.infrastructure;
 
 import org.sanmibuh.tedee.ApplicationLocale;
 import org.springframework.boot.autoconfigure.web.WebProperties;

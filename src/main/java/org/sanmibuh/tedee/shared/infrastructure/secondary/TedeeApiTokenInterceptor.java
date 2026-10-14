@@ -1,4 +1,4 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.shared.infrastructure.secondary;
 
 import java.io.IOException;
 import java.time.Clock;
@@ -10,7 +10,7 @@ import org.springframework.http.client.ClientHttpRequestInterceptor;
 import org.springframework.http.client.ClientHttpResponse;
 
 @RequiredArgsConstructor
-final class TedeeApiTokenInterceptor implements ClientHttpRequestInterceptor {
+public final class TedeeApiTokenInterceptor implements ClientHttpRequestInterceptor {
 
   private static final String API_TOKEN_HEADER = "api_token";
 

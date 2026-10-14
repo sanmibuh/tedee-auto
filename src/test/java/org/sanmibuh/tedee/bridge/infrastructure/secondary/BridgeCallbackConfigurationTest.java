@@ -1,24 +1,24 @@
-package org.sanmibuh.tedee.lock.infrastructure.secondary;
+package org.sanmibuh.tedee.bridge.infrastructure.secondary;
 
 import static org.assertj.core.api.BDDAssertions.then;
 
 import com.sun.net.httpserver.HttpExchange;
 import com.sun.net.httpserver.HttpServer;
-import com.tedee.bridge.client.ApiClient;
 import java.io.IOException;
 import java.io.UncheckedIOException;
 import java.net.InetSocketAddress;
 import java.net.URI;
 import java.nio.charset.StandardCharsets;
 import java.time.Clock;
-import java.time.Duration;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.atomic.AtomicInteger;
 import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.framework.resilience.RetryProperties;
-import org.sanmibuh.tedee.lock.infrastructure.TedeeProperties;
+import org.sanmibuh.tedee.shared.infrastructure.TedeeProperties;
+import org.sanmibuh.tedee.shared.infrastructure.secondary.TedeeApiTokenGenerator;
+import org.sanmibuh.tedee.shared.infrastructure.secondary.TedeeApiTokenInterceptor;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
@@ -26,33 +26,11 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.MediaType;
 import org.springframework.web.client.RestClient;
 
-class TedeeClientConfigurationTest {
+class BridgeCallbackConfigurationTest {
 
-  private final TedeeClientConfiguration sut = new TedeeClientConfiguration();
   private final ApplicationContextRunner runner =
       new ApplicationContextRunner()
-          .withUserConfiguration(TedeeClientConfiguration.class, TestConfiguration.class);
-
-  @Test
-  void should_configureApiClientBasePath_whenPropertiesAreProvided() {
-    final var properties = properties();
-    final var apiClient =
-        sut.tedeeApiClient(
-            RestClient.builder(),
-            properties,
-            sut.tedeeApiTokenInterceptor(properties, Clock.systemUTC()));
-
-    then(apiClient.getBasePath()).isEqualTo("https://gateway.local/tedee/api/v1.0");
-  }
-
-  @Test
-  void should_createLockCommandApi_whenApiClientIsProvided() {
-    final var apiClient = new ApiClient();
-
-    final var lockCommandApi = sut.lockCommandApi(apiClient);
-
-    then(lockCommandApi).isInstanceOf(TedeeLockCommandApi.class);
-  }
+          .withUserConfiguration(BridgeCallbackConfiguration.class, TestConfiguration.class);
 
   @Test
   @SneakyThrows
@@ -76,7 +54,6 @@ class TedeeClientConfigurationTest {
             URI.create("http://localhost:" + server.getAddress().getPort() + "/v1.0"),
             "secret-token",
             "callback-secret",
-            Duration.ofSeconds(30),
             new RetryProperties(2, 500L, 2.0, 5000L));
     try {
       runner
@@ -84,7 +61,6 @@ class TedeeClientConfigurationTest {
               "sanmibuh.rest.tedee.base-url=" + properties.baseUrl(),
               "sanmibuh.rest.tedee.api-key=" + properties.apiKey(),
               "sanmibuh.rest.tedee.callback-secret=" + properties.callbackSecret(),
-              "sanmibuh.rest.tedee.callback-registration-interval=30s",
               "sanmibuh.rest.tedee.retry.max-retries=2",
               "sanmibuh.rest.tedee.retry.initial-interval=500",
               "sanmibuh.rest.tedee.retry.multiplier=2.0",
@@ -112,15 +88,6 @@ class TedeeClientConfigurationTest {
     exchange.close();
   }
 
-  private static TedeeProperties properties() {
-    return new TedeeProperties(
-        URI.create("https://gateway.local/tedee/api/v1.0"),
-        "secret-token",
-        "callback-secret",
-        Duration.ofSeconds(30),
-        new RetryProperties(2, 500L, 2.0, 5000L));
-  }
-
   @Configuration
   @EnableConfigurationProperties(TedeeProperties.class)
   static class TestConfiguration {
@@ -128,6 +95,11 @@ class TedeeClientConfigurationTest {
     @Bean
     Clock clock() {
       return Clock.systemUTC();
+    }
+
+    @Bean
+    TedeeApiTokenInterceptor tedeeApiTokenInterceptor(final Clock clock) {
+      return new TedeeApiTokenInterceptor(new TedeeApiTokenGenerator("secret-token"), clock);
     }
 
     @Bean
