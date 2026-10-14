@@ -29,7 +29,7 @@ The Bridge uses encrypted `api_token` authentication. A request interceptor crea
 
 ## Notifications
 
-`Notifier` is a framework-level output port with a Telegram adapter. Credentials are required at startup, Telegram failures are mapped to integration categories, and transient failures are retried.
+`Notifier` is a framework-level output port with a Telegram adapter. Credentials are required at startup, Telegram failures are mapped to integration categories, and transient failures are retried. Operational notifications always use the required Telegram `chat-id`; the optional `admin-chat-id` identifies the administrator for future inbound administrative features and defaults to `chat-id` when omitted.
 
 Notifications consume `Lock` and `Bridge` domain events and are rendered through `MessageSource`. Battery levels are categorized as depleted (<=10), critical (<=20), low (<=40), medium (<=60), good (<=80), or high. Catalogs are in `messages.properties` and `messages_es.properties`; `spring.web.locale` selects the application locale for event-driven notifications.
 

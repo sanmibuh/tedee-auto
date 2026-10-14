@@ -33,6 +33,7 @@ import org.springframework.test.web.client.MockRestServiceServer;
       "sanmibuh.notification.telegram.base-url=http://telegram.local",
       "sanmibuh.notification.telegram.bot-token=bot-token",
       "sanmibuh.notification.telegram.chat-id=chat-id",
+      "sanmibuh.notification.telegram.admin-chat-id=administrator-chat-id",
       "sanmibuh.notification.telegram.retry.max-retries=2",
       "sanmibuh.notification.telegram.retry.initial-interval=1",
       "sanmibuh.notification.telegram.retry.multiplier=1",
