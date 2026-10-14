@@ -1,0 +1,66 @@
+src/main/java/org/sanmibuh/tedee/bridge/infrastructure/primary/TedeeCallbackRegistration.java
+  s_52cbbda4d37c31::t_b3d656111bc859 3
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/BridgeCallbackAddedHandlerTest.java
+  s_52cbbda4d37c31::t_38c25c16a4b17b 19
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/TedeeBridgeRepositoryTest.java
+  h_97a91c9e567f87 6,29
+src/main/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/BridgeCallbackConfiguration.java
+  s_52cbbda4d37c31::t_602e460dff7050 5-6
+src/main/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/BridgeCallbackAddedHandler.java
+  h_97a91c9e567f87 3,10
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeWebhookAuthenticationInterceptor.java
+  h_97a91c9e567f87 4,11
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/primary/TedeeWebhookConfiguration.java
+  h_97a91c9e567f87 3
+src/main/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeClientConfiguration.java
+  h_97a91c9e567f87 7-10
+src/main/java/org/sanmibuh/tedee/shared/infrastructure/TedeeInfrastructureConfiguration.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/tedee/shared/infrastructure/TedeeProperties.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/tedee/shared/infrastructure/primary/TedeeEventController.java
+  h_97a91c9e567f87 3
+src/main/java/org/sanmibuh/tedee/shared/infrastructure/secondary/TedeeApiTokenGenerator.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/tedee/shared/infrastructure/secondary/TedeeApiTokenInterceptor.java
+  h_97a91c9e567f87 1
+src/main/java/org/sanmibuh/tedee/shared/infrastructure/secondary/TedeeReflectionHints.java
+  h_97a91c9e567f87 1,6,15
+src/test/java/org/sanmibuh/tedee/bridge/infrastructure/secondary/BridgeCallbackConfigurationTest.java
+  h_97a91c9e567f87 19-21
+src/test/java/org/sanmibuh/tedee/lock/infrastructure/secondary/TedeeLockGatewayTest.java
+  h_97a91c9e567f87 23
+src/test/java/org/sanmibuh/tedee/shared/infrastructure/TedeeInfrastructureConfigurationTest.java
+  h_97a91c9e567f87 1
+src/test/java/org/sanmibuh/tedee/shared/infrastructure/TedeePropertiesTest.java
+  h_97a91c9e567f87 1
+src/test/java/org/sanmibuh/tedee/shared/infrastructure/primary/TedeeEventControllerTest.java
+  h_97a91c9e567f87 26
+src/test/java/org/sanmibuh/tedee/shared/infrastructure/secondary/TedeeApiTokenGeneratorTest.java
+  h_97a91c9e567f87 1
+src/test/java/org/sanmibuh/tedee/shared/infrastructure/secondary/TedeeApiTokenInterceptorTest.java
+  h_97a91c9e567f87 1
+src/test/java/org/sanmibuh/tedee/shared/infrastructure/secondary/TedeeReflectionHintsTest.java
+  h_97a91c9e567f87 1,45
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a212c95ac71c1f3579791d6c13a560aa1e2c3e71",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  },
+  "sessions": {
+    "s_52cbbda4d37c31": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec9050ba0ffeRhWCuodvyM5kGk",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
