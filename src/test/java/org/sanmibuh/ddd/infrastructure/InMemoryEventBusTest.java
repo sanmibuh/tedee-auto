@@ -71,7 +71,7 @@ class InMemoryEventBusTest {
     try (final var logCaptor = LogCaptor.forClass(InMemoryEventBus.class)) {
       sut.publish(event);
 
-      then(logCaptor.getInfoLogs()).singleElement(STRING).contains(event.toString());
+      then(logCaptor.getInfoLogs()).containsExactly("Dispatching domain event %s".formatted(event));
     }
   }
 

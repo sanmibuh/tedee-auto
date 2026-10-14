@@ -2,7 +2,6 @@ package org.sanmibuh.ddd.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
-import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 
 import java.util.List;
 import nl.altindag.log.LogCaptor;
@@ -38,8 +37,8 @@ class InMemoryQueryBusTest {
     try (final var logCaptor = LogCaptor.forClass(InMemoryQueryBus.class)) {
       sut.dispatch(query);
 
-      then(logCaptor.getInfoLogs()).hasSize(2).first(STRING).contains(query.toString());
-      then(logCaptor.getInfoLogs()).last(STRING).contains("result");
+      then(logCaptor.getInfoLogs())
+          .containsExactly("Dispatching query %s".formatted(query), "Query response result");
     }
   }
 
