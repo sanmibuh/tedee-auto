@@ -1,0 +1,27 @@
+src/main/java/org/sanmibuh/ddd/domain/AggregateRoot.java
+  s_52cbbda4d37c31::t_583c738a6dec33 7-8
+src/main/java/org/sanmibuh/ddd/port/Repository.java
+  s_52cbbda4d37c31::t_8ac8decb0096ac 7,10-13
+src/test/java/org/sanmibuh/ddd/domain/AggregateRootTest.java
+  s_52cbbda4d37c31::t_bb446d979c375a 63,74,78,85,89,91
+src/test/java/org/sanmibuh/ddd/domain/RepositoryTest.java
+  s_52cbbda4d37c31::t_a80c92c5db1136 39,54,68,80,83
+src/test/java/org/sanmibuh/tedee/bridge/domain/BridgeTest.java
+  s_52cbbda4d37c31::t_304e0db8c124a0 8,15-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "792cc66666f473d15938c0ee78e0be7875a3039b",
+  "prompts": {},
+  "sessions": {
+    "s_52cbbda4d37c31": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec9050ba0ffeRhWCuodvyM5kGk",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
