@@ -2,7 +2,6 @@ package org.sanmibuh.ddd.infrastructure;
 
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
-import static org.assertj.core.api.InstanceOfAssertFactories.STRING;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -47,7 +46,7 @@ class InMemoryCommandBusTest {
     try (final var logCaptor = LogCaptor.forClass(InMemoryCommandBus.class)) {
       sut.dispatch(command);
 
-      then(logCaptor.getInfoLogs()).singleElement(STRING).contains(command.toString());
+      then(logCaptor.getInfoLogs()).containsExactly("Dispatching command %s".formatted(command));
     }
   }
 

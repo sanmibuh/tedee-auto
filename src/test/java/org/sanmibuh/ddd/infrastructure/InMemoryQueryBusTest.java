@@ -4,21 +4,12 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import java.util.List;
+import nl.altindag.log.LogCaptor;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.port.Query;
 import org.sanmibuh.ddd.port.QueryHandler;
 
 class InMemoryQueryBusTest {
-
-  record StubQuery() implements Query<String> {}
-
-  static class StubQueryHandler implements QueryHandler<StubQuery, String> {
-
-    @Override
-    public String handle(final StubQuery query) {
-      return "result";
-    }
-  }
 
   @Test
   void should_returnQueryResult_whenHandlerIsRegistered() {
@@ -36,5 +27,28 @@ class InMemoryQueryBusTest {
     thenThrownBy(() -> sut.dispatch(new StubQuery()))
         .isInstanceOf(HandlerNotFoundException.class)
         .hasMessageContaining(StubQuery.class.getName());
+  }
+
+  @Test
+  void should_logDispatchedQueryAndResponse_whenHandlerIsRegistered() {
+    final var query = new StubQuery();
+    final var sut = new InMemoryQueryBus(List.of(new StubQueryHandler()));
+
+    try (final var logCaptor = LogCaptor.forClass(InMemoryQueryBus.class)) {
+      sut.dispatch(query);
+
+      then(logCaptor.getInfoLogs())
+          .containsExactly("Dispatching query %s".formatted(query), "Query response result");
+    }
+  }
+
+  record StubQuery() implements Query<String> {}
+
+  static class StubQueryHandler implements QueryHandler<StubQuery, String> {
+
+    @Override
+    public String handle(final StubQuery query) {
+      return "result";
+    }
   }
 }

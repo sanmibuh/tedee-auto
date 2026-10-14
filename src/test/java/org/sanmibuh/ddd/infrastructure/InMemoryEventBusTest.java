@@ -63,6 +63,18 @@ class InMemoryEventBusTest {
     }
   }
 
+  @Test
+  void should_logDispatchedEvent_whenPublished() {
+    final var event = new StubEvent();
+    final var sut = new InMemoryEventBus(List.of(new StubEventHandler()));
+
+    try (final var logCaptor = LogCaptor.forClass(InMemoryEventBus.class)) {
+      sut.publish(event);
+
+      then(logCaptor.getInfoLogs()).containsExactly("Dispatching domain event %s".formatted(event));
+    }
+  }
+
   record StubEvent() implements DomainEvent {}
 
   @NoSubscribersRequired
