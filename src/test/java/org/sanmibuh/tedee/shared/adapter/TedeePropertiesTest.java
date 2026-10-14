@@ -1,0 +1,215 @@
+package org.sanmibuh.tedee.shared.adapter;
+
+import static org.assertj.core.api.BDDAssertions.then;
+
+import java.net.URI;
+import java.util.stream.Stream;
+import org.assertj.core.api.BDDSoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
+import org.junit.jupiter.api.Named;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.ConfigDataApplicationContextInitializer;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+import org.springframework.boot.validation.autoconfigure.ValidationAutoConfiguration;
+
+@ExtendWith(SoftAssertionsExtension.class)
+class TedeePropertiesTest {
+
+  private final ApplicationContextRunner runner =
+      new ApplicationContextRunner()
+          .withConfiguration(AutoConfigurations.of(ValidationAutoConfiguration.class))
+          .withUserConfiguration(EnableTedeeProperties.class);
+
+  private final ApplicationContextRunner applicationConfigurationRunner =
+      new ApplicationContextRunner()
+          .withInitializer(new ConfigDataApplicationContextInitializer())
+          .withConfiguration(AutoConfigurations.of(ValidationAutoConfiguration.class))
+          .withUserConfiguration(EnableTedeeProperties.class);
+
+  @InjectSoftAssertions private BDDSoftAssertions softly;
+
+  @Test
+  void should_bindProperties_whenBaseUrlAndApiKeyAreProvided() {
+    runner
+        .withPropertyValues(
+            "sanmibuh.rest.tedee.base-url=https://gateway.local/tedee/api/v1.0",
+            "sanmibuh.rest.tedee.api-key=secret-token",
+            "sanmibuh.rest.tedee.callback-secret=callback-secret",
+            "sanmibuh.rest.tedee.retry.max-retries=2",
+            "sanmibuh.rest.tedee.retry.initial-interval=500",
+            "sanmibuh.rest.tedee.retry.multiplier=2.0",
+            "sanmibuh.rest.tedee.retry.max-interval=5000")
+        .run(
+            context -> {
+              final var sut = context.getBean(TedeeProperties.class);
+              softly
+                  .then(sut.baseUrl())
+                  .isEqualTo(URI.create("https://gateway.local/tedee/api/v1.0"));
+              softly.then(sut.apiKey()).isEqualTo("secret-token");
+              softly.then(sut.callbackSecret()).isEqualTo("callback-secret");
+              softly.then(sut.retry().maxRetries()).isEqualTo(2);
+              softly.then(sut.retry().initialInterval()).isEqualTo(500L);
+              softly.then(sut.retry().multiplier()).isEqualTo(2.0);
+              softly.then(sut.retry().maxInterval()).isEqualTo(5000L);
+            });
+  }
+
+  @Test
+  void should_bindBaseUrl_whenEnvironmentContainsBaseUrlWithoutHost() {
+    applicationConfigurationRunner
+        .withSystemProperties(
+            "TEDEE_BASE_URL=https://gateway.local/tedee/api/v1.0",
+            "TEDEE_HOST=",
+            "TEDEE_API_KEY=secret-token",
+            "TEDEE_CALLBACK_SECRET=callback-secret")
+        .run(
+            context ->
+                then(context.getBean(TedeeProperties.class).baseUrl())
+                    .isEqualTo(URI.create("https://gateway.local/tedee/api/v1.0")));
+  }
+
+  @Test
+  void should_bindLocalBaseUrl_whenEnvironmentContainsHostWithoutBaseUrl() {
+    applicationConfigurationRunner
+        .withSystemProperties(
+            "TEDEE_BASE_URL=",
+            "TEDEE_HOST=bridge.local",
+            "TEDEE_API_KEY=secret-token",
+            "TEDEE_CALLBACK_SECRET=callback-secret")
+        .run(
+            context ->
+                then(context.getBean(TedeeProperties.class).baseUrl())
+                    .isEqualTo(URI.create("http://bridge.local/v1.0")));
+  }
+
+  @Test
+  void should_failStartup_whenBaseUrlAndHostAreBlank() {
+    applicationConfigurationRunner
+        .withSystemProperties(
+            "TEDEE_BASE_URL=",
+            "TEDEE_HOST=",
+            "TEDEE_API_KEY=secret-token",
+            "TEDEE_CALLBACK_SECRET=callback-secret")
+        .run(context -> then(context).hasFailed());
+  }
+
+  @Test
+  void should_failStartup_whenApiKeyIsBlank() {
+    applicationConfigurationRunner
+        .withSystemProperties(
+            "TEDEE_BASE_URL=https://gateway.local/tedee/api/v1.0",
+            "TEDEE_HOST=",
+            "TEDEE_API_KEY=",
+            "TEDEE_CALLBACK_SECRET=callback-secret")
+        .run(context -> then(context).hasFailed());
+  }
+
+  @ParameterizedTest
+  @MethodSource("validBoundaryProperties")
+  void should_startUp_whenRetryValuesAreAtTheirValidBoundary(final String... properties) {
+    runner.withPropertyValues(properties).run(context -> then(context).hasNotFailed());
+  }
+
+  private static Stream<Arguments> validBoundaryProperties() {
+    return Stream.of(
+        Arguments.of(
+            Named.of("max-retries is zero (retry disabled)", retry("0", "500", "2.0", "5000"))),
+        Arguments.of(
+            Named.of(
+                "multiplier is exactly one (fixed backoff)", retry("2", "500", "1.0", "5000"))),
+        Arguments.of(
+            Named.of("initial-interval equals max-interval", retry("2", "5000", "2.0", "5000"))));
+  }
+
+  @ParameterizedTest
+  @MethodSource("invalidProperties")
+  void should_failStartup_whenPropertyIsMissingOrBlank(final String... properties) {
+    runner.withPropertyValues(properties).run(context -> then(context).hasFailed());
+  }
+
+  private static String[] retry(
+      final String maxRetries,
+      final String initialInterval,
+      final String multiplier,
+      final String maxInterval) {
+    return new String[] {
+      "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+      "sanmibuh.rest.tedee.api-key=secret-token",
+      "sanmibuh.rest.tedee.callback-secret=callback-secret",
+      "sanmibuh.rest.tedee.retry.max-retries=" + maxRetries,
+      "sanmibuh.rest.tedee.retry.initial-interval=" + initialInterval,
+      "sanmibuh.rest.tedee.retry.multiplier=" + multiplier,
+      "sanmibuh.rest.tedee.retry.max-interval=" + maxInterval
+    };
+  }
+
+  private static Stream<Arguments> invalidProperties() {
+    return Stream.of(
+        Arguments.of(
+            Named.of(
+                "base-url is missing", new String[] {"sanmibuh.rest.tedee.api-key=secret-token"})),
+        Arguments.of(
+            Named.of(
+                "api-key is missing",
+                new String[] {"sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0"})),
+        Arguments.of(
+            Named.of(
+                "callback-secret is missing",
+                new String[] {
+                  "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+                  "sanmibuh.rest.tedee.api-key=secret-token"
+                })),
+        Arguments.of(
+            Named.of(
+                "base-url is blank",
+                new String[] {
+                  "sanmibuh.rest.tedee.base-url=  ", "sanmibuh.rest.tedee.api-key=secret-token"
+                })),
+        Arguments.of(Named.of("base-url has no host", baseUrl("http:///v1.0"))),
+        Arguments.of(
+            Named.of(
+                "api-key is blank",
+                new String[] {
+                  "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+                  "sanmibuh.rest.tedee.api-key=  ",
+                  "sanmibuh.rest.tedee.callback-secret=callback-secret"
+                })),
+        Arguments.of(
+            Named.of(
+                "callback-secret is blank",
+                new String[] {
+                  "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+                  "sanmibuh.rest.tedee.api-key=secret-token",
+                  "sanmibuh.rest.tedee.callback-secret=  "
+                })),
+        Arguments.of(
+            Named.of(
+                "retry is missing",
+                new String[] {
+                  "sanmibuh.rest.tedee.base-url=http://bridge.local/v1.0",
+                  "sanmibuh.rest.tedee.api-key=secret-token"
+                })),
+        Arguments.of(Named.of("max-retries is negative", retry("-1", "500", "2.0", "5000"))),
+        Arguments.of(Named.of("initial-interval is not positive", retry("2", "0", "2.0", "5000"))),
+        Arguments.of(Named.of("multiplier is below one", retry("2", "500", "0.5", "5000"))),
+        Arguments.of(Named.of("max-interval is not positive", retry("2", "500", "2.0", "0"))),
+        Arguments.of(
+            Named.of("initial-interval exceeds max-interval", retry("2", "6000", "2.0", "5000"))));
+  }
+
+  private static String[] baseUrl(final String baseUrl) {
+    final var properties = retry("2", "500", "2.0", "5000");
+    properties[0] = "sanmibuh.rest.tedee.base-url=" + baseUrl;
+    return properties;
+  }
+
+  @EnableConfigurationProperties(TedeeProperties.class)
+  private static final class EnableTedeeProperties {}
+}

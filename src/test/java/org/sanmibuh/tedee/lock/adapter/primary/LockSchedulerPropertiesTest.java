@@ -1,0 +1,25 @@
+package org.sanmibuh.tedee.lock.adapter.primary;
+
+import static org.assertj.core.api.BDDAssertions.then;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.context.properties.EnableConfigurationProperties;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
+
+class LockSchedulerPropertiesTest {
+
+  private final ApplicationContextRunner runner =
+      new ApplicationContextRunner().withUserConfiguration(EnableLockSchedulerProperties.class);
+
+  @Test
+  void should_bindZoneToUtc_whenZoneIsNotProvided() {
+    runner.run(
+        context -> {
+          final var sut = context.getBean(LockSchedulerProperties.class);
+          then(sut.zone()).isEqualTo(LockSchedulerProperties.DEFAULT_ZONE);
+        });
+  }
+
+  @EnableConfigurationProperties(LockSchedulerProperties.class)
+  private static final class EnableLockSchedulerProperties {}
+}

@@ -1,0 +1,45 @@
+package org.sanmibuh.tedee.lock.adapter.secondary;
+
+import lombok.RequiredArgsConstructor;
+import org.sanmibuh.tedee.lock.domain.exception.InvalidLockRequestException;
+import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
+import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Component;
+import org.springframework.web.client.RestClientException;
+import org.springframework.web.client.RestClientResponseException;
+
+@Component
+@RequiredArgsConstructor
+final class TedeeLockGateway implements LockGateway {
+
+  private final LockCommandApi lockCommandApi;
+
+  @Override
+  public void lock(final LockId lockId) {
+    final var deviceId = lockId.value();
+    try {
+      lockCommandApi.lock(deviceId);
+    } catch (final RestClientResponseException exception) {
+      throw translateException(exception, deviceId);
+    } catch (final RestClientException exception) {
+      throw new LockTemporarilyUnavailableException(deviceId, exception);
+    }
+  }
+
+  private RuntimeException translateException(
+      final RestClientResponseException exception, final int deviceId) {
+    return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
+      case NOT_FOUND -> new InvalidLockRequestException(deviceId, exception);
+      case METHOD_NOT_ALLOWED,
+          NOT_ACCEPTABLE,
+          CONFLICT,
+          BAD_GATEWAY,
+          SERVICE_UNAVAILABLE,
+          GATEWAY_TIMEOUT ->
+          new LockTemporarilyUnavailableException(deviceId, exception);
+      case null, default -> new LockOperationFailedException(deviceId, exception);
+    };
+  }
+}
