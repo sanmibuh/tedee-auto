@@ -27,6 +27,17 @@ class TelegramPropertiesTest {
     runner.withPropertyValues(validProperties()).run(context -> then(context).hasNotFailed());
   }
 
+  @Test
+  void should_resolveAdministratorChat_whenAdminChatIdIsConfigured() {
+    runner
+        .withPropertyValues(
+            properties("sanmibuh.notification.telegram.admin-chat-id=administrator-chat-id"))
+        .run(
+            context ->
+                then(context.getBean(TelegramProperties.class).adminChatId())
+                    .isEqualTo("administrator-chat-id"));
+  }
+
   @ParameterizedTest
   @MethodSource("invalidProperties")
   void should_failStartup_whenPropertyIsMissingOrBlank(final String... properties) {
