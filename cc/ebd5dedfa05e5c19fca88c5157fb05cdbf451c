@@ -1,0 +1,20 @@
+src/main/java/org/sanmibuh/ddd/port/TransactionalCommandBus.java
+  h_97a91c9e567f87 1-10
+src/test/java/org/sanmibuh/ddd/adapter/TransactionalCommandBusTest.java
+  h_97a91c9e567f87 1-75
+src/main/java/org/sanmibuh/ddd/adapter/InMemoryTransactionalCommandBus.java
+  h_97a91c9e567f87 1-17
+pom.xml
+  h_97a91c9e567f87 50-53
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ccebd5dedfa05e5c19fca88c5157fb05cdbf451c",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
