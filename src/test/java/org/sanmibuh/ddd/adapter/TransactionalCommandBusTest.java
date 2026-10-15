@@ -1,6 +1,8 @@
 package org.sanmibuh.ddd.adapter;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
@@ -35,6 +37,22 @@ class TransactionalCommandBusTest {
     }
   }
 
+  @Test
+  void should_rollbackTransaction_whenCommandHandlingFails() {
+    try (final var context = new AnnotationConfigApplicationContext(TestConfiguration.class)) {
+      final var sut = context.getBean(TransactionalCommandBus.class);
+      final var delegate = context.getBean(RecordingCommandBus.class);
+      final var transactionManager =
+          (RecordingTransactionManager) context.getBean("transactionManager");
+      final var command = new StubCommand();
+      doThrow(new IllegalStateException()).when(delegate).dispatch(command);
+
+      thenThrownBy(() -> sut.dispatch(command)).isInstanceOf(IllegalStateException.class);
+
+      then(transactionManager.rollbackCount).isOne();
+    }
+  }
+
   interface RecordingCommandBus extends CommandBus {}
 
   record StubCommand() implements Command {}
@@ -62,6 +80,7 @@ class TransactionalCommandBusTest {
   static final class RecordingTransactionManager extends AbstractPlatformTransactionManager {
 
     private int commitCount;
+    private int rollbackCount;
 
     @Override
     protected Object doGetTransaction() {
@@ -80,7 +99,7 @@ class TransactionalCommandBusTest {
 
     @Override
     protected void doRollback(final DefaultTransactionStatus status) {
-      // No-op
+      rollbackCount++;
     }
   }
 }
