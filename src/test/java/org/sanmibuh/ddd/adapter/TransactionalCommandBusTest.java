@@ -1,9 +1,9 @@
 package org.sanmibuh.ddd.adapter;
 
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.CommandBus;
@@ -13,9 +13,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import org.springframework.transaction.support.SimpleTransactionStatus;
+import org.springframework.transaction.support.AbstractPlatformTransactionManager;
+import org.springframework.transaction.support.DefaultTransactionStatus;
 
 class TransactionalCommandBusTest {
 
@@ -24,15 +24,18 @@ class TransactionalCommandBusTest {
     try (final var context = new AnnotationConfigApplicationContext(TestConfiguration.class)) {
       final var sut = context.getBean(TransactionalCommandBus.class);
       final var delegate = context.getBean(RecordingCommandBus.class);
-      final var transactionManager = context.getBean(RecordingTransactionManager.class);
+      final var transactionManager =
+          (RecordingTransactionManager) context.getBean("transactionManager");
       final var command = new StubCommand();
 
       sut.dispatch(command);
 
       verify(delegate).dispatch(command);
-      verify(transactionManager).commit(org.mockito.ArgumentMatchers.any(TransactionStatus.class));
+      then(transactionManager.commitCount).isOne();
     }
   }
+
+  interface RecordingCommandBus extends CommandBus {}
 
   record StubCommand() implements Command {}
 
@@ -51,25 +54,33 @@ class TransactionalCommandBusTest {
     }
 
     @Bean
-    RecordingTransactionManager transactionManager() {
-      return mock(RecordingTransactionManager.class);
+    PlatformTransactionManager transactionManager() {
+      return new RecordingTransactionManager();
     }
   }
 
-  interface RecordingCommandBus extends CommandBus {}
+  static final class RecordingTransactionManager extends AbstractPlatformTransactionManager {
 
-  interface RecordingTransactionManager extends PlatformTransactionManager {
+    private int commitCount;
 
     @Override
-    default SimpleTransactionStatus getTransaction(
-        final @Nullable TransactionDefinition definition) {
-      return new SimpleTransactionStatus();
+    protected Object doGetTransaction() {
+      return new Object();
     }
 
     @Override
-    default void commit(final TransactionStatus status) {}
+    protected void doBegin(final Object transaction, final TransactionDefinition definition) {
+      // No-op
+    }
 
     @Override
-    default void rollback(final TransactionStatus status) {}
+    protected void doCommit(final DefaultTransactionStatus status) {
+      commitCount++;
+    }
+
+    @Override
+    protected void doRollback(final DefaultTransactionStatus status) {
+      // No-op
+    }
   }
 }

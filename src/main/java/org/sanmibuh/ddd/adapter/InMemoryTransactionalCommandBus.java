@@ -12,6 +12,6 @@ public final class InMemoryTransactionalCommandBus implements TransactionalComma
 
   @Override
   public void dispatch(final Command command) {
-    throw new UnsupportedOperationException();
+    delegate.dispatch(command);
   }
 }
