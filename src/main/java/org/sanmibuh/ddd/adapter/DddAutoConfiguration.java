@@ -38,6 +38,7 @@ public class DddAutoConfiguration {
   }
 
   @Bean
+  @ConditionalOnMissingBean(CommandBus.class)
   public InMemoryCommandBus inMemoryCommandBus(
       final List<CommandHandler<?, ?>> handlers, final EventBus eventBus) {
     return new InMemoryCommandBus(handlers, eventBus);
@@ -45,7 +46,7 @@ public class DddAutoConfiguration {
 
   @Bean
   @Primary
-  @ConditionalOnBean(PlatformTransactionManager.class)
+  @ConditionalOnBean({PlatformTransactionManager.class, InMemoryCommandBus.class})
   @ConditionalOnMissingBean(TransactionalCommandBus.class)
   public TransactionalCommandBus transactionalCommandBus(
       @Qualifier("inMemoryCommandBus") final CommandBus commandBus) {
