@@ -15,7 +15,7 @@ These boundaries and event rules are enforced by ArchUnit.
 
 ## Domain Messaging
 
-Aggregates record events; the command bus publishes them after handling; repositories persist immutable aggregate snapshots only. Aggregates are created through named factories and reconstructed from their snapshot types. `Repository.save(aggregate)` delegates to the concrete `save(snapshot)` adapter contract, while `Repository.get` owns find-or-throw behavior. Snapshot payloads use scalar standard types or immutable lists of them; domain-event payload rules remain stricter. Event handlers, command handlers, and query handlers are discovered and registered through the DDD auto-configuration.
+Aggregates record events; the command bus publishes them after handling; repositories persist immutable aggregate snapshots only. When a `PlatformTransactionManager` is available, the auto-configuration makes a transactional command-bus decorator primary so handling and synchronous event publication share one transaction; otherwise it uses the in-memory bus directly. Applications can replace both defaults by declaring their own `CommandBus`. Aggregates are created through named factories and reconstructed from their snapshot types. `Repository.save(aggregate)` delegates to the concrete `save(snapshot)` adapter contract, while `Repository.get` owns find-or-throw behavior. Snapshot payloads use scalar standard types or immutable lists of them; domain-event payload rules remain stricter. Event handlers, command handlers, and query handlers are discovered and registered through the DDD auto-configuration.
 
 Failures are classified by outcome: domain violations map to 400, missing aggregates to 404, permanent integrations to 500, and transient integrations to 503.
 
