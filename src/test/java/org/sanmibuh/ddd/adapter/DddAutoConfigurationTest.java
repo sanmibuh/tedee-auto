@@ -6,10 +6,10 @@ import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
-import org.springframework.context.annotation.AnnotationConfigApplicationContext;
+import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Import;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
@@ -18,6 +18,9 @@ import org.springframework.transaction.support.DefaultTransactionStatus;
 class DddAutoConfigurationTest {
 
   private final DddAutoConfiguration sut = new DddAutoConfiguration();
+  private final ApplicationContextRunner contextRunner =
+      new ApplicationContextRunner()
+          .withConfiguration(AutoConfigurations.of(DddAutoConfiguration.class));
 
   @Test
   void should_returnRegistrar_whenDomainEventHandlerRegistrarCalled() {
@@ -38,18 +41,20 @@ class DddAutoConfigurationTest {
 
   @Test
   void should_returnCommandBus_whenCommandHandlersProvided() {
-    then(sut.commandBus(List.of(), new InMemoryEventBus(List.of())))
+    then(sut.inMemoryCommandBus(List.of(), new InMemoryEventBus(List.of())))
         .isInstanceOf(InMemoryCommandBus.class);
   }
 
   @Test
   void should_returnTransactionalCommandBus_whenTransactionManagerProvided() {
-    try (final var context =
-        new AnnotationConfigApplicationContext(TransactionalConfiguration.class)) {
-      then(context.getBean(CommandBus.class)).isInstanceOf(TransactionalCommandBus.class);
-      then(context.getBean("inMemoryCommandBus", CommandBus.class))
-          .isInstanceOf(InMemoryCommandBus.class);
-    }
+    contextRunner
+        .withUserConfiguration(TransactionalConfiguration.class)
+        .run(
+            context -> {
+              then(context.getBean(CommandBus.class)).isInstanceOf(TransactionalCommandBus.class);
+              then(context.getBean("inMemoryCommandBus", CommandBus.class))
+                  .isInstanceOf(InMemoryCommandBus.class);
+            });
   }
 
   @Test
@@ -58,7 +63,6 @@ class DddAutoConfigurationTest {
   }
 
   @Configuration
-  @Import(DddAutoConfiguration.class)
   static class TransactionalConfiguration {
 
     @Bean
