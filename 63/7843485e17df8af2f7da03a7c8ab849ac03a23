@@ -1,0 +1,14 @@
+src/test/java/org/sanmibuh/ddd/adapter/TransactionalCommandBusTest.java
+  h_97a91c9e567f87 4-5,40-55,83,102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "637843485e17df8af2f7da03a7c8ab849ac03a23",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
