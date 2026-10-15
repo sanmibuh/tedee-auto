@@ -1,0 +1,14 @@
+src/test/java/org/sanmibuh/ddd/adapter/DddAutoConfigurationTest.java
+  h_97a91c9e567f87 7,9-16,45-54,59-91
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "e3b25d32fb8a46d7cb8790c4c5cd4693cff92cb6",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
