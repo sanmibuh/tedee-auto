@@ -1,0 +1,21 @@
+src/main/java/org/sanmibuh/ddd/adapter/DddAutoConfiguration.java
+  s_ede3749780694d::t_de2ed57f0d0c2c 11,14,17-18,41,46-54
+src/test/java/org/sanmibuh/ddd/adapter/DddAutoConfigurationTest.java
+  s_ede3749780694d::t_ad148b778444b4 9-10,21-23,44,50-57
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "27d581df836f5469c200b097e38d0d837fe3143a",
+  "prompts": {},
+  "sessions": {
+    "s_ede3749780694d": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ec3b9e475ffemI0Jy954z6yTQ1",
+        "model": "gpt-5.6-terra"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
