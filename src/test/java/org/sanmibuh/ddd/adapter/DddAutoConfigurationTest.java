@@ -1,6 +1,7 @@
 package org.sanmibuh.ddd.adapter;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
@@ -58,6 +59,17 @@ class DddAutoConfigurationTest {
   }
 
   @Test
+  void should_notRegisterDefaultCommandBuses_whenCustomCommandBusProvided() {
+    contextRunner
+        .withUserConfiguration(CustomCommandBusConfiguration.class)
+        .run(
+            context -> {
+              then(context).doesNotHaveBean(InMemoryCommandBus.class);
+              then(context).doesNotHaveBean(TransactionalCommandBus.class);
+            });
+  }
+
+  @Test
   void should_returnQueryBus_whenQueryHandlersProvided() {
     then(sut.queryBus(List.of())).isInstanceOf(InMemoryQueryBus.class);
   }
@@ -68,6 +80,15 @@ class DddAutoConfigurationTest {
     @Bean
     PlatformTransactionManager transactionManager() {
       return new TestTransactionManager();
+    }
+  }
+
+  @Configuration
+  static class CustomCommandBusConfiguration {
+
+    @Bean
+    CommandBus commandBus() {
+      return mock(CommandBus.class);
     }
   }
 
