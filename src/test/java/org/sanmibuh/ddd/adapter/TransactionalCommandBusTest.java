@@ -9,7 +9,6 @@ import static org.mockito.Mockito.verify;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.CommandBus;
-import org.sanmibuh.ddd.port.TransactionalCommandBus;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
