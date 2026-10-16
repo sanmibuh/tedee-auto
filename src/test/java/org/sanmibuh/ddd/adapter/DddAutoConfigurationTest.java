@@ -12,7 +12,9 @@ import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.ddd.port.CommandHandler;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
+import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
+import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -97,6 +99,18 @@ class DddAutoConfigurationTest {
   }
 
   @Test
+  void should_returnTransactionalCommandBus_whenTransactionManagerAutoConfiguredAfterDdd() {
+    new ApplicationContextRunner()
+        .withConfiguration(
+            AutoConfigurations.of(
+                DddAutoConfiguration.class, LateTransactionManagerAutoConfiguration.class))
+        .run(
+            context ->
+                then(context.getBean(CommandBus.class))
+                    .isInstanceOf(TransactionalCommandBus.class));
+  }
+
+  @Test
   void should_returnQueryBus_whenQueryHandlersProvided() {
     then(sut.queryBus(List.of())).isInstanceOf(InMemoryQueryBus.class);
   }
@@ -125,6 +139,16 @@ class DddAutoConfigurationTest {
     @Bean
     CommandHandler<TestCommand, TestAggregate> commandHandler() {
       return new TestCommandHandler();
+    }
+  }
+
+  @AutoConfiguration
+  @AutoConfigureAfter(DddAutoConfiguration.class)
+  static class LateTransactionManagerAutoConfiguration {
+
+    @Bean
+    PlatformTransactionManager lateTransactionManager() {
+      return new TestTransactionManager();
     }
   }
 
