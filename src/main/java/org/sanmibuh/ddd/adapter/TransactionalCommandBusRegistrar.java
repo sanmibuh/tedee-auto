@@ -4,6 +4,7 @@ import org.sanmibuh.ddd.port.CommandBus;
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.AbstractBeanDefinition;
 import org.springframework.beans.factory.support.BeanDefinitionRegistry;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.beans.factory.support.RootBeanDefinition;
@@ -41,7 +42,7 @@ final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPo
     }
 
     var definition = new RootBeanDefinition(InMemoryCommandBus.class);
-    definition.setAutowireMode(RootBeanDefinition.AUTOWIRE_CONSTRUCTOR);
+    definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);
     definition.setAttribute(DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_MARKER, true);
     registry.registerBeanDefinition(
         DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME, definition);
