@@ -17,6 +17,14 @@ updates:
           - "org.springframework.boot:*"
           - "org.springframework:*"
 
+  - package-ecosystem: "docker"
+    directory: "/docker/liquibase"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:

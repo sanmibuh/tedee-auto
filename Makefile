@@ -1,4 +1,4 @@
-.PHONY: help build clean format test automation-test pitest image
+.PHONY: help build clean format test automation-test pitest image liquibase-image migrate
 
 help:
 	@echo "Usage: make <target>"
@@ -10,6 +10,8 @@ help:
 	@echo "  automation-test  Run GitHub automation script tests"
 	@echo "  pitest  Run incremental mutation testing"
 	@echo "  image   Build GraalVM native Docker image"
+	@echo "  liquibase-image  Build the Liquibase migration image"
+	@echo "  migrate Apply db/changelog to ./data/tedee.db using the migration image"
 
 build:
 	./mvnw compile -B
@@ -41,3 +43,10 @@ pitest:
 
 image:
 	docker build -f docker/app/Dockerfile -t tedee-automation .
+
+liquibase-image:
+	.github/scripts/build-liquibase-image.sh tedee-liquibase
+
+migrate: liquibase-image
+	@mkdir -p data
+	docker run --rm -v "$(CURDIR)/data:/data" tedee-liquibase
