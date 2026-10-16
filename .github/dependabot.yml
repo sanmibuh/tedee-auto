@@ -18,6 +18,18 @@ updates:
           - "org.springframework:*"
 
   - package-ecosystem: "docker"
+    directory: "/docker/app"
+    schedule:
+      interval: "weekly"
+      day: "saturday"
+    open-pull-requests-limit: 10
+    rebase-strategy: auto
+    ignore:
+      # The GraalVM image tracks the Java language level and toolchain, which are managed manually
+      - dependency-name: "ghcr.io/graalvm/native-image-community"
+        update-types: ["version-update:semver-major"]
+
+  - package-ecosystem: "docker"
     directory: "/docker/liquibase"
     schedule:
       interval: "weekly"
