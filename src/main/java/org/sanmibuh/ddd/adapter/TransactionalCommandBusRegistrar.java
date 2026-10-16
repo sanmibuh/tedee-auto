@@ -1,0 +1,50 @@
+package org.sanmibuh.ddd.adapter;
+
+import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
+import org.springframework.beans.factory.config.RuntimeBeanReference;
+import org.springframework.beans.factory.support.BeanDefinitionRegistry;
+import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
+import org.springframework.beans.factory.support.RootBeanDefinition;
+import org.springframework.transaction.PlatformTransactionManager;
+
+final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPostProcessor {
+
+  private static final String IN_MEMORY_COMMAND_BUS_BEAN_NAME = "inMemoryCommandBus";
+  private static final String TRANSACTIONAL_COMMAND_BUS_BEAN_NAME = "transactionalCommandBus";
+
+  @Override
+  public void postProcessBeanDefinitionRegistry(final BeanDefinitionRegistry registry) {
+    if (!(registry instanceof ConfigurableListableBeanFactory beanFactory)
+        || !hasInMemoryCommandBus(beanFactory)
+        || !hasTransactionManager(beanFactory)
+        || hasTransactionalCommandBus(beanFactory)) {
+      return;
+    }
+
+    var definition = new RootBeanDefinition(InMemoryTransactionalCommandBus.class);
+    definition.setPrimary(true);
+    definition
+        .getConstructorArgumentValues()
+        .addIndexedArgumentValue(0, new RuntimeBeanReference(IN_MEMORY_COMMAND_BUS_BEAN_NAME));
+    registry.registerBeanDefinition(TRANSACTIONAL_COMMAND_BUS_BEAN_NAME, definition);
+  }
+
+  @Override
+  public void postProcessBeanFactory(final ConfigurableListableBeanFactory beanFactory)
+      throws BeansException {
+    // No-op
+  }
+
+  private boolean hasInMemoryCommandBus(final ConfigurableListableBeanFactory beanFactory) {
+    return beanFactory.containsBeanDefinition(IN_MEMORY_COMMAND_BUS_BEAN_NAME);
+  }
+
+  private boolean hasTransactionManager(final ConfigurableListableBeanFactory beanFactory) {
+    return beanFactory.getBeanNamesForType(PlatformTransactionManager.class).length > 0;
+  }
+
+  private boolean hasTransactionalCommandBus(final ConfigurableListableBeanFactory beanFactory) {
+    return beanFactory.getBeanNamesForType(TransactionalCommandBus.class).length > 0;
+  }
+}

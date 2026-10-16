@@ -8,14 +8,12 @@ import org.sanmibuh.ddd.port.EventBus;
 import org.sanmibuh.ddd.port.QueryBus;
 import org.sanmibuh.ddd.port.QueryHandler;
 import org.springframework.beans.factory.BeanFactory;
-import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.context.annotation.Primary;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
@@ -34,6 +32,11 @@ public class DddAutoConfiguration {
   }
 
   @Bean
+  static BeanDefinitionRegistryPostProcessor transactionalCommandBusRegistrar() {
+    return new TransactionalCommandBusRegistrar();
+  }
+
+  @Bean
   @ConditionalOnMissingBean(EventBus.class)
   public InMemoryEventBus eventBus(final List<DomainEventHandler<?>> handlers) {
     return new InMemoryEventBus(handlers);
@@ -44,15 +47,6 @@ public class DddAutoConfiguration {
   public InMemoryCommandBus inMemoryCommandBus(
       final List<CommandHandler<?, ?>> handlers, final EventBus eventBus) {
     return new InMemoryCommandBus(handlers, eventBus);
-  }
-
-  @Bean
-  @Primary
-  @ConditionalOnBean({PlatformTransactionManager.class, InMemoryCommandBus.class})
-  @ConditionalOnMissingBean(TransactionalCommandBus.class)
-  public TransactionalCommandBus transactionalCommandBus(
-      @Qualifier("inMemoryCommandBus") final CommandBus commandBus) {
-    return new InMemoryTransactionalCommandBus(commandBus);
   }
 
   @Bean
