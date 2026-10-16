@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/ddd/adapter/TransactionalCommandBusRegistrar.java
+  h_97a91c9e567f87 5,76-78,81-93,95,97,108-109
+src/test/java/org/sanmibuh/ddd/adapter/TransactionalCommandBusRegistrarTest.java
+  h_97a91c9e567f87 109-122,133-148
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "bcbc6871e1fc04ad9615a68f76940c2767cc2fac",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
