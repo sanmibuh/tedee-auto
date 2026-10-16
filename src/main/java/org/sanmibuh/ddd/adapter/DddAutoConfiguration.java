@@ -8,14 +8,12 @@ import org.sanmibuh.ddd.port.QueryHandler;
 import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.support.BeanDefinitionRegistryPostProcessor;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
-import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.context.annotation.Bean;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 
 @AutoConfiguration
+@EnableTransactionManagement
 public class DddAutoConfiguration {
 
   static final String IN_MEMORY_COMMAND_BUS_BEAN_NAME = "inMemoryCommandBus";
@@ -51,8 +49,4 @@ public class DddAutoConfiguration {
     return new InMemoryQueryBus(handlers);
   }
 
-  @Configuration(proxyBeanMethods = false)
-  @ConditionalOnBean(PlatformTransactionManager.class)
-  @EnableTransactionManagement
-  static class TransactionManagementConfiguration {}
 }

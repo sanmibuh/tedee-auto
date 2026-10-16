@@ -122,6 +122,23 @@ class DddAutoConfigurationTest {
   }
 
   @Test
+  void should_startTransaction_whenTransactionManagerAutoConfiguredAfterDdd() {
+    new ApplicationContextRunner()
+        .withConfiguration(
+            AutoConfigurations.of(
+                DddAutoConfiguration.class, LateTransactionManagerAutoConfiguration.class))
+        .withUserConfiguration(CommandHandlerConfiguration.class)
+        .run(
+            context -> {
+              var transactionManager = context.getBean(TestTransactionManager.class);
+
+              context.getBean(CommandBus.class).dispatch(new TestCommand());
+
+              then(transactionManager.transactionBegun).isTrue();
+            });
+  }
+
+  @Test
   void should_returnQueryBus_whenQueryHandlersProvided() {
     then(sut.queryBus(List.of())).isInstanceOf(InMemoryQueryBus.class);
   }
