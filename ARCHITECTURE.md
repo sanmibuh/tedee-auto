@@ -48,6 +48,6 @@ The release workflow verifies the release state, builds and smoke-tests the nati
 ```bash
 ./mvnw verify
 make pitest
-docker build -t tedee-automation .
+docker build -f docker/app/Dockerfile -t tedee-automation .
 ./mvnw -Pnative native:compile
 ```

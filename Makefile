@@ -40,4 +40,4 @@ pitest:
 	@echo ">> PITest: updated history written to .pit/history-output.bin"
 
 image:
-	docker build -t tedee-automation .
+	docker build -f docker/app/Dockerfile -t tedee-automation .
