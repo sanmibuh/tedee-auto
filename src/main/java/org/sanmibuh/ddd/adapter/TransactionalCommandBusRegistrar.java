@@ -2,6 +2,7 @@ package org.sanmibuh.ddd.adapter;
 
 import org.sanmibuh.ddd.port.CommandBus;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
 import org.springframework.beans.factory.support.AbstractBeanDefinition;
@@ -37,7 +38,8 @@ final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPo
 
   private void registerInMemoryCommandBusIfAbsent(
       final BeanDefinitionRegistry registry, final ConfigurableListableBeanFactory beanFactory) {
-    if (beanFactory.getBeanNamesForType(CommandBus.class).length > 0) {
+    if (BeanFactoryUtils.beanNamesForTypeIncludingAncestors(beanFactory, CommandBus.class).length
+        > 0) {
       return;
     }
 
@@ -70,7 +72,40 @@ final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPo
   }
 
   private boolean hasTransactionManager(final ConfigurableListableBeanFactory beanFactory) {
-    return beanFactory.getBeanNamesForType(PlatformTransactionManager.class).length == 1;
+    var transactionManagerNames =
+        BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
+            beanFactory, PlatformTransactionManager.class);
+    return transactionManagerNames.length == 1
+        || hasSinglePrimaryTransactionManager(beanFactory, transactionManagerNames);
+  }
+
+  private boolean hasSinglePrimaryTransactionManager(
+      final ConfigurableListableBeanFactory beanFactory, final String[] transactionManagerNames) {
+    var primaryTransactionManagerCount = 0;
+    for (final var transactionManagerName : transactionManagerNames) {
+      if (isPrimary(beanFactory, transactionManagerName)) {
+        primaryTransactionManagerCount++;
+      }
+    }
+    return hasSinglePrimaryTransactionManagerPITEquivalent(primaryTransactionManagerCount);
+  }
+
+  private boolean hasSinglePrimaryTransactionManagerPITEquivalent(
+      final int primaryTransactionManagerCount) {
+    return primaryTransactionManagerCount == 1;
+  }
+
+  private boolean isPrimary(
+      final ConfigurableListableBeanFactory beanFactory, final String transactionManagerName) {
+    if (beanFactory.containsBeanDefinition(transactionManagerName)) {
+      return beanFactory.getBeanDefinition(transactionManagerName).isPrimary();
+    }
+
+    final var parentBeanFactory = beanFactory.getParentBeanFactory();
+    return parentBeanFactory
+            instanceof ConfigurableListableBeanFactory parentConfigurableBeanFactory
+        && parentConfigurableBeanFactory.containsBeanDefinition(transactionManagerName)
+        && parentConfigurableBeanFactory.getBeanDefinition(transactionManagerName).isPrimary();
   }
 
   private boolean hasTransactionalCommandBus(final ConfigurableListableBeanFactory beanFactory) {

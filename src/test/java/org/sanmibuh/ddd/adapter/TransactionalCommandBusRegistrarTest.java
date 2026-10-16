@@ -87,4 +87,55 @@ class TransactionalCommandBusRegistrarTest {
             DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME))
         .isTrue();
   }
+
+  @Test
+  void should_registerTransactionalCommandBus_whenParentProvidesPrimaryTransactionManager() {
+    final var parentBeanFactory = new DefaultListableBeanFactory();
+    final var primaryTransactionManager = new RootBeanDefinition(PlatformTransactionManager.class);
+    primaryTransactionManager.setPrimary(true);
+    parentBeanFactory.registerBeanDefinition(
+        "primaryTransactionManager", primaryTransactionManager);
+    final var beanFactory = new DefaultListableBeanFactory(parentBeanFactory);
+    beanFactory.registerBeanDefinition(
+        "secondaryTransactionManager", new RootBeanDefinition(PlatformTransactionManager.class));
+
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
+
+    then(beanFactory.containsBeanDefinition(
+            DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME))
+        .isTrue();
+  }
+
+  @Test
+  void should_notRegisterTransactionalCommandBus_whenParentTransactionManagerIsNotPrimary() {
+    final var parentBeanFactory = new DefaultListableBeanFactory();
+    parentBeanFactory.registerBeanDefinition(
+        "parentTransactionManager", new RootBeanDefinition(PlatformTransactionManager.class));
+    final var beanFactory = new DefaultListableBeanFactory(parentBeanFactory);
+    beanFactory.registerBeanDefinition(
+        "childTransactionManager", new RootBeanDefinition(PlatformTransactionManager.class));
+
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
+
+    then(beanFactory.containsBeanDefinition(
+            DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME))
+        .isFalse();
+  }
+
+  @Test
+  void should_notRegisterTransactionalCommandBus_whenMultiplePrimaryTransactionManagersProvided() {
+    final var beanFactory = new DefaultListableBeanFactory();
+    final var firstTransactionManager = new RootBeanDefinition(PlatformTransactionManager.class);
+    firstTransactionManager.setPrimary(true);
+    beanFactory.registerBeanDefinition("firstTransactionManager", firstTransactionManager);
+    final var secondTransactionManager = new RootBeanDefinition(PlatformTransactionManager.class);
+    secondTransactionManager.setPrimary(true);
+    beanFactory.registerBeanDefinition("secondTransactionManager", secondTransactionManager);
+
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
+
+    then(beanFactory.containsBeanDefinition(
+            DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME))
+        .isFalse();
+  }
 }

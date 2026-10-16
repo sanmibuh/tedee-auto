@@ -1,16 +1,23 @@
 package org.sanmibuh.ddd.adapter;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.Mockito.mock;
 
 import java.util.List;
+import org.assertj.core.api.BDDSoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
+import org.sanmibuh.ddd.domain.DomainEvent;
 import org.sanmibuh.ddd.domain.EntitySnapshot;
 import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.ddd.port.CommandHandler;
+import org.sanmibuh.ddd.port.DomainEventHandler;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfiguration;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
@@ -23,10 +30,13 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
 import org.springframework.transaction.support.DefaultTransactionStatus;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+@ExtendWith(SoftAssertionsExtension.class)
 class DddAutoConfigurationTest {
 
   private final DddAutoConfiguration sut = new DddAutoConfiguration();
+  @InjectSoftAssertions private BDDSoftAssertions softly;
   private final ApplicationContextRunner contextRunner =
       new ApplicationContextRunner()
           .withConfiguration(AutoConfigurations.of(DddAutoConfiguration.class));
@@ -157,6 +167,29 @@ class DddAutoConfigurationTest {
   }
 
   @Test
+  void should_rollbackTransaction_whenEventHandlerThrows() {
+    contextRunner
+        .withUserConfiguration(
+            TransactionalConfiguration.class,
+            EventPublishingCommandHandlerConfiguration.class,
+            FailingEventHandlerConfiguration.class)
+        .run(
+            context -> {
+              var transactionManager = context.getBean(TestTransactionManager.class);
+
+              thenThrownBy(
+                      () ->
+                          context.getBean(CommandBus.class).dispatch(new EventPublishingCommand()))
+                  .isInstanceOf(IllegalStateException.class);
+
+              softly.then(transactionManager.transactionBegun).isTrue();
+              softly.then(transactionManager.transactionRolledBack).isTrue();
+              softly.then(transactionManager.transactionCommitted).isFalse();
+              softly.then(context.getBean(FailingEventHandler.class).transactionActive).isTrue();
+            });
+  }
+
+  @Test
   void should_returnQueryBus_whenQueryHandlersProvided() {
     then(sut.queryBus(List.of())).isInstanceOf(InMemoryQueryBus.class);
   }
@@ -197,6 +230,25 @@ class DddAutoConfigurationTest {
     }
   }
 
+  @Configuration
+  static class EventPublishingCommandHandlerConfiguration {
+
+    @Bean
+    CommandHandler<EventPublishingCommand, EventPublishingAggregate>
+        eventPublishingCommandHandler() {
+      return new EventPublishingCommandHandler();
+    }
+  }
+
+  @Configuration
+  static class FailingEventHandlerConfiguration {
+
+    @Bean
+    DomainEventHandler<TestEvent> failingEventHandler() {
+      return new FailingEventHandler();
+    }
+  }
+
   @AutoConfiguration
   @AutoConfigureAfter(DddAutoConfiguration.class)
   static class LateTransactionManagerAutoConfiguration {
@@ -210,6 +262,8 @@ class DddAutoConfigurationTest {
   static final class TestTransactionManager extends AbstractPlatformTransactionManager {
 
     private boolean transactionBegun;
+    private boolean transactionCommitted;
+    private boolean transactionRolledBack;
 
     @Override
     protected Object doGetTransaction() {
@@ -223,16 +277,20 @@ class DddAutoConfigurationTest {
 
     @Override
     protected void doCommit(final DefaultTransactionStatus status) {
-      // No-op
+      transactionCommitted = true;
     }
 
     @Override
     protected void doRollback(final DefaultTransactionStatus status) {
-      // No-op
+      transactionRolledBack = true;
     }
   }
 
   record TestCommand() implements Command {}
+
+  record EventPublishingCommand() implements Command {}
+
+  record TestEvent() implements DomainEvent {}
 
   record TestAggregateId(Integer value) implements AggregateRootId<Integer> {}
 
@@ -256,6 +314,40 @@ class DddAutoConfigurationTest {
     @Override
     protected TestAggregate execute(final TestCommand command) {
       return new TestAggregate();
+    }
+  }
+
+  static final class EventPublishingAggregate
+      extends AggregateRoot<TestAggregateId, Integer, TestAggregateSnapshot> {
+
+    EventPublishingAggregate() {
+      super(new TestAggregateId(2));
+      recordEvent(new TestEvent());
+    }
+
+    @Override
+    public TestAggregateSnapshot snapshot() {
+      return new TestAggregateSnapshot(id().value());
+    }
+  }
+
+  static final class EventPublishingCommandHandler
+      extends CommandHandler<EventPublishingCommand, EventPublishingAggregate> {
+
+    @Override
+    protected EventPublishingAggregate execute(final EventPublishingCommand command) {
+      return new EventPublishingAggregate();
+    }
+  }
+
+  static final class FailingEventHandler implements DomainEventHandler<TestEvent> {
+
+    private boolean transactionActive;
+
+    @Override
+    public void handle(final TestEvent event) {
+      transactionActive = TransactionSynchronizationManager.isActualTransactionActive();
+      throw new IllegalStateException();
     }
   }
 }
