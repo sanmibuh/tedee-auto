@@ -25,7 +25,8 @@ final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPo
         .getConstructorArgumentValues()
         .addIndexedArgumentValue(
             0, new RuntimeBeanReference(DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME));
-    registry.registerBeanDefinition(DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME, definition);
+    registry.registerBeanDefinition(
+        DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME, definition);
   }
 
   @Override
