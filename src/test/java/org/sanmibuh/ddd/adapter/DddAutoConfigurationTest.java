@@ -18,6 +18,7 @@ import org.springframework.boot.autoconfigure.AutoConfigureAfter;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.support.GenericApplicationContext;
 import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.AbstractPlatformTransactionManager;
@@ -94,6 +95,21 @@ class DddAutoConfigurationTest {
               then(context).doesNotHaveBean(TransactionalCommandBus.class);
               then(context.getBean(CommandBus.class))
                   .isSameAs(context.getBean("inMemoryCommandBus"));
+            });
+  }
+
+  @Test
+  void should_notRegisterDefaultCommandBuses_whenParentContextProvidesCommandBus() {
+    final var parentContext = new GenericApplicationContext();
+    parentContext.registerBean(CommandBus.class, () -> mock(CommandBus.class));
+    parentContext.refresh();
+
+    contextRunner
+        .withParent(parentContext)
+        .run(
+            context -> {
+              then(context).doesNotHaveBean(InMemoryCommandBus.class);
+              then(context).doesNotHaveBean(TransactionalCommandBus.class);
             });
   }
 

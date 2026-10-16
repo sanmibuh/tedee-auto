@@ -71,4 +71,20 @@ class TransactionalCommandBusRegistrarTest {
             DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME))
         .isFalse();
   }
+
+  @Test
+  void should_registerTransactionalCommandBus_whenPrimaryTransactionManagerProvided() {
+    final var beanFactory = new DefaultListableBeanFactory();
+    final var primaryTransactionManager = new RootBeanDefinition(PlatformTransactionManager.class);
+    primaryTransactionManager.setPrimary(true);
+    beanFactory.registerBeanDefinition("primaryTransactionManager", primaryTransactionManager);
+    beanFactory.registerBeanDefinition(
+        "secondaryTransactionManager", new RootBeanDefinition(PlatformTransactionManager.class));
+
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
+
+    then(beanFactory.containsBeanDefinition(
+            DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME))
+        .isTrue();
+  }
 }
