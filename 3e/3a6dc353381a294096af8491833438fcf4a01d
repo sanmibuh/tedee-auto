@@ -1,0 +1,16 @@
+src/main/java/org/sanmibuh/ddd/adapter/DddAutoConfiguration.java
+  h_97a91c9e567f87 23-25,48
+src/main/java/org/sanmibuh/ddd/adapter/TransactionalCommandBusRegistrar.java
+  h_97a91c9e567f87 26-28,38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3e3a6dc353381a294096af8491833438fcf4a01d",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
