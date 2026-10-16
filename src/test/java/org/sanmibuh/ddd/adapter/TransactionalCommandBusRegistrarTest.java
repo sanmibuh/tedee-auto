@@ -222,6 +222,40 @@ class TransactionalCommandBusRegistrarTest {
   }
 
   @Test
+  void should_registerTransactionalCommandBus_whenOneOfThreeTransactionManagersIsPrimary() {
+    final var beanFactory = new DefaultListableBeanFactory();
+    final var primaryTransactionManager = new RootBeanDefinition(PlatformTransactionManager.class);
+    primaryTransactionManager.setPrimary(true);
+    beanFactory.registerBeanDefinition("primaryTransactionManager", primaryTransactionManager);
+    beanFactory.registerBeanDefinition(
+        "firstTransactionManager", new RootBeanDefinition(PlatformTransactionManager.class));
+    beanFactory.registerBeanDefinition(
+        "secondTransactionManager", new RootBeanDefinition(PlatformTransactionManager.class));
+
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
+
+    then(beanFactory.containsBeanDefinition(
+            DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME))
+        .isTrue();
+  }
+
+  @Test
+  void should_registerTransactionalCommandBus_whenSingletonCoexistsWithPrimaryDefinition() {
+    final var beanFactory = new DefaultListableBeanFactory();
+    beanFactory.registerSingleton(
+        "singletonTransactionManager", mock(PlatformTransactionManager.class));
+    final var primaryTransactionManager = new RootBeanDefinition(PlatformTransactionManager.class);
+    primaryTransactionManager.setPrimary(true);
+    beanFactory.registerBeanDefinition("primaryTransactionManager", primaryTransactionManager);
+
+    sut.postProcessBeanDefinitionRegistry(beanFactory);
+
+    then(beanFactory.containsBeanDefinition(
+            DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME))
+        .isTrue();
+  }
+
+  @Test
   void should_notRegisterTransactionalCommandBus_whenMultiplePrimaryTransactionManagersProvided() {
     final var beanFactory = new DefaultListableBeanFactory();
     final var firstTransactionManager = new RootBeanDefinition(PlatformTransactionManager.class);
