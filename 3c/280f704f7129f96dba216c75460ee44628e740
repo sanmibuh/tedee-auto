@@ -1,0 +1,23 @@
+.github/dependabot.yml
+  s_2057cad20e8237::t_19aa70d452b01d 20-31
+README.md
+  s_2057cad20e8237::t_95b8761a93f4dc 35,85-87,96,98-101,169-176,178,181-183,187,195
+docker/liquibase/Dockerfile
+  s_2057cad20e8237::t_c1fbd13b287a94 9,15-19
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3c280f704f7129f96dba216c75460ee44628e740",
+  "prompts": {},
+  "sessions": {
+    "s_2057cad20e8237": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ebb089b54ffeshFlwhgCDK4b2G",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
