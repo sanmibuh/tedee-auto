@@ -1,0 +1,16 @@
+src/test/java/org/sanmibuh/ddd/adapter/DddAutoConfigurationTest.java
+  h_97a91c9e567f87 87-98,148-156
+src/test/java/org/sanmibuh/ddd/adapter/TransactionalCommandBusRegistrarTest.java
+  h_97a91c9e567f87 67,81
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "a5bb912030ed2020d4fdf55be9fbc3760d8cdc57",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
