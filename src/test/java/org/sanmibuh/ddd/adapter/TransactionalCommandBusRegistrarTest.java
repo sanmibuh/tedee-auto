@@ -64,7 +64,7 @@ class TransactionalCommandBusRegistrarTest {
   }
 
   @Test
-  void should_registerTransactionalCommandBus_whenMultipleTransactionManagersProvided() {
+  void should_notRegisterTransactionalCommandBus_whenMultipleTransactionManagersProvided() {
     final var beanFactory = new DefaultListableBeanFactory();
     beanFactory.registerBeanDefinition(
         DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME,
@@ -78,6 +78,6 @@ class TransactionalCommandBusRegistrarTest {
 
     then(beanFactory.containsBeanDefinition(
             DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME))
-        .isTrue();
+        .isFalse();
   }
 }

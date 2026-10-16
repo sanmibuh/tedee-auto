@@ -85,6 +85,18 @@ class DddAutoConfigurationTest {
   }
 
   @Test
+  void should_notRegisterTransactionalCommandBus_whenCustomCommandBusUsesInMemoryName() {
+    contextRunner
+        .withUserConfiguration(
+            SameNameCustomCommandBusConfiguration.class, TransactionalConfiguration.class)
+        .run(
+            context -> {
+              then(context).doesNotHaveBean(TransactionalCommandBus.class);
+              then(context.getBean(CommandBus.class)).isSameAs(context.getBean("inMemoryCommandBus"));
+            });
+  }
+
+  @Test
   void should_startTransaction_whenCommandDispatched() {
     contextRunner
         .withUserConfiguration(TransactionalConfiguration.class, CommandHandlerConfiguration.class)
@@ -128,6 +140,15 @@ class DddAutoConfigurationTest {
   static class CustomCommandBusConfiguration {
 
     @Bean
+    CommandBus commandBus() {
+      return mock(CommandBus.class);
+    }
+  }
+
+  @Configuration
+  static class SameNameCustomCommandBusConfiguration {
+
+    @Bean("inMemoryCommandBus")
     CommandBus commandBus() {
       return mock(CommandBus.class);
     }
