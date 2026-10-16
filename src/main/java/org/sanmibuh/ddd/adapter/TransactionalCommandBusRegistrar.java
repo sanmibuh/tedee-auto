@@ -41,11 +41,16 @@ final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPo
       return;
     }
 
+    registry.registerBeanDefinition(
+        DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME,
+        createInMemoryCommandBusDefinitionPITEquivalent());
+  }
+
+  private RootBeanDefinition createInMemoryCommandBusDefinitionPITEquivalent() {
     var definition = new RootBeanDefinition(InMemoryCommandBus.class);
     definition.setAutowireMode(AbstractBeanDefinition.AUTOWIRE_CONSTRUCTOR);
     definition.setAttribute(DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_MARKER, true);
-    registry.registerBeanDefinition(
-        DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME, definition);
+    return definition;
   }
 
   @Override

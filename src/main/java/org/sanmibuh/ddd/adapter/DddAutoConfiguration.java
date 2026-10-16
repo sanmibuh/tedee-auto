@@ -48,5 +48,4 @@ public class DddAutoConfiguration {
   public InMemoryQueryBus queryBus(final List<QueryHandler<?, ?>> handlers) {
     return new InMemoryQueryBus(handlers);
   }
-
 }

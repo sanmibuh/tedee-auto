@@ -49,7 +49,8 @@ class DddAutoConfigurationTest {
 
   @Test
   void should_registerInMemoryCommandBus_whenCustomCommandBusMissing() {
-    contextRunner.run(context -> then(context.getBean(CommandBus.class)).isInstanceOf(InMemoryCommandBus.class));
+    contextRunner.run(
+        context -> then(context.getBean(CommandBus.class)).isInstanceOf(InMemoryCommandBus.class));
   }
 
   @Test
@@ -91,7 +92,8 @@ class DddAutoConfigurationTest {
         .run(
             context -> {
               then(context).doesNotHaveBean(TransactionalCommandBus.class);
-              then(context.getBean(CommandBus.class)).isSameAs(context.getBean("inMemoryCommandBus"));
+              then(context.getBean(CommandBus.class))
+                  .isSameAs(context.getBean("inMemoryCommandBus"));
             });
   }
 
