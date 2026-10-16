@@ -48,9 +48,8 @@ class DddAutoConfigurationTest {
   }
 
   @Test
-  void should_returnCommandBus_whenCommandHandlersProvided() {
-    then(sut.inMemoryCommandBus(List.of(), new InMemoryEventBus(List.of())))
-        .isInstanceOf(InMemoryCommandBus.class);
+  void should_registerInMemoryCommandBus_whenCustomCommandBusMissing() {
+    contextRunner.run(context -> then(context.getBean(CommandBus.class)).isInstanceOf(InMemoryCommandBus.class));
   }
 
   @Test

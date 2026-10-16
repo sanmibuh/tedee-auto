@@ -24,9 +24,6 @@ class TransactionalCommandBusRegistrarTest {
   void should_registerTransactionalCommandBus_whenInMemoryBusAndTransactionManagerProvided() {
     final var beanFactory = new DefaultListableBeanFactory();
     beanFactory.registerBeanDefinition(
-        DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME,
-        new RootBeanDefinition(InMemoryCommandBus.class));
-    beanFactory.registerBeanDefinition(
         "transactionManager", new RootBeanDefinition(PlatformTransactionManager.class));
 
     sut.postProcessBeanDefinitionRegistry(beanFactory);
@@ -52,9 +49,6 @@ class TransactionalCommandBusRegistrarTest {
   @Test
   void should_notRegisterTransactionalCommandBus_whenTransactionManagerMissing() {
     final var beanFactory = new DefaultListableBeanFactory();
-    beanFactory.registerBeanDefinition(
-        DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME,
-        new RootBeanDefinition(InMemoryCommandBus.class));
 
     sut.postProcessBeanDefinitionRegistry(beanFactory);
 
@@ -66,9 +60,6 @@ class TransactionalCommandBusRegistrarTest {
   @Test
   void should_notRegisterTransactionalCommandBus_whenMultipleTransactionManagersProvided() {
     final var beanFactory = new DefaultListableBeanFactory();
-    beanFactory.registerBeanDefinition(
-        DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME,
-        new RootBeanDefinition(InMemoryCommandBus.class));
     beanFactory.registerBeanDefinition(
         "firstTransactionManager", new RootBeanDefinition(PlatformTransactionManager.class));
     beanFactory.registerBeanDefinition(
