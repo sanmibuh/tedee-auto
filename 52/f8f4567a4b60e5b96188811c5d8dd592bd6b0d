@@ -1,0 +1,27 @@
+.github/dependabot.yml
+  s_2057cad20e8237::t_22ba061d3e8bd9 20-27
+.github/scripts/build-liquibase-image.sh
+  s_2057cad20e8237::t_691aa8bf2fa7bf 1-20
+.gitignore
+  s_2057cad20e8237::t_898d808bebaf8c 14-16
+Makefile
+  s_2057cad20e8237::t_941ad1fe9b41cc 1,13-14,46-52
+docker/liquibase/Dockerfile
+  s_2057cad20e8237::t_566606b24c6582 4-7
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "52f8f4567a4b60e5b96188811c5d8dd592bd6b0d",
+  "prompts": {},
+  "sessions": {
+    "s_2057cad20e8237": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ebb089b54ffeshFlwhgCDK4b2G",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
