@@ -1,0 +1,25 @@
+.github/workflows/native.yml
+  s_2057cad20e8237::t_fad2943715e2f9 28
+.github/workflows/release.yml
+  s_2057cad20e8237::t_59beb1ecc29e4d 189
+ARCHITECTURE.md
+  s_2057cad20e8237::t_d4cccf2b707cb4 51
+Makefile
+  s_2057cad20e8237::t_8e3757c40f2cc3 43
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "fd2db1f060312da16a4a5c21abbff313be30d10e",
+  "prompts": {},
+  "sessions": {
+    "s_2057cad20e8237": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ebb089b54ffeshFlwhgCDK4b2G",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
