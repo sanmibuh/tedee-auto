@@ -36,11 +36,17 @@ final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPo
   }
 
   private boolean hasInMemoryCommandBus(final ConfigurableListableBeanFactory beanFactory) {
-    return beanFactory.containsBeanDefinition(DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME);
+    if (!beanFactory.containsBeanDefinition(DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME)) {
+      return false;
+    }
+
+    var beanDefinition =
+        beanFactory.getBeanDefinition(DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME);
+    return InMemoryCommandBus.class.getName().equals(beanDefinition.getBeanClassName());
   }
 
   private boolean hasTransactionManager(final ConfigurableListableBeanFactory beanFactory) {
-    return beanFactory.getBeanNamesForType(PlatformTransactionManager.class).length > 0;
+    return beanFactory.getBeanNamesForType(PlatformTransactionManager.class).length == 1;
   }
 
   private boolean hasTransactionalCommandBus(final ConfigurableListableBeanFactory beanFactory) {
