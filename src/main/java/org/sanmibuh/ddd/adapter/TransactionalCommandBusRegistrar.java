@@ -2,6 +2,7 @@ package org.sanmibuh.ddd.adapter;
 
 import org.sanmibuh.ddd.port.CommandBus;
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.BeanFactoryUtils;
 import org.springframework.beans.factory.config.ConfigurableListableBeanFactory;
 import org.springframework.beans.factory.config.RuntimeBeanReference;
@@ -72,22 +73,28 @@ final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPo
   }
 
   private boolean hasTransactionManager(final ConfigurableListableBeanFactory beanFactory) {
-    var transactionManagerNames =
-        BeanFactoryUtils.beanNamesForTypeIncludingAncestors(
-            beanFactory, PlatformTransactionManager.class);
-    return transactionManagerNames.length == 1
-        || hasSinglePrimaryTransactionManager(beanFactory, transactionManagerNames);
+    var candidates = transactionManagerCandidatesPITEquivalent(beanFactory);
+    return candidates.count == 1
+        || hasSinglePrimaryTransactionManagerPITEquivalent(candidates.primaryCount);
   }
 
-  private boolean hasSinglePrimaryTransactionManager(
-      final ConfigurableListableBeanFactory beanFactory, final String[] transactionManagerNames) {
-    var primaryTransactionManagerCount = 0;
-    for (final var transactionManagerName : transactionManagerNames) {
-      if (isPrimary(beanFactory, transactionManagerName)) {
-        primaryTransactionManagerCount++;
+  private TransactionManagerCandidates transactionManagerCandidatesPITEquivalent(
+      final ConfigurableListableBeanFactory beanFactory) {
+    var count = 0;
+    var primaryCount = 0;
+    BeanFactory currentBeanFactory = beanFactory;
+    while (currentBeanFactory instanceof ConfigurableListableBeanFactory configurableBeanFactory) {
+      for (final var transactionManagerName :
+          configurableBeanFactory.getBeanNamesForType(
+              PlatformTransactionManager.class, false, false)) {
+        count++;
+        if (configurableBeanFactory.getBeanDefinition(transactionManagerName).isPrimary()) {
+          primaryCount++;
+        }
       }
+      currentBeanFactory = configurableBeanFactory.getParentBeanFactory();
     }
-    return hasSinglePrimaryTransactionManagerPITEquivalent(primaryTransactionManagerCount);
+    return new TransactionManagerCandidates(count, primaryCount);
   }
 
   private boolean hasSinglePrimaryTransactionManagerPITEquivalent(
@@ -95,20 +102,9 @@ final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPo
     return primaryTransactionManagerCount == 1;
   }
 
-  private boolean isPrimary(
-      final ConfigurableListableBeanFactory beanFactory, final String transactionManagerName) {
-    if (beanFactory.containsBeanDefinition(transactionManagerName)) {
-      return beanFactory.getBeanDefinition(transactionManagerName).isPrimary();
-    }
-
-    final var parentBeanFactory = beanFactory.getParentBeanFactory();
-    return parentBeanFactory
-            instanceof ConfigurableListableBeanFactory parentConfigurableBeanFactory
-        && parentConfigurableBeanFactory.containsBeanDefinition(transactionManagerName)
-        && parentConfigurableBeanFactory.getBeanDefinition(transactionManagerName).isPrimary();
-  }
-
   private boolean hasTransactionalCommandBus(final ConfigurableListableBeanFactory beanFactory) {
     return beanFactory.getBeanNamesForType(TransactionalCommandBus.class).length > 0;
   }
+
+  private record TransactionManagerCandidates(int count, int primaryCount) {}
 }
