@@ -20,6 +20,9 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
 @AutoConfiguration
 public class DddAutoConfiguration {
 
+  static final String IN_MEMORY_COMMAND_BUS_BEAN_NAME = "inMemoryCommandBus";
+  static final String TRANSACTIONAL_COMMAND_BUS_BEAN_NAME = "transactionalCommandBus";
+
   @Bean
   static BeanDefinitionRegistryPostProcessor domainEventHandlerRegistrar(
       final BeanFactory beanFactory) {
@@ -42,7 +45,7 @@ public class DddAutoConfiguration {
     return new InMemoryEventBus(handlers);
   }
 
-  @Bean
+  @Bean(IN_MEMORY_COMMAND_BUS_BEAN_NAME)
   @ConditionalOnMissingBean(CommandBus.class)
   public InMemoryCommandBus inMemoryCommandBus(
       final List<CommandHandler<?, ?>> handlers, final EventBus eventBus) {

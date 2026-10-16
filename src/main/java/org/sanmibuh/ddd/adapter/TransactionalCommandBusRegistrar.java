@@ -10,9 +10,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 
 final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPostProcessor {
 
-  private static final String IN_MEMORY_COMMAND_BUS_BEAN_NAME = "inMemoryCommandBus";
-  private static final String TRANSACTIONAL_COMMAND_BUS_BEAN_NAME = "transactionalCommandBus";
-
   @Override
   public void postProcessBeanDefinitionRegistry(final BeanDefinitionRegistry registry) {
     if (!(registry instanceof ConfigurableListableBeanFactory beanFactory)
@@ -26,8 +23,9 @@ final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPo
     definition.setPrimary(true);
     definition
         .getConstructorArgumentValues()
-        .addIndexedArgumentValue(0, new RuntimeBeanReference(IN_MEMORY_COMMAND_BUS_BEAN_NAME));
-    registry.registerBeanDefinition(TRANSACTIONAL_COMMAND_BUS_BEAN_NAME, definition);
+        .addIndexedArgumentValue(
+            0, new RuntimeBeanReference(DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME));
+    registry.registerBeanDefinition(DddAutoConfiguration.TRANSACTIONAL_COMMAND_BUS_BEAN_NAME, definition);
   }
 
   @Override
@@ -37,7 +35,7 @@ final class TransactionalCommandBusRegistrar implements BeanDefinitionRegistryPo
   }
 
   private boolean hasInMemoryCommandBus(final ConfigurableListableBeanFactory beanFactory) {
-    return beanFactory.containsBeanDefinition(IN_MEMORY_COMMAND_BUS_BEAN_NAME);
+    return beanFactory.containsBeanDefinition(DddAutoConfiguration.IN_MEMORY_COMMAND_BUS_BEAN_NAME);
   }
 
   private boolean hasTransactionManager(final ConfigurableListableBeanFactory beanFactory) {
