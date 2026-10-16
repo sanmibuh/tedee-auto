@@ -41,6 +41,7 @@ These standards apply to all code in this project and are the basis for any code
 - Final by default: every concrete class is `final` unless it is explicitly designed for extension. Leaf exceptions, handlers, buses, adapters, registrars and aggregates are all `final`. The only classes left non-final are those Spring proxies with CGLIB — `@Configuration`, `@AutoConfiguration` and `@SpringBootApplication` classes with `@Bean` methods — since a subclassing proxy cannot extend a final class. Concrete aggregates being final is enforced at build time by ArchUnit.
 - Use 2-space indentation.
 - Do not write comments that restate what the code already says. Only comment to explain a non-obvious decision or constraint that cannot be expressed in the code itself.
+- An intentionally empty method body must contain `// No-op`.
 - Use Lombok to remove boilerplate: `@RequiredArgsConstructor` for constructor injection. Never write constructors or getters by hand when Lombok can generate them.
 
 ### Architecture
