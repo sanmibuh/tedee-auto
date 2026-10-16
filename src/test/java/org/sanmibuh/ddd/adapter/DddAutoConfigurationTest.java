@@ -5,7 +5,12 @@ import static org.mockito.Mockito.mock;
 
 import java.util.List;
 import org.junit.jupiter.api.Test;
+import org.sanmibuh.ddd.domain.AggregateRoot;
+import org.sanmibuh.ddd.domain.AggregateRootId;
+import org.sanmibuh.ddd.domain.EntitySnapshot;
+import org.sanmibuh.ddd.port.Command;
 import org.sanmibuh.ddd.port.CommandBus;
+import org.sanmibuh.ddd.port.CommandHandler;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.boot.autoconfigure.AutoConfigurations;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -70,6 +75,28 @@ class DddAutoConfigurationTest {
   }
 
   @Test
+  void should_start_whenCustomCommandBusAndTransactionManagerProvided() {
+    contextRunner
+        .withUserConfiguration(
+            CustomCommandBusConfiguration.class, TransactionalConfiguration.class)
+        .run(context -> then(context).hasNotFailed());
+  }
+
+  @Test
+  void should_startTransaction_whenCommandDispatched() {
+    contextRunner
+        .withUserConfiguration(TransactionalConfiguration.class, CommandHandlerConfiguration.class)
+        .run(
+            context -> {
+              var transactionManager = context.getBean(TestTransactionManager.class);
+
+              context.getBean(CommandBus.class).dispatch(new TestCommand());
+
+              then(transactionManager.transactionBegun).isTrue();
+            });
+  }
+
+  @Test
   void should_returnQueryBus_whenQueryHandlersProvided() {
     then(sut.queryBus(List.of())).isInstanceOf(InMemoryQueryBus.class);
   }
@@ -92,7 +119,18 @@ class DddAutoConfigurationTest {
     }
   }
 
+  @Configuration
+  static class CommandHandlerConfiguration {
+
+    @Bean
+    CommandHandler<TestCommand, TestAggregate> commandHandler() {
+      return new TestCommandHandler();
+    }
+  }
+
   static final class TestTransactionManager extends AbstractPlatformTransactionManager {
+
+    private boolean transactionBegun;
 
     @Override
     protected Object doGetTransaction() {
@@ -101,7 +139,7 @@ class DddAutoConfigurationTest {
 
     @Override
     protected void doBegin(final Object transaction, final TransactionDefinition definition) {
-      // No-op
+      transactionBegun = true;
     }
 
     @Override
@@ -112,6 +150,33 @@ class DddAutoConfigurationTest {
     @Override
     protected void doRollback(final DefaultTransactionStatus status) {
       // No-op
+    }
+  }
+
+  record TestCommand() implements Command {}
+
+  record TestAggregateId(Integer value) implements AggregateRootId<Integer> {}
+
+  record TestAggregateSnapshot(Integer id) implements EntitySnapshot<Integer> {}
+
+  static final class TestAggregate
+      extends AggregateRoot<TestAggregateId, Integer, TestAggregateSnapshot> {
+
+    TestAggregate() {
+      super(new TestAggregateId(1));
+    }
+
+    @Override
+    public TestAggregateSnapshot snapshot() {
+      return new TestAggregateSnapshot(id().value());
+    }
+  }
+
+  static final class TestCommandHandler extends CommandHandler<TestCommand, TestAggregate> {
+
+    @Override
+    protected TestAggregate execute(final TestCommand command) {
+      return new TestAggregate();
     }
   }
 }
