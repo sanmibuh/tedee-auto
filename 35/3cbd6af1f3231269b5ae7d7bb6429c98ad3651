@@ -1,0 +1,21 @@
+.github/workflows/release.yml
+  s_2057cad20e8237::t_ba07e3ea2a67cf 301-318
+db/changelog/db.changelog-master.yaml
+  s_2057cad20e8237::t_d113d6acabeb90 5
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "353cbd6af1f3231269b5ae7d7bb6429c98ad3651",
+  "prompts": {},
+  "sessions": {
+    "s_2057cad20e8237": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ebb089b54ffeshFlwhgCDK4b2G",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
