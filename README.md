@@ -32,6 +32,7 @@ brew install jdtls
 make build    # compile
 make test     # run tests + coverage report
 make pitest   # run mutation tests (incremental)
+make migrate  # apply db/changelog to ./data/tedee.mv.db with the Liquibase image
 ```
 
 Or directly with Maven:
@@ -81,7 +82,9 @@ On the first run — or whenever `coverage-data` is missing, cannot be fetched, 
 
 The service is published as a GraalVM native image to the GitHub Container Registry: `ghcr.io/sanmibuh/tedee-auto/tedee-automation`. Browse all published versions on the [package page](https://github.com/sanmibuh/tedee-auto/pkgs/container/tedee-auto%2Ftedee-automation) and the corresponding changelogs under [Releases](https://github.com/sanmibuh/tedee-auto/releases).
 
-The container's working directory is `/home/nonroot`, so Spring Boot automatically picks up `./config/application.yml`. Mount your config directory (read-only) at `/home/nonroot/config` and a writable directory at `/var/log/tedee` for the rolling log files.
+The container's working directory is `/home/nonroot`, so Spring Boot automatically picks up `./config/application.yml`. Mount your config directory (read-only) at `/home/nonroot/config`, a writable directory at `/var/log/tedee` for the rolling log files, and a writable directory at `/home/nonroot/data` for the H2 database file.
+
+The database schema is owned by Liquibase and applied by a separate, ephemeral migration image (`ghcr.io/sanmibuh/tedee-auto/tedee-automation-migrations`) that runs to completion before the application starts. The application only validates the schema and never changes it. Both images share every release tag.
 
 ### 1. Prepare the host
 
@@ -90,11 +93,12 @@ All examples below use `/srv/tedee-auto` as the base host path. Replace every oc
 ```bash
 # Creating directories under a system path such as /srv requires root; drop sudo
 # if you use a user-writable base path.
-sudo mkdir -p /srv/tedee-auto/config /srv/tedee-auto/logs
+sudo mkdir -p /srv/tedee-auto/config /srv/tedee-auto/logs /srv/tedee-auto/data
 
-# The distroless image runs as the non-root user (UID/GID 65532); the log
-# directory must be owned by it. chown always needs elevated privileges.
-sudo chown -R 65532:65532 /srv/tedee-auto/logs
+# The distroless image runs as the non-root user (UID/GID 65532); the log and
+# data directories must be owned by it. The migration container runs as the same
+# UID. chown always needs elevated privileges.
+sudo chown -R 65532:65532 /srv/tedee-auto/logs /srv/tedee-auto/data
 ```
 
 Then create `/srv/tedee-auto/config/application.yml` with the content from the next step (edit it with `sudo` if the directory is root-owned).
@@ -162,13 +166,25 @@ sanmibuh:
 
 ```yaml
 services:
+  tedee-migrations:
+    image: ghcr.io/sanmibuh/tedee-auto/tedee-automation-migrations:${TEDEE_VERSION:-latest}
+    container_name: tedee-migrations
+    user: "65532:65532"
+    restart: "no"
+    volumes:
+      - /srv/tedee-auto/data:/data
+
   tedee-automation:
-    image: ghcr.io/sanmibuh/tedee-auto/tedee-automation:latest
+    image: ghcr.io/sanmibuh/tedee-auto/tedee-automation:${TEDEE_VERSION:-latest}
     container_name: tedee-automation
     restart: unless-stopped
+    depends_on:
+      tedee-migrations:
+        condition: service_completed_successfully
     volumes:
       - /srv/tedee-auto/config:/home/nonroot/config:ro
       - /srv/tedee-auto/logs:/var/log/tedee
+      - /srv/tedee-auto/data:/home/nonroot/data
     logging:
       driver: json-file
       options:
@@ -176,7 +192,7 @@ services:
         max-file: "3"
 ```
 
-> Use `:latest` for the newest build, or pin a specific version tag (e.g. `:0.1.1`) for reproducible deployments. Available tags are listed on the [package page](https://github.com/sanmibuh/tedee-auto/pkgs/container/tedee-auto%2Ftedee-automation) and [releases](https://github.com/sanmibuh/tedee-auto/releases).
+> Both images share the `TEDEE_VERSION` variable so they always use the same tag. It defaults to `latest`; for reproducible deployments pin a specific version (e.g. `TEDEE_VERSION=0.1.1`) in the shell or in a `.env` file next to the Compose file. Available tags are listed on the [package page](https://github.com/sanmibuh/tedee-auto/pkgs/container/tedee-auto%2Ftedee-automation) and [releases](https://github.com/sanmibuh/tedee-auto/releases).
 
 ### 4. Run
 

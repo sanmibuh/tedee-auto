@@ -17,8 +17,14 @@ readonly CONTAINER="tedee-native-smoke"
 readonly HEALTH_URL="http://localhost:8080/actuator/health"
 readonly TIMEOUT_SECONDS=90
 
+DATA_DIR="$(mktemp -d)"
+readonly DATA_DIR
+# The distroless image runs as UID 65532; the H2 data directory must be writable by it.
+chmod 777 "${DATA_DIR}"
+
 cleanup() {
   docker rm -f "${CONTAINER}" >/dev/null 2>&1 || true
+  rm -rf "${DATA_DIR}"
 }
 trap cleanup EXIT
 
@@ -38,6 +44,7 @@ docker run -d --name "${CONTAINER}" \
   -e PUBLIC_URL=http://localhost:8080 \
   -e TELEGRAM_BOT_TOKEN=smoke-test-bot-token \
   -e TELEGRAM_CHAT_ID=smoke-test-chat-id \
+  -v "${DATA_DIR}:/home/nonroot/data" \
   -p 8080:8080 \
   "${IMAGE}" >/dev/null
 

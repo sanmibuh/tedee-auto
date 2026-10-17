@@ -186,6 +186,7 @@ jobs:
         uses: docker/build-push-action@v7
         with:
           context: .
+          file: docker/app/Dockerfile
           load: true
           tags: tedee-automation:${{ steps.version.outputs.release }}
 
@@ -194,6 +195,20 @@ jobs:
       # context only in the native binary — ./mvnw verify cannot catch it.
       - name: Smoke test native image
         run: .github/scripts/native-smoke-test.sh tedee-automation:${{ steps.version.outputs.release }}
+
+      # Migration image: reuse the previous release's image when nothing it contains changed,
+      # otherwise build and smoke-test a new one. Both paths end with the same release tag.
+      - name: Resolve migration image
+        id: migrations
+        run: .github/scripts/resolve-liquibase-image.sh ghcr.io/sanmibuh/tedee-auto/tedee-automation-migrations >> "$GITHUB_OUTPUT"
+
+      - name: Build migration image
+        if: steps.migrations.outputs.reuse != 'true'
+        run: .github/scripts/build-liquibase-image.sh tedee-automation-migrations:${{ steps.version.outputs.release }}
+
+      - name: Smoke test migration image
+        if: steps.migrations.outputs.reuse != 'true'
+        run: .github/scripts/liquibase-smoke-test.sh tedee-automation-migrations:${{ steps.version.outputs.release }}
 
       # 6: first irreversible external effect. Only a smoke-tested image is
       # published, and only under its IMMUTABLE version tag. The mutable `latest`
@@ -208,6 +223,19 @@ jobs:
           docker tag "tedee-automation:${VERSION}" \
             "ghcr.io/sanmibuh/tedee-auto/tedee-automation:${VERSION}"
           docker push "ghcr.io/sanmibuh/tedee-auto/tedee-automation:${VERSION}"
+
+      # The migration image shares the application's release tag: either a freshly built image
+      # or the previous release's image re-tagged (same digest, no rebuild).
+      - name: Push migration image (version tag only)
+        run: |
+          VERSION="${{ steps.version.outputs.release }}"
+          IMAGE="ghcr.io/sanmibuh/tedee-auto/tedee-automation-migrations"
+          if [ "${{ steps.migrations.outputs.reuse }}" = "true" ]; then
+            docker buildx imagetools create -t "${IMAGE}:${VERSION}" "${IMAGE}:${{ steps.migrations.outputs.previous }}"
+          else
+            docker tag "tedee-automation-migrations:${VERSION}" "${IMAGE}:${VERSION}"
+            docker push "${IMAGE}:${VERSION}"
+          fi
 
       # 7: only now touch main. Build BOTH commits locally — the release and the
       # snapshot bump — tag the release commit, and publish everything in a SINGLE
@@ -270,7 +298,24 @@ jobs:
           echo "ERROR: failed to create GitHub Release v${VERSION} after 3 attempts. The tag exists; recreate the release from it manually."
           exit 1
 
-      # 8: last, advance the mutable `latest` alias to this build — only now that
+      # 8: last, advance the mutable `latest` aliases. The migration alias moves FIRST and a failure
+      # aborts the run before the application alias moves, so `latest` can never pair a new
+      # application with an older migration image.
+      - name: Update GHCR migrations latest alias
+        run: |
+          VERSION="${{ steps.version.outputs.release }}"
+          IMAGE="ghcr.io/sanmibuh/tedee-auto/tedee-automation-migrations"
+          for attempt in 1 2 3; do
+            if docker buildx imagetools create -t "${IMAGE}:latest" "${IMAGE}:${VERSION}"; then
+              exit 0
+            fi
+            echo "migrations latest attempt ${attempt} failed, retrying..."
+            sleep 5
+          done
+          echo "ERROR: failed to update migrations latest after 3 attempts. The :${VERSION} image is published; repoint latest manually."
+          exit 1
+
+      # Then advance the application `latest` alias to this build — only now that
       # main, the tag and the GitHub Release are all published, so an aborted run
       # never moves `latest` onto an unreleased image. Retried on transient GHCR
       # errors; a persistent failure leaves the immutable :version image, tag and

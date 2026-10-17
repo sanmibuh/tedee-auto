@@ -16,7 +16,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Answers;
 import org.mockito.BDDMockito;
-import org.sanmibuh.ddd.adapter.InMemoryCommandBus;
+import org.sanmibuh.ddd.adapter.TransactionalCommandBus;
 import org.sanmibuh.ddd.port.CommandBus;
 import org.sanmibuh.framework.notifier.Notifier;
 import org.sanmibuh.tedee.bridge.adapter.secondary.CallbackCommandApi;
@@ -55,8 +55,8 @@ class TedeeAutomationApplicationTest {
   @InjectSoftAssertions private BDDSoftAssertions softly;
 
   @Test
-  void should_wireTheInMemoryCommandBus_whenApplicationStarts() {
-    then(commandBus).isInstanceOf(InMemoryCommandBus.class);
+  void should_wireTheTransactionalCommandBus_whenApplicationStarts() {
+    then(commandBus).isInstanceOf(TransactionalCommandBus.class);
   }
 
   @Test

@@ -52,6 +52,16 @@
       <artifactId>spring-tx</artifactId>
     </dependency>
 
+    <!-- Persistence: JPA on file-based H2 (pure Java, native-image friendly); schema DDL is owned by Liquibase (run from a separate image) -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+    </dependency>
+
     <!-- Lombok -->
     <dependency>
       <groupId>org.projectlombok</groupId>

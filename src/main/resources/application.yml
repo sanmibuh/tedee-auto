@@ -4,6 +4,14 @@ spring:
   web:
     # Locale for user-facing messages; use an IETF language tag such as es.
     locale: en
+  datasource:
+    # H2 file database on the shared data volume (tedee.mv.db); the schema is created by the separate Liquibase migration image.
+    url: jdbc:h2:file:/home/nonroot/data/tedee
+  jpa:
+    open-in-view: false
+    hibernate:
+      # Hibernate only validates the schema; Liquibase owns all DDL.
+      ddl-auto: validate
   aop:
     # Use JDK dynamic proxies so retry advice targets the LockGateway interface and TedeeLockGateway stays final.
     proxy-target-class: false
