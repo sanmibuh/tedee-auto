@@ -33,6 +33,14 @@ The Bridge uses encrypted `api_token` authentication. A request interceptor crea
 
 Notifications consume `Lock` and `Bridge` domain events and are rendered through `MessageSource`. Battery levels are categorized as depleted (<=10), critical (<=20), low (<=40), medium (<=60), good (<=80), or high. Catalogs are in `messages.properties` and `messages_es.properties`; `spring.web.locale` selects the application locale for event-driven notifications.
 
+## Persistence
+
+Persistence is infrastructure for secondary adapters: JPA entities and repositories live in adapters and domain aggregates stay persistence-agnostic. The embedded database is file-based H2 (`tedee.mv.db` on the shared data volume, `TEDEE_DB_PATH` to relocate it). It replaced SQLite because `sqlite-jdbc` loads a bundled `.so` that a static musl native binary cannot load; H2 is pure Java. The H2 console is not used.
+
+Liquibase owns the schema and Hibernate only validates it (`ddl-auto: validate`). The application has no Liquibase dependency: migrations run from a separate, ephemeral image built from `docker/liquibase/` that applies `db/changelog` and exits before the application starts. `db/changelog/db.changelog-master.yaml` includes every file in `db/changelog/changes/`; changesets are reviewed, committed formatted-SQL files named `NNN-description.sql` (H2 is the only engine, so DDL is written exactly). JPA-based diff generation is a development aid only and never runs in CI or releases. `make migrate` applies the changelog to `./data` locally.
+
+The H2 file format changes between major versions, so the application and migration images must use the same H2 version: `.github/scripts/build-liquibase-image.sh` resolves `h2.version` from `pom.xml` and records it as an image label.
+
 ## Runtime And Quality
 
 Runtime hints cover reflection needed by Jackson and configuration binding in the native image. The generated Bridge client remains an adapter collaborator, not a port.
@@ -43,11 +51,12 @@ PITest must remain at 100%; use `make pitest` for its incremental history workfl
 
 ## Delivery
 
-The release workflow verifies the release state, builds and smoke-tests the native image, publishes the immutable image, then atomically publishes the release commits and tag. `latest` advances only after the release exists.
+Dockerfiles live in `docker/app` (native application image) and `docker/liquibase` (migration image). The release workflow verifies the release state, builds and smoke-tests the native image, publishes the immutable image, then atomically publishes the release commits and tag. `latest` advances only after the release exists. The migration image is published under every application release tag: when `db/`, `docker/liquibase/` and the H2 version are unchanged since the previous release it is only re-tagged to the existing digest, otherwise a new image is built and smoke-tested.
 
 ```bash
 ./mvnw verify
 make pitest
 docker build -f docker/app/Dockerfile -t tedee-automation .
+make migrate
 ./mvnw -Pnative native:compile
 ```
