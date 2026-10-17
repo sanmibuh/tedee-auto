@@ -1,0 +1,29 @@
+.github/scripts/build-liquibase-image.sh
+  s_2057cad20e8237::t_a303c1fc4e2f76 3,15-20
+.gitignore
+  s_2057cad20e8237::t_0159c04d64cb0a 14
+ARCHITECTURE.md
+  s_2057cad20e8237::t_524eb8eec91e42 38
+Makefile
+  s_2057cad20e8237::t_3c3db0c47186c7 52
+docker/liquibase/Dockerfile
+  s_2057cad20e8237::t_7f95f3bcc95f74 4,9-10
+src/main/resources/application.yml
+  s_2057cad20e8237::t_773fe2633c7f3b 9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "138c6d8c968f26ddac23a90b702d05166f281bb0",
+  "prompts": {},
+  "sessions": {
+    "s_2057cad20e8237": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ebb089b54ffeshFlwhgCDK4b2G",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
