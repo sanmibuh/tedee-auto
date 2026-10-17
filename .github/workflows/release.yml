@@ -298,7 +298,24 @@ jobs:
           echo "ERROR: failed to create GitHub Release v${VERSION} after 3 attempts. The tag exists; recreate the release from it manually."
           exit 1
 
-      # 8: last, advance the mutable `latest` alias to this build — only now that
+      # 8: last, advance the mutable `latest` aliases. The migration alias moves FIRST and a failure
+      # aborts the run before the application alias moves, so `latest` can never pair a new
+      # application with an older migration image.
+      - name: Update GHCR migrations latest alias
+        run: |
+          VERSION="${{ steps.version.outputs.release }}"
+          IMAGE="ghcr.io/sanmibuh/tedee-auto/tedee-automation-migrations"
+          for attempt in 1 2 3; do
+            if docker buildx imagetools create -t "${IMAGE}:latest" "${IMAGE}:${VERSION}"; then
+              exit 0
+            fi
+            echo "migrations latest attempt ${attempt} failed, retrying..."
+            sleep 5
+          done
+          echo "ERROR: failed to update migrations latest after 3 attempts. The :${VERSION} image is published; repoint latest manually."
+          exit 1
+
+      # Then advance the application `latest` alias to this build — only now that
       # main, the tag and the GitHub Release are all published, so an aborted run
       # never moves `latest` onto an unreleased image. Retried on transient GHCR
       # errors; a persistent failure leaves the immutable :version image, tag and
@@ -316,18 +333,4 @@ jobs:
             sleep 5
           done
           echo "ERROR: failed to push latest after 3 attempts. The :${VERSION} image, tag and release are published; repoint latest manually."
-          exit 1
-
-      - name: Update GHCR migrations latest alias
-        run: |
-          VERSION="${{ steps.version.outputs.release }}"
-          IMAGE="ghcr.io/sanmibuh/tedee-auto/tedee-automation-migrations"
-          for attempt in 1 2 3; do
-            if docker buildx imagetools create -t "${IMAGE}:latest" "${IMAGE}:${VERSION}"; then
-              exit 0
-            fi
-            echo "migrations latest attempt ${attempt} failed, retrying..."
-            sleep 5
-          done
-          echo "ERROR: failed to update migrations latest after 3 attempts. The :${VERSION} image is published; repoint latest manually."
           exit 1
