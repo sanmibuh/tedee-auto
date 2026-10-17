@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/framework/scheduling/CronValidatorTest.java
+  s_2b1ab2dc2ae61e::t_ac885c060dd45c 1-21
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "ae2c6abff7a5ab51fc17b533898aa94b5584debb",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
