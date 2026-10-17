@@ -1,0 +1,21 @@
+src/test/java/org/sanmibuh/framework/scheduling/CronValidatorTest.java
+  s_2b1ab2dc2ae61e::t_a152847738c506 11,17
+src/test/java/org/sanmibuh/tedee/lock/domain/vo/CronExpressionTest.java
+  s_2b1ab2dc2ae61e::t_45e214a6b284ea 12
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d26dce869f0056d7a1fe29c08e4ab33a2595d396",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
