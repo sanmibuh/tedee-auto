@@ -13,6 +13,7 @@ import com.tngtech.archunit.lang.ArchCondition;
 import com.tngtech.archunit.lang.ArchRule;
 import com.tngtech.archunit.lang.ConditionEvents;
 import com.tngtech.archunit.lang.SimpleConditionEvent;
+import jakarta.persistence.Entity;
 import java.util.Set;
 import org.sanmibuh.ddd.domain.AggregateRoot;
 import org.sanmibuh.ddd.domain.AggregateRootId;
@@ -87,6 +88,18 @@ class HexagonalArchitectureTest {
           .resideInAPackage("org.springframework..");
 
   @ArchTest
+  static final ArchRule should_beNamedJpaEntityInSecondaryAdapter_whenAnnotatedWithEntity =
+      classes()
+          .that()
+          .resideInAPackage("org.sanmibuh.tedee..")
+          .and()
+          .areAnnotatedWith(Entity.class)
+          .should()
+          .haveSimpleNameEndingWith("JpaEntity")
+          .andShould()
+          .resideInAPackage("..adapter.secondary..");
+
+  @ArchTest
   static final ArchRule should_forbidAdapterDependencies_whenInDomainLayer =
       noClasses()
           .that()
@@ -158,7 +171,7 @@ class HexagonalArchitectureTest {
           .resideInAPackage("..domain.vo..");
 
   @ArchTest
-  static final ArchRule should_resideInValueObjectPackage_whenLockEntityId =
+  static final ArchRule should_resideInValueObjectPackage_whenLockJpaEntityId =
       classes()
           .that()
           .resideInAPackage("org.sanmibuh.tedee.lock.domain..")
