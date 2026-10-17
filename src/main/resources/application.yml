@@ -10,6 +10,9 @@ spring:
   jpa:
     open-in-view: false
     hibernate:
+      naming:
+        # Derive table names from <Name>JpaEntity by dropping the suffix.
+        implicit-strategy: org.sanmibuh.framework.persistence.JpaEntityImplicitNamingStrategy
       # Hibernate only validates the schema; Liquibase owns all DDL.
       ddl-auto: validate
   aop:
