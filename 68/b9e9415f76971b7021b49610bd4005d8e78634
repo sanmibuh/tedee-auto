@@ -1,0 +1,21 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/exception/InvalidCronExpressionException.java
+  s_ff28f5bf709230::t_e0b7d8550ef191 1-10
+src/test/java/org/sanmibuh/tedee/lock/domain/vo/CronExpressionTest.java
+  s_ff28f5bf709230::t_264380d4c7b56f 1-40
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "68b9e9415f76971b7021b49610bd4005d8e78634",
+  "prompts": {},
+  "sessions": {
+    "s_ff28f5bf709230": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "0b2d7ebd-645d-4b37-8954-156250d5807a",
+        "model": "unknown"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
