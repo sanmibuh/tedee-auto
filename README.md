@@ -32,7 +32,7 @@ brew install jdtls
 make build    # compile
 make test     # run tests + coverage report
 make pitest   # run mutation tests (incremental)
-make migrate  # apply db/changelog to ./data/tedee.db with the Liquibase image
+make migrate  # apply db/changelog to ./data/tedee.mv.db with the Liquibase image
 ```
 
 Or directly with Maven:
@@ -82,7 +82,7 @@ On the first run — or whenever `coverage-data` is missing, cannot be fetched, 
 
 The service is published as a GraalVM native image to the GitHub Container Registry: `ghcr.io/sanmibuh/tedee-auto/tedee-automation`. Browse all published versions on the [package page](https://github.com/sanmibuh/tedee-auto/pkgs/container/tedee-auto%2Ftedee-automation) and the corresponding changelogs under [Releases](https://github.com/sanmibuh/tedee-auto/releases).
 
-The container's working directory is `/home/nonroot`, so Spring Boot automatically picks up `./config/application.yml`. Mount your config directory (read-only) at `/home/nonroot/config`, a writable directory at `/var/log/tedee` for the rolling log files, and a writable directory at `/home/nonroot/data` for the SQLite database.
+The container's working directory is `/home/nonroot`, so Spring Boot automatically picks up `./config/application.yml`. Mount your config directory (read-only) at `/home/nonroot/config`, a writable directory at `/var/log/tedee` for the rolling log files, and a writable directory at `/home/nonroot/data` for the H2 database file.
 
 The database schema is owned by Liquibase and applied by a separate, ephemeral migration image (`ghcr.io/sanmibuh/tedee-auto/tedee-automation-migrations`) that runs to completion before the application starts. The application only validates the schema and never changes it. Both images share every release tag.
 

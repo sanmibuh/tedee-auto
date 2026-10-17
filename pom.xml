@@ -52,18 +52,14 @@
       <artifactId>spring-tx</artifactId>
     </dependency>
 
-    <!-- Persistence: JPA on SQLite; schema DDL is owned by Liquibase (run from a separate image) -->
+    <!-- Persistence: JPA on file-based H2 (pure Java, native-image friendly); schema DDL is owned by Liquibase (run from a separate image) -->
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-starter-data-jpa</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.hibernate.orm</groupId>
-      <artifactId>hibernate-community-dialects</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.xerial</groupId>
-      <artifactId>sqlite-jdbc</artifactId>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
     </dependency>
 
     <!-- Lombok -->

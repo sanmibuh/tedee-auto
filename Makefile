@@ -11,7 +11,7 @@ help:
 	@echo "  pitest  Run incremental mutation testing"
 	@echo "  image   Build GraalVM native Docker image"
 	@echo "  liquibase-image  Build the Liquibase migration image"
-	@echo "  migrate Apply db/changelog to ./data/tedee.db using the migration image"
+	@echo "  migrate Apply db/changelog to ./data/tedee.mv.db using the migration image"
 
 build:
 	./mvnw compile -B

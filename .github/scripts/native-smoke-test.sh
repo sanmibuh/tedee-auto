@@ -19,7 +19,7 @@ readonly TIMEOUT_SECONDS=90
 
 DATA_DIR="$(mktemp -d)"
 readonly DATA_DIR
-# The distroless image runs as UID 65532; the SQLite directory must be writable by it.
+# The distroless image runs as UID 65532; the H2 data directory must be writable by it.
 chmod 777 "${DATA_DIR}"
 
 cleanup() {
