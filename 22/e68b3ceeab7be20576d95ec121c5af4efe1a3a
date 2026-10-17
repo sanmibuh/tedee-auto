@@ -1,0 +1,23 @@
+.github/scripts/liquibase-smoke-test.sh
+  s_2057cad20e8237::t_c801d1103d86df 1-24
+.github/scripts/resolve-liquibase-image.sh
+  s_2057cad20e8237::t_19027d94b96c5f 1-37
+.github/workflows/release.yml
+  s_2057cad20e8237::t_7c92df52ad1b07 199-212,227-239,320-333
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "22e68b3ceeab7be20576d95ec121c5af4efe1a3a",
+  "prompts": {},
+  "sessions": {
+    "s_2057cad20e8237": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ebb089b54ffeshFlwhgCDK4b2G",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
