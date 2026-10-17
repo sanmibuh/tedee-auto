@@ -1,0 +1,33 @@
+.github/scripts/build-liquibase-image.sh
+  s_2057cad20e8237::t_43215cf9a5f15b 3-4,12-13,17
+.github/scripts/native-smoke-test.sh
+  s_2057cad20e8237::t_da7aa2d31cf84a 22
+Makefile
+  s_2057cad20e8237::t_eb3e05571ba19b 14
+README.md
+  s_2057cad20e8237::t_c6a143e76e7a3d 35,85
+docker/liquibase/Dockerfile
+  s_2057cad20e8237::t_3ad5a59747fbf5 1,5,7,10-11,21
+pom.xml
+  s_2057cad20e8237::t_cadbfb50672e2d 55,61-62
+src/main/resources/application.yml
+  s_2057cad20e8237::t_d1f73d6fecad45 8-9
+src/test/resources/application.properties
+  s_2057cad20e8237::t_1f52c8de7d6f6c 1-2
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "3813111fad89d0f2fd50c2d6233939ccb225e2d1",
+  "prompts": {},
+  "sessions": {
+    "s_2057cad20e8237": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_ebb089b54ffeshFlwhgCDK4b2G",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
