@@ -49,4 +49,4 @@ liquibase-image:
 
 migrate: liquibase-image
 	@mkdir -p data
-	docker run --rm -v "$(CURDIR)/data:/data" tedee-liquibase
+	docker run --rm --user "$(shell id -u):$(shell id -g)" -v "$(CURDIR)/data:/data" tedee-liquibase

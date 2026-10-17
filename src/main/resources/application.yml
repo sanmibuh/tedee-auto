@@ -6,7 +6,7 @@ spring:
     locale: en
   datasource:
     # H2 file database on the shared data volume (tedee.mv.db); the schema is created by the separate Liquibase migration image.
-    url: jdbc:h2:file:${TEDEE_DB_PATH:/home/nonroot/data/tedee}
+    url: jdbc:h2:file:/home/nonroot/data/tedee
   jpa:
     open-in-view: false
     hibernate:

@@ -11,7 +11,7 @@ target/
 # Local deployment config (compose + secrets, not versioned)
 /deploy/
 
-# Local SQLite database (make migrate)
+# Local H2 database (make migrate)
 /data/
 
 # PITest incremental analysis

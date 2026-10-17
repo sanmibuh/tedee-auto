@@ -35,7 +35,7 @@ Notifications consume `Lock` and `Bridge` domain events and are rendered through
 
 ## Persistence
 
-Persistence is infrastructure for secondary adapters: JPA entities and repositories live in adapters and domain aggregates stay persistence-agnostic. The embedded database is file-based H2 (`tedee.mv.db` on the shared data volume, `TEDEE_DB_PATH` to relocate it). It replaced SQLite because `sqlite-jdbc` loads a bundled `.so` that a static musl native binary cannot load; H2 is pure Java. The H2 console is not used.
+Persistence is infrastructure for secondary adapters: JPA entities and repositories live in adapters and domain aggregates stay persistence-agnostic. The embedded database is file-based H2 (`tedee.mv.db` on the shared data volume). It replaced SQLite because `sqlite-jdbc` loads a bundled `.so` that a static musl native binary cannot load; H2 is pure Java. The H2 console is not used.
 
 Liquibase owns the schema and Hibernate only validates it (`ddl-auto: validate`). The application has no Liquibase dependency: migrations run from a separate, ephemeral image built from `docker/liquibase/` that applies `db/changelog` and exits before the application starts. `db/changelog/db.changelog-master.yaml` includes every file in `db/changelog/changes/`; changesets are reviewed, committed formatted-SQL files named `NNN-description.sql` (H2 is the only engine, so DDL is written exactly). JPA-based diff generation is a development aid only and never runs in CI or releases. `make migrate` applies the changelog to `./data` locally.
 

@@ -1,14 +1,13 @@
 # Ephemeral migration image: applies db/changelog to the H2 database on the shared data volume, then exits.
 FROM liquibase/liquibase:5.0.4
 
-# Required: pass the version resolved from pom.xml (see .github/scripts/build-liquibase-image.sh).
+# Required: the H2 version from pom.xml, recorded as a label (see .github/scripts/build-liquibase-image.sh).
 ARG H2_VERSION
 
 LABEL h2.version=${H2_VERSION}
 
-ADD --chown=liquibase:liquibase --chmod=644 \
-  https://repo1.maven.org/maven2/com/h2database/h2/${H2_VERSION}/h2-${H2_VERSION}.jar \
-  /liquibase/lib/h2.jar
+# The driver jar is resolved and checksum-verified by Maven in the build script; the image never downloads it.
+COPY --chown=liquibase:liquibase --chmod=644 target/liquibase/h2.jar /liquibase/lib/h2.jar
 
 COPY --chown=liquibase:liquibase db/changelog /liquibase/changelog
 
