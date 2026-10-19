@@ -21,6 +21,7 @@
     <archunit.version>1.5.1</archunit.version>
     <error-prone.version>2.50.0</error-prone.version>
     <google-java-format.version>1.36.1</google-java-format.version>
+    <hibernate-query-asserts.version>2.2.0</hibernate-query-asserts.version>
     <jacoco.version>0.8.15</jacoco.version>
     <logcaptor.version>2.12.7</logcaptor.version>
     <java.version>25</java.version>
@@ -88,12 +89,23 @@
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-restclient-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.springframework.boot</groupId>
       <artifactId>spring-boot-webmvc-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>com.mickaelb</groupId>
+      <artifactId>hibernate-query-asserts</artifactId>
+      <version>${hibernate-query-asserts.version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -166,7 +178,9 @@
           <compilerArgs>
             <arg>-XDcompilePolicy=simple</arg>
             <arg>--should-stop=ifError=FLOW</arg>
-            <arg>-Xplugin:ErrorProne -XepExcludedPaths:.*/generated-sources/.* -Xep:NullAway:ERROR -XepOpt:NullAway:AnnotatedPackages=org.sanmibuh -XepOpt:NullAway:AcknowledgeRestrictiveAnnotations=true</arg>
+            <arg>-Xplugin:ErrorProne -XepExcludedPaths:.*/generated-sources/.* -Xep:NullAway:ERROR
+              -XepOpt:NullAway:AnnotatedPackages=org.sanmibuh -XepOpt:NullAway:AcknowledgeRestrictiveAnnotations=true
+            </arg>
           </compilerArgs>
         </configuration>
       </plugin>

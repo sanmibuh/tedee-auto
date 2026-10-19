@@ -7,7 +7,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import java.util.HashSet;
+import jakarta.persistence.OrderBy;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -22,11 +23,12 @@ public class LockJpaEntity {
 
   @ElementCollection(fetch = FetchType.EAGER)
   @CollectionTable(name = "lock_cron_expression", joinColumns = @JoinColumn(name = "lock_id"))
+  @OrderBy
   @Column(name = "cron_expression", nullable = false, length = 512)
-  private Set<String> cronExpressions = new HashSet<>();
+  private Set<String> cronExpressions = new LinkedHashSet<>();
 
   public LockJpaEntity(final int id, final Set<String> cronExpressions) {
     this.id = id;
-    this.cronExpressions = new HashSet<>(cronExpressions);
+    this.cronExpressions = new LinkedHashSet<>(cronExpressions);
   }
 }
