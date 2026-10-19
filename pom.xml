@@ -22,11 +22,13 @@
     <error-prone.version>2.50.0</error-prone.version>
     <google-java-format.version>1.36.1</google-java-format.version>
     <hibernate-query-asserts.version>2.2.0</hibernate-query-asserts.version>
+    <liquibase.version>5.0.4</liquibase.version>
     <jacoco.version>0.8.15</jacoco.version>
     <logcaptor.version>2.12.7</logcaptor.version>
     <java.version>25</java.version>
     <nullaway.version>0.14.2</nullaway.version>
     <test.spring.config.location>classpath:/</test.spring.config.location>
+    <test.db.url>jdbc:h2:mem:tedee</test.db.url>
     <openapi-generator.version>7.26.0</openapi-generator.version>
     <pitest-history-plugin.version>0.0.1</pitest-history-plugin.version>
     <pitest-junit5-plugin.version>1.2.3</pitest-junit5-plugin.version>
@@ -103,6 +105,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-liquibase</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>com.mickaelb</groupId>
       <artifactId>hibernate-query-asserts</artifactId>
       <version>${hibernate-query-asserts.version}</version>
@@ -123,6 +130,16 @@
   </dependencies>
 
   <build>
+    <testResources>
+      <testResource>
+        <directory>src/test/resources</directory>
+      </testResource>
+      <testResource>
+        <!-- The Liquibase changelog is the schema source of truth; tests apply it from the classpath. -->
+        <directory>db/changelog</directory>
+        <targetPath>db/changelog</targetPath>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <!-- Isolate tests from the git-ignored ./config/application.yml so local runs match CI. -->
@@ -131,6 +148,7 @@
         <configuration>
           <systemPropertyVariables>
             <spring.config.location>${test.spring.config.location}</spring.config.location>
+            <test.db.url>${test.db.url}</test.db.url>
           </systemPropertyVariables>
         </configuration>
       </plugin>
@@ -304,6 +322,74 @@
                 <buildArg>-march=x86-64-v2</buildArg>
               </buildArgs>
             </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+      <!-- Development aid for the local database: `make execute-migration` applies the changelog (liquibase:update)
+           and `make create-migration` (scripts/generate-migration.sh) diffs the JPA entities, read directly
+           by liquibase-hibernate7, against it. The plugin classpath lists what that extension needs. -->
+      <id>migration</id>
+      <properties>
+        <migration.dir>${project.build.directory}/migration</migration.dir>
+        <!-- Local development database (without the .mv.db suffix); make passes DB_DIR through -Ddb.path. -->
+        <db.path>${project.basedir}/data/tedee</db.path>
+      </properties>
+      <build>
+        <plugins>
+          <plugin>
+            <groupId>org.liquibase</groupId>
+            <artifactId>liquibase-maven-plugin</artifactId>
+            <version>${liquibase.version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>com.h2database</groupId>
+                <artifactId>h2</artifactId>
+                <version>${h2.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>org.liquibase.ext</groupId>
+                <artifactId>liquibase-hibernate7</artifactId>
+                <version>${liquibase.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-orm</artifactId>
+                <version>${spring-framework.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>org.hibernate.orm</groupId>
+                <artifactId>hibernate-core</artifactId>
+                <version>${hibernate.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-hibernate</artifactId>
+                <version>${project.parent.version}</version>
+              </dependency>
+              <dependency>
+                <groupId>jakarta.validation</groupId>
+                <artifactId>jakarta.validation-api</artifactId>
+                <version>${jakarta-validation.version}</version>
+              </dependency>
+            </dependencies>
+            <configuration>
+              <searchPath>${project.basedir}</searchPath>
+              <changeLogFile>db/changelog/db.changelog-master.yaml</changeLogFile>
+              <url>jdbc:h2:file:${db.path}</url>
+              <referenceUrl>hibernate:spring:org.sanmibuh.tedee?dialect=org.hibernate.dialect.H2Dialect&amp;hibernate.implicit_naming_strategy=org.sanmibuh.framework.persistence.JpaEntityImplicitNamingStrategy&amp;hibernate.physical_naming_strategy=org.hibernate.boot.model.naming.PhysicalNamingStrategySnakeCaseImpl</referenceUrl>
+              <diffChangeLogFile>${migration.dir}/out/${migration.name}.h2.sql</diffChangeLogFile>
+            </configuration>
+            <executions>
+              <execution>
+                <id>diff-against-entities</id>
+                <phase>process-classes</phase>
+                <goals>
+                  <goal>diff</goal>
+                </goals>
+              </execution>
+            </executions>
           </plugin>
         </plugins>
       </build>

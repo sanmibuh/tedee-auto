@@ -5,8 +5,8 @@ spring:
     # Locale for user-facing messages; use an IETF language tag such as es.
     locale: en
   datasource:
-    # H2 file database on the shared data volume (tedee.mv.db); the schema is created by the separate Liquibase migration image.
-    url: jdbc:h2:file:/home/nonroot/data/tedee
+    # H2 file database on the shared data volume (tedee.mv.db); DB_PATH overrides the location without the .mv.db suffix; the schema is created by the separate Liquibase migration image.
+    url: jdbc:h2:file:${DB_PATH:/home/nonroot/data/tedee}
   jpa:
     open-in-view: false
     hibernate:

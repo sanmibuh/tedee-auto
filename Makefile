@@ -1,4 +1,7 @@
-.PHONY: help build clean format test automation-test pitest image liquibase-image migrate
+# Local development database directory (git-ignored); the database file is <DB_DIR>/tedee.mv.db.
+DB_DIR ?= data
+
+.PHONY: help build clean format test automation-test pitest image liquibase-image execute-migration create-migration db-drop
 
 help:
 	@echo "Usage: make <target>"
@@ -11,7 +14,9 @@ help:
 	@echo "  pitest  Run incremental mutation testing"
 	@echo "  image   Build GraalVM native Docker image"
 	@echo "  liquibase-image  Build the Liquibase migration image"
-	@echo "  migrate Apply db/changelog to ./data/tedee.mv.db using the migration image"
+	@echo "  execute-migration  Apply db/changelog to $(DB_DIR)/tedee.mv.db with the Liquibase Maven plugin (DB_DIR=data by default)"
+	@echo "  db-drop Delete the local database in $(DB_DIR)"
+	@echo "  create-migration  Apply pending migrations, then generate a changeset from JPA entity changes (issue from the GH-<n> branch name)"
 
 build:
 	./mvnw compile -B
@@ -47,6 +52,12 @@ image:
 liquibase-image:
 	.github/scripts/build-liquibase-image.sh tedee-liquibase
 
-migrate: liquibase-image
-	@mkdir -p data
-	docker run --rm --user "$(shell id -u):$(shell id -g)" -v "$(CURDIR)/data:/data" tedee-liquibase
+execute-migration:
+	@mkdir -p $(DB_DIR)
+	./mvnw -q -B -Pmigration liquibase:update -Ddb.path="$(abspath $(DB_DIR))/tedee"
+
+db-drop:
+	rm -f $(DB_DIR)/tedee.mv.db $(DB_DIR)/tedee.trace.db
+
+create-migration: execute-migration
+	DB_DIR="$(DB_DIR)" scripts/generate-migration.sh

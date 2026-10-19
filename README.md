@@ -32,7 +32,9 @@ brew install jdtls
 make build    # compile
 make test     # run tests + coverage report
 make pitest   # run mutation tests (incremental)
-make migrate  # apply db/changelog to ./data/tedee.mv.db with the Liquibase image
+make execute-migration  # apply db/changelog to ./data/tedee.mv.db with the Liquibase Maven plugin (DB_DIR=<dir> to change it)
+make db-drop  # delete the local development database
+make create-migration  # run execute-migration, then generate a changeset from the JPA entity changes
 ```
 
 Or directly with Maven:
