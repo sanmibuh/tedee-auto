@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.ElementCollection;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.ForeignKey;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OrderBy;
@@ -22,7 +23,10 @@ public class LockJpaEntity {
   @Id private int id;
 
   @ElementCollection(fetch = FetchType.EAGER)
-  @CollectionTable(name = "lock_cron_expression", joinColumns = @JoinColumn(name = "lock_id"))
+  @CollectionTable(
+      name = "lock_cron_expression",
+      joinColumns = @JoinColumn(name = "lock_id"),
+      foreignKey = @ForeignKey(name = "fk_lock_cron_expression_lock"))
   @OrderBy
   @Column(name = "cron_expression", nullable = false, length = 512)
   private Set<String> cronExpressions = new LinkedHashSet<>();
