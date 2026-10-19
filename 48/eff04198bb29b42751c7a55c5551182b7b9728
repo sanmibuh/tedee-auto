@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockJpaEntity.java
+  s_2b1ab2dc2ae61e::t_d35d83f5eba41f 8,26-29
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "48eff04198bb29b42751c7a55c5551182b7b9728",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
