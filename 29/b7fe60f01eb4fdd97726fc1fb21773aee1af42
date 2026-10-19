@@ -1,0 +1,33 @@
+src/test/java/org/sanmibuh/framework/persistence/RepositoryTest.java
+  s_2b1ab2dc2ae61e::t_7c0e121530a711 10,21
+README.md
+  s_2b1ab2dc2ae61e::t_f0232b2aa86d17 35-37
+Makefile
+  s_2b1ab2dc2ae61e::t_9243da5614075b 1-4,17-19,55-63
+pom.xml
+  s_2b1ab2dc2ae61e::t_ec7eba9ce14bce 25,31,107-111,133-142,151,329-396
+ARCHITECTURE.md
+  s_2b1ab2dc2ae61e::t_1f393939555f56 40,60
+src/test/resources/application.properties
+  s_2b1ab2dc2ae61e::t_e61a4e9173161a 1-6
+scripts/generate-migration.sh
+  s_2b1ab2dc2ae61e::t_9baea695f4b623 1-46
+src/main/resources/application.yml
+  s_2b1ab2dc2ae61e::t_881e5a67ee5580 8-9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "29b7fe60f01eb4fdd97726fc1fb21773aee1af42",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
