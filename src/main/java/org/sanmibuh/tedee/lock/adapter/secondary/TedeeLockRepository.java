@@ -28,7 +28,7 @@ public final class TedeeLockRepository implements LockRepository {
         new Lock(
             new LockSnapshot(
                 lockId.value(),
-                lockGateway.get(lockId).name(),
+                lockGateway.get(lockId).orElseThrow().name(),
                 LockStatus.UNLOCKED,
                 cronExpressions)));
   }

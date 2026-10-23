@@ -8,6 +8,7 @@ import com.mickaelb.api.AssertHibernateSQLCount;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import java.util.List;
+import java.util.Optional;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -44,7 +45,8 @@ class TedeeLockRepositoryTest {
 
   @BeforeEach
   void stubGateway() {
-    given(lockGateway.get(new LockId(DEVICE_ID))).willReturn(new LockView(DEVICE_ID, NAME));
+    given(lockGateway.get(new LockId(DEVICE_ID)))
+        .willReturn(Optional.of(new LockView(DEVICE_ID, NAME)));
   }
 
   @Test
@@ -102,6 +104,14 @@ class TedeeLockRepositoryTest {
     sut.save(new LockSnapshot(DEVICE_ID, NAME, LockStatus.LOCKED, List.of()));
 
     then(sut.get(new LockId(DEVICE_ID)).snapshot().status()).isEqualTo(LockStatus.UNLOCKED);
+  }
+
+  @Test
+  @AssertHibernateSQLCount(selects = 1)
+  void should_returnEmpty_whenBridgeDoesNotKnowTheLock() {
+    given(lockGateway.get(new LockId(DEVICE_ID))).willReturn(Optional.empty());
+
+    then(sut.findById(new LockId(DEVICE_ID))).isEmpty();
   }
 
   private void saveAndFlush(final LockSnapshot snapshot) {

@@ -23,7 +23,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
-import org.sanmibuh.tedee.lock.domain.exception.InvalidLockRequestException;
+import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
@@ -75,7 +75,7 @@ class TedeeLockGatewayTest {
 
     static Stream<Arguments> nonTransientBridgeErrors() {
       return Stream.of(
-          Arguments.of(HttpStatus.NOT_FOUND, InvalidLockRequestException.class),
+          Arguments.of(HttpStatus.NOT_FOUND, AggregateNotFoundException.class),
           Arguments.of(HttpStatus.UNAUTHORIZED, LockOperationFailedException.class),
           Arguments.of(HttpStatus.BAD_REQUEST, LockOperationFailedException.class),
           Arguments.of(HttpStatus.INTERNAL_SERVER_ERROR, LockOperationFailedException.class));
@@ -191,7 +191,19 @@ class TedeeLockGatewayTest {
       final var lock = sut.get(new LockId(DEVICE_ID));
 
       server.verify();
-      then(lock).isEqualTo(new LockView(DEVICE_ID, "Front door"));
+      then(lock).contains(new LockView(DEVICE_ID, "Front door"));
+    }
+
+    @Test
+    void should_returnEmpty_whenBridgeDoesNotKnowTheLock() {
+      server
+          .expect(ExpectedCount.once(), requestTo(LOCK_DETAILS_URL))
+          .andExpect(method(HttpMethod.GET))
+          .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+      then(sut.get(new LockId(DEVICE_ID))).isEmpty();
+
+      server.verify();
     }
 
     @ParameterizedTest
@@ -210,7 +222,7 @@ class TedeeLockGatewayTest {
 
       final var lock = sut.get(new LockId(DEVICE_ID));
 
-      then(lock).isEqualTo(new LockView(DEVICE_ID, String.valueOf(DEVICE_ID)));
+      then(lock).contains(new LockView(DEVICE_ID, String.valueOf(DEVICE_ID)));
     }
   }
 
@@ -227,20 +239,6 @@ class TedeeLockGatewayTest {
 
       thenThrownBy(() -> operation.call.accept(sut))
           .isInstanceOf(LockTemporarilyUnavailableException.class);
-
-      server.verify();
-    }
-
-    @ParameterizedTest
-    @EnumSource(Operation.class)
-    void should_translateNotFound_whenBridgeDoesNotKnowTheLock(final Operation operation) {
-      server
-          .expect(ExpectedCount.once(), requestTo(operation.url))
-          .andExpect(method(operation.method))
-          .andRespond(withStatus(HttpStatus.NOT_FOUND));
-
-      thenThrownBy(() -> operation.call.accept(sut))
-          .isInstanceOf(InvalidLockRequestException.class);
 
       server.verify();
     }
