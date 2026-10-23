@@ -53,12 +53,13 @@ class ReportBatteryLevelHandlerTest {
   void should_recordBatteryLevelReported_whenReportingLevel(
       final int level, final BatteryLevelCategory category) {
     given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), LockStatus.UNLOCKED));
+        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
 
     sut.handle(new ReportBatteryLevelCommand(1, level));
 
     verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents())
-        .containsExactly(new BatteryLevelReported(1, new BatteryStatus(level, category)));
+        .containsExactly(
+            new BatteryLevelReported(1, "Front door", new BatteryStatus(level, category)));
   }
 }

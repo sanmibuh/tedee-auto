@@ -29,17 +29,18 @@ class CloseLockHandlerTest {
   @Test
   void should_recordLockRequested_whenClosingAnOpenLock() {
     given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), LockStatus.UNLOCKED));
+        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
 
     sut.handle(new CloseLockCommand(1));
 
     verify(repository).save(savedLock.capture());
-    then(savedLock.getValue().domainEvents()).containsExactly(new LockRequested(1));
+    then(savedLock.getValue().domainEvents()).containsExactly(new LockRequested(1, "Front door"));
   }
 
   @Test
   void should_notRecordEvent_whenClosingAnAlreadyClosedLock() {
-    given(repository.get(new LockId(1))).willReturn(Lock.create(new LockId(1), LockStatus.LOCKED));
+    given(repository.get(new LockId(1)))
+        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.LOCKED));
 
     sut.handle(new CloseLockCommand(1));
 

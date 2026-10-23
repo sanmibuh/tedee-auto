@@ -26,11 +26,11 @@ public class TedeeClientConfiguration {
   }
 
   @Bean
-  ApiClient tedeeApiClient(
+  LockGateway lockGateway(
       final RestClient.Builder builder,
       final TedeeProperties properties,
       final TedeeApiTokenInterceptor interceptor) {
-    return apiClient(builder, properties, interceptor);
+    return new TedeeLockGateway(new LockApi(apiClient(builder, properties, interceptor)));
   }
 
   private ApiClient apiClient(
@@ -40,10 +40,5 @@ public class TedeeClientConfiguration {
     final var apiClient = new ApiClient(builder.requestInterceptor(interceptor).build());
     apiClient.setBasePath(properties.baseUrl().toString());
     return apiClient;
-  }
-
-  @Bean
-  LockCommandApi lockCommandApi(final ApiClient apiClient) {
-    return new TedeeLockCommandApi(new LockApi(apiClient));
   }
 }

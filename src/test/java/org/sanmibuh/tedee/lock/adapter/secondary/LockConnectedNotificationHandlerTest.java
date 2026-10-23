@@ -23,7 +23,7 @@ class LockConnectedNotificationHandlerTest {
         new LockConnectedNotificationHandler(
             notifier, messages(), applicationLocale(Locale.ENGLISH));
 
-    sut.handle(new LockConnected(42));
+    sut.handle(new LockConnected(42, "Front door"));
 
     then(notifier).should().notify("Lock 42 is connected");
   }

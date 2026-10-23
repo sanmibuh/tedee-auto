@@ -20,12 +20,17 @@ import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
 public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
 
+  private final String name;
   private final Set<CronExpression> cronExpressions;
   private LockStatus status;
 
   private Lock(
-      final LockId id, final LockStatus status, final Set<CronExpression> cronExpressions) {
+      final LockId id,
+      final String name,
+      final LockStatus status,
+      final Set<CronExpression> cronExpressions) {
     super(id);
+    this.name = name;
     this.status = status;
     this.cronExpressions = new LinkedHashSet<>(cronExpressions);
   }
@@ -33,20 +38,21 @@ public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
   public Lock(final LockSnapshot snapshot) {
     this(
         new LockId(snapshot.id()),
+        snapshot.name(),
         snapshot.status(),
         snapshot.cronExpressions().stream()
             .map(CronExpression::new)
             .collect(Collectors.toCollection(LinkedHashSet::new)));
   }
 
-  public static Lock create(final LockId id, final LockStatus status) {
-    return new Lock(id, status, Set.of());
+  public static Lock create(final LockId id, final String name, final LockStatus status) {
+    return new Lock(id, name, status, Set.of());
   }
 
   @Override
   public LockSnapshot snapshot() {
     return new LockSnapshot(
-        id().value(), status, cronExpressions.stream().map(CronExpression::value).toList());
+        id().value(), name, status, cronExpressions.stream().map(CronExpression::value).toList());
   }
 
   public void lock() {
@@ -54,7 +60,7 @@ public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
       return;
     }
     status = LockStatus.LOCKED;
-    recordEvent(new LockRequested(id().value()));
+    recordEvent(new LockRequested(id().value(), name));
   }
 
   public void addCronExpression(final CronExpression expression) {
@@ -66,25 +72,26 @@ public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
   }
 
   public void reportStatus(final LockState state, final LockJamStatus jamStatus) {
-    recordEvent(new LockStatusReported(id().value(), state, jamStatus));
+    recordEvent(new LockStatusReported(id().value(), name, state, jamStatus));
   }
 
   public void reportConnected() {
-    recordEvent(new LockConnected(id().value()));
+    recordEvent(new LockConnected(id().value(), name));
   }
 
   public void reportDisconnected() {
-    recordEvent(new LockDisconnected(id().value()));
+    recordEvent(new LockDisconnected(id().value(), name));
   }
 
   public void reportSettingsChanged() {
-    recordEvent(new LockSettingsChanged(id().value()));
+    recordEvent(new LockSettingsChanged(id().value(), name));
   }
 
   public void reportBatteryLevel(final BatteryIndicator indicator) {
     recordEvent(
         new BatteryLevelReported(
             id().value(),
+            name,
             new BatteryStatus(indicator.getLevel().value(), indicator.getCategory())));
   }
 }

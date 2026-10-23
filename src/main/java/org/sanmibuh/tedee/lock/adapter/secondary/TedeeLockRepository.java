@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 public final class TedeeLockRepository implements LockRepository {
 
   private final LockJpaRepository jpaRepository;
+  private final LockGateway lockGateway;
 
   @Override
   public Optional<Lock> findById(final LockId lockId) {
@@ -23,8 +24,9 @@ public final class TedeeLockRepository implements LockRepository {
         jpaRepository.findById(lockId.value()).map(LockJpaEntity::getCronExpressions).stream()
             .flatMap(Set::stream)
             .toList();
+    final var view = lockGateway.get(lockId);
     return Optional.of(
-        new Lock(new LockSnapshot(lockId.value(), LockStatus.UNLOCKED, cronExpressions)));
+        new Lock(new LockSnapshot(view.id(), view.name(), LockStatus.UNLOCKED, cronExpressions)));
   }
 
   @Override

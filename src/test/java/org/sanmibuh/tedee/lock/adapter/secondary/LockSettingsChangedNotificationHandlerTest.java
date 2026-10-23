@@ -23,7 +23,7 @@ class LockSettingsChangedNotificationHandlerTest {
         new LockSettingsChangedNotificationHandler(
             notifier, messages(), applicationLocale(Locale.ENGLISH));
 
-    sut.handle(new LockSettingsChanged(42));
+    sut.handle(new LockSettingsChanged(42, "Front door"));
 
     then(notifier).should().notify("Lock 42 settings changed");
   }
