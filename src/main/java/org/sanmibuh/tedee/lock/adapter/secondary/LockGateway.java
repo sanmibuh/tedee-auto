@@ -1,6 +1,5 @@
 package org.sanmibuh.tedee.lock.adapter.secondary;
 
-import java.util.Optional;
 import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
 import org.springframework.resilience.annotation.Retryable;
@@ -15,5 +14,5 @@ interface LockGateway {
 
   void lock(LockId lockId);
 
-  Optional<LockView> get(LockId lockId);
+  LockView get(LockId lockId);
 }

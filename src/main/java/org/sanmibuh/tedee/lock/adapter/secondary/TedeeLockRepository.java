@@ -24,13 +24,9 @@ public final class TedeeLockRepository implements LockRepository {
         jpaRepository.findById(lockId.value()).map(LockJpaEntity::getCronExpressions).stream()
             .flatMap(Set::stream)
             .toList();
-    return lockGateway
-        .get(lockId)
-        .map(
-            view ->
-                new Lock(
-                    new LockSnapshot(
-                        view.id(), view.name(), LockStatus.UNLOCKED, cronExpressions)));
+    final var view = lockGateway.get(lockId);
+    return Optional.of(
+        new Lock(new LockSnapshot(view.id(), view.name(), LockStatus.UNLOCKED, cronExpressions)));
   }
 
   @Override

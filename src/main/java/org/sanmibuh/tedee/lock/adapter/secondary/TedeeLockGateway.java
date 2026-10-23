@@ -1,7 +1,6 @@
 package org.sanmibuh.tedee.lock.adapter.secondary;
 
 import com.tedee.bridge.client.api.LockApi;
-import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
@@ -28,21 +27,13 @@ final class TedeeLockGateway implements LockGateway {
   }
 
   @Override
-  public Optional<LockView> get(final LockId lockId) {
+  public LockView get(final LockId lockId) {
     final var deviceId = lockId.value();
     try {
       final var details = lockApi.getLockById(deviceId);
-      return Optional.of(
-          new LockView(
-              deviceId,
-              StringUtils.hasText(details.getName())
-                  ? details.getName()
-                  : String.valueOf(deviceId)));
-    } catch (final RestClientResponseException exception) {
-      if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
-        return Optional.empty();
-      }
-      throw translateException(exception, deviceId);
+      return new LockView(
+          deviceId,
+          StringUtils.hasText(details.getName()) ? details.getName() : String.valueOf(deviceId));
     } catch (final RestClientException exception) {
       throw translateException(exception, deviceId);
     }

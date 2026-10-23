@@ -8,7 +8,6 @@ import com.mickaelb.api.AssertHibernateSQLCount;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import java.util.List;
-import java.util.Optional;
 import org.assertj.core.api.BDDSoftAssertions;
 import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
 import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
@@ -46,8 +45,7 @@ class TedeeLockRepositoryTest {
 
   @BeforeEach
   void stubGateway() {
-    given(lockGateway.get(new LockId(DEVICE_ID)))
-        .willReturn(Optional.of(new LockView(DEVICE_ID, NAME)));
+    given(lockGateway.get(new LockId(DEVICE_ID))).willReturn(new LockView(DEVICE_ID, NAME));
   }
 
   @Test

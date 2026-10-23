@@ -191,7 +191,7 @@ class TedeeLockGatewayTest {
       final var lock = sut.get(new LockId(DEVICE_ID));
 
       server.verify();
-      then(lock).contains(new LockView(DEVICE_ID, "Front door"));
+      then(lock).isEqualTo(new LockView(DEVICE_ID, "Front door"));
     }
 
     @Test
@@ -223,7 +223,7 @@ class TedeeLockGatewayTest {
 
       final var lock = sut.get(new LockId(DEVICE_ID));
 
-      then(lock).contains(new LockView(DEVICE_ID, String.valueOf(DEVICE_ID)));
+      then(lock).isEqualTo(new LockView(DEVICE_ID, String.valueOf(DEVICE_ID)));
     }
   }
 
