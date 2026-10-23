@@ -1,0 +1,25 @@
+src/main/java/org/sanmibuh/framework/persistence/JpaEntityImplicitNamingStrategy.java
+  s_2b1ab2dc2ae61e::t_5a9ac3d8d83f6c 1-20
+src/main/java/org/sanmibuh/framework/persistence/PersistenceRuntimeHints.java
+  s_2b1ab2dc2ae61e::t_21f22ff9ba5600 1-17
+src/test/java/org/sanmibuh/framework/persistence/JpaEntityImplicitNamingStrategyTest.java
+  s_2b1ab2dc2ae61e::t_75477929203e19 1-52
+src/test/java/org/sanmibuh/framework/persistence/PersistenceRuntimeHintsTest.java
+  s_2b1ab2dc2ae61e::t_5a489cdf527d2d 1-26
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "f9946273073c2f43317488513725567f7b4e53ac",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

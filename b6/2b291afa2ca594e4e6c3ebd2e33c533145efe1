@@ -1,0 +1,31 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  s_2b1ab2dc2ae61e::t_38bb94ebbda1cf 3-5,15,23,26-32,34-39,43,48-49,60-67
+src/test/java/org/sanmibuh/tedee/lock/domain/LockTest.java
+  s_2b1ab2dc2ae61e::t_38a803f4a6c120 5,14
+src/main/java/org/sanmibuh/tedee/lock/domain/LockSnapshot.java
+  s_ff28f5bf709230::t_3ba8624f13a564 3,7-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "b62b291afa2ca594e4e6c3ebd2e33c533145efe1",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    },
+    "s_ff28f5bf709230": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "0b2d7ebd-645d-4b37-8954-156250d5807a",
+        "model": "unknown"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

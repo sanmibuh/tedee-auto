@@ -1,0 +1,31 @@
+src/test/resources/sql/lock-with-cron-expressions.sql
+  s_2b1ab2dc2ae61e::t_99a65803c74934 1-3
+src/test/resources/application.properties
+  s_2b1ab2dc2ae61e::t_a962b045f1a38f 1,3
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepository.java
+  s_2b1ab2dc2ae61e::t_cd50bff978c40b 3,5-6,15,18-19,22-27,32-34
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepositoryTest.java
+  s_2b1ab2dc2ae61e::t_9c577e715a81f9 5-7,9-10,13-16,18-19,23-24,26-28,31-34,38-42,44-70
+src/test/java/org/sanmibuh/framework/persistence/RepositoryTest.java
+  s_2b1ab2dc2ae61e::t_917d28588680f1 1-24
+ARCHITECTURE.md
+  s_2b1ab2dc2ae61e::t_4169ea6348c7b5 24,38
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockJpaEntity.java
+  s_2b1ab2dc2ae61e::t_fa4d9d06b094e8 10-11,26,28,32
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "d90fa7aaf3fe530144f35cd3ad3010f15ff34b5a",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

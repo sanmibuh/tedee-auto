@@ -1,0 +1,23 @@
+.github/scripts/native-smoke-test.sh
+  s_abaaf629357f5f::t_2adcfe48a4d250 12-15,18-19,43-45
+.github/workflows/native.yml
+  s_abaaf629357f5f::t_1be744d5d5b10f 32-34,36
+.github/workflows/release.yml
+  s_abaaf629357f5f::t_c2634d8f9ed8b5 210-216
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "8105b14604c9c007dae410ddd60c50ef9b8862fb",
+  "prompts": {},
+  "sessions": {
+    "s_abaaf629357f5f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e98a6896bffetLIDU9CCQmj1hP",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

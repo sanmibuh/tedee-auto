@@ -1,0 +1,21 @@
+src/main/java/org/sanmibuh/tedee/TedeeAutomationApplication.java
+  s_2b1ab2dc2ae61e::t_56641a68e8975a 3,6,11
+src/main/resources/application.yml
+  s_2b1ab2dc2ae61e::t_eecb316db4170f 13-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "19eb5c899a72cb3559f77bd4030113202199b4b7",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

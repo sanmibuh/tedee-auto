@@ -1,0 +1,21 @@
+src/main/java/org/sanmibuh/tedee/lock/application/AddLockCronExpressionHandler.java
+  s_ff28f5bf709230::t_759e8c13bd149a 1-24
+src/main/java/org/sanmibuh/tedee/lock/application/AddLockCronExpressionCommand.java
+  s_ff28f5bf709230::t_fed5faf4ba8e0e 1-6
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "9ff9c0014ab11904ff77bb55e9e88352711085ac",
+  "prompts": {},
+  "sessions": {
+    "s_ff28f5bf709230": {
+      "agent_id": {
+        "tool": "github-copilot-cli",
+        "id": "0b2d7ebd-645d-4b37-8954-156250d5807a",
+        "model": "unknown"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

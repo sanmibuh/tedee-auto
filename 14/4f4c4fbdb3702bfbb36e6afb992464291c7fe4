@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/vo/CronExpression.java
+  s_2b1ab2dc2ae61e::t_721d46ebf35e6f 3,9
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "144f4c4fbdb3702bfbb36e6afb992464291c7fe4",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}

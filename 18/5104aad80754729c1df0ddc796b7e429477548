@@ -1,0 +1,23 @@
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockJpaEntity.java
+  s_2b1ab2dc2ae61e::t_a77e0e16c4cbad 1-32
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockJpaRepository.java
+  s_2b1ab2dc2ae61e::t_cd0f3198546008 1-5
+src/test/java/org/sanmibuh/tedee/automation/HexagonalArchitectureTest.java
+  s_2b1ab2dc2ae61e::t_6881625d358b85 16,90-101,174
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.5",
+  "base_commit_sha": "185104aad80754729c1df0ddc796b7e429477548",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
