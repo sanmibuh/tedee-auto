@@ -18,9 +18,9 @@
     "last_nok": "2026-10-12"
   },
   "gemini-3.5-flash-lite": {
-    "ok": 29,
+    "ok": 30,
     "nok": 0,
-    "last_ok": "2026-10-22",
+    "last_ok": "2026-10-23",
     "last_nok": null
   }
 }
