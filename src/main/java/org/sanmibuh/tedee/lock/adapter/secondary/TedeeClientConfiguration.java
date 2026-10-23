@@ -43,12 +43,7 @@ public class TedeeClientConfiguration {
   }
 
   @Bean
-  LockCommandApi lockCommandApi(final ApiClient apiClient) {
-    return new TedeeLockCommandApi(new LockApi(apiClient));
-  }
-
-  @Bean
-  LockQueryApi lockQueryApi(final ApiClient apiClient) {
-    return new TedeeLockQueryApi(new LockApi(apiClient));
+  LockBridgeApi lockBridgeApi(final ApiClient apiClient) {
+    return new TedeeLockBridgeApi(new LockApi(apiClient));
   }
 }

@@ -14,13 +14,13 @@ import org.springframework.web.client.RestClientResponseException;
 @RequiredArgsConstructor
 final class TedeeLockGateway implements LockGateway {
 
-  private final LockCommandApi lockCommandApi;
+  private final LockBridgeApi lockBridgeApi;
 
   @Override
   public void lock(final LockId lockId) {
     final var deviceId = lockId.value();
     try {
-      lockCommandApi.lock(deviceId);
+      lockBridgeApi.lock(deviceId);
     } catch (final RestClientResponseException exception) {
       throw translateException(exception, deviceId);
     } catch (final RestClientException exception) {

@@ -4,6 +4,7 @@ import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.method;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.requestTo;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import java.time.Clock;
@@ -27,15 +28,15 @@ import org.springframework.test.web.client.MockRestServiceServer;
 @Import({TedeeClientConfiguration.class, TedeeInfrastructureConfiguration.class})
 @TestPropertySource(
     properties = {
-      "sanmibuh.rest.tedee.base-url=" + TedeeLockQueryApiTest.BASE_URL,
-      "sanmibuh.rest.tedee.api-key=" + TedeeLockQueryApiTest.API_KEY,
+      "sanmibuh.rest.tedee.base-url=" + TedeeLockBridgeApiTest.BASE_URL,
+      "sanmibuh.rest.tedee.api-key=" + TedeeLockBridgeApiTest.API_KEY,
       "sanmibuh.rest.tedee.callback-secret=callback-secret",
       "sanmibuh.rest.tedee.retry.max-retries=2",
       "sanmibuh.rest.tedee.retry.initial-interval=1",
       "sanmibuh.rest.tedee.retry.multiplier=1",
       "sanmibuh.rest.tedee.retry.max-interval=1"
     })
-class TedeeLockQueryApiTest {
+class TedeeLockBridgeApiTest {
 
   static final String BASE_URL = "http://localhost/v1.0";
   static final String API_KEY = "BE9xnPnGfVUS";
@@ -48,7 +49,7 @@ class TedeeLockQueryApiTest {
 
   @InjectSoftAssertions BDDSoftAssertions softly;
 
-  @Autowired LockQueryApi sut;
+  @Autowired LockBridgeApi sut;
   @Autowired MockRestServiceServer server;
 
   @MockitoBean Clock clock;
@@ -70,5 +71,17 @@ class TedeeLockQueryApiTest {
     server.verify();
     softly.then(details.getId()).isEqualTo(DEVICE_ID);
     softly.then(details.getName()).isEqualTo(NAME);
+  }
+
+  @Test
+  void should_postToLockEndpoint_whenLocking() {
+    server
+        .expect(requestTo(LOCK_URL + "/lock"))
+        .andExpect(method(HttpMethod.POST))
+        .andRespond(withNoContent());
+
+    sut.lock(DEVICE_ID);
+
+    server.verify();
   }
 }
