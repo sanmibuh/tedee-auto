@@ -7,7 +7,11 @@ import com.mickaelb.api.AssertHibernateSQLCount;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.OptimisticLockException;
 import java.util.List;
+import org.assertj.core.api.BDDSoftAssertions;
+import org.assertj.core.api.junit.jupiter.InjectSoftAssertions;
+import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.sanmibuh.framework.persistence.RepositoryTest;
 import org.sanmibuh.tedee.lock.domain.LockSnapshot;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
@@ -17,6 +21,7 @@ import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.context.jdbc.Sql;
 
+@ExtendWith(SoftAssertionsExtension.class)
 @RepositoryTest
 @Import(TedeeLockRepository.class)
 class TedeeLockRepositoryTest {
@@ -24,6 +29,8 @@ class TedeeLockRepositoryTest {
   private static final int DEVICE_ID = 42;
   private static final String WEEKDAYS_AT_22 = "0 0 22 * * MON-FRI";
   private static final String NIGHTLY = "0 30 23 * * *";
+
+  @InjectSoftAssertions BDDSoftAssertions softly;
 
   @Autowired TedeeLockRepository sut;
   @Autowired EntityManager entityManager;
@@ -51,18 +58,18 @@ class TedeeLockRepositoryTest {
   @Test
   @Sql("/sql/lock-with-cron-expressions.sql")
   @AssertHibernateSQLCount(selects = 1, deletes = 1, updates = 1)
-  void should_replacePersistedCronExpressions_whenSavingAgain() {
-    sut.save(new LockSnapshot(DEVICE_ID, LockStatus.UNLOCKED, List.of(NIGHTLY)));
-    entityManager.flush();
+  void should_replaceCronExpressionsAndIncrementVersion_whenSavingAgain() {
+    saveAndFlush(new LockSnapshot(DEVICE_ID, LockStatus.UNLOCKED, List.of(NIGHTLY)));
 
-    then(storedCronExpressions()).containsExactly(NIGHTLY);
+    softly.then(storedCronExpressions()).containsExactly(NIGHTLY);
+    softly.then(storedVersions()).containsExactly(1L);
   }
 
   @Test
   @Sql("/sql/lock-with-cron-expressions.sql")
-  void should_incrementVersion_whenOnlyCronExpressionsChange() {
-    sut.save(new LockSnapshot(DEVICE_ID, LockStatus.UNLOCKED, List.of(NIGHTLY)));
-    entityManager.flush();
+  @AssertHibernateSQLCount(selects = 1, updates = 1)
+  void should_incrementVersion_whenSavingUnchangedLock() {
+    saveAndFlush(sut.get(new LockId(DEVICE_ID)).snapshot());
 
     then(storedVersions()).containsExactly(1L);
   }
@@ -79,10 +86,16 @@ class TedeeLockRepositoryTest {
   }
 
   @Test
+  @AssertHibernateSQLCount(selects = 2, inserts = 1)
   void should_notPersistLockStatus_whenSavingLockedLock() {
     sut.save(new LockSnapshot(DEVICE_ID, LockStatus.LOCKED, List.of()));
 
     then(sut.get(new LockId(DEVICE_ID)).snapshot().status()).isEqualTo(LockStatus.UNLOCKED);
+  }
+
+  private void saveAndFlush(final LockSnapshot snapshot) {
+    sut.save(snapshot);
+    entityManager.flush();
   }
 
   private List<Long> storedVersions() {

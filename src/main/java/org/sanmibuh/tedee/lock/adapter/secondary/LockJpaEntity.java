@@ -30,6 +30,7 @@ public class LockJpaEntity {
   @OrderBy
   @Column(name = "cron_expression", nullable = false, length = 512)
   private final Set<String> cronExpressions = new LinkedHashSet<>();
+
   @Id private int id;
   @Version private long version;
 
