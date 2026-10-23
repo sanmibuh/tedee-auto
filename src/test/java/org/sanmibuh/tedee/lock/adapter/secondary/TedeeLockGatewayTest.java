@@ -13,10 +13,13 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 
 import java.io.IOException;
 import java.time.Clock;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
+import lombok.RequiredArgsConstructor;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.EnumSource;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.junit.jupiter.params.provider.ValueSource;
 import org.sanmibuh.tedee.lock.domain.exception.InvalidLockRequestException;
@@ -167,6 +170,33 @@ class TedeeLockGatewayTest {
     server.verify();
   }
 
+  @ParameterizedTest
+  @EnumSource(Operation.class)
+  void should_retryThenGiveUp_whenAnyOperationKeepsFailingTransiently(final Operation operation) {
+    server
+        .expect(ExpectedCount.times(EXPECTED_ATTEMPTS), requestTo(operation.url))
+        .andExpect(method(operation.method))
+        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+
+    thenThrownBy(() -> operation.call.accept(sut))
+        .isInstanceOf(LockTemporarilyUnavailableException.class);
+
+    server.verify();
+  }
+
+  @ParameterizedTest
+  @EnumSource(Operation.class)
+  void should_translateNotFound_whenBridgeDoesNotKnowTheLock(final Operation operation) {
+    server
+        .expect(ExpectedCount.once(), requestTo(operation.url))
+        .andExpect(method(operation.method))
+        .andRespond(withStatus(HttpStatus.NOT_FOUND));
+
+    thenThrownBy(() -> operation.call.accept(sut)).isInstanceOf(InvalidLockRequestException.class);
+
+    server.verify();
+  }
+
   @Test
   void should_returnLockView_whenGettingLock() {
     server
@@ -200,5 +230,19 @@ class TedeeLockGatewayTest {
     final var lock = sut.get(new LockId(DEVICE_ID));
 
     then(lock).isEqualTo(new LockView(DEVICE_ID, String.valueOf(DEVICE_ID)));
+  }
+
+  @RequiredArgsConstructor
+  private enum Operation {
+    LOCK(HttpMethod.POST, TedeeLockGatewayTest.LOCK_URL, gateway -> gateway.lock(lockId())),
+    GET(HttpMethod.GET, TedeeLockGatewayTest.LOCK_DETAILS_URL, gateway -> gateway.get(lockId()));
+
+    private final HttpMethod method;
+    private final String url;
+    private final Consumer<LockGateway> call;
+
+    private static LockId lockId() {
+      return new LockId(DEVICE_ID);
+    }
   }
 }
