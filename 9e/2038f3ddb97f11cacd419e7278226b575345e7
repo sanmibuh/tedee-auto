@@ -1,0 +1,35 @@
+AGENTS.md
+  s_abaaf629357f5f::t_4a7cc7294d9a40 33
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockJpaEntity.java
+  s_abaaf629357f5f::t_1a1cd857aa620a 33
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepositoryTest.java
+  s_abaaf629357f5f::t_7785d04e74a324 70-72,89
+  s_2b1ab2dc2ae61e::t_9c577e715a81f9 99-100
+  s_abaaf629357f5f::t_253fc56d50c355 10-12,14,24,33-34,61-62,64-65,96-98
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockJpaRepository.java
+  s_abaaf629357f5f::t_f9aaff14f51184 3-4,6,8-13
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "9e2038f3ddb97f11cacd419e7278226b575345e7",
+  "prompts": {},
+  "sessions": {
+    "s_2b1ab2dc2ae61e": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_eb5808345ffealyn0CNB9wwNpx",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    },
+    "s_abaaf629357f5f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e98a6896bffetLIDU9CCQmj1hP",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
