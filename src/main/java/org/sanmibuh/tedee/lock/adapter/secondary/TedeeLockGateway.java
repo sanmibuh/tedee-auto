@@ -7,6 +7,7 @@ import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
 import org.springframework.http.HttpStatus;
+import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
@@ -29,7 +30,17 @@ final class TedeeLockGateway implements LockGateway {
 
   @Override
   public LockView get(final LockId lockId) {
-    throw new UnsupportedOperationException();
+    final var deviceId = lockId.value();
+    try {
+      final var details = lockApi.getLockById(deviceId);
+      return new LockView(
+          deviceId,
+          StringUtils.hasText(details.getName()) ? details.getName() : String.valueOf(deviceId));
+    } catch (final RestClientResponseException exception) {
+      throw translateException(exception, deviceId);
+    } catch (final RestClientException exception) {
+      throw new LockTemporarilyUnavailableException(deviceId, exception);
+    }
   }
 
   private RuntimeException translateException(

@@ -18,6 +18,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
+import org.junit.jupiter.params.provider.ValueSource;
 import org.sanmibuh.tedee.lock.domain.exception.InvalidLockRequestException;
 import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
@@ -180,5 +181,24 @@ class TedeeLockGatewayTest {
 
     server.verify();
     then(lock).isEqualTo(new LockView(DEVICE_ID, "Front door"));
+  }
+
+  @ParameterizedTest
+  @ValueSource(
+      strings = {
+        "{\"id\":42}",
+        "{\"id\":42,\"name\":null}",
+        "{\"id\":42,\"name\":\"\"}",
+        "{\"id\":42,\"name\":\"  \"}"
+      })
+  void should_returnDeviceIdAsName_whenBridgeReturnsNoUsableName(final String body) {
+    server
+        .expect(requestTo(LOCK_DETAILS_URL))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+
+    final var lock = sut.get(new LockId(DEVICE_ID));
+
+    then(lock).isEqualTo(new LockView(DEVICE_ID, String.valueOf(DEVICE_ID)));
   }
 }
