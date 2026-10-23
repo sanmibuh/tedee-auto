@@ -1,0 +1,33 @@
+src/test/java/org/sanmibuh/tedee/lock/application/AddLockCronExpressionHandlerTest.java
+  s_72c0d5b162fab1::t_c26407ccf4a596 6-7,34-35,42,46,54,58
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  s_72c0d5b162fab1::t_66fd1aefd388fd 6-8,34,39,44
+src/test/java/org/sanmibuh/tedee/lock/application/RemoveLockCronExpressionHandlerTest.java
+  s_72c0d5b162fab1::t_7bbb83162f2b4a 6-7,34-35,42,46,54,58
+src/test/java/org/sanmibuh/tedee/lock/application/ReportBatteryLevelHandlerTest.java
+  s_72c0d5b162fab1::t_96b757ee08ba56 7-9,58,60,64
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockConnectedHandlerTest.java
+  s_72c0d5b162fab1::t_828189617d47af 6-8,34,39
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockDisconnectedHandlerTest.java
+  s_72c0d5b162fab1::t_46dff4062a81a2 6-8,34,39
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockSettingsChangedHandlerTest.java
+  s_72c0d5b162fab1::t_a8c33187c4988a 6-8,34,39
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockStatusHandlerTest.java
+  s_72c0d5b162fab1::t_8de98ea38a5615 8-10,62,64,68,74,76,83,90,92,99,101
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "0a4e7e5f0f734cf2cbdad3d91989ede1f6187cca",
+  "prompts": {},
+  "sessions": {
+    "s_72c0d5b162fab1": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e97eb301bffe2YjOkarYxfVlFK",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
