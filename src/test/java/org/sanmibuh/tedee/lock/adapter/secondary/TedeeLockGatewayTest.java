@@ -1,5 +1,6 @@
 package org.sanmibuh.tedee.lock.adapter.secondary;
 
+import static org.assertj.core.api.BDDAssertions.then;
 import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.mockito.BDDMockito.given;
 import static org.springframework.test.web.client.match.MockRestRequestMatchers.header;
@@ -8,6 +9,7 @@ import static org.springframework.test.web.client.match.MockRestRequestMatchers.
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withException;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withNoContent;
 import static org.springframework.test.web.client.response.MockRestResponseCreators.withStatus;
+import static org.springframework.test.web.client.response.MockRestResponseCreators.withSuccess;
 
 import java.io.IOException;
 import java.time.Clock;
@@ -26,6 +28,7 @@ import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
 import org.springframework.context.annotation.Import;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.ExpectedCount;
@@ -53,7 +56,8 @@ class TedeeLockGatewayTest {
   private static final String EXPECTED_API_TOKEN =
       "e59d9763edc6e59f2faccf9a769e5cf170d68439c3fd67afae5e3e72d0463a711691058833000";
   private static final int DEVICE_ID = 42;
-  private static final String LOCK_URL = BASE_URL + "/lock/" + DEVICE_ID + "/lock";
+  private static final String LOCK_DETAILS_URL = BASE_URL + "/lock/" + DEVICE_ID;
+  private static final String LOCK_URL = LOCK_DETAILS_URL + "/lock";
 
   @Autowired private LockGateway sut;
 
@@ -160,5 +164,21 @@ class TedeeLockGatewayTest {
     sut.lock(new LockId(DEVICE_ID));
 
     server.verify();
+  }
+
+  @Test
+  void should_returnLockView_whenGettingLock() {
+    server
+        .expect(requestTo(LOCK_DETAILS_URL))
+        .andExpect(method(HttpMethod.GET))
+        .andRespond(
+            withSuccess(
+                "{\"id\":%d,\"name\":\"Front door\"}".formatted(DEVICE_ID),
+                MediaType.APPLICATION_JSON));
+
+    final var lock = sut.get(new LockId(DEVICE_ID));
+
+    server.verify();
+    then(lock).isEqualTo(new LockView(DEVICE_ID, "Front door"));
   }
 }

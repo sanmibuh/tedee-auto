@@ -27,6 +27,11 @@ final class TedeeLockGateway implements LockGateway {
     }
   }
 
+  @Override
+  public LockView get(final LockId lockId) {
+    throw new UnsupportedOperationException();
+  }
+
   private RuntimeException translateException(
       final RestClientResponseException exception, final int deviceId) {
     return switch (HttpStatus.resolve(exception.getStatusCode().value())) {

@@ -13,4 +13,6 @@ import org.springframework.resilience.annotation.Retryable;
 interface LockGateway {
 
   void lock(LockId lockId);
+
+  LockView get(LockId lockId);
 }
