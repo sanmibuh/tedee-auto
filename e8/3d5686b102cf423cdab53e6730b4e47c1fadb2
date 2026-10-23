@@ -1,0 +1,55 @@
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/persistence/TedeeLockRepository.java
+  s_f30bbc4327210b::t_afe91cf93b744c 29
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/rest/LockView.java
+  s_f30bbc4327210b::t_3cd4b31245f897 3-5
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  s_f30bbc4327210b::t_829fb917ec7289 24,29,33,41,50,54,57
+src/main/java/org/sanmibuh/tedee/lock/domain/LockSnapshot.java
+  s_f30bbc4327210b::t_409b199f500e65 5,7
+src/main/java/org/sanmibuh/tedee/lock/domain/vo/LockState.java
+  s_f30bbc4327210b::t_06603018d50002 20-23
+src/test/java/org/sanmibuh/tedee/lock/LockSnapshotMother.java
+  s_f30bbc4327210b::t_067e76e9b36d3d 6,14
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/persistence/TedeeLockRepositoryTest.java
+  s_f30bbc4327210b::t_3a25780f8f5215 23,50,57,65,76,97,105-106,108-116,128-131
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/rest/TedeeClientConfigurationTest.java
+  s_f30bbc4327210b::t_700e36f6d2d0bd 10,47,51
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/rest/TedeeLockGatewayTest.java
+  s_f30bbc4327210b::t_93212a581c6ae3 30,189,195-223,255
+src/test/java/org/sanmibuh/tedee/lock/application/AddLockCronExpressionHandlerTest.java
+  s_f30bbc4327210b::t_fcbab52e6651a5 19,35,46,58
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  s_f30bbc4327210b::t_3b1851ce4dd9eb 21,34,44
+src/test/java/org/sanmibuh/tedee/lock/application/RemoveLockCronExpressionHandlerTest.java
+  s_f30bbc4327210b::t_7b18e35904dd2c 19,35,46,58
+src/test/java/org/sanmibuh/tedee/lock/application/ReportBatteryLevelHandlerTest.java
+  s_f30bbc4327210b::t_1275461f41c38f 27,58
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockConnectedHandlerTest.java
+  s_f30bbc4327210b::t_6082285c902460 21,34
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockDisconnectedHandlerTest.java
+  s_f30bbc4327210b::t_ba605614ba91a4 21,34
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockSettingsChangedHandlerTest.java
+  s_f30bbc4327210b::t_e0c693e3d59f20 21,34
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockStatusHandlerTest.java
+  s_f30bbc4327210b::t_d915b96e9d679c 61,73,89,98
+src/test/java/org/sanmibuh/tedee/lock/domain/LockTest.java
+  s_f30bbc4327210b::t_3de9c798ee853f 7,13-14
+src/test/java/org/sanmibuh/tedee/lock/domain/vo/LockStateTest.java
+  s_f30bbc4327210b::t_322d7305dad008 3-20
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "e83d5686b102cf423cdab53e6730b4e47c1fadb2",
+  "prompts": {},
+  "sessions": {
+    "s_f30bbc4327210b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e97b74a97ffeB6EbQAw1X69OK4",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
