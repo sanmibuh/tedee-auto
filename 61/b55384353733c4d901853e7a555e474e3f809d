@@ -1,0 +1,27 @@
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockGateway.java
+  s_e3db5ab72b4b38::t_c790817ace2d7f 3,18
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockGateway.java
+  s_e3db5ab72b4b38::t_ff0804cf9aa63b 4,31,35-40
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepository.java
+  s_e3db5ab72b4b38::t_7e63d1c3174ed3 31
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockGatewayTest.java
+  s_e3db5ab72b4b38::t_80fc97675de6e7 194-206,225
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepositoryTest.java
+  s_e3db5ab72b4b38::t_6da01b89207e84 11,48-49,109-116
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "61b55384353733c4d901853e7a555e474e3f809d",
+  "prompts": {},
+  "sessions": {
+    "s_e3db5ab72b4b38": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e986f3733ffegWS7ouN3h34BaR",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
