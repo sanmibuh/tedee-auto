@@ -40,7 +40,7 @@ class TedeeLockRepositoryTest {
   @AssertHibernateSQLCount(selects = 1)
   void should_returnUnlockedLockWithoutCronExpressions_whenLockWasNeverSaved() {
     then(sut.get(new LockId(DEVICE_ID)).snapshot())
-        .isEqualTo(new LockSnapshot(DEVICE_ID, LockStatus.UNLOCKED, List.of()));
+        .isEqualTo(new LockSnapshot(DEVICE_ID, "", LockStatus.UNLOCKED, List.of()));
   }
 
   @Test
@@ -48,7 +48,7 @@ class TedeeLockRepositoryTest {
   @AssertHibernateSQLCount(selects = 1)
   void should_returnPersistedCronExpressions_whenFindingStoredLock() {
     final var expected =
-        new LockSnapshot(DEVICE_ID, LockStatus.UNLOCKED, List.of(WEEKDAYS_AT_22, NIGHTLY));
+        new LockSnapshot(DEVICE_ID, "", LockStatus.UNLOCKED, List.of(WEEKDAYS_AT_22, NIGHTLY));
 
     final var actual = sut.get(new LockId(DEVICE_ID)).snapshot();
 
@@ -59,7 +59,7 @@ class TedeeLockRepositoryTest {
   @Sql("/sql/lock-with-cron-expressions.sql")
   @AssertHibernateSQLCount(selects = 1, deletes = 1, updates = 1)
   void should_replaceCronExpressionsAndIncrementVersion_whenSavingAgain() {
-    saveAndFlush(new LockSnapshot(DEVICE_ID, LockStatus.UNLOCKED, List.of(NIGHTLY)));
+    saveAndFlush(new LockSnapshot(DEVICE_ID, "", LockStatus.UNLOCKED, List.of(NIGHTLY)));
 
     softly.then(storedCronExpressions()).containsExactly(NIGHTLY);
     softly.then(storedVersions()).containsExactly(1L);
@@ -80,7 +80,7 @@ class TedeeLockRepositoryTest {
     sut.get(new LockId(DEVICE_ID));
     jdbcTemplate.update("UPDATE lock SET version = version + 1 WHERE id = ?", DEVICE_ID);
 
-    sut.save(new LockSnapshot(DEVICE_ID, LockStatus.UNLOCKED, List.of(NIGHTLY)));
+    sut.save(new LockSnapshot(DEVICE_ID, "", LockStatus.UNLOCKED, List.of(NIGHTLY)));
 
     thenThrownBy(entityManager::flush).isInstanceOf(OptimisticLockException.class);
   }
@@ -88,7 +88,7 @@ class TedeeLockRepositoryTest {
   @Test
   @AssertHibernateSQLCount(selects = 2, inserts = 1)
   void should_notPersistLockStatus_whenSavingLockedLock() {
-    sut.save(new LockSnapshot(DEVICE_ID, LockStatus.LOCKED, List.of()));
+    sut.save(new LockSnapshot(DEVICE_ID, "", LockStatus.LOCKED, List.of()));
 
     then(sut.get(new LockId(DEVICE_ID)).snapshot().status()).isEqualTo(LockStatus.UNLOCKED);
   }

@@ -29,7 +29,7 @@ class ReportLockSettingsChangedHandlerTest {
   @Test
   void should_recordLockSettingsChanged_whenReportingLockSettingsChanged() {
     given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), LockStatus.UNLOCKED));
+        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
 
     sut.handle(new ReportLockSettingsChangedCommand(1));
 

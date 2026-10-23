@@ -57,7 +57,7 @@ class ReportLockStatusHandlerTest {
   void should_recordLockStatusReported_whenReportingState(
       final int bridgeState, final LockState state) {
     given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), LockStatus.UNLOCKED));
+        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
 
     sut.handle(new ReportLockStatusCommand(1, bridgeState, 0, 2));
 
@@ -70,7 +70,7 @@ class ReportLockStatusHandlerTest {
   @ValueSource(ints = {0, 1})
   void should_recordLockStatusReported_whenReportingJammedState(final int jammed) {
     given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), LockStatus.UNLOCKED));
+        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
 
     sut.handle(new ReportLockStatusCommand(1, 6, jammed, 2));
 
@@ -86,7 +86,7 @@ class ReportLockStatusHandlerTest {
   @Test
   void should_throwException_whenReportingUndocumentedState() {
     given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), LockStatus.UNLOCKED));
+        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
 
     thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(1, 10, 0, 2)))
         .isInstanceOf(InvalidLockStateException.class)
@@ -96,7 +96,7 @@ class ReportLockStatusHandlerTest {
   @Test
   void should_throwException_whenReportingUndocumentedJamStatus() {
     given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), LockStatus.UNLOCKED));
+        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
 
     thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(1, 6, 2, 2)))
         .isInstanceOf(InvalidLockJamStatusException.class)

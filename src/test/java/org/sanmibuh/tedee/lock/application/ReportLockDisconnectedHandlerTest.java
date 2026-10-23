@@ -29,7 +29,7 @@ class ReportLockDisconnectedHandlerTest {
   @Test
   void should_recordLockDisconnected_whenReportingDisconnectedLock() {
     given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), LockStatus.UNLOCKED));
+        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
 
     sut.handle(new ReportLockDisconnectedCommand(1));
 

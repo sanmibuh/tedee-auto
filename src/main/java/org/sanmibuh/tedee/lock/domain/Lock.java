@@ -39,14 +39,14 @@ public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
             .collect(Collectors.toCollection(LinkedHashSet::new)));
   }
 
-  public static Lock create(final LockId id, final LockStatus status) {
+  public static Lock create(final LockId id, final String name, final LockStatus status) {
     return new Lock(id, status, Set.of());
   }
 
   @Override
   public LockSnapshot snapshot() {
     return new LockSnapshot(
-        id().value(), status, cronExpressions.stream().map(CronExpression::value).toList());
+        id().value(), "", status, cronExpressions.stream().map(CronExpression::value).toList());
   }
 
   public void lock() {
