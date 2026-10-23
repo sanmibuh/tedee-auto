@@ -17,6 +17,10 @@ public enum LockState {
 
   private final int bridgeCode;
 
+  public boolean isLocked() {
+    return this == CLOSED;
+  }
+
   LockState(final int bridgeCode) {
     this.bridgeCode = bridgeCode;
   }

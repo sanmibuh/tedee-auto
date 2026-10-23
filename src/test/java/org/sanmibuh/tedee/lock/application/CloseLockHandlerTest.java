@@ -18,7 +18,7 @@ import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.event.LockRequested;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
-import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
 
 @ExtendWith(MockitoExtension.class)
 class CloseLockHandlerTest {
@@ -31,7 +31,7 @@ class CloseLockHandlerTest {
 
   @Test
   void should_recordLockRequested_whenClosingAnOpenLock() {
-    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockState.OPEN)));
 
     sut.handle(new CloseLockCommand(1));
 
@@ -41,7 +41,7 @@ class CloseLockHandlerTest {
 
   @Test
   void should_notRecordEvent_whenClosingAnAlreadyClosedLock() {
-    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.LOCKED)));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockState.CLOSED)));
 
     sut.handle(new CloseLockCommand(1));
 

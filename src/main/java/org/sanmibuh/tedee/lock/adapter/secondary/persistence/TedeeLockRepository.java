@@ -9,7 +9,6 @@ import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.LockSnapshot;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
-import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 import org.springframework.stereotype.Repository;
 
 @Repository
@@ -27,7 +26,7 @@ public final class TedeeLockRepository implements LockRepository {
             .toList();
     final var view = lockGateway.get(lockId);
     return Optional.of(
-        new Lock(new LockSnapshot(view.id(), view.name(), LockStatus.UNLOCKED, cronExpressions)));
+        new Lock(new LockSnapshot(view.id(), view.name(), view.state(), cronExpressions)));
   }
 
   @Override

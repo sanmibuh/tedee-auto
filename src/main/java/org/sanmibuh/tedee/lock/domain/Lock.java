@@ -16,22 +16,21 @@ import org.sanmibuh.tedee.lock.domain.vo.CronExpression;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
 import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.vo.LockState;
-import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
 public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
 
   private final String name;
   private final Set<CronExpression> cronExpressions;
-  private LockStatus status;
+  private LockState state;
 
   private Lock(
       final LockId id,
       final String name,
-      final LockStatus status,
+      final LockState state,
       final Set<CronExpression> cronExpressions) {
     super(id);
     this.name = name;
-    this.status = status;
+    this.state = state;
     this.cronExpressions = new LinkedHashSet<>(cronExpressions);
   }
 
@@ -39,7 +38,7 @@ public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
     this(
         new LockId(snapshot.id()),
         snapshot.name(),
-        snapshot.status(),
+        snapshot.state(),
         snapshot.cronExpressions().stream()
             .map(CronExpression::new)
             .collect(Collectors.toCollection(LinkedHashSet::new)));
@@ -48,14 +47,14 @@ public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
   @Override
   public LockSnapshot snapshot() {
     return new LockSnapshot(
-        id().value(), name, status, cronExpressions.stream().map(CronExpression::value).toList());
+        id().value(), name, state, cronExpressions.stream().map(CronExpression::value).toList());
   }
 
   public void lock() {
-    if (status == LockStatus.LOCKED) {
+    if (state.isLocked()) {
       return;
     }
-    status = LockStatus.LOCKED;
+    state = LockState.CLOSING;
     recordEvent(new LockRequested(id().value(), name));
   }
 

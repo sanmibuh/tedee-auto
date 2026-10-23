@@ -1,3 +1,5 @@
 package org.sanmibuh.tedee.lock.adapter.secondary.rest;
 
-public record LockView(int id, String name) {}
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
+
+public record LockView(int id, String name, LockState state) {}

@@ -7,6 +7,7 @@ import static org.springframework.test.web.client.response.MockRestResponseCreat
 import java.time.Clock;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
 import org.sanmibuh.tedee.shared.adapter.TedeeProperties;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.boot.test.context.runner.ApplicationContextRunner;
@@ -43,11 +44,11 @@ class TedeeClientConfigurationTest {
               .expect(requestTo(BASE_URL + "/lock/" + DEVICE_ID))
               .andRespond(
                   withSuccess(
-                      "{\"id\":%d,\"name\":\"Front door\"}".formatted(DEVICE_ID),
+                      "{\"id\":%d,\"name\":\"Front door\",\"state\":6}".formatted(DEVICE_ID),
                       MediaType.APPLICATION_JSON));
 
           then(context.getBean(LockGateway.class).get(new LockId(DEVICE_ID)))
-              .isEqualTo(new LockView(DEVICE_ID, "Front door"));
+              .isEqualTo(new LockView(DEVICE_ID, "Front door", LockState.CLOSED));
         });
   }
 
