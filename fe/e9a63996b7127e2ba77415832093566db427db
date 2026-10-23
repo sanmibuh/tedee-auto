@@ -1,0 +1,29 @@
+ARCHITECTURE.md
+  s_e3db5ab72b4b38::t_d3bd53e99b1c47 28
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockBridgeApi.java
+  s_e3db5ab72b4b38::t_056ee679fc1964 5,8-9
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeClientConfiguration.java
+  s_e3db5ab72b4b38::t_f46db6648e776e 46-47
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockBridgeApi.java
+  s_e3db5ab72b4b38::t_37992b0b697bb6 8,16-20
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockGateway.java
+  s_e3db5ab72b4b38::t_c01dc86c885b37 17,23
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockBridgeApiTest.java
+  s_e3db5ab72b4b38::t_ae1e2d35df916f 7,31-32,39,52,75-86
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "fee9a63996b7127e2ba77415832093566db427db",
+  "prompts": {},
+  "sessions": {
+    "s_e3db5ab72b4b38": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e986f3733ffegWS7ouN3h34BaR",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
