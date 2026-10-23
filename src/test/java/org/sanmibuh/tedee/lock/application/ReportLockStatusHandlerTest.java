@@ -5,6 +5,9 @@ import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.ID;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.NAME;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.snapshot;
 
 import java.util.stream.Stream;
 import org.junit.jupiter.api.Test;
@@ -56,50 +59,46 @@ class ReportLockStatusHandlerTest {
   @MethodSource("reportedStates")
   void should_recordLockStatusReported_whenReportingState(
       final int bridgeState, final LockState state) {
-    given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
 
-    sut.handle(new ReportLockStatusCommand(1, bridgeState, 0, 2));
+    sut.handle(new ReportLockStatusCommand(ID, bridgeState, 0, 2));
 
     verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents())
-        .containsExactly(new LockStatusReported(1, "Front door", state, LockJamStatus.NOT_JAMMED));
+        .containsExactly(new LockStatusReported(ID, NAME, state, LockJamStatus.NOT_JAMMED));
   }
 
   @ParameterizedTest
   @ValueSource(ints = {0, 1})
   void should_recordLockStatusReported_whenReportingJammedState(final int jammed) {
-    given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
 
-    sut.handle(new ReportLockStatusCommand(1, 6, jammed, 2));
+    sut.handle(new ReportLockStatusCommand(ID, 6, jammed, 2));
 
     verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents())
         .containsExactly(
             new LockStatusReported(
                 1,
-                "Front door",
+                NAME,
                 LockState.CLOSED,
                 jammed == 1 ? LockJamStatus.JAMMED : LockJamStatus.NOT_JAMMED));
   }
 
   @Test
   void should_throwException_whenReportingUndocumentedState() {
-    given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
 
-    thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(1, 10, 0, 2)))
+    thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(ID, 10, 0, 2)))
         .isInstanceOf(InvalidLockStateException.class)
         .hasMessage("Unknown lock state: 10");
   }
 
   @Test
   void should_throwException_whenReportingUndocumentedJamStatus() {
-    given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
 
-    thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(1, 6, 2, 2)))
+    thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(ID, 6, 2, 2)))
         .isInstanceOf(InvalidLockJamStatusException.class)
         .hasMessage("Unknown lock jam status: 2");
   }

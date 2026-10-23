@@ -4,6 +4,9 @@ import static org.assertj.core.api.BDDAssertions.then;
 import static org.junit.jupiter.params.provider.Arguments.argumentSet;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.ID;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.NAME;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.snapshot;
 
 import java.util.stream.Stream;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -52,14 +55,12 @@ class ReportBatteryLevelHandlerTest {
   @MethodSource("batteryLevels")
   void should_recordBatteryLevelReported_whenReportingLevel(
       final int level, final BatteryLevelCategory category) {
-    given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
 
-    sut.handle(new ReportBatteryLevelCommand(1, level));
+    sut.handle(new ReportBatteryLevelCommand(ID, level));
 
     verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents())
-        .containsExactly(
-            new BatteryLevelReported(1, "Front door", new BatteryStatus(level, category)));
+        .containsExactly(new BatteryLevelReported(ID, NAME, new BatteryStatus(level, category)));
   }
 }

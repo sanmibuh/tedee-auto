@@ -3,8 +3,9 @@ package org.sanmibuh.tedee.lock.application;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.ID;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.snapshot;
 
-import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
@@ -14,7 +15,6 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
-import org.sanmibuh.tedee.lock.domain.LockSnapshot;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
 import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
@@ -30,23 +30,20 @@ class RemoveLockCronExpressionHandlerTest {
 
   @Captor ArgumentCaptor<Lock> savedLock;
 
-  private static LockSnapshot snapshotWith(final String... expressions) {
-    return new LockSnapshot(1, "Front door", LockStatus.UNLOCKED, List.of(expressions));
-  }
-
   private void givenLockWithCronExpressions(final String... expressions) {
-    given(repository.get(new LockId(1))).willReturn(new Lock(snapshotWith(expressions)));
+    given(repository.get(new LockId(ID)))
+        .willReturn(new Lock(snapshot(LockStatus.UNLOCKED, expressions)));
   }
 
   @Test
   void should_removeCronExpression_whenExpressionExists() {
     givenLockWithCronExpressions(WEEKDAYS_AT_22, NIGHTLY);
 
-    sut.handle(new RemoveLockCronExpressionCommand(1, WEEKDAYS_AT_22));
+    sut.handle(new RemoveLockCronExpressionCommand(ID, WEEKDAYS_AT_22));
 
     verify(repository).save(savedLock.capture());
     final var actual = savedLock.getValue().snapshot();
-    final var expected = snapshotWith(NIGHTLY);
+    final var expected = snapshot(LockStatus.UNLOCKED, NIGHTLY);
     then(actual).isEqualTo(expected);
   }
 
@@ -54,11 +51,11 @@ class RemoveLockCronExpressionHandlerTest {
   void should_keepCronExpressions_whenExpressionIsAbsent() {
     givenLockWithCronExpressions(NIGHTLY);
 
-    sut.handle(new RemoveLockCronExpressionCommand(1, WEEKDAYS_AT_22));
+    sut.handle(new RemoveLockCronExpressionCommand(ID, WEEKDAYS_AT_22));
 
     verify(repository).save(savedLock.capture());
     final var actual = savedLock.getValue().snapshot();
-    final var expected = snapshotWith(NIGHTLY);
+    final var expected = snapshot(LockStatus.UNLOCKED, NIGHTLY);
     then(actual).isEqualTo(expected);
   }
 }
