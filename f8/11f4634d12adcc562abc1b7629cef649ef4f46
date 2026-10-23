@@ -1,0 +1,43 @@
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepository.java
+  s_e3db5ab72b4b38::t_fe37483f9917f5 27
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  s_e3db5ab72b4b38::t_9c2a6290544d6d 42,49
+src/main/java/org/sanmibuh/tedee/lock/domain/LockSnapshot.java
+  s_e3db5ab72b4b38::t_d0b6e023813a0c 7
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepositoryTest.java
+  s_e3db5ab72b4b38::t_76c5339939c275 43,51,62,83,91
+src/test/java/org/sanmibuh/tedee/lock/application/AddLockCronExpressionHandlerTest.java
+  s_e3db5ab72b4b38::t_0dbec89151a575 34
+src/test/java/org/sanmibuh/tedee/lock/application/CloseLockHandlerTest.java
+  s_e3db5ab72b4b38::t_597ee39f8f7b11 32,42-43
+src/test/java/org/sanmibuh/tedee/lock/application/RemoveLockCronExpressionHandlerTest.java
+  s_e3db5ab72b4b38::t_8ca29b43bcf7e3 34
+src/test/java/org/sanmibuh/tedee/lock/application/ReportBatteryLevelHandlerTest.java
+  s_e3db5ab72b4b38::t_f494abae78d56f 56
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockConnectedHandlerTest.java
+  s_e3db5ab72b4b38::t_b71ccb5bdf6eab 32
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockDisconnectedHandlerTest.java
+  s_e3db5ab72b4b38::t_f85add2f2eacb3 32
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockSettingsChangedHandlerTest.java
+  s_e3db5ab72b4b38::t_1283f131ce4cd9 32
+src/test/java/org/sanmibuh/tedee/lock/application/ReportLockStatusHandlerTest.java
+  s_e3db5ab72b4b38::t_5c6e33c43b69ee 60,73,89,99
+src/test/java/org/sanmibuh/tedee/lock/domain/LockTest.java
+  s_e3db5ab72b4b38::t_a463695200839e 13-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "f811f4634d12adcc562abc1b7629cef649ef4f46",
+  "prompts": {},
+  "sessions": {
+    "s_e3db5ab72b4b38": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e986f3733ffegWS7ouN3h34BaR",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
