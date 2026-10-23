@@ -16,6 +16,7 @@ import java.time.Clock;
 import java.util.function.Consumer;
 import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
@@ -69,167 +70,180 @@ class TedeeLockGatewayTest {
 
   @MockitoBean private Clock clock;
 
-  static Stream<Arguments> nonTransientBridgeErrors() {
-    return Stream.of(
-        Arguments.of(HttpStatus.NOT_FOUND, InvalidLockRequestException.class),
-        Arguments.of(HttpStatus.UNAUTHORIZED, LockOperationFailedException.class),
-        Arguments.of(HttpStatus.BAD_REQUEST, LockOperationFailedException.class),
-        Arguments.of(HttpStatus.INTERNAL_SERVER_ERROR, LockOperationFailedException.class));
+  @Nested
+  class Locking {
+
+    static Stream<Arguments> nonTransientBridgeErrors() {
+      return Stream.of(
+          Arguments.of(HttpStatus.NOT_FOUND, InvalidLockRequestException.class),
+          Arguments.of(HttpStatus.UNAUTHORIZED, LockOperationFailedException.class),
+          Arguments.of(HttpStatus.BAD_REQUEST, LockOperationFailedException.class),
+          Arguments.of(HttpStatus.INTERNAL_SERVER_ERROR, LockOperationFailedException.class));
+    }
+
+    static Stream<Arguments> transientBridgeErrors() {
+      return Stream.of(
+          Arguments.of(HttpStatus.METHOD_NOT_ALLOWED),
+          Arguments.of(HttpStatus.NOT_ACCEPTABLE),
+          Arguments.of(HttpStatus.CONFLICT),
+          Arguments.of(HttpStatus.BAD_GATEWAY),
+          Arguments.of(HttpStatus.SERVICE_UNAVAILABLE),
+          Arguments.of(HttpStatus.GATEWAY_TIMEOUT));
+    }
+
+    @Test
+    void should_postToLockEndpoint_whenLocking() {
+      server
+          .expect(requestTo(LOCK_URL))
+          .andExpect(method(HttpMethod.POST))
+          .andRespond(withNoContent());
+
+      sut.lock(new LockId(DEVICE_ID));
+
+      server.verify();
+    }
+
+    @Test
+    void should_sendApiToken_whenLocking() {
+      given(clock.millis()).willReturn(FIXED_MILLIS);
+      server
+          .expect(requestTo(LOCK_URL))
+          .andExpect(header("api_token", EXPECTED_API_TOKEN))
+          .andRespond(withNoContent());
+
+      sut.lock(new LockId(DEVICE_ID));
+
+      server.verify();
+    }
+
+    @ParameterizedTest
+    @MethodSource("nonTransientBridgeErrors")
+    void should_translateWithoutRetrying_whenBridgeRespondsWithNonTransientError(
+        final HttpStatus status, final Class<? extends Throwable> expectedException) {
+      server
+          .expect(ExpectedCount.once(), requestTo(LOCK_URL))
+          .andExpect(method(HttpMethod.POST))
+          .andRespond(withStatus(status));
+
+      thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID))).isInstanceOf(expectedException);
+
+      server.verify();
+    }
+
+    @ParameterizedTest
+    @MethodSource("transientBridgeErrors")
+    void should_retryUpToConfiguredAttemptsThenGiveUp_whenBridgeKeepsRespondingWithTransientError(
+        final HttpStatus status) {
+      server
+          .expect(ExpectedCount.times(EXPECTED_ATTEMPTS), requestTo(LOCK_URL))
+          .andExpect(method(HttpMethod.POST))
+          .andRespond(withStatus(status));
+
+      thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
+          .isInstanceOf(LockTemporarilyUnavailableException.class);
+
+      server.verify();
+    }
+
+    @Test
+    void should_retryThenGiveUp_whenBridgeIsUnreachable() {
+      server
+          .expect(ExpectedCount.times(EXPECTED_ATTEMPTS), requestTo(LOCK_URL))
+          .andExpect(method(HttpMethod.POST))
+          .andRespond(withException(new IOException("bridge unreachable")));
+
+      thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
+          .isInstanceOf(LockTemporarilyUnavailableException.class);
+
+      server.verify();
+    }
+
+    @Test
+    void should_retryUntilSuccess_whenBridgeRespondsWithTransientErrorThenSucceeds() {
+      server
+          .expect(requestTo(LOCK_URL))
+          .andExpect(method(HttpMethod.POST))
+          .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
+      server
+          .expect(requestTo(LOCK_URL))
+          .andExpect(method(HttpMethod.POST))
+          .andRespond(withNoContent());
+
+      sut.lock(new LockId(DEVICE_ID));
+
+      server.verify();
+    }
   }
 
-  static Stream<Arguments> transientBridgeErrors() {
-    return Stream.of(
-        Arguments.of(HttpStatus.METHOD_NOT_ALLOWED),
-        Arguments.of(HttpStatus.NOT_ACCEPTABLE),
-        Arguments.of(HttpStatus.CONFLICT),
-        Arguments.of(HttpStatus.BAD_GATEWAY),
-        Arguments.of(HttpStatus.SERVICE_UNAVAILABLE),
-        Arguments.of(HttpStatus.GATEWAY_TIMEOUT));
+  @Nested
+  class GettingLock {
+
+    @Test
+    void should_returnLockView_whenGettingLock() {
+      server
+          .expect(requestTo(LOCK_DETAILS_URL))
+          .andExpect(method(HttpMethod.GET))
+          .andRespond(
+              withSuccess(
+                  "{\"id\":%d,\"name\":\"Front door\"}".formatted(DEVICE_ID),
+                  MediaType.APPLICATION_JSON));
+
+      final var lock = sut.get(new LockId(DEVICE_ID));
+
+      server.verify();
+      then(lock).isEqualTo(new LockView(DEVICE_ID, "Front door"));
+    }
+
+    @ParameterizedTest
+    @ValueSource(
+        strings = {
+          "{\"id\":42}",
+          "{\"id\":42,\"name\":null}",
+          "{\"id\":42,\"name\":\"\"}",
+          "{\"id\":42,\"name\":\"  \"}"
+        })
+    void should_returnDeviceIdAsName_whenBridgeReturnsNoUsableName(final String body) {
+      server
+          .expect(requestTo(LOCK_DETAILS_URL))
+          .andExpect(method(HttpMethod.GET))
+          .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
+
+      final var lock = sut.get(new LockId(DEVICE_ID));
+
+      then(lock).isEqualTo(new LockView(DEVICE_ID, String.valueOf(DEVICE_ID)));
+    }
   }
 
-  @Test
-  void should_postToLockEndpoint_whenLocking() {
-    server
-        .expect(requestTo(LOCK_URL))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withNoContent());
+  @Nested
+  class EveryOperation {
 
-    sut.lock(new LockId(DEVICE_ID));
+    @ParameterizedTest
+    @EnumSource(Operation.class)
+    void should_retryThenGiveUp_whenOperationKeepsFailingTransiently(final Operation operation) {
+      server
+          .expect(ExpectedCount.times(EXPECTED_ATTEMPTS), requestTo(operation.url))
+          .andExpect(method(operation.method))
+          .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
 
-    server.verify();
-  }
+      thenThrownBy(() -> operation.call.accept(sut))
+          .isInstanceOf(LockTemporarilyUnavailableException.class);
 
-  @Test
-  void should_sendApiToken_whenLocking() {
-    given(clock.millis()).willReturn(FIXED_MILLIS);
-    server
-        .expect(requestTo(LOCK_URL))
-        .andExpect(header("api_token", EXPECTED_API_TOKEN))
-        .andRespond(withNoContent());
+      server.verify();
+    }
 
-    sut.lock(new LockId(DEVICE_ID));
+    @ParameterizedTest
+    @EnumSource(Operation.class)
+    void should_translateNotFound_whenBridgeDoesNotKnowTheLock(final Operation operation) {
+      server
+          .expect(ExpectedCount.once(), requestTo(operation.url))
+          .andExpect(method(operation.method))
+          .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
-    server.verify();
-  }
+      thenThrownBy(() -> operation.call.accept(sut))
+          .isInstanceOf(InvalidLockRequestException.class);
 
-  @ParameterizedTest
-  @MethodSource("nonTransientBridgeErrors")
-  void should_translateWithoutRetrying_whenBridgeRespondsWithNonTransientError(
-      final HttpStatus status, final Class<? extends Throwable> expectedException) {
-    server
-        .expect(ExpectedCount.once(), requestTo(LOCK_URL))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(status));
-
-    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID))).isInstanceOf(expectedException);
-
-    server.verify();
-  }
-
-  @ParameterizedTest
-  @MethodSource("transientBridgeErrors")
-  void should_retryUpToConfiguredAttemptsThenGiveUp_whenBridgeKeepsRespondingWithTransientError(
-      final HttpStatus status) {
-    server
-        .expect(ExpectedCount.times(EXPECTED_ATTEMPTS), requestTo(LOCK_URL))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(status));
-
-    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
-        .isInstanceOf(LockTemporarilyUnavailableException.class);
-
-    server.verify();
-  }
-
-  @Test
-  void should_retryThenGiveUp_whenBridgeIsUnreachable() {
-    server
-        .expect(ExpectedCount.times(EXPECTED_ATTEMPTS), requestTo(LOCK_URL))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withException(new IOException("bridge unreachable")));
-
-    thenThrownBy(() -> sut.lock(new LockId(DEVICE_ID)))
-        .isInstanceOf(LockTemporarilyUnavailableException.class);
-
-    server.verify();
-  }
-
-  @Test
-  void should_retryUntilSuccess_whenBridgeRespondsWithTransientErrorThenSucceeds() {
-    server
-        .expect(requestTo(LOCK_URL))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
-    server
-        .expect(requestTo(LOCK_URL))
-        .andExpect(method(HttpMethod.POST))
-        .andRespond(withNoContent());
-
-    sut.lock(new LockId(DEVICE_ID));
-
-    server.verify();
-  }
-
-  @ParameterizedTest
-  @EnumSource(Operation.class)
-  void should_retryThenGiveUp_whenAnyOperationKeepsFailingTransiently(final Operation operation) {
-    server
-        .expect(ExpectedCount.times(EXPECTED_ATTEMPTS), requestTo(operation.url))
-        .andExpect(method(operation.method))
-        .andRespond(withStatus(HttpStatus.SERVICE_UNAVAILABLE));
-
-    thenThrownBy(() -> operation.call.accept(sut))
-        .isInstanceOf(LockTemporarilyUnavailableException.class);
-
-    server.verify();
-  }
-
-  @ParameterizedTest
-  @EnumSource(Operation.class)
-  void should_translateNotFound_whenBridgeDoesNotKnowTheLock(final Operation operation) {
-    server
-        .expect(ExpectedCount.once(), requestTo(operation.url))
-        .andExpect(method(operation.method))
-        .andRespond(withStatus(HttpStatus.NOT_FOUND));
-
-    thenThrownBy(() -> operation.call.accept(sut)).isInstanceOf(InvalidLockRequestException.class);
-
-    server.verify();
-  }
-
-  @Test
-  void should_returnLockView_whenGettingLock() {
-    server
-        .expect(requestTo(LOCK_DETAILS_URL))
-        .andExpect(method(HttpMethod.GET))
-        .andRespond(
-            withSuccess(
-                "{\"id\":%d,\"name\":\"Front door\"}".formatted(DEVICE_ID),
-                MediaType.APPLICATION_JSON));
-
-    final var lock = sut.get(new LockId(DEVICE_ID));
-
-    server.verify();
-    then(lock).isEqualTo(new LockView(DEVICE_ID, "Front door"));
-  }
-
-  @ParameterizedTest
-  @ValueSource(
-      strings = {
-        "{\"id\":42}",
-        "{\"id\":42,\"name\":null}",
-        "{\"id\":42,\"name\":\"\"}",
-        "{\"id\":42,\"name\":\"  \"}"
-      })
-  void should_returnDeviceIdAsName_whenBridgeReturnsNoUsableName(final String body) {
-    server
-        .expect(requestTo(LOCK_DETAILS_URL))
-        .andExpect(method(HttpMethod.GET))
-        .andRespond(withSuccess(body, MediaType.APPLICATION_JSON));
-
-    final var lock = sut.get(new LockId(DEVICE_ID));
-
-    then(lock).isEqualTo(new LockView(DEVICE_ID, String.valueOf(DEVICE_ID)));
+      server.verify();
+    }
   }
 
   @RequiredArgsConstructor
