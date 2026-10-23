@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 public final class TedeeLockRepository implements LockRepository {
 
   private final LockJpaRepository jpaRepository;
+  private final LockGateway lockGateway;
 
   @Override
   public Optional<Lock> findById(final LockId lockId) {
