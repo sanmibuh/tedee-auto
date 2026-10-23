@@ -25,7 +25,12 @@ public final class TedeeLockRepository implements LockRepository {
             .flatMap(Set::stream)
             .toList();
     return Optional.of(
-        new Lock(new LockSnapshot(lockId.value(), "", LockStatus.UNLOCKED, cronExpressions)));
+        new Lock(
+            new LockSnapshot(
+                lockId.value(),
+                lockGateway.get(lockId).name(),
+                LockStatus.UNLOCKED,
+                cronExpressions)));
   }
 
   @Override
