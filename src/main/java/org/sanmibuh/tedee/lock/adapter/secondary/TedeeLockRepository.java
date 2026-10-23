@@ -31,6 +31,9 @@ public final class TedeeLockRepository implements LockRepository {
   public void save(final LockSnapshot snapshot) {
     // The lock status is not persisted: the physical lock is authoritative and a stale LOCKED
     // value would turn later scheduled closes into no-ops.
-    jpaRepository.save(new LockJpaEntity(snapshot.id(), Set.copyOf(snapshot.cronExpressions())));
+    final var entity =
+        jpaRepository.findById(snapshot.id()).orElseGet(() -> new LockJpaEntity(snapshot.id()));
+    entity.update(snapshot);
+    jpaRepository.save(entity);
   }
 }

@@ -1,9 +1,11 @@
 package org.sanmibuh.tedee.lock.adapter.secondary;
 
 import static org.assertj.core.api.BDDAssertions.then;
+import static org.assertj.core.api.BDDAssertions.thenThrownBy;
 
 import com.mickaelb.api.AssertHibernateSQLCount;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.OptimisticLockException;
 import java.util.List;
 import org.junit.jupiter.api.Test;
 import org.sanmibuh.framework.persistence.RepositoryTest;
@@ -48,7 +50,7 @@ class TedeeLockRepositoryTest {
 
   @Test
   @Sql("/sql/lock-with-cron-expressions.sql")
-  @AssertHibernateSQLCount(selects = 1, deletes = 1)
+  @AssertHibernateSQLCount(selects = 1, deletes = 1, updates = 1)
   void should_replacePersistedCronExpressions_whenSavingAgain() {
     sut.save(new LockSnapshot(DEVICE_ID, LockStatus.UNLOCKED, List.of(NIGHTLY)));
     entityManager.flush();
@@ -57,10 +59,35 @@ class TedeeLockRepositoryTest {
   }
 
   @Test
+  @Sql("/sql/lock-with-cron-expressions.sql")
+  void should_incrementVersion_whenOnlyCronExpressionsChange() {
+    sut.save(new LockSnapshot(DEVICE_ID, LockStatus.UNLOCKED, List.of(NIGHTLY)));
+    entityManager.flush();
+
+    then(storedVersions()).containsExactly(1L);
+  }
+
+  @Test
+  @Sql("/sql/lock-with-cron-expressions.sql")
+  void should_failOnFlush_whenLockWasModifiedConcurrently() {
+    sut.get(new LockId(DEVICE_ID));
+    jdbcTemplate.update("UPDATE lock SET version = version + 1 WHERE id = ?", DEVICE_ID);
+
+    sut.save(new LockSnapshot(DEVICE_ID, LockStatus.UNLOCKED, List.of(NIGHTLY)));
+
+    thenThrownBy(entityManager::flush).isInstanceOf(OptimisticLockException.class);
+  }
+
+  @Test
   void should_notPersistLockStatus_whenSavingLockedLock() {
     sut.save(new LockSnapshot(DEVICE_ID, LockStatus.LOCKED, List.of()));
 
     then(sut.get(new LockId(DEVICE_ID)).snapshot().status()).isEqualTo(LockStatus.UNLOCKED);
+  }
+
+  private List<Long> storedVersions() {
+    return jdbcTemplate.queryForList(
+        "SELECT version FROM lock WHERE id = ?", Long.class, DEVICE_ID);
   }
 
   private List<String> storedCronExpressions() {
