@@ -1,0 +1,19 @@
+src/test/java/org/sanmibuh/tedee/lock/LockSnapshotMother.java
+  s_f30bbc4327210b::t_6b5c79ca71258d 14-15
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "17272152e6ac9fe76e9da2fb0cc1206fb5587a63",
+  "prompts": {},
+  "sessions": {
+    "s_f30bbc4327210b": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e97b74a97ffeB6EbQAw1X69OK4",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
