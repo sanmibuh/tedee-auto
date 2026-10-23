@@ -3,6 +3,9 @@ package org.sanmibuh.tedee.lock.application;
 import static org.assertj.core.api.BDDAssertions.then;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.verify;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.ID;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.NAME;
+import static org.sanmibuh.tedee.lock.LockSnapshotMother.snapshot;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -28,19 +31,17 @@ class CloseLockHandlerTest {
 
   @Test
   void should_recordLockRequested_whenClosingAnOpenLock() {
-    given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.UNLOCKED));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
 
     sut.handle(new CloseLockCommand(1));
 
     verify(repository).save(savedLock.capture());
-    then(savedLock.getValue().domainEvents()).containsExactly(new LockRequested(1, "Front door"));
+    then(savedLock.getValue().domainEvents()).containsExactly(new LockRequested(ID, NAME));
   }
 
   @Test
   void should_notRecordEvent_whenClosingAnAlreadyClosedLock() {
-    given(repository.get(new LockId(1)))
-        .willReturn(Lock.create(new LockId(1), "Front door", LockStatus.LOCKED));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.LOCKED)));
 
     sut.handle(new CloseLockCommand(1));
 
