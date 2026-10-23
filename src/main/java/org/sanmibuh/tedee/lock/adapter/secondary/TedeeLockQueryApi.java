@@ -11,6 +11,6 @@ final class TedeeLockQueryApi implements LockQueryApi {
 
   @Override
   public LockDetails getLock(final int deviceId) {
-    throw new UnsupportedOperationException();
+    return lockApi.getLockById(deviceId);
   }
 }
