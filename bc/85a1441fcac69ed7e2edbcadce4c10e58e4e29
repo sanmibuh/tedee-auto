@@ -1,0 +1,14 @@
+src/test/java/org/sanmibuh/tedee/lock/LockSnapshotMother.java
+  h_97a91c9e567f87 1-17
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "bc85a1441fcac69ed7e2edbcadce4c10e58e4e29",
+  "prompts": {},
+  "humans": {
+    "h_97a91c9e567f87": {
+      "author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
