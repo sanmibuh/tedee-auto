@@ -11,7 +11,7 @@ public final class LockSnapshotMother {
   public static final int ID = 1;
   public static final String NAME = "Front door";
 
-  public static LockSnapshot snapshot(final LockState status, final String... cronExpressions) {
-    return new LockSnapshot(ID, NAME, status, List.of(cronExpressions));
+  public static LockSnapshot snapshot(final LockState state, final String... cronExpressions) {
+    return new LockSnapshot(ID, NAME, state, List.of(cronExpressions));
   }
 }
