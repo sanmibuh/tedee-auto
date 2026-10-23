@@ -1,11 +1,14 @@
 package org.sanmibuh.tedee.lock.adapter.secondary.rest;
 
 import com.tedee.bridge.client.api.LockApi;
+import com.tedee.bridge.client.model.LockDetails.StateEnum;
 import lombok.RequiredArgsConstructor;
+import org.jspecify.annotations.Nullable;
 import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
 import org.springframework.http.HttpStatus;
 import org.springframework.util.StringUtils;
 import org.springframework.web.client.RestClientException;
@@ -33,10 +36,17 @@ final class TedeeLockGateway implements LockGateway {
       final var details = lockApi.getLockById(deviceId);
       return new LockView(
           deviceId,
-          StringUtils.hasText(details.getName()) ? details.getName() : String.valueOf(deviceId));
+          StringUtils.hasText(details.getName()) ? details.getName() : String.valueOf(deviceId),
+          toState(details.getState()));
     } catch (final RestClientException exception) {
       throw translateException(exception, deviceId);
     }
+  }
+
+  private LockState toState(@Nullable final StateEnum bridgeState) {
+    return bridgeState == null
+        ? LockState.UNKNOWN
+        : LockState.fromBridgeCode(bridgeState.getValue());
   }
 
   private RuntimeException translateException(

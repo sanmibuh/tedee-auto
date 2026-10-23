@@ -16,7 +16,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
-import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
 
 @ExtendWith(MockitoExtension.class)
 class RemoveLockCronExpressionHandlerTest {
@@ -32,7 +32,7 @@ class RemoveLockCronExpressionHandlerTest {
 
   private void givenLockWithCronExpressions(final String... expressions) {
     given(repository.get(new LockId(ID)))
-        .willReturn(new Lock(snapshot(LockStatus.UNLOCKED, expressions)));
+        .willReturn(new Lock(snapshot(LockState.OPEN, expressions)));
   }
 
   @Test
@@ -43,7 +43,7 @@ class RemoveLockCronExpressionHandlerTest {
 
     verify(repository).save(savedLock.capture());
     final var actual = savedLock.getValue().snapshot();
-    final var expected = snapshot(LockStatus.UNLOCKED, NIGHTLY);
+    final var expected = snapshot(LockState.OPEN, NIGHTLY);
     then(actual).isEqualTo(expected);
   }
 
@@ -55,7 +55,7 @@ class RemoveLockCronExpressionHandlerTest {
 
     verify(repository).save(savedLock.capture());
     final var actual = savedLock.getValue().snapshot();
-    final var expected = snapshot(LockStatus.UNLOCKED, NIGHTLY);
+    final var expected = snapshot(LockState.OPEN, NIGHTLY);
     then(actual).isEqualTo(expected);
   }
 }

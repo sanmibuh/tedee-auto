@@ -24,7 +24,7 @@ import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported;
 import org.sanmibuh.tedee.lock.domain.event.BatteryLevelReported.BatteryStatus;
 import org.sanmibuh.tedee.lock.domain.vo.BatteryLevelCategory;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
-import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
 
 @ExtendWith(MockitoExtension.class)
 class ReportBatteryLevelHandlerTest {
@@ -55,7 +55,7 @@ class ReportBatteryLevelHandlerTest {
   @MethodSource("batteryLevels")
   void should_recordBatteryLevelReported_whenReportingLevel(
       final int level, final BatteryLevelCategory category) {
-    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockState.OPEN)));
 
     sut.handle(new ReportBatteryLevelCommand(ID, level));
 

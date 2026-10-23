@@ -18,7 +18,7 @@ import org.sanmibuh.tedee.lock.domain.Lock;
 import org.sanmibuh.tedee.lock.domain.LockRepository;
 import org.sanmibuh.tedee.lock.domain.event.LockSettingsChanged;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
-import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
 
 @ExtendWith(MockitoExtension.class)
 class ReportLockSettingsChangedHandlerTest {
@@ -31,7 +31,7 @@ class ReportLockSettingsChangedHandlerTest {
 
   @Test
   void should_recordLockSettingsChanged_whenReportingLockSettingsChanged() {
-    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockState.OPEN)));
 
     sut.handle(new ReportLockSettingsChangedCommand(1));
 

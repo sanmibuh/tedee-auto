@@ -29,7 +29,6 @@ import org.sanmibuh.tedee.lock.domain.exception.InvalidLockStateException;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
 import org.sanmibuh.tedee.lock.domain.vo.LockJamStatus;
 import org.sanmibuh.tedee.lock.domain.vo.LockState;
-import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
 @ExtendWith(MockitoExtension.class)
 class ReportLockStatusHandlerTest {
@@ -59,7 +58,7 @@ class ReportLockStatusHandlerTest {
   @MethodSource("reportedStates")
   void should_recordLockStatusReported_whenReportingState(
       final int bridgeState, final LockState state) {
-    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockState.OPEN)));
 
     sut.handle(new ReportLockStatusCommand(ID, bridgeState, 0, 2));
 
@@ -71,7 +70,7 @@ class ReportLockStatusHandlerTest {
   @ParameterizedTest
   @ValueSource(ints = {0, 1})
   void should_recordLockStatusReported_whenReportingJammedState(final int jammed) {
-    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockState.OPEN)));
 
     sut.handle(new ReportLockStatusCommand(ID, 6, jammed, 2));
 
@@ -87,7 +86,7 @@ class ReportLockStatusHandlerTest {
 
   @Test
   void should_throwException_whenReportingUndocumentedState() {
-    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockState.OPEN)));
 
     thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(ID, 10, 0, 2)))
         .isInstanceOf(InvalidLockStateException.class)
@@ -96,7 +95,7 @@ class ReportLockStatusHandlerTest {
 
   @Test
   void should_throwException_whenReportingUndocumentedJamStatus() {
-    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockStatus.UNLOCKED)));
+    given(repository.get(new LockId(ID))).willReturn(new Lock(snapshot(LockState.OPEN)));
 
     thenThrownBy(() -> sut.handle(new ReportLockStatusCommand(ID, 6, 2, 2)))
         .isInstanceOf(InvalidLockJamStatusException.class)

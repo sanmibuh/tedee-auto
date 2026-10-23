@@ -20,7 +20,7 @@ import org.sanmibuh.tedee.lock.adapter.secondary.rest.LockGateway;
 import org.sanmibuh.tedee.lock.adapter.secondary.rest.LockView;
 import org.sanmibuh.tedee.lock.domain.LockSnapshot;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
-import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Import;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -47,14 +47,14 @@ class TedeeLockRepositoryTest {
 
   @BeforeEach
   void stubGateway() {
-    given(lockGateway.get(new LockId(DEVICE_ID))).willReturn(new LockView(DEVICE_ID, NAME));
+    stubReportedState(LockState.OPEN);
   }
 
   @Test
   @AssertHibernateSQLCount(selects = 1)
   void should_returnUnlockedLockWithoutCronExpressions_whenLockWasNeverSaved() {
     then(sut.get(new LockId(DEVICE_ID)).snapshot())
-        .isEqualTo(new LockSnapshot(DEVICE_ID, NAME, LockStatus.UNLOCKED, List.of()));
+        .isEqualTo(new LockSnapshot(DEVICE_ID, NAME, LockState.OPEN, List.of()));
   }
 
   @Test
@@ -62,7 +62,7 @@ class TedeeLockRepositoryTest {
   @AssertHibernateSQLCount(selects = 1)
   void should_returnPersistedCronExpressions_whenFindingStoredLock() {
     final var expected =
-        new LockSnapshot(DEVICE_ID, NAME, LockStatus.UNLOCKED, List.of(WEEKDAYS_AT_22, NIGHTLY));
+        new LockSnapshot(DEVICE_ID, NAME, LockState.OPEN, List.of(WEEKDAYS_AT_22, NIGHTLY));
 
     final var actual = sut.get(new LockId(DEVICE_ID)).snapshot();
 
@@ -73,7 +73,7 @@ class TedeeLockRepositoryTest {
   @Sql("/sql/lock-with-cron-expressions.sql")
   @AssertHibernateSQLCount(selects = 1, deletes = 1, updates = 1)
   void should_replaceCronExpressionsAndIncrementVersion_whenSavingAgain() {
-    saveAndFlush(new LockSnapshot(DEVICE_ID, NAME, LockStatus.UNLOCKED, List.of(NIGHTLY)));
+    saveAndFlush(new LockSnapshot(DEVICE_ID, NAME, LockState.OPEN, List.of(NIGHTLY)));
 
     softly.then(storedCronExpressions()).containsExactly(NIGHTLY);
     softly.then(storedVersions()).containsExactly(1L);
@@ -94,7 +94,7 @@ class TedeeLockRepositoryTest {
     sut.get(new LockId(DEVICE_ID));
     jdbcTemplate.update("UPDATE lock SET version = version + 1 WHERE id = ?", DEVICE_ID);
 
-    sut.save(new LockSnapshot(DEVICE_ID, NAME, LockStatus.UNLOCKED, List.of(NIGHTLY)));
+    sut.save(new LockSnapshot(DEVICE_ID, NAME, LockState.OPEN, List.of(NIGHTLY)));
 
     thenThrownBy(entityManager::flush).isInstanceOf(OptimisticLockException.class);
   }
@@ -102,9 +102,18 @@ class TedeeLockRepositoryTest {
   @Test
   @AssertHibernateSQLCount(selects = 2, inserts = 1)
   void should_notPersistLockStatus_whenSavingLockedLock() {
-    sut.save(new LockSnapshot(DEVICE_ID, NAME, LockStatus.LOCKED, List.of()));
+    sut.save(new LockSnapshot(DEVICE_ID, NAME, LockState.CLOSED, List.of()));
+    stubReportedState(LockState.OPEN);
 
-    then(sut.get(new LockId(DEVICE_ID)).snapshot().status()).isEqualTo(LockStatus.UNLOCKED);
+    then(sut.get(new LockId(DEVICE_ID)).snapshot().state()).isEqualTo(LockState.OPEN);
+  }
+
+  @Test
+  @AssertHibernateSQLCount(selects = 1)
+  void should_returnReportedStatus_whenBridgeReportsLockedLock() {
+    stubReportedState(LockState.CLOSED);
+
+    then(sut.get(new LockId(DEVICE_ID)).snapshot().state()).isEqualTo(LockState.CLOSED);
   }
 
   @Test
@@ -114,6 +123,10 @@ class TedeeLockRepositoryTest {
     given(lockGateway.get(lockId)).willThrow(new AggregateNotFoundException(lockId));
 
     thenThrownBy(() -> sut.get(lockId)).isInstanceOf(AggregateNotFoundException.class);
+  }
+
+  private void stubReportedState(final LockState state) {
+    given(lockGateway.get(new LockId(DEVICE_ID))).willReturn(new LockView(DEVICE_ID, NAME, state));
   }
 
   private void saveAndFlush(final LockSnapshot snapshot) {

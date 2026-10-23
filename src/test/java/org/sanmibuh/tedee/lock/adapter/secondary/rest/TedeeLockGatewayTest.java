@@ -27,6 +27,7 @@ import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
+import org.sanmibuh.tedee.lock.domain.vo.LockState;
 import org.sanmibuh.tedee.shared.adapter.TedeeInfrastructureConfiguration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.restclient.test.autoconfigure.RestClientTest;
@@ -185,13 +186,41 @@ class TedeeLockGatewayTest {
           .andExpect(method(HttpMethod.GET))
           .andRespond(
               withSuccess(
-                  "{\"id\":%d,\"name\":\"Front door\"}".formatted(DEVICE_ID),
+                  "{\"id\":%d,\"name\":\"Front door\",\"state\":6}".formatted(DEVICE_ID),
                   MediaType.APPLICATION_JSON));
 
       final var lock = sut.get(new LockId(DEVICE_ID));
 
       server.verify();
-      then(lock).isEqualTo(new LockView(DEVICE_ID, "Front door"));
+      then(lock).isEqualTo(new LockView(DEVICE_ID, "Front door", LockState.CLOSED));
+    }
+
+    @ParameterizedTest
+    @MethodSource("stateForBridgeCode")
+    void should_returnBridgeState_whenGettingLock(final int bridgeState, final LockState expected) {
+      server
+          .expect(requestTo(LOCK_DETAILS_URL))
+          .andRespond(
+              withSuccess(
+                  "{\"id\":42,\"name\":\"Front door\",\"state\":%d}".formatted(bridgeState),
+                  MediaType.APPLICATION_JSON));
+
+      then(sut.get(new LockId(DEVICE_ID)).state()).isEqualTo(expected);
+    }
+
+    static Stream<Arguments> stateForBridgeCode() {
+      return Stream.of(
+          Arguments.of(0, LockState.UNCALIBRATED),
+          Arguments.of(1, LockState.CALIBRATION),
+          Arguments.of(2, LockState.OPEN),
+          Arguments.of(3, LockState.PARTIALLY_OPEN),
+          Arguments.of(4, LockState.OPENING),
+          Arguments.of(5, LockState.CLOSING),
+          Arguments.of(6, LockState.CLOSED),
+          Arguments.of(7, LockState.PULL_SPRING),
+          Arguments.of(8, LockState.PULLING),
+          Arguments.of(9, LockState.UNKNOWN),
+          Arguments.of(255, LockState.UNPULLING));
     }
 
     @Test
@@ -223,7 +252,7 @@ class TedeeLockGatewayTest {
 
       final var lock = sut.get(new LockId(DEVICE_ID));
 
-      then(lock).isEqualTo(new LockView(DEVICE_ID, String.valueOf(DEVICE_ID)));
+      then(lock).isEqualTo(new LockView(DEVICE_ID, String.valueOf(DEVICE_ID), LockState.UNKNOWN));
     }
   }
 
