@@ -23,7 +23,7 @@ class LockDisconnectedNotificationHandlerTest {
         new LockDisconnectedNotificationHandler(
             notifier, messages(), applicationLocale(Locale.ENGLISH));
 
-    sut.handle(new LockDisconnected(42));
+    sut.handle(new LockDisconnected(42, "Front door"));
 
     then(notifier).should().notify("Lock 42 is disconnected");
   }

@@ -60,7 +60,7 @@ public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
       return;
     }
     status = LockStatus.LOCKED;
-    recordEvent(new LockRequested(id().value()));
+    recordEvent(new LockRequested(id().value(), ""));
   }
 
   public void addCronExpression(final CronExpression expression) {
@@ -72,25 +72,26 @@ public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
   }
 
   public void reportStatus(final LockState state, final LockJamStatus jamStatus) {
-    recordEvent(new LockStatusReported(id().value(), state, jamStatus));
+    recordEvent(new LockStatusReported(id().value(), "", state, jamStatus));
   }
 
   public void reportConnected() {
-    recordEvent(new LockConnected(id().value()));
+    recordEvent(new LockConnected(id().value(), ""));
   }
 
   public void reportDisconnected() {
-    recordEvent(new LockDisconnected(id().value()));
+    recordEvent(new LockDisconnected(id().value(), ""));
   }
 
   public void reportSettingsChanged() {
-    recordEvent(new LockSettingsChanged(id().value()));
+    recordEvent(new LockSettingsChanged(id().value(), ""));
   }
 
   public void reportBatteryLevel(final BatteryIndicator indicator) {
     recordEvent(
         new BatteryLevelReported(
             id().value(),
+            "",
             new BatteryStatus(indicator.getLevel().value(), indicator.getCategory())));
   }
 }

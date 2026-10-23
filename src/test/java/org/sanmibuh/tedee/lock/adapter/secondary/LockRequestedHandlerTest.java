@@ -19,7 +19,7 @@ class LockRequestedHandlerTest {
 
   @Test
   void should_lockTheDevice_whenHandlingLockRequested() {
-    sut.handle(new LockRequested(42));
+    sut.handle(new LockRequested(42, "Front door"));
 
     verify(lockGateway).lock(new LockId(42));
   }

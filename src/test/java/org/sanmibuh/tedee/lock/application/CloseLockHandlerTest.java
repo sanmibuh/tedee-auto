@@ -34,7 +34,7 @@ class CloseLockHandlerTest {
     sut.handle(new CloseLockCommand(1));
 
     verify(repository).save(savedLock.capture());
-    then(savedLock.getValue().domainEvents()).containsExactly(new LockRequested(1));
+    then(savedLock.getValue().domainEvents()).containsExactly(new LockRequested(1, "Front door"));
   }
 
   @Test

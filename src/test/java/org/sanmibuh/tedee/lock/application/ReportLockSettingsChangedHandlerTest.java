@@ -34,6 +34,7 @@ class ReportLockSettingsChangedHandlerTest {
     sut.handle(new ReportLockSettingsChangedCommand(1));
 
     verify(repository).save(savedLock.capture());
-    then(savedLock.getValue().domainEvents()).containsExactly(new LockSettingsChanged(1));
+    then(savedLock.getValue().domainEvents())
+        .containsExactly(new LockSettingsChanged(1, "Front door"));
   }
 }

@@ -47,7 +47,8 @@ class LockStatusReportedNotificationHandlerTest {
     final var sut =
         new LockStatusReportedNotificationHandler(notifier, messages(), applicationLocale(locale));
 
-    sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.NOT_JAMMED));
+    sut.handle(
+        new LockStatusReported(42, "Front door", LockState.CLOSED, LockJamStatus.NOT_JAMMED));
 
     BDDMockito.then(notifier).should().notify(stateMessage);
   }
@@ -59,7 +60,7 @@ class LockStatusReportedNotificationHandlerTest {
     final var sut =
         new LockStatusReportedNotificationHandler(notifier, messages(), applicationLocale(locale));
 
-    sut.handle(new LockStatusReported(42, LockState.CLOSED, LockJamStatus.JAMMED));
+    sut.handle(new LockStatusReported(42, "Front door", LockState.CLOSED, LockJamStatus.JAMMED));
 
     BDDMockito.then(notifier).should().notify(jamMessage);
   }

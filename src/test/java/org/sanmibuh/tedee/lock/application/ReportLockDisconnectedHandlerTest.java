@@ -34,6 +34,7 @@ class ReportLockDisconnectedHandlerTest {
     sut.handle(new ReportLockDisconnectedCommand(1));
 
     verify(repository).save(savedLock.capture());
-    then(savedLock.getValue().domainEvents()).containsExactly(new LockDisconnected(1));
+    then(savedLock.getValue().domainEvents())
+        .containsExactly(new LockDisconnected(1, "Front door"));
   }
 }

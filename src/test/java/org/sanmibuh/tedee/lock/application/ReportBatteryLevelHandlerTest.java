@@ -59,6 +59,7 @@ class ReportBatteryLevelHandlerTest {
 
     verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents())
-        .containsExactly(new BatteryLevelReported(1, new BatteryStatus(level, category)));
+        .containsExactly(
+            new BatteryLevelReported(1, "Front door", new BatteryStatus(level, category)));
   }
 }

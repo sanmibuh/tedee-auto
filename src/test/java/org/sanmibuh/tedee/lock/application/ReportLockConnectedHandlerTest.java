@@ -34,6 +34,6 @@ class ReportLockConnectedHandlerTest {
     sut.handle(new ReportLockConnectedCommand(1));
 
     verify(repository).save(savedLock.capture());
-    then(savedLock.getValue().domainEvents()).containsExactly(new LockConnected(1));
+    then(savedLock.getValue().domainEvents()).containsExactly(new LockConnected(1, "Front door"));
   }
 }

@@ -63,7 +63,7 @@ class ReportLockStatusHandlerTest {
 
     verify(repository).save(savedLock.capture());
     then(savedLock.getValue().domainEvents())
-        .containsExactly(new LockStatusReported(1, state, LockJamStatus.NOT_JAMMED));
+        .containsExactly(new LockStatusReported(1, "Front door", state, LockJamStatus.NOT_JAMMED));
   }
 
   @ParameterizedTest
@@ -79,6 +79,7 @@ class ReportLockStatusHandlerTest {
         .containsExactly(
             new LockStatusReported(
                 1,
+                "Front door",
                 LockState.CLOSED,
                 jammed == 1 ? LockJamStatus.JAMMED : LockJamStatus.NOT_JAMMED));
   }
