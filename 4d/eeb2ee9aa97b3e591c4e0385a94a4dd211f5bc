@@ -1,0 +1,19 @@
+src/main/java/org/sanmibuh/tedee/lock/domain/Lock.java
+  s_e3db5ab72b4b38::t_92af55627ebef9 63,75,79,83,87,94
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "4deeb2ee9aa97b3e591c4e0385a94a4dd211f5bc",
+  "prompts": {},
+  "sessions": {
+    "s_e3db5ab72b4b38": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e986f3733ffegWS7ouN3h34BaR",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
