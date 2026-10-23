@@ -1,0 +1,21 @@
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepository.java
+  s_e3db5ab72b4b38::t_40b8941235543a 19
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepositoryTest.java
+  s_e3db5ab72b4b38::t_56e5dc5f52a1ca 5,14,24,33,39-40,45-49,54,62,73,94,102
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "54368a503c7728925e690b6e5471834b725d1a65",
+  "prompts": {},
+  "sessions": {
+    "s_e3db5ab72b4b38": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e986f3733ffegWS7ouN3h34BaR",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
