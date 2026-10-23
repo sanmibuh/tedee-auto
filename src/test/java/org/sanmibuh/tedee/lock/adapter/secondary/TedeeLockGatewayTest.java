@@ -195,13 +195,14 @@ class TedeeLockGatewayTest {
     }
 
     @Test
-    void should_returnEmpty_whenBridgeDoesNotKnowTheLock() {
+    void should_throwNotFound_whenBridgeDoesNotKnowTheLock() {
       server
           .expect(ExpectedCount.once(), requestTo(LOCK_DETAILS_URL))
           .andExpect(method(HttpMethod.GET))
           .andRespond(withStatus(HttpStatus.NOT_FOUND));
 
-      then(sut.get(new LockId(DEVICE_ID))).isEmpty();
+      thenThrownBy(() -> sut.get(new LockId(DEVICE_ID)))
+          .isInstanceOf(AggregateNotFoundException.class);
 
       server.verify();
     }

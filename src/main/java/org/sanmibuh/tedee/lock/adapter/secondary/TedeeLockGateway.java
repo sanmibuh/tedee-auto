@@ -3,7 +3,7 @@ package org.sanmibuh.tedee.lock.adapter.secondary;
 import com.tedee.bridge.client.api.LockApi;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
-import org.sanmibuh.tedee.lock.domain.exception.InvalidLockRequestException;
+import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
@@ -38,6 +38,11 @@ final class TedeeLockGateway implements LockGateway {
               StringUtils.hasText(details.getName())
                   ? details.getName()
                   : String.valueOf(deviceId)));
+    } catch (final RestClientResponseException exception) {
+      if (exception.getStatusCode() == HttpStatus.NOT_FOUND) {
+        return Optional.empty();
+      }
+      throw translateException(exception, deviceId);
     } catch (final RestClientException exception) {
       throw translateException(exception, deviceId);
     }
@@ -54,7 +59,7 @@ final class TedeeLockGateway implements LockGateway {
   private RuntimeException translateResponse(
       final RestClientResponseException exception, final int deviceId) {
     return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
-      case NOT_FOUND -> new InvalidLockRequestException(deviceId, exception);
+      case NOT_FOUND -> new AggregateNotFoundException(new LockId(deviceId));
       case METHOD_NOT_ALLOWED,
           NOT_ACCEPTABLE,
           CONFLICT,

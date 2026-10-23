@@ -15,6 +15,7 @@ import org.assertj.core.api.junit.jupiter.SoftAssertionsExtension;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.sanmibuh.ddd.domain.AggregateNotFoundException;
 import org.sanmibuh.framework.persistence.RepositoryTest;
 import org.sanmibuh.tedee.lock.domain.LockSnapshot;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
@@ -108,10 +109,11 @@ class TedeeLockRepositoryTest {
 
   @Test
   @AssertHibernateSQLCount(selects = 1)
-  void should_returnEmpty_whenBridgeDoesNotKnowTheLock() {
-    given(lockGateway.get(new LockId(DEVICE_ID))).willReturn(Optional.empty());
+  void should_throwNotFound_whenBridgeDoesNotKnowTheLock() {
+    final var lockId = new LockId(DEVICE_ID);
+    given(lockGateway.get(lockId)).willThrow(new AggregateNotFoundException(lockId));
 
-    then(sut.findById(new LockId(DEVICE_ID))).isEmpty();
+    thenThrownBy(() -> sut.get(lockId)).isInstanceOf(AggregateNotFoundException.class);
   }
 
   private void saveAndFlush(final LockSnapshot snapshot) {
