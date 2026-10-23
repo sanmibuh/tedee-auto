@@ -20,12 +20,17 @@ import org.sanmibuh.tedee.lock.domain.vo.LockStatus;
 
 public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
 
+  private final String name;
   private final Set<CronExpression> cronExpressions;
   private LockStatus status;
 
   private Lock(
-      final LockId id, final LockStatus status, final Set<CronExpression> cronExpressions) {
+      final LockId id,
+      final String name,
+      final LockStatus status,
+      final Set<CronExpression> cronExpressions) {
     super(id);
+    this.name = name;
     this.status = status;
     this.cronExpressions = new LinkedHashSet<>(cronExpressions);
   }
@@ -33,6 +38,7 @@ public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
   public Lock(final LockSnapshot snapshot) {
     this(
         new LockId(snapshot.id()),
+        snapshot.name(),
         snapshot.status(),
         snapshot.cronExpressions().stream()
             .map(CronExpression::new)
@@ -40,13 +46,13 @@ public final class Lock extends AggregateRoot<LockId, Integer, LockSnapshot> {
   }
 
   public static Lock create(final LockId id, final String name, final LockStatus status) {
-    return new Lock(id, status, Set.of());
+    return new Lock(id, name, status, Set.of());
   }
 
   @Override
   public LockSnapshot snapshot() {
     return new LockSnapshot(
-        id().value(), "", status, cronExpressions.stream().map(CronExpression::value).toList());
+        id().value(), name, status, cronExpressions.stream().map(CronExpression::value).toList());
   }
 
   public void lock() {

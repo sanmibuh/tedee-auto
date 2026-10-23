@@ -31,7 +31,7 @@ class AddLockCronExpressionHandlerTest {
   @Captor ArgumentCaptor<Lock> savedLock;
 
   private static LockSnapshot snapshotWith(final String... expressions) {
-    return new LockSnapshot(1, "", LockStatus.UNLOCKED, List.of(expressions));
+    return new LockSnapshot(1, "Front door", LockStatus.UNLOCKED, List.of(expressions));
   }
 
   private void givenLockWithCronExpressions(final String... expressions) {
