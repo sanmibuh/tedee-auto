@@ -31,7 +31,7 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.client.ExpectedCount;
 import org.springframework.test.web.client.MockRestServiceServer;
 
-@RestClientTest(TedeeLockGateway.class)
+@RestClientTest
 @Import({TedeeClientConfiguration.class, TedeeInfrastructureConfiguration.class})
 @TestPropertySource(
     properties = {

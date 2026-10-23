@@ -1,26 +1,25 @@
 package org.sanmibuh.tedee.lock.adapter.secondary;
 
+import com.tedee.bridge.client.api.LockApi;
 import lombok.RequiredArgsConstructor;
 import org.sanmibuh.tedee.lock.domain.exception.InvalidLockRequestException;
 import org.sanmibuh.tedee.lock.domain.exception.LockOperationFailedException;
 import org.sanmibuh.tedee.lock.domain.exception.LockTemporarilyUnavailableException;
 import org.sanmibuh.tedee.lock.domain.vo.LockId;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestClientException;
 import org.springframework.web.client.RestClientResponseException;
 
-@Component
 @RequiredArgsConstructor
 final class TedeeLockGateway implements LockGateway {
 
-  private final LockBridgeApi lockBridgeApi;
+  private final LockApi lockApi;
 
   @Override
   public void lock(final LockId lockId) {
     final var deviceId = lockId.value();
     try {
-      lockBridgeApi.lock(deviceId);
+      lockApi.postLock(deviceId);
     } catch (final RestClientResponseException exception) {
       throw translateException(exception, deviceId);
     } catch (final RestClientException exception) {
