@@ -21,10 +21,8 @@ final class TedeeLockGateway implements LockGateway {
     final var deviceId = lockId.value();
     try {
       lockApi.postLock(deviceId);
-    } catch (final RestClientResponseException exception) {
-      throw translateException(exception, deviceId);
     } catch (final RestClientException exception) {
-      throw new LockTemporarilyUnavailableException(deviceId, exception);
+      throw translateException(exception, deviceId);
     }
   }
 
@@ -36,14 +34,20 @@ final class TedeeLockGateway implements LockGateway {
       return new LockView(
           deviceId,
           StringUtils.hasText(details.getName()) ? details.getName() : String.valueOf(deviceId));
-    } catch (final RestClientResponseException exception) {
-      throw translateException(exception, deviceId);
     } catch (final RestClientException exception) {
-      throw new LockTemporarilyUnavailableException(deviceId, exception);
+      throw translateException(exception, deviceId);
     }
   }
 
   private RuntimeException translateException(
+      final RestClientException exception, final int deviceId) {
+    return switch (exception) {
+      case RestClientResponseException response -> translateResponse(response, deviceId);
+      default -> unavailable(deviceId, exception);
+    };
+  }
+
+  private RuntimeException translateResponse(
       final RestClientResponseException exception, final int deviceId) {
     return switch (HttpStatus.resolve(exception.getStatusCode().value())) {
       case NOT_FOUND -> new InvalidLockRequestException(deviceId, exception);
@@ -53,8 +57,13 @@ final class TedeeLockGateway implements LockGateway {
           BAD_GATEWAY,
           SERVICE_UNAVAILABLE,
           GATEWAY_TIMEOUT ->
-          new LockTemporarilyUnavailableException(deviceId, exception);
+          unavailable(deviceId, exception);
       case null, default -> new LockOperationFailedException(deviceId, exception);
     };
+  }
+
+  private LockTemporarilyUnavailableException unavailable(
+      final int deviceId, final RestClientException exception) {
+    return new LockTemporarilyUnavailableException(deviceId, exception);
   }
 }
