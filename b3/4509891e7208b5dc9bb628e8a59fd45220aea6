@@ -1,0 +1,19 @@
+ARCHITECTURE.md
+  s_abaaf629357f5f::t_4c7155d7ceeb89 38
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "b34509891e7208b5dc9bb628e8a59fd45220aea6",
+  "prompts": {},
+  "sessions": {
+    "s_abaaf629357f5f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e98a6896bffetLIDU9CCQmj1hP",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
