@@ -29,8 +29,11 @@ jobs:
           load: true
           tags: tedee-automation:native-smoke
 
+      - name: Build migration image
+        run: .github/scripts/build-liquibase-image.sh tedee-automation-migrations:native-smoke
+
       - name: Run native smoke test
-        run: .github/scripts/native-smoke-test.sh tedee-automation:native-smoke
+        run: .github/scripts/native-smoke-test.sh tedee-automation:native-smoke tedee-automation-migrations:native-smoke
 
   report-failure:
     if: failure()

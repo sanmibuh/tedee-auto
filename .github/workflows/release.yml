@@ -193,9 +193,6 @@ jobs:
       # Prove the freshly built native image boots before it is pushed or any
       # tag/release is created. A missing reflection hint aborts the Spring
       # context only in the native binary — ./mvnw verify cannot catch it.
-      - name: Smoke test native image
-        run: .github/scripts/native-smoke-test.sh tedee-automation:${{ steps.version.outputs.release }}
-
       # Migration image: reuse the previous release's image when nothing it contains changed,
       # otherwise build and smoke-test a new one. Both paths end with the same release tag.
       - name: Resolve migration image
@@ -209,6 +206,13 @@ jobs:
       - name: Smoke test migration image
         if: steps.migrations.outputs.reuse != 'true'
         run: .github/scripts/liquibase-smoke-test.sh tedee-automation-migrations:${{ steps.version.outputs.release }}
+
+      # Boots the native image on a database migrated by this release's changelog. When the migration
+      # image is reused, the previously pulled release image is used instead.
+      - name: Smoke test native image
+        run: .github/scripts/native-smoke-test.sh tedee-automation:${{ steps.version.outputs.release }} "${MIGRATION_IMAGE}"
+        env:
+          MIGRATION_IMAGE: ${{ steps.migrations.outputs.reuse != 'true' && format('tedee-automation-migrations:{0}', steps.version.outputs.release) || format('ghcr.io/sanmibuh/tedee-auto/tedee-automation-migrations:{0}', steps.migrations.outputs.previous) }}
 
       # 6: first irreversible external effect. Only a smoke-tested image is
       # published, and only under its IMMUTABLE version tag. The mutable `latest`

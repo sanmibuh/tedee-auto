@@ -30,6 +30,7 @@ These standards apply to all code in this project and are the basis for any code
 - Value object tests only cover guard clauses (invalid input). Do not test successful construction — that is covered indirectly when the value object is used.
 - Test domain and application logic with **collaborative (sociable) unit tests** at the use-case boundary (the handler). The handler is the `sut`, exercised with a **real aggregate**; mock only the port (the I/O boundary). Never mock business logic — assert aggregate behaviour *through* the use case, inspecting the aggregate handed to `save(...)` (e.g. via `ArgumentCaptor` and immutable `domainEvents()`), not mutable getters.
 - Give an aggregate its own direct test only when its invariants grow complex. Simple behaviour stays expressed as use-case scenarios; do not duplicate it in a separate aggregate test.
+- Every test of a persistence adapter (`@RepositoryTest`) must be annotated with `@AssertHibernateSQLCount` declaring the exact number of statements (`selects`, `inserts`, `updates`, `deletes`). Counts include the statements executed on `flush`, and unspecified types are asserted as 0. The only exception is a test that expects the flush itself to fail (e.g. an optimistic locking conflict), because the listener re-flushes the stale session after the test.
 
 ### Clean Code
 - **SOLID**: single responsibility, open/closed, no god objects.
