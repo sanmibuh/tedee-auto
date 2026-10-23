@@ -21,6 +21,7 @@ import org.sanmibuh.ddd.domain.DomainEvent;
 import org.sanmibuh.ddd.domain.EntityId;
 import org.sanmibuh.ddd.domain.Snapshot;
 import org.sanmibuh.ddd.port.Command;
+import org.sanmibuh.ddd.port.DomainEventHandler;
 import org.sanmibuh.ddd.port.Query;
 
 @AnalyzeClasses(packages = "org.sanmibuh")
@@ -88,7 +89,7 @@ class HexagonalArchitectureTest {
           .resideInAPackage("org.springframework..");
 
   @ArchTest
-  static final ArchRule should_beNamedJpaEntityInSecondaryAdapter_whenAnnotatedWithEntity =
+  static final ArchRule should_beNamedJpaEntityInPersistenceAdapter_whenAnnotatedWithEntity =
       classes()
           .that()
           .resideInAPackage("org.sanmibuh.tedee..")
@@ -97,7 +98,17 @@ class HexagonalArchitectureTest {
           .should()
           .haveSimpleNameEndingWith("JpaEntity")
           .andShould()
-          .resideInAPackage("..adapter.secondary..");
+          .resideInAPackage("..adapter.secondary.persistence..");
+
+  @ArchTest
+  static final ArchRule should_resideInSecondaryEventPackage_whenImplementingDomainEventHandler =
+      classes()
+          .that()
+          .implement(DomainEventHandler.class)
+          .and()
+          .resideInAPackage("org.sanmibuh.tedee..")
+          .should()
+          .resideInAPackage("..adapter.secondary.event..");
 
   @ArchTest
   static final ArchRule should_forbidAdapterDependencies_whenInDomainLayer =

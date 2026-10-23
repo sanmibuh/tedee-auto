@@ -1,0 +1,27 @@
+package org.sanmibuh.tedee.lock.adapter.secondary.event;
+
+import static org.mockito.Mockito.verify;
+
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
+import org.sanmibuh.tedee.lock.adapter.secondary.rest.LockGateway;
+import org.sanmibuh.tedee.lock.domain.event.LockRequested;
+import org.sanmibuh.tedee.lock.domain.vo.LockId;
+
+@ExtendWith(MockitoExtension.class)
+class LockRequestedHandlerTest {
+
+  @Mock LockGateway lockGateway;
+
+  @InjectMocks LockRequestedHandler sut;
+
+  @Test
+  void should_lockTheDevice_whenHandlingLockRequested() {
+    sut.handle(new LockRequested(42, "Front door"));
+
+    verify(lockGateway).lock(new LockId(42));
+  }
+}
