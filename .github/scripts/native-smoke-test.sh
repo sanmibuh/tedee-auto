@@ -9,10 +9,14 @@
 # container exits, and this script fails fast dumping the container logs — the
 # exact class of failure that only surfaces in the native binary, not on the JVM.
 #
-# Usage: native-smoke-test.sh <image-ref>
+# The application only validates the schema (Liquibase owns all DDL), so the migration image is run
+# first against the same data directory, exactly as in deployment.
+#
+# Usage: native-smoke-test.sh <image-ref> <migration-image-ref>
 set -euo pipefail
 
-readonly IMAGE="${1:?usage: native-smoke-test.sh <image-ref>}"
+readonly IMAGE="${1:?usage: native-smoke-test.sh <image-ref> <migration-image-ref>}"
+readonly MIGRATION_IMAGE="${2:?usage: native-smoke-test.sh <image-ref> <migration-image-ref>}"
 readonly CONTAINER="tedee-native-smoke"
 readonly HEALTH_URL="http://localhost:8080/actuator/health"
 readonly TIMEOUT_SECONDS=90
@@ -35,6 +39,9 @@ fail() {
   echo "--------------------------"
   exit 1
 }
+
+echo "Applying migrations from image: ${MIGRATION_IMAGE}"
+docker run --rm --user 65532:65532 -v "${DATA_DIR}:/data" "${MIGRATION_IMAGE}" >/dev/null
 
 echo "Starting container from image: ${IMAGE}"
 docker run -d --name "${CONTAINER}" \
