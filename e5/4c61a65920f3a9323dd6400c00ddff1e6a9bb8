@@ -1,0 +1,25 @@
+AGENTS.md
+  s_abaaf629357f5f::t_4a7cc7294d9a40 33
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockJpaEntity.java
+  s_abaaf629357f5f::t_1a1cd857aa620a 33
+src/main/java/org/sanmibuh/tedee/lock/adapter/secondary/LockJpaRepository.java
+  s_abaaf629357f5f::t_f9aaff14f51184 3-4,6,8-13
+src/test/java/org/sanmibuh/tedee/lock/adapter/secondary/TedeeLockRepositoryTest.java
+  s_abaaf629357f5f::t_7785d04e74a324 63,71-80,93
+---
+{
+  "schema_version": "authorship/3.0.0",
+  "git_ai_version": "1.7.6",
+  "base_commit_sha": "e54c61a65920f3a9323dd6400c00ddff1e6a9bb8",
+  "prompts": {},
+  "sessions": {
+    "s_abaaf629357f5f": {
+      "agent_id": {
+        "tool": "opencode",
+        "id": "ses_e98a6896bffetLIDU9CCQmj1hP",
+        "model": "claude-sonnet-5.5"
+      },
+      "human_author": "David Belmez <davidbvic@inditex.com>"
+    }
+  }
+}
