@@ -23,7 +23,7 @@
     <google-java-format.version>1.36.1</google-java-format.version>
     <hibernate-query-asserts.version>2.2.0</hibernate-query-asserts.version>
     <liquibase.version>5.0.4</liquibase.version>
-    <jacoco.version>0.8.15</jacoco.version>
+    <jacoco.version>0.8.16</jacoco.version>
     <logcaptor.version>2.13.0</logcaptor.version>
     <java.version>25</java.version>
     <nullaway.version>0.14.3</nullaway.version>
