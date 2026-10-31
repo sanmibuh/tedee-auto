@@ -26,7 +26,7 @@
     <jacoco.version>0.8.15</jacoco.version>
     <logcaptor.version>2.13.0</logcaptor.version>
     <java.version>25</java.version>
-    <nullaway.version>0.14.2</nullaway.version>
+    <nullaway.version>0.14.3</nullaway.version>
     <test.spring.config.location>classpath:/</test.spring.config.location>
     <test.db.url>jdbc:h2:mem:tedee</test.db.url>
     <openapi-generator.version>7.26.0</openapi-generator.version>
