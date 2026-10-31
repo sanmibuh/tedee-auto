@@ -19,7 +19,7 @@
 
   <properties>
     <archunit.version>1.5.1</archunit.version>
-    <error-prone.version>2.50.0</error-prone.version>
+    <error-prone.version>2.51.0</error-prone.version>
     <google-java-format.version>1.36.1</google-java-format.version>
     <hibernate-query-asserts.version>2.2.0</hibernate-query-asserts.version>
     <liquibase.version>5.0.4</liquibase.version>
